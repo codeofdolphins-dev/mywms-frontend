@@ -123,7 +123,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 
     /* Horizontal layouts */
     .horizontal .horizontal-menu {
-        @apply hidden shadow-md lg:flex;
+        /* @apply hidden shadow-md lg:flex; */
+        @apply shadow-md flex;
     }
     .horizontal .horizontal-logo {
         @apply flex;
