@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { HiDatabase } from "react-icons/hi";
 import { FaClipboardList, FaStore } from "react-icons/fa";
 import { TiShoppingCart } from "react-icons/ti";
-import { FaTruckRampBox, FaUserGroup  } from "react-icons/fa6";
+import { FaTruckRampBox, FaUserGroup } from "react-icons/fa6";
 import { BiSolidFactory } from "react-icons/bi";
 import { LuWarehouse } from "react-icons/lu";
 
@@ -26,7 +26,7 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-   
+
     function createMarkup(messages: any) {
         return { __html: messages };
     }
@@ -237,9 +237,9 @@ const Header = () => {
                 </div>
 
                 {/* horizontal menu */}
-                <ul className="horizontal-menu py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
+                <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
                     {/* dashboard */}
-                    <li 
+                    <li
                         className="menu nav-item relative"
                         onClick={() => navigate("/")}
                     >
@@ -275,18 +275,31 @@ const Header = () => {
                     {/* requisition */}
                     <li
                         className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/requisition")}
                     >
-                        <button type="button" className={`nav-link ${location.pathname === '/requisition' ? 'active' : ''} `}>
+                        <button type="button" className={`nav-link ${location.pathname === '/requisition' ? 'active' : ''} !cursor-default`}>
                             <div className="flex items-center">
                                 <FaClipboardList />
                                 <span className="px-1">Requisition</span>
                             </div>
+                            <div className="right_arrow">
+                                <IconCaretDown />
+                            </div>
                         </button>
+                        <ul className="sub-menu">
+                            <li>
+                                <NavLink to="/requisition/admin/rules">Rules</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/requisition/browse">Browse</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/requisition/create">Create</NavLink>
+                            </li>
+                        </ul>
                     </li>
 
                     {/* purchase */}
-                    <li
+                    {/* <li
                         className="menu nav-item relative !ml-0"
                         onClick={() => navigate("/purchase")}
                     >
@@ -296,7 +309,7 @@ const Header = () => {
                                 <span className="px-1">Purchase</span>
                             </div>
                         </button>
-                    </li>
+                    </li> */}
 
                     {/* supplier */}
                     <li
@@ -337,15 +350,15 @@ const Header = () => {
                         </button>
                     </li>
 
-                    {/* authorised dealer */}
+                    {/* dealer */}
                     <li
                         className="menu nav-item relative !ml-0"
                         onClick={() => navigate("/authorised-dealer")}
                     >
-                        <button type="button" className={`nav-link ${location.pathname === '/authorised-dealer' ? 'active' : ''} `}>
+                        <button type="button" className={`nav-link ${location.pathname === '/dealer' ? 'active' : ''} `}>
                             <div className="flex items-center">
-                                <FaUserGroup  />
-                                <span className="px-1">Authorised dealer</span>
+                                <FaUserGroup />
+                                <span className="px-1">Dealer</span>
                             </div>
                         </button>
                     </li>
@@ -370,7 +383,7 @@ const Header = () => {
                     >
                         <button type="button" className={`nav-link ${location.pathname === '/retailer' ? 'active' : ''} `}>
                             <div className="flex items-center">
-                                <FaUserGroup  />
+                                <FaUserGroup />
                                 <span className="px-1">Retailer</span>
                             </div>
                         </button>

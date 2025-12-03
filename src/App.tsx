@@ -1,11 +1,14 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
-import AuthLayout from './routes/Auth.route'
+import AuthLayout from './layouts/Auth.layout'
 import Login from './screens/auth/Login'
 import Register from './screens/auth/Register'
 import Dashboard from './screens/Dashboard'
-import AppLayout from './routes/App.route'
+import AppLayout from './layouts/App.layout'
 import Master from './screens/Master'
 import Error404 from './screens/Error404'
+import RequisitionLayout from './layouts/Requisition.layout'
+import Rules from './screens/requisition/Rules'
+import RequisitionBrowse from './screens/requisition/RequisitionBrowse.jsx';
 
 function App() {
 
@@ -19,6 +22,13 @@ function App() {
         <Route path="/" element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="master" element={<Master />} />
+
+          {/* requisition */}
+          <Route path="requisition" element={<RequisitionLayout />} >
+            <Route path="admin/rules" element={<Rules />} />
+            <Route path="browse" element={ <RequisitionBrowse /> } />
+          </Route>
+
         </Route>
         <Route path="*" element={<Error404 />} />
       </Route>
