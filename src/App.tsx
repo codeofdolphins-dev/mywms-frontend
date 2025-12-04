@@ -8,39 +8,122 @@ import Master from './screens/Master'
 import Error404 from './screens/Error404'
 import RequisitionLayout from './layouts/Requisition.layout'
 import Rules from './screens/requisition/Rules'
-import RequisitionBrowse from './screens/requisition/RequisitionBrowse.jsx';
+import Browse from './screens/Browse.jsx';
+import Select from './components/inputs/SearchableSelect'
+import SupplierLayout from './layouts/Supplier.layout'
+import ProductionLayout from './layouts/Production.layout'
+import StoreLayout from './layouts/StoreLayout'
+import DealerLayout from './layouts/DealerLayout'
+import RetailerLayout from './layouts/RetailerLayout'
+import DistributorLayout from './layouts/DistributorLayout'
+import WarehouseLayout from './layouts/WarehouseLayout'
+import AccessLayout from './layouts/Access.layout'
+import CreateRequisition from './screens/requisition/CreateRequisition'
+import Category from './screens/category/Category'
+import MasterLayout from './layouts/Master.layout'
 
 function App() {
 
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route>
-        <Route path="auth" element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-        </Route>
-        <Route path="/" element={<AppLayout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="master" element={<Master />} />
+    const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route>
+                {/* auth */}
+                <Route path="auth" element={<AuthLayout />}>
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                </Route>
 
-          {/* requisition */}
-          <Route path="requisition" element={<RequisitionLayout />} >
-            <Route path="admin/rules" element={<Rules />} />
-            <Route path="browse" element={ <RequisitionBrowse /> } />
-          </Route>
+                {/* app */}
+                <Route path="/" element={<AppLayout />}>
+                    <Route path="/" element={<Dashboard />} />
+                    
+                    {/* master */}
+                    <Route path="master" element={<MasterLayout />} >
+                        <Route path="" element={<Master />} />
+                        <Route path="categories" element={<Category />} />
+                    </Route>
 
-        </Route>
-        <Route path="*" element={<Error404 />} />
-      </Route>
+                    {/* access */}
+                    <Route path="access" element={<AccessLayout />} >
+                        <Route path="role" element={<Master />} />
+                        <Route path="role/create" element={<Master />} />
+                        <Route path="role/assign" element={<Master />} />
+                        <Route path="permission" element={<Master />} />
+                        <Route path="permission/create" element={<Master />} />
+                        <Route path="permission/assign" element={<Master />} />
+                    </Route>
+
+                    {/* requisition */}
+                    <Route path="requisition" element={<RequisitionLayout />} >
+                        <Route path="admin/rules" element={<Rules />} />
+                        <Route path="" element={<Browse
+                            pageName="Requisitions"
+                        />} />
+                        <Route path="create" element={<CreateRequisition />} />
+                    </Route>
+
+                    {/* supplier */}
+                    <Route path="supplier" element={<SupplierLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Suppliers"
+                        />} />
+                    </Route>
+
+                    {/* production */}
+                    <Route path="production" element={<ProductionLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Production"
+                        />} />
+                    </Route>
+
+                    {/* store */}
+                    <Route path="store" element={<StoreLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Store"
+                        />} />
+                    </Route>
+
+                    {/* dealer */}
+                    <Route path="dealer" element={<DealerLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Dealer"
+                        />} />
+                    </Route>
+
+                    {/* retailer */}
+                    <Route path="retailer" element={<RetailerLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Retailer"
+                        />} />
+                    </Route>
+
+                    {/* distributor */}
+                    <Route path="distributor" element={<DistributorLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Distributor"
+                        />} />
+                    </Route>
+
+                    {/* warehouse */}
+                    <Route path="warehouse" element={<WarehouseLayout />} >
+                        <Route path="" element={<Browse
+                            pageName="Warehouse"
+                        />} />
+                    </Route>
+
+                </Route>
+                <Route path="*" element={<Error404 />} />
+                {/* <Route path="*" element={<Select />} /> */}
+            </Route>
+        )
     )
-  )
 
 
-  return <>
-    <div className="horizontal full main-section antialiased relative font-nunito text-sm font-normal">
-      <RouterProvider router={router} />
-    </div>
-  </>
+    return <>
+        <div className="horizontal full main-section antialiased relative font-nunito text-sm font-normal">
+            <RouterProvider router={router} />
+        </div>
+    </>
 }
 
 export default App

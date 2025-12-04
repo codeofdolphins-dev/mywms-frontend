@@ -96,8 +96,6 @@ const BrowseTable = () => {
         direction: 'asc',
     });
 
-    console.log(recordsData);
-
     useEffect(() => {
         setColumnName(
             rowData.length > 0 ? Object.keys(rowData[0]) : []

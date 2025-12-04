@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { HiDatabase } from "react-icons/hi";
-import { FaClipboardList, FaStore } from "react-icons/fa";
-import { TiShoppingCart } from "react-icons/ti";
-import { FaTruckRampBox, FaUserGroup } from "react-icons/fa6";
-import { BiSolidFactory } from "react-icons/bi";
-import { LuWarehouse } from "react-icons/lu";
+import { Link } from 'react-router-dom';
+
 
 // import { IRootState } from '../../store';
 // import { toggleRTL, toggleTheme, toggleSidebar } from '../../store/themeConfigSlice';
@@ -18,14 +13,9 @@ import IconUser from '../Icon/IconUser';
 import IconMail from '../Icon/IconMail';
 import IconLockDots from '../Icon/IconLockDots';
 import IconLogout from '../Icon/IconLogout';
-import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
-import IconCaretDown from '../Icon/IconCaretDown';
-import IconMenuComponents from '../Icon/Menu/IconMenuComponents';
+
 
 const Header = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-
 
     function createMarkup(messages: any) {
         return { __html: messages };
@@ -95,7 +85,6 @@ const Header = () => {
         <header className="z-40 horizontal">
             <div className="shadow-sm">
 
-                {/* header */}
                 <div className="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
                     <div className="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                         <Link to="/" className="main-logo flex items-center shrink-0">
@@ -235,229 +224,7 @@ const Header = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* horizontal menu */}
-                <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
-                    {/* dashboard */}
-                    <li
-                        className="menu nav-item relative"
-                        onClick={() => navigate("/")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <IconMenuDashboard className="shrink-0" />
-                                <span className="px-1">{'dashboard'}</span>
-                            </div>
-                            <div className="right_arrow">
-                                <IconCaretDown />
-                            </div>
-                        </button>
-                        <ul className="sub-menu">
-                            <li>
-                                <NavLink to="/">{'sales'}</NavLink>
-                            </li>
-                        </ul>
-                    </li>
-
-                    {/* master */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/master")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/master' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <HiDatabase />
-                                <span className="px-1">Master</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* requisition */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/requisition' ? 'active' : ''} !cursor-default`}>
-                            <div className="flex items-center">
-                                <FaClipboardList />
-                                <span className="px-1">Requisition</span>
-                            </div>
-                            <div className="right_arrow">
-                                <IconCaretDown />
-                            </div>
-                        </button>
-                        <ul className="sub-menu">
-                            <li>
-                                <NavLink to="/requisition/admin/rules">Rules</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/requisition/browse">Browse</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/requisition/create">Create</NavLink>
-                            </li>
-                        </ul>
-                    </li>
-
-                    {/* purchase */}
-                    {/* <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/purchase")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/purchase' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <TiShoppingCart />
-                                <span className="px-1">Purchase</span>
-                            </div>
-                        </button>
-                    </li> */}
-
-                    {/* supplier */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/supplier")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/supplier' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <FaTruckRampBox />
-                                <span className="px-1">Supplier</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* production */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/production")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/production' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <BiSolidFactory />
-                                <span className="px-1">Production</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* store */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/store")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/store' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <FaStore />
-                                <span className="px-1">Store</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* dealer */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/authorised-dealer")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/dealer' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <FaUserGroup />
-                                <span className="px-1">Dealer</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* distributor */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/distributor")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/distributor' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <FaUserGroup />
-                                <span className="px-1">Distributor</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* retailer */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/retailer")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/retailer' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <FaUserGroup />
-                                <span className="px-1">Retailer</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    {/* warehouse */}
-                    <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/warehouse")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <LuWarehouse />
-                                <span className="px-1">Warehouse</span>
-                            </div>
-                        </button>
-                    </li>
-
-                    <li className="menu nav-item relative">
-                        <button type="button" className="nav-link">
-                            <div className="flex items-center">
-                                <IconMenuComponents className="shrink-0" />
-                                <span className="px-1">{'components'}</span>
-                            </div>
-                            <div className="right_arrow">
-                                <IconCaretDown />
-                            </div>
-                        </button>
-                        {/* <ul className="sub-menu">
-                            <li>
-                                <NavLink to="/components/tabs">{t('tabs')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/accordions">{t('accordions')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/modals">{t('modals')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/cards">{t('cards')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/carousel">{t('carousel')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/countdown">{t('countdown')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/counter">{t('counter')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/sweetalert">{t('sweet_alerts')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/timeline">{t('timeline')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/notifications">{t('notifications')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/media-object">{t('media_object')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/list-group">{t('list_group')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/pricing-table">{t('pricing_tables')}</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/components/lightbox">{t('lightbox')}</NavLink>
-                            </li>
-                        </ul> */}
-                    </li>
-                </ul>
+                
             </div>
         </header>
     );

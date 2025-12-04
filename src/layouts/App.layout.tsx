@@ -1,6 +1,7 @@
 import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import Header from '../components/layout/Header';
 import { Outlet } from 'react-router-dom';
+import NavBar from '../components/layout/NavBar';
 // import { IRootState } from '../../store';
 // import { toggleSidebar } from '../../store/themeConfigSlice';
 // import Footer from './Footer';
@@ -75,6 +76,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
                     <div className="main-content flex flex-col min-h-screen">
                         {/* BEGIN TOP NAVBAR */}
                         <Header />
+                        <NavBar />
                         {/* END TOP NAVBAR */}
 
                         {/* BEGIN CONTENT AREA */}

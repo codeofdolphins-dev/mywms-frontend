@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 // import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
-import Dropdown from '../../components/Dropdown';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
+import SearchableSelect from '../../components/inputs/SearchableSelect';
 
 const Login = () => {
     // const dispatch = useDispatch();
@@ -15,10 +14,9 @@ const Login = () => {
     const navigate = useNavigate();
 
     const submitForm = () => {
-        navigate('/dashboard');
+        navigate('/');
     };
 
-    const [flag, setFlag] = useState('user');
 
     return (
         <div>
@@ -39,42 +37,9 @@ const Login = () => {
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
-                                <div>
-                                    <label htmlFor="Email">User Type</label>
-                                    <div className="dropdown">
-                                        <Dropdown
-                                            offset={[0, 8]}
-                                            btnClassName="flex items-center gap-2.5 rounded-lg border border-white-dark/30 bg-white px-2 py-1.5 text-white-dark hover:border-primary hover:text-primary dark:bg-black !w-full"
-                                            button={
-                                                <>
-                                                    <div className="text-base font-bold uppercase w-full">{flag}</div>
-                                                    <span className="shrink-0">
-                                                        <IconCaretDown />
-                                                    </span>
-                                                </>
-                                            }
-                                        >
-                                            <ul className="!px-2 text-dark dark:text-white-dark grid grid-cols-2 gap-2 font-semibold dark:text-white-light/90 w-96">
-
-                                                {["user", "dealer", "warehouse"].map((item: any, i: number) => {
-                                                    return (
-                                                        <li key={i}>
-                                                            <button
-                                                                type="button"
-                                                                className={`flex w-full hover:text-primary rounded-lg ${flag === item.code ? 'bg-primary/10 text-primary' : ''}`}
-                                                                onClick={() => {
-                                                                    setFlag(item);
-                                                                }}
-                                                            >
-                                                                {item}
-                                                            </button>
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        </Dropdown>
-                                    </div>
-                                </div>
+                                <SearchableSelect
+                                    label="User Type"
+                                />
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
