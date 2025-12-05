@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import { useForm } from 'react-hook-form';
-import AddItemTable from '../../components/requisition/AddItemTable';
+import ItemTable from '../../components/ItemTable';
 
 
 const tableData = [
@@ -47,6 +47,7 @@ const CreateRequisition = () => {
     const [supplier, setSupplier] = useState('');
     const [warehouse, setWarehouse] = useState('');
     const [items, setItems] = useState(tableData || []);
+    const colName = ["Id", "GSTIN No.", "Brand", "Product", "Pack Size", "Req Qty.", "Actions"];
 
 
     const addItem = () => {
@@ -115,9 +116,10 @@ const CreateRequisition = () => {
                     }
 
                     {itemCount > 0 && <>
-                        <AddItemTable
+                        <ItemTable
                             items={items}
                             setItems={setItems}
+                            colName={colName}
                         />
                         <button type="button" className="btn btn-primary ml-auto">Submit Requisition</button>
                     </>}

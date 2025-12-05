@@ -36,27 +36,28 @@ const Input = React.forwardRef(({
     type = 'text',
     className = '',
     error,
+    required=false,
     ...props
 }, ref) => {
 
-    const id = useId();
+    const _id = useId();
 
     return (
         <div className="w-full">
             {
                 label && <label
-                    htmlFor={id}
-                    className='inline-block mb-1 pl-1'
+                    htmlFor={_id}
+                    className='inline-block mb-0 pl-1 text-sm text-gray-600'
                 >
-                    {label}
+                    {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
             }
             <input
+                id={_id}
                 type={type}
-                className={`px-3 py-2 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-200 border border-gray-200 w-full ${error ? "border-red-500" : ""} ${className}`}
+                className={`px-3 py-1.5 text-sm rounded-md bg-white text-black outline-none duration-200 border border-[#B3B3B3] w-full ${error ? "border-red-500" : ""} ${className}`}
                 ref={ref}
                 {...props}
-                id={id}
             />
              {error && <span className='text-danger'>This field is required</span>}
         </div>

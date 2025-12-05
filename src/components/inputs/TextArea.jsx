@@ -11,7 +11,7 @@ const TextArea = ({
         <div>
             {label && <label
                 htmlFor={_id}
-                className='inline-block mb-1 pl-1'
+                className='inline-block mb-1 pl-1 text-sm text-gray-600'
             >
                 {label}
             </label>}

@@ -15,11 +15,11 @@ const SearchInput = ({
     return (
         <div className='w-full'>
             {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
-            <div className="form-input flex items-center">
+            <div className="form-input flex items-center border-2">
                 <input
                     id={_id}
                     type={type}
-                    className={`w-full focus:outline-none pe-3 ${className}`}
+                    className={`w-full focus:outline-none pe-3 text-base ${className}`}
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     {...rest}

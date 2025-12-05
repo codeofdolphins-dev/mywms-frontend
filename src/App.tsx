@@ -21,6 +21,11 @@ import AccessLayout from './layouts/Access.layout'
 import CreateRequisition from './screens/requisition/CreateRequisition'
 import Category from './screens/category/Category'
 import MasterLayout from './layouts/Master.layout'
+import Brand from './screens/brand/Brand'
+import Warehouse from './screens/warehouse/Warehouse'
+import Supplier from './screens/supplier/Supplier'
+import HSN from './screens/hsn/HSN'
+import Product from './screens/product/Product'
 
 function App() {
 
@@ -41,6 +46,11 @@ function App() {
                     <Route path="master" element={<MasterLayout />} >
                         <Route path="" element={<Master />} />
                         <Route path="categories" element={<Category />} />
+                        <Route path="brands" element={<Brand />} />
+                        <Route path="warehouses" element={<Warehouse />} />
+                        <Route path="suppliers" element={<Supplier />} />
+                        <Route path="hsncodes" element={<HSN />} />
+                        <Route path="products" element={<Product />} />
                     </Route>
 
                     {/* access */}

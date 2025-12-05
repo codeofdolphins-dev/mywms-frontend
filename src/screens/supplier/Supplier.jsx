@@ -11,8 +11,6 @@ import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
 import CreateRequsitionModal from '../../components/requisition/CreateRequsition.modal';
-import ButtonBasic from '../../components/inputs/ButtonBasic';
-import { FaPlus } from "react-icons/fa6";
 
 
 const tableData = [
@@ -67,7 +65,7 @@ const tableData = [
 ];
 
 
-const Category = () => {
+const Supplier = () => {
 
     const [search, setSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
@@ -101,11 +99,10 @@ const Category = () => {
                     <h1 className="text-5xl font-bold my-3">Categories</h1>
                     <p className='text-gray-600 text-base'>Manage and view all categories</p>
                 </div>
-                <ButtonBasic
-                    setState={setIsShow}
-                >
-                    Add Categories
-                </ButtonBasic>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => setIsShow(true)}
+                >Create Categories</button>
             </div>
 
 
@@ -311,4 +308,4 @@ const Category = () => {
     )
 }
 
-export default Category
+export default Supplier;
