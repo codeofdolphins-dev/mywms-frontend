@@ -6,12 +6,26 @@ import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 
+// type OptionType =
+//     {
+//         value: string;
+//         label: string
+//     }[]
+
+
+const options = [
+    { value: 'orange', label: 'Orange' },
+    { value: 'white', label: 'White' },
+    { value: 'purple', label: 'Purple' },
+];
+
 const Login = () => {
     // const dispatch = useDispatch();
     // useEffect(() => {
     //     dispatch(setPageTitle('Login Boxed'));
     // });
     const navigate = useNavigate();
+    const [userType, setUserType] = useState('');
 
     const submitForm = () => {
         navigate('/');
@@ -36,9 +50,12 @@ const Login = () => {
                                 <h1 className="text-3xl font-extrabold uppercase leading-snug! text-primary md:text-4xl">Sign in</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
                             </div>
-                            <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
+                            <form className="space-y-5" onSubmit={submitForm}>
                                 <SearchableSelect
                                     label="User Type"
+                                    options={options}
+                                    value={userType}
+                                    setValue={setUserType}
                                 />
                                 <div>
                                     <label htmlFor="Email">Email</label>

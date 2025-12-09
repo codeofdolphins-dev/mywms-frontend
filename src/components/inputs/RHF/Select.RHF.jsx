@@ -9,8 +9,18 @@ function RHSelect({
     isMulti = false,
     placeholder = "Select...",
     disabled = false,
-    required=false
-}) {
+    required = false,
+    error = ''
+}, ref) {
+
+    const selectRef = React.useRef(null);
+
+    React.useImperativeHandle(ref, () => ({
+        focus: () => {
+            selectRef.current?.focus();
+        }
+    }));
+
     const getValue = () => {
         if (!value) return isMulti ? [] : null;
         return isMulti
@@ -30,6 +40,8 @@ function RHSelect({
 
             <Select
                 value={getValue()}
+                ref={selectRef}
+                inputRef={el => el}
                 onChange={(selected) => {
                     if (disabled) return; // prevent interaction when disabled
                     if (isMulti) {
@@ -43,11 +55,11 @@ function RHSelect({
                 isDisabled={disabled}
                 placeholder={placeholder}
                 classNamePrefix="react-select"
-                className={`text-sm ${disabled ? "opacity-60 cursor-not-allowed" : ""
-                    }`}
+                className={`text-sm ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
             />
+            {error && <span className='text-danger'>{error}</span>}
         </div>
     );
 }
 
-export default RHSelect;
+export default React.forwardRef(RHSelect);

@@ -2,17 +2,14 @@ import Select from 'react-select';
 import React, { useId } from 'react'
 import IconCode from '../Icon/IconCode';
 
-const options = [
-    { value: 'orange', label: 'Orange' },
-    { value: 'white', label: 'White' },
-    { value: 'purple', label: 'Purple' },
-];
-
 
 const SearchableSelect = ({
     id = "",
     label = '',
-    setValue = {}
+    value = "",
+    setValue = {},
+    options = [],
+    isSearchable = true
 }) => {
 
     const _id = id || useId();
@@ -22,9 +19,9 @@ const SearchableSelect = ({
             {label && <label htmlFor={_id}>{label}</label>}
             <div className="">
                 <Select
-                    defaultValue={options[0]}
+                    defaultValue={value}
                     options={options}
-                    isSearchable={true}
+                    isSearchable={isSearchable}
                     onChange = {((option) => setValue(option?.value))}
                 />  
             </div>

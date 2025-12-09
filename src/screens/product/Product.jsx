@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
 import IconPencil from '../../components/Icon/IconPencil';
@@ -11,7 +11,6 @@ import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
-import AddProductModal from '../../components/product/AddProduct.modal';
 
 
 const tableData = [
@@ -115,9 +114,11 @@ const tableData = [
 
 const Product = () => {
 
+    const navigate = useNavigate();
+
     const [search, setSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
-    const [items, setItems] = useState(tableData);    
+    const [items, setItems] = useState(tableData);
 
     const colName = ["Id", "Product", "Sku", "Category", "Hsn Code", "Price", "Mrp", "Type", "Status", "Actions"];
 
@@ -133,7 +134,7 @@ const Product = () => {
                         Master
                     </Link>
                 </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                <li className="before:content-['/'] before:mr-2">
                     <span>Products</span>
                 </li>
             </ul>
@@ -144,9 +145,12 @@ const Product = () => {
                     <h1 className="text-5xl font-bold my-3">Products</h1>
                     <p className='text-gray-600 text-base'>Manage and view all products in your inventory</p>
                 </div>
-                <ButtonBasic
-                    setState={setIsShow}
-                >Add Product</ButtonBasic>
+                <button
+                    className='btn btn-primary'
+                    onClick={() => navigate("add-product")}
+                >
+                    Add Product
+                </button>
             </div>
 
 
@@ -168,12 +172,6 @@ const Product = () => {
                 setItems={setItems}
                 upperCase={true}
                 edit={true}
-            />
-
-            {/* add product modal */}
-            <AddProductModal
-                isShow={isShow}
-                setIsShow={setIsShow}
             />
         </div >
     )

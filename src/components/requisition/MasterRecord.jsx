@@ -1,21 +1,13 @@
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import sortBy from 'lodash/sortBy';
 // import { useDispatch } from 'react-redux';
 // import { setPageTitle } from '../../store/themeConfigSlice';
 
 
-type MasterRecordProps = {
-    rowData: Array<{
-        id: number;
-        module: string;
-        levelCode: string;
-    }>;
-    selectedRecords?: [];
-    setSelectedRecords?: (records: any) => void;
-}
 
-const MasterRecord: React.FC<MasterRecordProps> = ({
+
+const MasterRecord = ({
     rowData,
     selectedRecords,
     setSelectedRecords
@@ -32,7 +24,7 @@ const MasterRecord: React.FC<MasterRecordProps> = ({
 
 
     const [search, setSearch] = useState('');
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+    const [sortStatus, setSortStatus] = useState({
         columnAccessor: 'id',
         direction: 'asc',
     });
@@ -69,7 +61,7 @@ const MasterRecord: React.FC<MasterRecordProps> = ({
         <div>
             <div className="panel">
                 <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
-                    <h5 className="font-semibold text-lg">Requisition Modules</h5>
+                    <h5 className="font-semibold text-lg">Business Flow</h5>
                     <div className="ltr:ml-auto rtl:mr-auto">
                         <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                     </div>
@@ -96,7 +88,7 @@ const MasterRecord: React.FC<MasterRecordProps> = ({
                         onSelectedRecordsChange={setSelectedRecords}
                         minHeight={200}
                         paginationText={({ from, to, totalRecords }) => `${from} to ${to} of ${totalRecords}`}
-                     />
+                    />
                 </div>
             </div>
         </div>

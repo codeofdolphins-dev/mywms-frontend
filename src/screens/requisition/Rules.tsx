@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import MasterRecord from '../../components/requisition/MasterRecord';
 import Basic from '../../components/requisition/Basic';
 import DragNDropTable from '../../components/requisition/DragNDropTable';
+import MasterRecord from '../../components/requisition/MasterRecord';
 
 const rowData = [
     { id: 1, module: "dealer", levelCode: "L-100" },

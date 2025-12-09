@@ -8,8 +8,7 @@ import Master from './screens/Master'
 import Error404 from './screens/Error404'
 import RequisitionLayout from './layouts/Requisition.layout'
 import Rules from './screens/requisition/Rules'
-import Browse from './screens/Browse.jsx';
-import Select from './components/inputs/SearchableSelect'
+import Browse from './screens/Browse';
 import SupplierLayout from './layouts/Supplier.layout'
 import ProductionLayout from './layouts/Production.layout'
 import StoreLayout from './layouts/StoreLayout'
@@ -26,6 +25,7 @@ import Warehouse from './screens/warehouse/Warehouse'
 import Supplier from './screens/supplier/Supplier'
 import HSN from './screens/hsn/HSN'
 import Product from './screens/product/Product'
+import AddProduct from './screens/product/AddProduct'
 
 function App() {
 
@@ -51,6 +51,7 @@ function App() {
                         <Route path="suppliers" element={<Supplier />} />
                         <Route path="hsncodes" element={<HSN />} />
                         <Route path="products" element={<Product />} />
+                        <Route path="products/add-product" element={<AddProduct />} />
                     </Route>
 
                     {/* access */}

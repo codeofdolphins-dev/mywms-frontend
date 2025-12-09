@@ -55,11 +55,11 @@ const Input = React.forwardRef(({
             <input
                 id={_id}
                 type={type}
-                className={`px-3 py-1.5 text-sm rounded-md bg-white text-black outline-none duration-200 border border-[#B3B3B3] w-full ${error ? "border-red-500" : ""} ${className}`}
+                className={`px-3 py-2 text-sm rounded-md bg-white text-black focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${className}`}
                 ref={ref}
                 {...props}
             />
-             {error && <span className='text-danger'>This field is required</span>}
+            {error && <span className='text-danger'>{error}</span>}
         </div>
     )
 })

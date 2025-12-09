@@ -3,7 +3,7 @@ import { FiPlus } from "react-icons/fi";
 
 const ButtonBasic = ({
   children,
-  setState
+  setState,
 }) => {
   return (
     <div>
