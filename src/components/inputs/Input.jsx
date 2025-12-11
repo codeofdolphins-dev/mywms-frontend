@@ -1,33 +1,3 @@
-// import React, { useId } from 'react'
-// import { FaRegTimesCircle } from "react-icons/fa";
-
-// const Input = React.forwardRef(({
-//     label = '',
-//     type = 'text',
-//     className = '',
-//     ...rest
-// }, ref) => {
-
-//     const _id = useId();
-
-//     return (
-//         <div className='w-full'>
-//             {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
-//             <div className="form-input flex items-center">
-//                 <input
-//                     id={_id}
-//                     type={type}
-//                     className={`w-full focus:outline-none pe-3 ${className}`}
-//                     ref={ref}
-//                     {...rest}
-//                 />
-//             </div>
-//         </div>
-//     )
-// });
-
-// export default Input;
-
 
 import React, { useId } from 'react'
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
 import IconPencil from '../../components/Icon/IconPencil';
@@ -79,6 +79,8 @@ const Supplier = () => {
 
     const { register } = useForm();
 
+    const navigate = useNavigate();
+
     return (
         <div>
             {/* breadcrumb */}
@@ -89,20 +91,21 @@ const Supplier = () => {
                     </Link>
                 </li>
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>Category</span>
+                    <span>Suppliers</span>
                 </li>
             </ul>
 
             {/* Header Section */}
             <div className="flex justify-between items-center mt-5">
                 <div>
-                    <h1 className="text-5xl font-bold my-3">Categories</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all categories</p>
+                    <h1 className="text-5xl font-bold my-3">Suppliers</h1>
+                    <p className='text-gray-600 text-base'>Manage and view all Suppliers</p>
                 </div>
                 <button
                     className="btn btn-primary"
-                    onClick={() => setIsShow(true)}
-                >Create Categories</button>
+                    // onClick={() => setIsShow(true)}
+                    onClick={() => navigate('add-supplier')}
+                >Create Supplier</button>
             </div>
 
 

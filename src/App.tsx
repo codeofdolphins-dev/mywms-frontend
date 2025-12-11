@@ -26,6 +26,8 @@ import Supplier from './screens/supplier/Supplier'
 import HSN from './screens/hsn/HSN'
 import Product from './screens/product/Product'
 import AddProduct from './screens/product/AddProduct'
+import AddSupplier from './screens/supplier/AddSupplier'
+import CreateHSN from './screens/hsn/CreateHSN'
 
 function App() {
 
@@ -49,7 +51,9 @@ function App() {
                         <Route path="brands" element={<Brand />} />
                         <Route path="warehouses" element={<Warehouse />} />
                         <Route path="suppliers" element={<Supplier />} />
+                        <Route path="suppliers/add-supplier" element={<AddSupplier />} />
                         <Route path="hsncodes" element={<HSN />} />
+                        <Route path="hsncodes/add-hsncode" element={<CreateHSN />} />
                         <Route path="products" element={<Product />} />
                         <Route path="products/add-product" element={<AddProduct />} />
                     </Route>
