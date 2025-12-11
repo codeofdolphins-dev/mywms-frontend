@@ -64,8 +64,11 @@ const AddProduct = () => {
 
             <div>
                 {/* Grid */}
-                <div className="panel" id="forms_grid">
-                    <div className="mb-5">
+                <div className="panel mt-5" id="forms_grid">
+                    <div className="">
+                        <div className="text-3xl mb-5">
+                            <h1>Add Product</h1>
+                        </div>
                         <form onSubmit={handleSubmit(submit)} className="space-y-5">
                             {/* 2nd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

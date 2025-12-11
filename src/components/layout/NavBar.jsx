@@ -10,6 +10,7 @@ import { FaTruckRampBox, FaUserGroup } from "react-icons/fa6";
 import { BiSolidFactory } from "react-icons/bi";
 import { LuWarehouse } from "react-icons/lu";
 import { RiAdminFill } from "react-icons/ri";
+import { MdAdminPanelSettings } from 'react-icons/md';
 
 
 const requisitionSubMenu = [
@@ -87,11 +88,65 @@ const NavBar = () => {
                 </button>
             </li>
 
-            {/* manage access */}
+            {/* admin */}
             <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname.includes('/access') ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
                         <RiAdminFill />
+                        <span className="px-1 whitespace-nowrap">Admin</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    <li className="relative">
+                        <button type="button" className={`nav-link ${location.pathname.includes('/access/role') ? 'active' : ''} !cursor-default`}>
+                            <span className="px-1 text-black">Role</span>
+                            <div className="ml-auto -rotate-90">
+                                <IconCaretDown className='text-black' />
+                            </div>
+                        </button>
+                        <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                            <li>
+                                <NavLink to="/access/role">All Roles</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/access/role/create">Create Roles</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/access/role/assign">Assign Roles</NavLink>
+                            </li>
+                        </ul>
+                    </li>
+                    <li className="relative">
+                        <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
+                            <span className="px-1 text-black">Permission</span>
+                            <div className="ml-auto -rotate-90">
+                                <IconCaretDown className='text-black' />
+                            </div>
+                        </button>
+                        <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                            <li>
+                                <NavLink to="/access/permission">All Permission</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/access/permission/create">Create Permission</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/access/permission/assign">Assign Permission</NavLink>
+                            </li>
+
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            {/* manage access */}
+            <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname.includes('/access') ? 'active' : ''} !cursor-default`}>
+                    <div className="flex items-center">
+                        <MdAdminPanelSettings />
                         <span className="px-1 whitespace-nowrap">Manage Access</span>
                     </div>
                     <div className="right_arrow">
@@ -142,9 +197,7 @@ const NavBar = () => {
             </li>
 
             {/* requisition */}
-            <li
-                className="menu nav-item relative !ml-0"
-            >
+            <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/requisition' ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
                         <FaClipboardList />
