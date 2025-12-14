@@ -6,8 +6,6 @@ import Dashboard from './screens/Dashboard'
 import AppLayout from './layouts/App.layout'
 import Master from './screens/Master'
 import Error404 from './screens/Error404'
-import RequisitionLayout from './layouts/Requisition.layout'
-import Rules from './screens/requisition/Rules'
 import Browse from './screens/Browse';
 import SupplierLayout from './layouts/Supplier.layout'
 import ProductionLayout from './layouts/Production.layout'
@@ -27,7 +25,10 @@ import HSN from './screens/hsn/HSN'
 import Product from './screens/product/Product'
 import AddProduct from './screens/product/AddProduct'
 import AddSupplier from './screens/supplier/AddSupplier'
-import CreateHSN from './screens/hsn/CreateHSN'
+import Rules from './screens/admin/Rules'
+import Inward from './screens/inward/Inward'
+import CreateInward from './screens/inward/CreateInward'
+import Requisition from './screens/requisition/Requisition'
 
 function App() {
 
@@ -43,7 +44,13 @@ function App() {
                 {/* app */}
                 <Route path="/" element={<AppLayout />}>
                     <Route path="/" element={<Dashboard />} />
-                    
+
+                    {/* master */}
+                    <Route path="admin" element={<MasterLayout />} >
+                        <Route path="business-flow" element={<Rules />} />
+                        <Route path="categories" element={<Category />} />
+                    </Route>
+
                     {/* master */}
                     <Route path="master" element={<MasterLayout />} >
                         <Route path="" element={<Master />} />
@@ -53,7 +60,6 @@ function App() {
                         <Route path="suppliers" element={<Supplier />} />
                         <Route path="suppliers/add-supplier" element={<AddSupplier />} />
                         <Route path="hsncodes" element={<HSN />} />
-                        <Route path="hsncodes/add-hsncode" element={<CreateHSN />} />
                         <Route path="products" element={<Product />} />
                         <Route path="products/add-product" element={<AddProduct />} />
                     </Route>
@@ -69,13 +75,8 @@ function App() {
                     </Route>
 
                     {/* requisition */}
-                    <Route path="requisition" element={<RequisitionLayout />} >
-                        <Route path="admin/rules" element={<Rules />} />
-                        <Route path="" element={<Browse
-                            pageName="Requisitions"
-                        />} />
-                        <Route path="create" element={<CreateRequisition />} />
-                    </Route>
+                    <Route path="requisition" element={<Requisition />} />
+                    <Route path="requisition/create" element={<CreateRequisition />} />
 
                     {/* supplier */}
                     <Route path="supplier" element={<SupplierLayout />} >
@@ -91,39 +92,18 @@ function App() {
                         />} />
                     </Route>
 
-                    {/* store */}
-                    <Route path="store" element={<StoreLayout />} >
-                        <Route path="" element={<Browse
-                            pageName="Store"
-                        />} />
+                    {/* inward */}
+                    <Route path="inward" element={<WarehouseLayout />} >
+                        <Route path="" element={<Inward />} />
+                        <Route path="create" element={<CreateInward />} />
                     </Route>
 
-                    {/* dealer */}
-                    <Route path="dealer" element={<DealerLayout />} >
-                        <Route path="" element={<Browse
-                            pageName="Dealer"
-                        />} />
-                    </Route>
-
-                    {/* retailer */}
-                    <Route path="retailer" element={<RetailerLayout />} >
-                        <Route path="" element={<Browse
-                            pageName="Retailer"
-                        />} />
-                    </Route>
-
-                    {/* distributor */}
-                    <Route path="distributor" element={<DistributorLayout />} >
-                        <Route path="" element={<Browse
-                            pageName="Distributor"
-                        />} />
-                    </Route>
-
-                    {/* warehouse */}
-                    <Route path="warehouse" element={<WarehouseLayout />} >
+                    {/* outward */}
+                    <Route path="outward" element={<WarehouseLayout />} >
                         <Route path="" element={<Browse
                             pageName="Warehouse"
                         />} />
+                        <Route path="create" element={<Master />} />
                     </Route>
 
                 </Route>

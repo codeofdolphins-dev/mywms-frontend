@@ -18,8 +18,8 @@ const rowData = [
 
 
 const Rules = () => {
-    const [selectedRecords, setSelectedRecords] = useState<any>([]);
-    const [handler, setHandler] = useState<any[]>(selectedRecords ?? []);
+    const [selectedRecords, setSelectedRecords] = useState([]);
+    const [handler, setHandler] = useState(selectedRecords ?? []);
 
     return (
         <div>

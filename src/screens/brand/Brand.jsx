@@ -11,7 +11,8 @@ import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
-import AddBrandModal from '../../components/brand/AddBrand.modal';
+import AddModal from '../../components/Add.modal';
+import Form from '../../components/brand/Form';
 
 
 const tableData = [
@@ -102,7 +103,13 @@ const Brand = () => {
             />
 
 
-            <AddBrandModal isShow={isShow} setIsShow={setIsShow} />
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title="Add New Brand"
+            >
+                <Form />
+            </AddModal>
 
         </div >
     )

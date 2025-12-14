@@ -25,78 +25,78 @@ const Form = () => {
     }
 
     return (
-        <div>
-            {/* Grid */}
-            <div className="panel" id="forms_grid">
-                <div className="mb-5">
-                    <form onSubmit={handleSubmit(submit)} className="space-y-5">
-                        {/* 2nd row */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <Input
-                                    label={"Brand Name"}
-                                    placeholder={"Enter brand name..."}
-                                    {...register("brand", {
-                                        required: "This field is required!!!"
-                                    })}
-                                    error={errors.brand?.message}
-                                    required={true}
-                                />
-                            </div>
-                            <div>
-                                <Controller
-                                    name="supplier"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <RHSelect
-                                            label="Supplier"
-                                            options={gstType}
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            required={true}
-                                        />
-                                    )}
-                                />
-                            </div>
+        <div className="panel" id="forms_grid">
+            <div className="mb-5">
+                <form onSubmit={handleSubmit(submit)} className="space-y-5">
+                    {/* 1st row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <Input
+                                label={"Brand Name"}
+                                placeholder={"Enter brand name..."}
+                                {...register("brand", {
+                                    required: "This field is required!!!"
+                                })}
+                                error={errors.brand?.message}
+                                required={true}
+                            />
                         </div>
+                        <div>
+                            <Controller
+                                name="supplier"
+                                control={control}
+                                rules={{
+                                    required: "This field is required!!!"
+                                }}
+                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                    <RHSelect
+                                        ref={(el) => {
+                                            ref({
+                                                focus: () => el?.focus()
+                                            });
+                                        } }
+                                        value={value}
+                                        onChange={onChange}
+                                        error={error?.message}
 
-                        {/* 3rd row */}
-                        <div className="grid grid-cols-1">
-                            <div>
-                                <TextArea
-                                    label="Description"
-                                    placeholder="Enter Description"
-                                    className="text-sm"
-                                    {...register("desc")}
-                                />
-                            </div>
+                                        label="Supplier"
+                                        options={gstType}
+                                        required={true}
+                                    />
+                                )}
+                            />
                         </div>
+                    </div>
 
-                        {/* 4th row */}
-                        <div className="grid grid-cols-1">
-                            <div>
-                                <Input
-                                    label={"Website"}
-                                    placeholder={"Enter website URL (e.g., https://example.com)"}
-                                    {...register("url")}
-                                />
-                            </div>
+                    {/* 2nd row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <Input
+                                label={"Website"}
+                                placeholder={"Enter website URL (e.g., https://example.com)"}
+                                {...register("url")}
+                            />
                         </div>
-
-                        {/* 5th row */}
-                        <div className="grid grid-cols-1">
-                            <div>
-                                <Input
-                                    label={"Origin Country"}
-                                    placeholder={"Enter Origin Country (e.g., India)"}
-                                    {...register("country")}
-                                />
-                            </div>
+                        <div>
+                            <Input
+                                label={"Origin Country"}
+                                placeholder={"Enter Origin Country (e.g., India)"}
+                                {...register("country")}
+                            />
                         </div>
+                    </div>
 
-                        {/* 6th row */}
-                        {/* file upload */}
-                        <div className="grid grid-cols-1">
+                    {/* 3rd row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <TextArea
+                                label="Description"
+                                placeholder="Enter Description"
+                                className="text-sm"
+                                {...register("desc")}
+                            />
+                        </div>
+                        <div>
                             <Controller
                                 name="productImage"
                                 control={control}
@@ -109,12 +109,12 @@ const Form = () => {
                                 )}
                             />
                         </div>
+                    </div>
 
-                        <div className="flex">
-                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Add Product</Button>
-                        </div>
-                    </form>
-                </div>
+                    <div className="flex">
+                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Create Brand</Button>
+                    </div>
+                </form>
             </div>
         </div>
     )

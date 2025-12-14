@@ -41,7 +41,7 @@ const AddSupplier = () => {
     const handelCancel = () => {
         reset();
         navigate(-1);
-    }
+    };    
 
     return (
         <div>
@@ -64,23 +64,24 @@ const AddSupplier = () => {
 
             <div>
                 {/* Grid */}
-                <div className="panel" id="forms_grid">
-                    <div className="mb-5">
-                        <form onSubmit={handleSubmit(submit)} className="space-y-5">
-                            {/* 2nd row */}
+                <div className="panel mt-5" id="forms_grid">
+                    <form onSubmit={handleSubmit(submit)} className="space-y-5">
+                        {/* 1st row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {/* Email */}
+                            <div>
+                                <Input
+                                    label={"Email"}
+                                    placeholder={"Enter Email..."}
+                                    {...register("email", {
+                                        required: "This field is required!!!"
+                                    })}
+                                    error={errors.email?.message}
+                                    required={true}
+                                />
+                            </div>
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {/* Email */}
-                                <div>
-                                    <Input
-                                        label={"Email"}
-                                        placeholder={"Enter Email..."}
-                                        {...register("email", {
-                                            required: "This field is required!!!"
-                                        })}
-                                        error={errors.email?.message}
-                                        required={true}
-                                    />
-                                </div>
 
                                 {/* Password */}
                                 <div>
@@ -95,37 +96,6 @@ const AddSupplier = () => {
                                         required={true}
                                     />
                                 </div>
-                                {/* <div>
-                                    <Controller
-                                        name="category"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref, onBlur }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="Category"
-                                                options={options}
-                                                error={error?.message}
-                                                isMulti={true}
-                                                required={true}
-                                            />
-                                        )}
-                                    />
-                                </div> */}
-                            </div>
-
-                            {/* 3rd row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
                                 {/* Confirm Password */}
                                 <div>
                                     <Input
@@ -139,55 +109,78 @@ const AddSupplier = () => {
                                         required={true}
                                     />
                                 </div>
+                            </div>
+                        </div>
 
-                                {/* Full Name */}
-                                <div>
-                                    <Input
-                                        label={"Full Name"}
-                                        placeholder={"Enter Full Name..."}
-                                        {...register("full_name", {
-                                            required: "This field is required!!!"
-                                        })}
-                                        error={errors.full_name?.message}
-                                        required={true}
-                                    />
-                                </div>
+                        {/* 2rd row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
+                            {/* Full Name */}
+                            <div>
+                                <Input
+                                    label={"Full Name"}
+                                    placeholder={"Enter Full Name..."}
+                                    {...register("full_name", {
+                                        required: "This field is required!!!"
+                                    })}
+                                    error={errors.full_name?.message}
+                                    required={true}
+                                />
+                            </div>
+                            {/* Phone Number */}
+                            <div>
+                                <Input
+                                    label={"Phone Number"}
+                                    placeholder={"Enter Phone Number..."}
+                                    {...register("phone", {
+                                        required: "This field is required!!!"
+                                    })}
+                                    error={errors.phone?.message}
+                                    required={true}
+                                />
                             </div>
 
-                            {/* 4th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Input
-                                        label={"company Name"}
-                                        placeholder={"Enter Company Name..."}
-                                        {...register("company_name", {
-                                            required: "This field is required!!!"
-                                        })}
-                                        error={errors.company_name?.message}
-                                        required={true}
-                                    />
-                                </div>
+                        </div>
 
-
-                                {/* Phone Number */}
-                                <div>
-                                    <Input
-                                        label={"Phone Number"}
-                                        placeholder={"Enter Phone Number..."}
-                                        {...register("phone", {
-                                            required: "This field is required!!!"
-                                        })}
-                                        error={errors.phone?.message}
-                                        required={true}
-                                    />
-                                </div>
-
+                        {/* 3rd row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <Input
+                                    label={"Company Name"}
+                                    placeholder={"Enter Company Name..."}
+                                    {...register("company_name", {
+                                        required: "This field is required!!!"
+                                    })}
+                                    error={errors.company_name?.message}
+                                    required={true}
+                                />
                             </div>
 
+                            {/* Address */}
+                            <div>
+                                <Input
+                                    label="Address"
+                                    placeholder="Enter Address..."
+                                    className="text-sm"
+                                    {...register("address")}
+                                />
+                            </div>
+                        </div>
 
-                            {/* 5th row */}
+                        {/* 4th row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* Pincode */}
+                                <div>
+                                    <Input
+                                        label={"Pincode"}
+                                        placeholder={"Enter Pincode"}
+                                        {...register("pincode", { required: "This field is required!!!" })}
+                                        error={errors.pincode?.message}
+                                        required={true}
+                                    />
+                                </div>
                                 <div>
                                     {/* State */}
                                     <Controller
@@ -203,6 +196,9 @@ const AddSupplier = () => {
                                         )}
                                     />
                                 </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     {/* district */}
                                     <Controller
@@ -218,72 +214,164 @@ const AddSupplier = () => {
                                         )}
                                     />
                                 </div>
+                                {/* file upload */}
+                                <div >
+                                    <Controller
+                                        name="image"
+                                        control={control}
+                                        defaultValue={null}
+                                        render={({ field: { onChange } }) => (
+                                            <FileUpload
+                                                label="Profile Image"
+                                                onChange={onChange} // gets File object
+                                            />
+                                        )}
+                                    />
+                                </div>
                             </div>
+                        </div>
+
+                        {/* 5th row */}
+                        <div className='grid grid-cols-1 gap-4'>
+                            <TextArea
+                                label="Description"
+                                placeholder="Enter Address..."
+                                className="text-sm"
+                                {...register("desc")}
+                            />
+                        </div>
+
+                        <div className="panel space-y-5 !mt-0" id='forms_grid'>
+                            <h1 className='text-lg mb-3'>Band Details</h1>
 
                             {/* 6th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* name */}
                                 <div>
-                                    {/* Pincode */}
+                                    <Input
+                                        label={"Account Holder Name"}
+                                        placeholder={"Enter Email..."}
+                                        {...register("acName", {
+                                            required: "This field is required!!!"
+                                        })}
+                                        error={errors.acName?.message}
+                                        required={true}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Bank Name */}
                                     <div>
                                         <Input
-                                            label={"Pincode"}
-                                            placeholder={"Enter Pincode"}
-                                            {...register("pincode", { required: "This field is required!!!" })}
-                                            error={errors.pincode?.message}
+                                            label={"Bank Name"}
+                                            placeholder={"Enter Bank Name"}
+                                            {...register("bankName", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.bankName?.message}
+                                            required={true}
+                                        />
+                                    </div>
+                                    
+                                    {/* ifsc */}
+                                    <div>
+                                        <Input
+                                            label={"IFSC Code"}
+                                            placeholder={"Enter Bank Name"}
+                                            type="number"
+                                            {...register("ifsc", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.ifsc?.message}
                                             required={true}
                                         />
                                     </div>
                                 </div>
-
-                                {/* Address */}
-                                <div>
-                                    <TextArea
-                                        label="Address"
-                                        placeholder="Enter Address..."
-                                        className="text-sm"
-                                        {...register("address")}
-                                    />
-                                </div>
-
                             </div>
 
-                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                                <div>
-                                    <TextArea
-                                        label="Description"
-                                        placeholder="Enter Address..."
-                                        className="text-sm"
-                                        {...register("desc")}
-                                    />
-                                </div>
+                            {/* 7th row */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                                    {/* branch */}
+                                    <div>
+                                        <Input
+                                            label={"Branch"}
+                                            placeholder={"Enter branch..."}
+                                            {...register("branch", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.branch?.message}
+                                            required={true}
+                                        />
+                                    </div>
 
-                                <div>
-                                    {/* file upload */}
-                                    <div >
+                                    {/* account type */}
+                                    <div>
                                         <Controller
-                                            name="image"
+                                            name="accType"
                                             control={control}
-                                            defaultValue={null}
-                                            render={({ field: { onChange } }) => (
-                                                <FileUpload
-                                                    label="Profile Image"
-                                                    onChange={onChange} // gets File object
+                                            rules={{
+                                                required: "Please select a account type!",
+                                            }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHRadioGroup
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    label="Account Type"
+                                                    required={true}
+                                                    options={[
+                                                        { label: "Savings", value: "savings" },
+                                                        { label: "Current", value: "current" },
+                                                    ]}
+                                                    error={error?.message}
                                                 />
                                             )}
                                         />
                                     </div>
                                 </div>
 
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Account Number */}
+                                    <div>
+                                        <Input
+                                            label="Account Number"
+                                            type="number"
+                                            placeholder={"Enter Account Number..."}
+                                            {...register("accountNumber", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.accountNumber?.message}
+                                            required={true}
+                                        />
+                                    </div>
+
+                                    {/* Confirm Account Number */}
+                                    <div>
+                                        <Input
+                                            label="Confirm Account Number"
+                                            type="number"
+                                            placeholder={"Confirm Account Number..."}
+                                            {...register("confirmAccountNumber", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.confirmAccountNumber?.message}
+                                            required={true}
+                                        />
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-
-                            <div className="flex">
-                                <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
-
-                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Add Product</Button>
-                            </div>
-                        </form>
-                    </div>
+                        <div className="flex">
+                            <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
+                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Add Product</Button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

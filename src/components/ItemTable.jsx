@@ -8,6 +8,7 @@ import BasicPagination from './BasicPagination';
 
 
 const ItemTable = ({
+    title = "",
     items = [],
     setItems,
     colName = [],
@@ -18,9 +19,6 @@ const ItemTable = ({
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    console.log("page", currentPage);
-    console.log("limit", limit);
-
 
     const handleDelete = (id) => {
         setItems(prevItems => prevItems?.filter(item => item?.[Object.keys(item)[0]] !== id));
@@ -30,9 +28,9 @@ const ItemTable = ({
 
     return (
         <div className="panel">
-            <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-lg">Requested Item List</h5>
-            </div>
+            {/* <div className="flex items-center justify-between mb-5">
+                <h5 className="font-semibold text-lg">{title || "Data table"}</h5>
+            </div> */}
             <div className="relative table-responsive mb-5 min-h-56">
                 <table>
                     <thead>
