@@ -90,7 +90,7 @@ const AddProduct = () => {
                                         rules={{
                                             required: "This field is required!!!"
                                         }}
-                                        render={({ field: { value, onChange, ref, onBlur }, fieldState: { error } }) => (
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                             <RHSelect
                                                 ref={(el) => {
                                                     ref({
@@ -233,7 +233,6 @@ const AddProduct = () => {
                                             />
                                         )}
                                     />
-
                                 </div>
                             </div>
 

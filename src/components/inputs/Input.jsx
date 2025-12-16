@@ -1,46 +1,20 @@
-// import React, { useId } from 'react'
-// import { FaRegTimesCircle } from "react-icons/fa";
 
-// const Input = React.forwardRef(({
-//     label = '',
-//     type = 'text',
-//     className = '',
-//     ...rest
-// }, ref) => {
+import React, { useId, useState } from 'react'
+import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 
-//     const _id = useId();
-
-//     return (
-//         <div className='w-full'>
-//             {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
-//             <div className="form-input flex items-center">
-//                 <input
-//                     id={_id}
-//                     type={type}
-//                     className={`w-full focus:outline-none pe-3 ${className}`}
-//                     ref={ref}
-//                     {...rest}
-//                 />
-//             </div>
-//         </div>
-//     )
-// });
-
-// export default Input;
-
-
-import React, { useId } from 'react'
 
 const Input = React.forwardRef(({
     label,
     type = 'text',
     className = '',
     error,
-    required=false,
+    required = false,
     ...props
 }, ref) => {
 
     const _id = useId();
+    const [isPasswordSeen, setIsPasswordSeen] = useState(false);
+
 
     return (
         <div className="w-full">
@@ -52,13 +26,29 @@ const Input = React.forwardRef(({
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
             }
-            <input
-                id={_id}
-                type={type}
-                className={`px-3 py-2 text-sm rounded-md bg-white text-black focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${className}`}
-                ref={ref}
-                {...props}
-            />
+            <div className='relative'>
+                <input
+                    id={_id}
+                    type={ isPasswordSeen ? "text" : type}
+                    className={`px-3 py-2 text-sm rounded-md bg-white text-black focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${className}`}
+                    ref={ref}
+                    {...props}
+                />
+                {
+                    type === "password" &&
+                    <span
+                        className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
+                        onClick={() => setIsPasswordSeen(prev => !prev)}
+                    >
+                        {
+                            isPasswordSeen
+                                ? <PiEyeBold size={22} />
+                                : <PiEyeClosed size={22} />
+                        }
+                    </span>
+                }
+            </div>
+
             {error && <span className='text-danger'>{error}</span>}
         </div>
     )

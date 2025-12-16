@@ -11,6 +11,7 @@ import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
+import { FiPlus } from 'react-icons/fi';
 
 
 const tableData = [
@@ -149,6 +150,7 @@ const Product = () => {
                     className='btn btn-primary'
                     onClick={() => navigate("add-product")}
                 >
+                    <FiPlus size={20} className='mr-2'/>
                     Add Product
                 </button>
             </div>
@@ -172,7 +174,7 @@ const Product = () => {
                 setItems={setItems}
                 upperCase={true}
                 edit={true}
-            />
+            />  
         </div >
     )
 }

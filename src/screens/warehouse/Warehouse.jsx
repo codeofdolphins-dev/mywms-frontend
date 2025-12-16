@@ -11,71 +11,73 @@ import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
 import CreateRequsitionModal from '../../components/requisition/CreateRequsition.modal';
+import ItemTable from '../../components/ItemTable';
+import RHSelect from '../../components/inputs/RHF/Select.RHF'
 
 
 const tableData = [
     {
-        id: 1,
-        name: 'John Doe',
-        email: 'johndoe@yahoo.com',
-        date: '10/08/2020',
-        sale: 120,
-        status: 'Complete',
-        register: '5 min ago',
-        progress: '40%',
-        position: 'Developer',
-        office: 'London',
+        "Id": 1,
+        "Email": "john.doe@example.com",
+        "Name": "John Doe",
+        "Number": "9876543210",
+        "GST No.": "27ABCDE1234F1Z5",
+        "License No.": "LIC123456",
+        "Type": "Mfg Bond Warehouse",
+        "Address": "123 Main Street, New York, NY",
+        "Lat.": 40.712776,
+        "Long.": -74.005974
     },
     {
-        id: 2,
-        name: 'Shaun Park',
-        email: 'shaunpark@gmail.com',
-        date: '11/08/2020',
-        sale: 400,
-        status: 'Pending',
-        register: '11 min ago',
-        progress: '23%',
-        position: 'Designer',
-        office: 'New York',
+        "Id": 2,
+        "Email": "jane.smith@example.com",
+        "Name": "Jane Smith",
+        "Number": "9123456780",
+        "GST No.": "29FGHIJ5678K2Z6",
+        "License No.": "LIC789012",
+        "Type": "Regional Warehouse",
+        "Address": "456 Oak Avenue, Los Angeles, CA",
+        "Lat.": 34.052235,
+        "Long.": -118.243683
     },
     {
-        id: 3,
-        name: 'Alma Clarke',
-        email: 'alma@gmail.com',
-        date: '12/02/2020',
-        sale: 310,
-        status: 'In Progress',
-        register: '1 hour ago',
-        progress: '80%',
-        position: 'Accountant',
-        office: 'Amazon',
+        "Id": 3,
+        "Email": "michael.brown@example.com",
+        "Name": "Michael Brown",
+        "Number": "9988776655",
+        "GST No.": "33LMNOP9012Q3Z7",
+        "License No.": "LIC345678",
+        "Type": "State Warehouse",
+        "Address": "789 Pine Road, Chicago, IL",
+        "Lat.": 41.878113,
+        "Long.": -87.629799
     },
     {
-        id: 4,
-        name: 'Vincent Carpenter',
-        email: 'vincent@gmail.com',
-        date: '13/08/2020',
-        sale: 100,
-        status: 'Canceled',
-        register: '1 day ago',
-        progress: '60%',
-        position: 'Data Scientist',
-        office: 'Canada',
-    },
+        "Id": 4,
+        "Email": "emily.wilson@example.com",
+        "Name": "Emily Wilson",
+        "Number": "9012345678",
+        "GST No.": "07RSTUV3456W4Z8",
+        "License No.": "LIC901234",
+        "Type": "3PL Warehouse",
+        "Address": "321 Maple Lane, Houston, TX",
+        "Lat.": 29.760427,
+        "Long.": -95.369804
+    }
 ];
 
+const colName = ["Id", "Email", "Name", "Number", "GST No.", "License No.", "Type", "Address", "Lat.", "Long.", "Actions"];
+
+const options = [
+    { value: 'orange', label: 'Orange' },
+    { value: 'white', label: 'White' },
+    { value: 'purple', label: 'Purple' },
+];
 
 const Warehouse = () => {
 
     const [search, setSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
-
-    const [active, setActive] = useState('1');
-    const togglePara = (value) => {
-        setActive((oldValue) => {
-            return oldValue === value ? '' : value;
-        });
-    };
 
     const { register } = useForm();
 
@@ -96,213 +98,39 @@ const Warehouse = () => {
             {/* Header Section */}
             <div className="flex justify-between items-center mt-5">
                 <div>
-                    <h1 className="text-5xl font-bold my-3">Categories</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all categories</p>
+                    <h1 className="text-5xl font-bold my-3">All Warehouse</h1>
+                    <p className='text-gray-600 text-base'>Manage and view all warehouse types</p>
                 </div>
-                <button
+                {/* <button
                     className="btn btn-primary"
                     onClick={() => setIsShow(true)}
-                >Create Categories</button>
+                >Create Warehouse</button> */}
             </div>
 
 
             {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by name or description..."
-                    className="bg- border-pink-500"
-                    value={search}
-                    setValue={setSearch}
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+                <div className='col-span-2'>
+                    <SearchInput
+                        type="text"
+                        placeholder="Search by name or description..."
+                        value={search}
+                        setValue={setSearch}
+                    />
+                </div>
+                <div>
+                    <RHSelect
+                        placeholder='Sort by warehouse type...'
+                        options={options}
+                    />
+                </div>
             </div>
 
-            {/* collapsable table */}
-            {search === '' ?
-                (
-                    <div className="panel" id="basic">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Basic</h5>
-                        </div>
-                        <div className="mb-5">
-                            <div className="space-y-2 font-semibold">
-                                <div className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === '1' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara('1')}
-                                    >
-                                        Category #1
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active === '1' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active === '1' ? 'auto' : 0}>
-                                            <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-
-                                                {/* checkboxes */}
-                                                <div className="table-responsive mb-5">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Date</th>
-                                                                <th>Sale</th>
-                                                                <th className="!text-center">Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {tableData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.id}>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.name}</div>
-                                                                        </td>
-                                                                        <td>{data.date}</td>
-                                                                        <td>{data.sale}</td>
-                                                                        <td className="text-center">
-                                                                            <ul className="flex items-center justify-center gap-2">
-                                                                                <li>
-                                                                                    <Tippy content="Edit">
-                                                                                        <button type="button">
-                                                                                            <IconPencil className="text-success" />
-                                                                                        </button>
-                                                                                    </Tippy>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <Tippy content="Delete">
-                                                                                        <button type="button">
-                                                                                            <IconTrashLines className="text-danger" />
-                                                                                        </button>
-                                                                                    </Tippy>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
-                                <div className="border border-[#d3d3d3] dark:border-[#1b2e4b] rounded">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === '2' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara('2')}
-                                    >
-                                        Collapsible Group Item #2
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active === '2' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active === '2' ? 'auto' : 0}>
-                                            <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-                                                <ul className="space-y-1">
-                                                    <li>
-                                                        <button type="button">Apple</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Orange</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Banana</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">list</button>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
-                                <div className="border border-[#d3d3d3] dark:border-[#1b2e4b] rounded">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === '3' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara('3')}
-                                    >
-                                        Collapsible Group Item #3
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active === '3' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active === '3' ? 'auto' : 0}>
-                                            <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-                                                <p>
-                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
-                                                    dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla
-                                                    assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur
-                                                    butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
-                                                    labore sustainable VHS.
-                                                </p>
-                                                <button type="button" className="btn btn-primary mt-4">
-                                                    Accept
-                                                </button>
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    < div className="panel">
-                        <div className="table-responsive mb-5">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Date</th>
-                                        <th>Sale</th>
-                                        <th className="!text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {tableData.map((data) => {
-                                        return (
-                                            <tr key={data.id}>
-                                                <td>
-                                                    <div className="whitespace-nowrap">{data.name}</div>
-                                                </td>
-                                                <td>{data.date}</td>
-                                                <td>{data.sale}</td>
-                                                <td className="text-center">
-                                                    <ul className="flex items-center justify-center gap-2">
-                                                        <li>
-                                                            <Tippy content="Edit">
-                                                                <button type="button">
-                                                                    <IconPencil className="text-success" />
-                                                                </button>
-                                                            </Tippy>
-                                                        </li>
-                                                        <li>
-                                                            <Tippy content="Delete">
-                                                                <button type="button">
-                                                                    <IconTrashLines className="text-danger" />
-                                                                </button>
-                                                            </Tippy>
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )
-            }
-
-            <CreateRequsitionModal isShow={isShow} setIsShow={setIsShow} />
+            <ItemTable
+                colName={colName}
+                items={tableData}
+                edit={true}
+            />
 
         </div >
     )

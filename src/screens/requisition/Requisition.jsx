@@ -1,15 +1,10 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
-import IconSettings from '../../components/Icon/IconSettings';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconCode from '../../components/Icon/IconCode';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
-import Input from '../../components/inputs/Input';
-import ItemTable from '../../components/ItemTable';
-import AddModal from '../../components/Add.modal';
+import ItemTable from '../../components/ItemTable'
+import { Link, useNavigate } from 'react-router-dom'
+import { FiPlus } from 'react-icons/fi';
 
+const colName = ["Id", "Supplier", "Name", "Phone No.", "Address", "Account Holder Name", "Account Number", "IFSC Code", "Branch", "Bank Name", "Actions"];
 
 const tableData = [
     {
@@ -62,42 +57,33 @@ const tableData = [
     }
 ];
 
-const colName = ["Id", "Email", "Name", "Phone No.", "Address", "Account Holder Name", "Account Number", "IFSC Code", "Branch", "Bank Name", "Actions"];
-
-const Supplier = () => {
-
-    const [search, setSearch] = useState('');
-    const [isShow, setIsShow] = useState(false);
-
-
+const Requisition = () => {
 
     const navigate = useNavigate();
+    const [search, setSearch] = useState("");
 
     return (
         <div>
             {/* breadcrumb */}
             <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <Link to="/master" className="text-primary hover:underline">
-                        Master
-                    </Link>
-                </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>Suppliers</span>
+                <li className="">
+                    <span>Requisition</span>
                 </li>
             </ul>
 
             {/* Header Section */}
             <div className="flex justify-between items-center mt-5">
                 <div>
-                    <h1 className="text-5xl font-bold my-3">Suppliers</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all Suppliers</p>
+                    <h1 className="text-5xl font-bold my-3">Requisition</h1>
+                    <p className='text-gray-600 text-base'>Manage and view all Requisitions</p>
                 </div>
                 <button
                     className="btn btn-primary"
-                    // onClick={() => setIsShow(true)}
-                    onClick={() => navigate('add-supplier')}
-                >Create Supplier</button>
+                    onClick={() => navigate('/requisition/create')}
+                >
+                    <FiPlus size={20} className='mr-2'/>
+                    Create New Requisition
+                </button>
             </div>
 
 
@@ -118,17 +104,8 @@ const Supplier = () => {
                 edit={true}
             />
 
-            <AddModal
-                isShow={isShow}
-                setIsShow={setIsShow}
-                title="Add New HSN"
-                maxWidth={'50'}
-            >
-                
-            </AddModal>
-
         </div >
     )
 }
 
-export default Supplier;
+export default Requisition

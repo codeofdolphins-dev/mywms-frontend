@@ -57,7 +57,7 @@ const Master = () => {
                     </Link>
                 </li>
             </ul>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 xl:grid-cols-3">
                 {items.map((item, index) => (
                     <div key={index}>
                         <MasterCard

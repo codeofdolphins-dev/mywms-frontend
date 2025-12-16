@@ -38,7 +38,11 @@ const tableData = [
         reqQty: 100,
     },
 ];
-
+const options = [
+    { value: 'orange', label: 'Orange' },
+    { value: 'white', label: 'White' },
+    { value: 'purple', label: 'Purple' },
+];
 
 const CreateRequisition = () => {
 
@@ -72,6 +76,7 @@ const CreateRequisition = () => {
                             <label htmlFor="supplier" className='text-lg flex'>Supplier <span className='text-danger'>*</span></label>
                             <SearchableSelect
                                 setValue={setSupplier}
+                                options={options}
                             />
                         </div>
                         <div className='flex items-center gap-5'>
@@ -115,14 +120,15 @@ const CreateRequisition = () => {
                         </div>
                     }
 
-                    {itemCount > 0 && <>
-                        <ItemTable
-                            items={items}
-                            setItems={setItems}
-                            colName={colName}
-                        />
-                        <button type="button" className="btn btn-primary ml-auto">Submit Requisition</button>
-                    </>}
+                    {itemCount > 0 &&
+                        <div className='!mt-10'>
+                            <ItemTable
+                                items={items}
+                                setItems={setItems}
+                                colName={colName}
+                            />
+                            <button type="button" className="btn btn-primary mt-5 ml-auto">Submit Requisition</button>
+                        </div>}
                 </form>
             </div>
         </div>

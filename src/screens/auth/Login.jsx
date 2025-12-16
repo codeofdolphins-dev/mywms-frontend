@@ -5,12 +5,8 @@ import { useEffect, useState } from 'react';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
-
-// type OptionType =
-//     {
-//         value: string;
-//         label: string
-//     }[]
+import IconEye from '../../components/Icon/IconEye';
+import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 
 
 const options = [
@@ -26,6 +22,7 @@ const Login = () => {
     // });
     const navigate = useNavigate();
     const [userType, setUserType] = useState('');
+    const [isPasswordSeen, setIsPasswordSeen] = useState(false);
 
     const submitForm = () => {
         navigate('/');
@@ -69,9 +66,19 @@ const Login = () => {
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
+                                        </span>
+                                        <input id="Password" type={isPasswordSeen ? "text" : "password" } placeholder="Enter Password" className="form-input px-11 placeholder:text-white-dark" />
+                                        <span 
+                                            className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
+                                            onClick={() => setIsPasswordSeen(prev => !prev)}
+                                        >
+                                            {
+                                                isPasswordSeen 
+                                                ? <PiEyeBold size={22}/>
+                                                : <PiEyeClosed size={22} />
+                                            }
                                         </span>
                                     </div>
                                 </div>

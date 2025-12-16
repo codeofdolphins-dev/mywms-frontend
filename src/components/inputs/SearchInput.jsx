@@ -15,7 +15,7 @@ const SearchInput = ({
     return (
         <div className='w-full'>
             {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
-            <div className="form-input flex items-center border-2">
+            <div className="flex items-center border border-[#b3b3b398] bg-white py-1.5 px-2 rounded-md">
                 <input
                     id={_id}
                     type={type}

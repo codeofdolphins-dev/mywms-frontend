@@ -4,17 +4,17 @@ import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
 import IconCaretDown from '../Icon/IconCaretDown';
 import IconMenuComponents from '../Icon/Menu/IconMenuComponents';
 import { HiDatabase } from "react-icons/hi";
-import { FaClipboardList, FaStore } from "react-icons/fa";
+import { FaClipboardList, FaQuoteLeft, FaStore } from "react-icons/fa";
 import { TiShoppingCart } from "react-icons/ti";
 import { FaTruckRampBox, FaUserGroup } from "react-icons/fa6";
 import { BiSolidFactory } from "react-icons/bi";
 import { LuWarehouse } from "react-icons/lu";
 import { RiAdminFill } from "react-icons/ri";
-import { MdAdminPanelSettings } from 'react-icons/md';
+import { MdAdminPanelSettings, MdOutlineReceiptLong } from 'react-icons/md';
+import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
 
 
 const requisitionSubMenu = [
-    { name: 'Rules', path: '/requisition/admin/rules' },
     { name: 'Browse', path: '/requisition' },
     { name: 'Create', path: '/requisition/create' },
 ];
@@ -42,9 +42,21 @@ const distributorSubMenu = [
     { name: 'Browse', path: '/distributor' },
     { name: 'Create', path: '/distributor/create' },
 ];
-const warehouseSubMenu = [
-    { name: 'Browse', path: '/warehouse' },
-    { name: 'Create', path: '/warehouse/create' },
+const inwardSubMenu = [
+    { name: 'Browse', path: '/inward' },
+    { name: 'Create', path: '/inward/create' },
+];
+const outwardSubMenu = [
+    { name: 'Browse', path: '/outward' },
+    { name: 'Create', path: '/outward/create' },
+];
+const quotationSubMenu = [
+    { name: 'Browse', path: '/quotation' },
+    { name: 'Create', path: '/quotation/create' },
+];
+const pOrderSubMenu = [
+    { name: 'Browse', path: '/purchase-order' },
+    { name: 'Create', path: '/purchase-order/create' },
 ];
 
 const NavBar = () => {
@@ -90,7 +102,7 @@ const NavBar = () => {
 
             {/* admin */}
             <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname.includes('/access') ? 'active' : ''} !cursor-default`}>
+                <button type="button" className={`nav-link ${location.pathname.includes('/admin') ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
                         <RiAdminFill />
                         <span className="px-1 whitespace-nowrap">Admin</span>
@@ -101,25 +113,9 @@ const NavBar = () => {
                 </button>
                 <ul className="sub-menu">
                     <li className="relative">
-                        <button type="button" className={`nav-link ${location.pathname.includes('/access/role') ? 'active' : ''} !cursor-default`}>
-                            <span className="px-1 text-black">Role</span>
-                            <div className="ml-auto -rotate-90">
-                                <IconCaretDown className='text-black' />
-                            </div>
-                        </button>
-                        <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                            <li>
-                                <NavLink to="/access/role">All Roles</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/access/role/create">Create Roles</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/access/role/assign">Assign Roles</NavLink>
-                            </li>
-                        </ul>
+                        <NavLink to="/admin/business-flow">Business Flow</NavLink>
                     </li>
-                    <li className="relative">
+                    {/* <li className="relative">
                         <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
                             <span className="px-1 text-black">Permission</span>
                             <div className="ml-auto -rotate-90">
@@ -138,7 +134,7 @@ const NavBar = () => {
                             </li>
 
                         </ul>
-                    </li>
+                    </li> */}
                 </ul>
             </li>
 
@@ -196,59 +192,6 @@ const NavBar = () => {
                 </ul>
             </li>
 
-            {/* requisition */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/requisition' ? 'active' : ''} !cursor-default`}>
-                    <div className="flex items-center">
-                        <FaClipboardList />
-                        <span className="px-1">Requisition</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {requisitionSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
-
-            {/* purchase */}
-            {/* <li
-                        className="menu nav-item relative !ml-0"
-                        onClick={() => navigate("/purchase")}
-                    >
-                        <button type="button" className={`nav-link ${location.pathname === '/purchase' ? 'active' : ''} `}>
-                            <div className="flex items-center">
-                                <TiShoppingCart />
-                                <span className="px-1">Purchase</span>
-                            </div>
-                        </button>
-                    </li> */}
-
-            {/* supplier */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/supplier' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <FaTruckRampBox />
-                        <span className="px-1">Supplier</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {supplierSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
-
             {/* production */}
             <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/production' ? 'active' : ''} `}>
@@ -269,8 +212,136 @@ const NavBar = () => {
                 </ul>
             </li>
 
-            {/* store */}
+            {/* requisition */}
             <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname.includes("/requisition") ? 'active' : ''} !cursor-default`}>
+                    <div className="flex items-center">
+                        <FaClipboardList />
+                        <span className="px-1">Requisition</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    {requisitionSubMenu.map((item) => (
+                        <li key={item.path}>
+                            <NavLink
+                                to={item.path}
+                                end={item.path}
+                                className={({ isActive }) => isActive ? "active" : "" }
+                            >
+                                {item.name}
+                            </NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </li>
+
+            {/* Quotation */}
+            <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname === '/quotation' ? 'active' : ''} `}>
+                    <div className="flex items-center">
+                        <FaQuoteLeft />
+                        <span className="px-1">Quotation</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    {quotationSubMenu.map((item) => (
+                        <li key={item.path}>
+                            <NavLink to={item.path}>{item.name}</NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </li>
+
+            {/* Purchase Order */}
+            <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname === '/purchase-order' ? 'active' : ''} `}>
+                    <div className="flex items-center">
+                        <MdOutlineReceiptLong />
+                        <span className="px-1">Purchase Order</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    {pOrderSubMenu.map((item) => (
+                        <li key={item.path}>
+                            <NavLink to={item.path}>{item.name}</NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </li>
+
+            {/* Inward */}
+            <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
+                    <div className="flex items-center">
+                        <BsBoxArrowInDown />
+                        <span className="px-1">Inward</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    {inwardSubMenu.map((item) => (
+                        <li key={item.path}>
+                            <NavLink to={item.path}>{item.name}</NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </li>
+
+            {/* outward */}
+            <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
+                    <div className="flex items-center">
+                        <BsBoxArrowUp />
+                        <span className="px-1">Outward</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    {outwardSubMenu.map((item) => (
+                        <li key={item.path}>
+                            <NavLink to={item.path}>{item.name}</NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </li>
+
+            {/* supplier */}
+            {/* <li className="menu nav-item relative !ml-0" >
+                <button type="button" className={`nav-link ${location.pathname === '/supplier' ? 'active' : ''} `}>
+                    <div className="flex items-center">
+                        <FaTruckRampBox />
+                        <span className="px-1">Supplier</span>
+                    </div>
+                    <div className="right_arrow">
+                        <IconCaretDown />
+                    </div>
+                </button>
+                <ul className="sub-menu">
+                    {supplierSubMenu.map((item) => (
+                        <li key={item.path}>
+                            <NavLink to={item.path}>{item.name}</NavLink>
+                        </li>
+                    ))}
+                </ul>
+            </li> */}
+
+
+
+            {/* store */}
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/store' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <FaStore />
@@ -287,10 +358,10 @@ const NavBar = () => {
                         </li>
                     ))}
                 </ul>
-            </li>
+            </li> */}
 
             {/* dealer */}
-            <li className="menu nav-item relative !ml-0" >
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/dealer' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <FaUserGroup />
@@ -307,10 +378,10 @@ const NavBar = () => {
                         </li>
                     ))}
                 </ul>
-            </li>
+            </li> */}
 
             {/* distributor */}
-            <li className="menu nav-item relative !ml-0" >
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/distributor' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <FaUserGroup />
@@ -327,10 +398,10 @@ const NavBar = () => {
                         </li>
                     ))}
                 </ul>
-            </li>
+            </li> */}
 
             {/* retailer */}
-            <li className="menu nav-item relative !ml-0" >
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/retailer' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <FaUserGroup />
@@ -347,10 +418,10 @@ const NavBar = () => {
                         </li>
                     ))}
                 </ul>
-            </li>
+            </li> */}
 
             {/* warehouse */}
-            <li className="menu nav-item relative !ml-0" >
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <LuWarehouse />
@@ -361,15 +432,16 @@ const NavBar = () => {
                     </div>
                 </button>
                 <ul className="sub-menu">
-                    {warehouseSubMenu.map((item) => (
+                    {inwardSubMenu.map((item) => (
                         <li key={item.path}>
                             <NavLink to={item.path}>{item.name}</NavLink>
                         </li>
                     ))}
                 </ul>
-            </li>
+            </li> */}
+
         </ul>
     )
 }
 
-export default NavBar
+export default NavBar;
