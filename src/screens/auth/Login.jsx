@@ -8,6 +8,7 @@ import SearchableSelect from '../../components/inputs/SearchableSelect';
 import IconEye from '../../components/Icon/IconEye';
 import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 import AuthService from '../../Backend/Auth.backend';
+import FullScreenLoader from '../../components/FullScreenLoader';
 
 
 
@@ -25,7 +26,7 @@ const Login = () => {
     const navigate = useNavigate();
     const [userType, setUserType] = useState('');
     const [isPasswordSeen, setIsPasswordSeen] = useState(false);
-    const { mutate, isSuccess } = AuthService.TQLogin();
+    const { mutate, isSuccess, isPending } = AuthService.TQLogin();
 
     const submitForm = async (e) => {
         e.preventDefault();
@@ -41,6 +42,7 @@ const Login = () => {
 
     }, [isSuccess]);
 
+    if(isPending) return <FullScreenLoader />;
 
 
     return (

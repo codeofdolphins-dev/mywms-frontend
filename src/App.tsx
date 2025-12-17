@@ -1,22 +1,12 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
-import AuthLayout from './layouts/Auth.layout';
 import Login from './screens/auth/Login';
 import Register from './screens/auth/Register';
 import Dashboard from './screens/Dashboard';
 import Master from './screens/Master';
 import Error404 from './screens/Error404';
-import Browse from './screens/Browse';;
-import SupplierLayout from './layouts/Supplier.layout';
-import ProductionLayout from './layouts/Production.layout';
-import StoreLayout from './layouts/StoreLayout';
-import DealerLayout from './layouts/DealerLayout';
-import RetailerLayout from './layouts/RetailerLayout';
-import DistributorLayout from './layouts/DistributorLayout';
-import WarehouseLayout from './layouts/WarehouseLayout';
-import AccessLayout from './layouts/Access.layout';
+import Browse from './screens/Browse';
 import CreateRequisition from './screens/requisition/CreateRequisition';
 import Category from './screens/category/Category';
-import MasterLayout from './layouts/Master.layout';
 import Brand from './screens/brand/Brand';
 import Warehouse from './screens/warehouse/Warehouse';
 import Supplier from './screens/supplier/Supplier';
@@ -36,24 +26,23 @@ function App() {
         createRoutesFromElements(
             <Route>
                 {/* auth */}
-                <Route path="auth" element={<AuthLayout />}>
+                <Route path="auth" >
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
                 </Route>
 
                 {/* app */}
                 <Route path="/" element={<AppLayout />}>
-                    <Route path="/" element={<Dashboard />} />
+                    <Route index element={<Dashboard />} />
 
                     {/* master */}
-                    <Route path="admin" element={<MasterLayout />} >
+                    <Route path="admin" >
                         <Route path="business-flow" element={<Rules />} />
-                        <Route path="categories" element={<Category />} />
                     </Route>
 
                     {/* master */}
-                    <Route path="master" element={<MasterLayout />} >
-                        <Route path="" element={<Master />} />
+                    <Route path='master'>
+                        <Route index element={<Master />} />
                         <Route path="categories" element={<Category />} />
                         <Route path="brands" element={<Brand />} />
                         <Route path="warehouses" element={<Warehouse />} />
@@ -65,7 +54,7 @@ function App() {
                     </Route>
 
                     {/* access */}
-                    <Route path="access" element={<AccessLayout />} >
+                    <Route path="access" >
                         <Route path="role" element={<Master />} />
                         <Route path="role/create" element={<Master />} />
                         <Route path="role/assign" element={<Master />} />
@@ -79,34 +68,34 @@ function App() {
                     <Route path="requisition/create" element={<CreateRequisition />} />
 
                     {/* supplier */}
-                    <Route path="supplier" element={<SupplierLayout />} >
+                    <Route path="supplier" >
                         <Route path="" element={<Browse
                             pageName="Suppliers"
                         />} />
                     </Route>
 
                     {/* production */}
-                    <Route path="production" element={<ProductionLayout />} >
+                    <Route path="production" >
                         <Route path="" element={<Browse
                             pageName="Production"
                         />} />
                     </Route>
 
                     {/* inward */}
-                    <Route path="inward" element={<WarehouseLayout />} >
-                        <Route path="" element={<Inward />} />
+                    <Route path="inward" >
+                        <Route index element={<Inward />} />
                         <Route path="create" element={<CreateInward />} />
                     </Route>
 
                     {/* outward */}
-                    <Route path="outward" element={<WarehouseLayout />} >
+                    <Route path="outward" >
                         <Route path="" element={<Browse
                             pageName="Warehouse"
                         />} />
                         <Route path="create" element={<Master />} />
                     </Route>
-
                 </Route>
+
                 <Route path="*" element={<Error404 />} />
                 {/* <Route path="*" element={<Select />} /> */}
             </Route>

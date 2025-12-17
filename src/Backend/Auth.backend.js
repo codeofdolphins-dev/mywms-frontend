@@ -47,14 +47,16 @@ class AuthService {
         });
     };
 
-    TQCurrentUser() {
+    TQCurrentUser(isEnable) {
         return useQuery({
             queryKey: ["current-user"],
             queryFn: async () => {
                 const res = await API.get("/user/current-user");
                 return res.data;
             },
-            refetchOnWindowFocus: false,
+            staleTime: Infinity,
+            gcTime: Infinity,
+            enabled: isEnable,
             onSuccess: (data) => {
                 console.log(data);
             },

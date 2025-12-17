@@ -12,7 +12,14 @@ import './tailwind.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
+    }
+  }
+})
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>

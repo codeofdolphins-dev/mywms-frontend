@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 // import { IRootState } from '../../store';
@@ -13,9 +13,14 @@ import IconUser from '../Icon/IconUser';
 import IconMail from '../Icon/IconMail';
 import IconLockDots from '../Icon/IconLockDots';
 import IconLogout from '../Icon/IconLogout';
+import { storeLogout } from '../../store/AuthSlice';
+import authService from '../../Backend/Auth.backend';
 
 
 const Header = () => {
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     function createMarkup(messages: any) {
         return { __html: messages };
@@ -79,6 +84,12 @@ const Header = () => {
     const removeNotification = (value: number) => {
         setNotifications(notifications.filter((user) => user.id !== value));
     };
+
+    const handelLogout = () => {
+
+        dispatch(storeLogout());
+        navigate("/auth/login");
+    }
 
 
     return (
@@ -214,10 +225,13 @@ const Header = () => {
                                         </Link>
                                     </li>
                                     <li className="border-t border-white-light dark:border-white-light/10">
-                                        <Link to="/auth/boxed-signin" className="text-danger !py-3">
+                                        <div 
+                                            className="text-danger !py-3"
+                                            onClick={ handelLogout }
+                                        >
                                             <IconLogout className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
                                             Sign Out
-                                        </Link>
+                                        </div>
                                     </li>
                                 </ul>
                             </Dropdown>
