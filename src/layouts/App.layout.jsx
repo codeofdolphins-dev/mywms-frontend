@@ -2,12 +2,17 @@ import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import Header from '../components/layout/Header';
 import { Outlet } from 'react-router-dom';
 import NavBar from '../components/layout/NavBar';
-// import { IRootState } from '../../store';
-// import { toggleSidebar } from '../../store/themeConfigSlice';
-// import Footer from './Footer';
-// import Sidebar from './Sidebar';
+import authService from '../Backend/Auth.backend';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeLogin } from '../store/AuthSlice';
 
-const AppLayout = ({ children }: PropsWithChildren) => {
+
+const AppLayout = () => {
+
+    const dispatch = useDispatch()
+    const isLogin = useSelector(state => state.auth.status);
+    console.log("isLogin", isLogin);
+    
 
     const [showLoader, setShowLoader] = useState(true);
     const [showTopButton, setShowTopButton] = useState(false);
@@ -25,28 +30,39 @@ const AppLayout = ({ children }: PropsWithChildren) => {
         }
     };
 
+    /** screen loader */
+    // useEffect(() => {
+    //     window.addEventListener('scroll', onScrollHandler);
+
+    //     const screenLoader = document.getElementsByClassName('screen_loader');
+    //     if (screenLoader?.length) {
+    //         screenLoader[0].classList.add('animate__fadeOut');
+    //         setTimeout(() => {
+    //             setShowLoader(false);
+    //         }, 200);
+    //     }
+
+    //     return () => {
+    //         window.removeEventListener('onscroll', onScrollHandler);
+    //     };
+    // }, []);
+
+    const { data, isLoading, isError, isSuccess } = authService.TQCurrentUser();
+
+
     useEffect(() => {
-        window.addEventListener('scroll', onScrollHandler);
-
-        const screenLoader = document.getElementsByClassName('screen_loader');
-        if (screenLoader?.length) {
-            screenLoader[0].classList.add('animate__fadeOut');
-            setTimeout(() => {
-                setShowLoader(false);
-            }, 200);
+        if(isSuccess){
+            dispatch(storeLogin(data.data));
         }
+    }, [isSuccess, data]);
 
-        return () => {
-            window.removeEventListener('onscroll', onScrollHandler);
-        };
-    }, []);
 
     return (
         <>
             {/* BEGIN MAIN CONTAINER */}
             <div className="relative">
                 {/* screen loader */}
-                {showLoader && (
+                {(isLoading) && (
                     <div className="screen_loader fixed inset-0 bg-[#fafafa] dark:bg-[#060818] z-[60] grid place-content-center animate__animated">
                         <svg width="64" height="64" viewBox="0 0 135 135" xmlns="http://www.w3.org/2000/svg" fill="#4361ee">
                             <path d="M67.447 58c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm9.448 9.447c0 5.523 4.477 10 10 10 5.522 0 10-4.477 10-10s-4.478-10-10-10c-5.523 0-10 4.477-10 10zm-9.448 9.448c-5.523 0-10 4.477-10 10 0 5.522 4.477 10 10 10s10-4.478 10-10c0-5.523-4.477-10-10-10zM58 67.447c0-5.523-4.477-10-10-10s-10 4.477-10 10 4.477 10 10 10 10-4.477 10-10z">
@@ -69,27 +85,16 @@ const AppLayout = ({ children }: PropsWithChildren) => {
                 </div>
 
                 <div className={`navbar-sticky main-container text-black dark:text-white-dark min-h-screen`}>
-                    {/* BEGIN SIDEBAR */}
-                    {/* <Sidebar /> */}
-                    {/* END SIDEBAR */}
 
                     <div className="main-content flex flex-col min-h-screen">
-                        {/* BEGIN TOP NAVBAR */}
                         <Header />
                         <NavBar />
-                        {/* END TOP NAVBAR */}
 
-                        {/* BEGIN CONTENT AREA */}
                         <Suspense>
                             <div className={`p-6 animate__animated`}>
                                 <Outlet />
                             </div>
                         </Suspense>
-                        {/* END CONTENT AREA */}
-
-                        {/* BEGIN FOOTER */}
-                        {/* <Footer /> */}
-                        {/* END FOOTER */}
                     </div>
                 </div>
             </div>

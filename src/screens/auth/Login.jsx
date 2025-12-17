@@ -7,7 +7,8 @@ import IconLockDots from '../../components/Icon/IconLockDots';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import IconEye from '../../components/Icon/IconEye';
 import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
-import { TQLogin } from '../../Backend/Auth.backend';
+import AuthService from '../../Backend/Auth.backend';
+
 
 
 const options = [
@@ -24,16 +25,22 @@ const Login = () => {
     const navigate = useNavigate();
     const [userType, setUserType] = useState('');
     const [isPasswordSeen, setIsPasswordSeen] = useState(false);
-    const { mutate, isPending, isError } = TQLogin();
+    const { mutate, isSuccess } = AuthService.TQLogin();
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault();
         const fromData = new FormData(e.currentTarget);
-        
         mutate(fromData);
     };
 
-    console.log(isError);
+    useEffect(() => {
+
+        if (isSuccess) {
+            navigate("/");
+        }
+
+    }, [isSuccess]);
+
 
 
     return (
@@ -76,15 +83,15 @@ const Login = () => {
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
-                                        <input id="Password" name='password' type={isPasswordSeen ? "text" : "password" } placeholder="Enter Password" className="form-input px-11 placeholder:text-white-dark" />
-                                        <span 
+                                        <input id="Password" name='password' type={isPasswordSeen ? "text" : "password"} placeholder="Enter Password" className="form-input px-11 placeholder:text-white-dark" />
+                                        <span
                                             className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
                                             onClick={() => setIsPasswordSeen(prev => !prev)}
                                         >
                                             {
-                                                isPasswordSeen 
-                                                ? <PiEyeBold size={22}/>
-                                                : <PiEyeClosed size={22} />
+                                                isPasswordSeen
+                                                    ? <PiEyeBold size={22} />
+                                                    : <PiEyeClosed size={22} />
                                             }
                                         </span>
                                     </div>

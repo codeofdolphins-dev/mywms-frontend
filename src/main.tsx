@@ -9,6 +9,8 @@ import store from './store/store';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import './tailwind.css';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 
 const queryClient = new QueryClient()
 

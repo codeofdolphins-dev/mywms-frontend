@@ -1,53 +1,71 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import API from "./index";
+import { errorAlert, successAlert } from "../utils/alerts";
+import { useDispatch } from "react-redux";
+import { storeLogin } from "../store/AuthSlice";
+import secureLocalStorage from "react-secure-storage"
+
+class AuthService {
+    TQLogin() { 
+        return useMutation({
+            mutationFn: async (data) => {
+                const res = await API.post("/auth/login", data);
+                return res.data;
+            },
+            onSuccess: (data) => {
+                successAlert("Login Successfull");
+                secureLocalStorage.setItem("tenant", data.tenant);
+                secureLocalStorage.setItem("token", data.token)
+
+            },
+            onError: (error) => {
+                // console.log(error.response.data);
+                errorAlert(error.response.data?.message);
+            },
+        });
+    };
+
+    TQCompanyRegister() {
+        return useMutation({
+            mutationFn: async (formData) => {
+                const res = await API.post("/auth/register-company", formData);
+                return res.data;
+            },
+            onSuccess: () => { },
+            onError: () => { },
+        });
+    };
+
+    TQUserRegister() {
+        return useMutation({
+            mutationFn: async (formData) => {
+                const res = await API.post("/auth/register-user", formData);
+                return res.data;
+            },
+            onSuccess: () => { },
+            onError: () => { },
+        });
+    };
+
+    TQCurrentUser() {
+        return useQuery({
+            queryKey: ["current-user"],
+            queryFn: async () => {
+                const res = await API.get("/user/current-user");
+                return res.data;
+            },
+            refetchOnWindowFocus: false,
+            onSuccess: (data) => {
+                console.log(data);
+            },
+            onError: (error) => {
+                console.log("error", error);
+            },
+        });
+    };
+
+}
 
 
-function TQLogin() {
-    return useMutation({
-        mutationFn: async (data) => {
-            const res = await API.post("/auth/logi", data);
-            return res.data;
-        }, 
-        onSuccess: (data) => {
-            console.log(data);            
-        },
-        onError: (error) => {
-            console.log(error.response.data);            
-        },
-    });
-};
-
-function TQCompanyRegister() {
-    return useMutation({
-        mutationFn: async ( formData ) => {
-            const res = await API.post("/auth/register-company", formData);
-            return res.data;
-        }, 
-        onSuccess: () => {},
-        onError: () => {},
-    });
-};
-
-function TQUserRegister() {
-    return useMutation({
-        mutationFn: async ( formData ) => {
-            const res = await API.post("/auth/register-user", formData);
-            return res.data;
-        }, 
-        onSuccess: () => {},
-        onError: () => {},
-    });
-};
-
-// function UserRegister() {
-//     return useMutation({
-//         mutationFn: async ( formData ) => {
-//             const res = await API.post("/auth/register-user", formData);
-//             return res;
-//         }, 
-//         onSuccess: () => {},
-//         onError: () => {},
-//     });
-// };
-
-export { TQLogin, TQCompanyRegister, TQUserRegister }
+const authService = new AuthService();
+export default authService;
