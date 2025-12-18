@@ -10,9 +10,11 @@ import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
-import CreateRequsitionModal from '../../components/requisition/CreateRequsition.modal';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import { FaPlus } from "react-icons/fa6";
+import CreateCategoryModal from '../../components/category/CreateCategory.modal';
+import AddModal from '../../components/Add.modal';
+import CategoryForm from '../../components/category/CategoryForm';
 
 
 const tableData = [
@@ -305,7 +307,16 @@ const Category = () => {
                 )
             }
 
-            <CreateRequsitionModal isShow={isShow} setIsShow={setIsShow} />
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title={"Add New Category"}
+                maxWidth='60'
+            >
+                <CategoryForm
+                    setIsShow={setIsShow}
+                />
+            </AddModal>
 
         </div >
     )

@@ -15,6 +15,7 @@ import IconLockDots from '../Icon/IconLockDots';
 import IconLogout from '../Icon/IconLogout';
 import { storeLogout } from '../../store/AuthSlice';
 import authService from '../../Backend/Auth.backend';
+import FullScreenLoader from '../FullScreenLoader';
 
 
 const Header = () => {
@@ -22,7 +23,7 @@ const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    function createMarkup(messages: any) {
+    function createMarkup(messages) {
         return { __html: messages };
     }
     const [messages, setMessages] = useState([
@@ -56,7 +57,7 @@ const Header = () => {
         },
     ]);
 
-    const removeMessage = (value: number) => {
+    const removeMessage = (value) => {
         setMessages(messages.filter((user) => user.id !== value));
     };
 
@@ -81,16 +82,25 @@ const Header = () => {
         },
     ]);
 
-    const removeNotification = (value: number) => {
+    const removeNotification = (value) => {
         setNotifications(notifications.filter((user) => user.id !== value));
     };
 
-    const handelLogout = () => {
+    const { mutate: logout , isLoading } = authService.TQLogout();
 
-        dispatch(storeLogout());
-        navigate("/auth/login");
+
+    const handelLogout = () => {
+        console.log("logout");
+
+        logout(undefined, {
+            onSuccess: () => {
+                dispatch(storeLogout());
+                navigate("/auth/login");
+            }
+        });
     }
 
+    if(isLoading) return <FullScreenLoader />;
 
     return (
         <header className="z-40 horizontal">
@@ -224,13 +234,13 @@ const Header = () => {
                                             Lock Screen
                                         </Link>
                                     </li>
-                                    <li className="border-t border-white-light dark:border-white-light/10">
-                                        <div 
-                                            className="text-danger !py-3"
-                                            onClick={ handelLogout }
-                                        >
-                                            <IconLogout className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
-                                            Sign Out
+                                    <li
+                                        className="border-t border-white-light dark:border-white-light/10 cursor-pointer"
+                                        onClick={handelLogout}
+                                    >
+                                        <div className="text-danger flex items-center py-3 ml-3" >
+                                            <IconLogout className="w-4.5 h-4.5 mr-2 rotate-90 shrink-0" />
+                                            Log Out
                                         </div>
                                     </li>
                                 </ul>
@@ -238,7 +248,7 @@ const Header = () => {
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </header>
     );

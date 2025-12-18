@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import Input from '../inputs/Input';
 import TextArea from '../inputs/TextArea';
 
-const CreateRequsitionModal = ({ isShow, setIsShow }) => {
+const CreateCategoryModal = ({ isShow, setIsShow }) => {
 
     const [isSubmit, setIsSubmit] = useState(false);
 
@@ -91,4 +91,4 @@ const CreateRequsitionModal = ({ isShow, setIsShow }) => {
     )
 }
 
-export default CreateRequsitionModal
+export default CreateCategoryModal;

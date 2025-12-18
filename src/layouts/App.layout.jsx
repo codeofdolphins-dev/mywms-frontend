@@ -1,8 +1,8 @@
 import { Suspense, useEffect, useState } from 'react';
-import Header from '../components/layout/Header';
 import { Outlet } from 'react-router-dom';
 import NavBar from '../components/layout/NavBar';
 import AuthBootstrap from './AuthBootstrap';
+import Header from '../components/layout/Header';
 
 
 const AppLayout = () => {

@@ -6,7 +6,7 @@ import { storeLogin } from "../store/AuthSlice";
 import secureLocalStorage from "react-secure-storage"
 
 class AuthService {
-    TQLogin() { 
+    TQLogin() {
         return useMutation({
             mutationFn: async (data) => {
                 const res = await API.post("/auth/login", data);
@@ -20,9 +20,25 @@ class AuthService {
             },
             onError: (error) => {
                 // console.log(error.response.data);
-                errorAlert(error.response.data?.message);
+                errorAlert(err.response.data || "something Wrong!!!");
             },
         });
+    };
+
+    TQLogout() {
+        return useMutation({
+            mutationFn: async () => {
+                const res = await API.get("/auth/logout");
+                return res.data;
+            },
+            onSuccess: (data) => {
+                successAlert(data.message)
+                secureLocalStorage.clear();
+            },
+            onError: (err) => {
+                errorAlert(err.response.data || "something Wrong!!!");``
+            }
+        })
     };
 
     TQCompanyRegister() {

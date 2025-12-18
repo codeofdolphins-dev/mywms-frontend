@@ -24,8 +24,8 @@ function RHSelect({
     const getValue = () => {
         if (!value) return isMulti ? [] : null;
         return isMulti
-            ? options.filter((opt) => value.includes(opt.value))
-            : options.find((opt) => opt.value === value) || null;
+            ? options.filter((opt) => value.includes(opt.id))
+            : options.find((opt) => opt.id === value) || null;
     };
 
     return (
@@ -41,16 +41,18 @@ function RHSelect({
             <Select
                 value={getValue()}
                 ref={selectRef}
-                inputRef={el => el}
+                inputRef={ref}
                 onChange={(selected) => {
                     if (disabled) return; // prevent interaction when disabled
                     if (isMulti) {
-                        onChange(selected ? selected.map((opt) => opt.value) : []);
+                        onChange(selected ? selected.map((opt) => opt.id) : []);
                     } else {
-                        onChange(selected ? selected.value : null);
+                        onChange(selected ? selected.id : null);
                     }
                 }}
                 options={options}
+                getOptionLabel={option => option.name}
+                getOptionValue={option => option.id}
                 isMulti={isMulti}
                 isDisabled={disabled}
                 placeholder={placeholder}

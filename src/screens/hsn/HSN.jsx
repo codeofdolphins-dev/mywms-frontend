@@ -10,7 +10,6 @@ import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
-import CreateRequsitionModal from '../../components/requisition/CreateRequsition.modal';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import CreateHSNForm from '../../components/HSN/CreateHSN.Form';
