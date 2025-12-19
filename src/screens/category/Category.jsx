@@ -8,13 +8,15 @@ import AnimateHeight from 'react-animate-height';
 import IconCode from '../../components/Icon/IconCode';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
-import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import { FaPlus } from "react-icons/fa6";
 import CreateCategoryModal from '../../components/category/CreateCategory.modal';
 import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
+import fetchData from '../../Backend/fetchData';
+import FullScreenLoader from '../../components/FullScreenLoader';
+import { utcToLocal } from '../../utils/UTCtoLocal';
 
 
 const tableData = [
@@ -74,6 +76,9 @@ const Category = () => {
     const [search, setSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
 
+    const { data, isLoading } = fetchData.TQAllCategoryList();
+
+
     const [active, setActive] = useState('1');
     const togglePara = (value) => {
         setActive((oldValue) => {
@@ -81,7 +86,17 @@ const Category = () => {
         });
     };
 
-    const { register } = useForm();
+
+    function handelEdit(id) {
+        console.log(id);
+    }
+
+    function handelDelete(id) {
+        console.log(id);
+    }
+
+
+    if (isLoading) return <FullScreenLoader />
 
     return (
         <div>
@@ -126,135 +141,144 @@ const Category = () => {
             {search === '' ?
                 (
                     <div className="panel" id="basic">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Basic</h5>
-                        </div>
+                        {/* <div className="flex items-center justify-between mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">Category List</h5>
+                        </div> */}
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
-                                <div className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === '1' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara('1')}
-                                    >
-                                        Category #1
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active === '1' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active === '1' ? 'auto' : 0}>
-                                            <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
+                                <table>
+                                    <thead>
+                                        <tr className='flex !w-full justify-between items-center pr-5'>
+                                            <th>Name</th>
+                                            <th>Desc</th>
+                                            <th>Status</th>
+                                            <th>CreatedAt</th>
+                                            <th >Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                                {
+                                    data.map((item, i) => {
 
-                                                {/* checkboxes */}
-                                                <div className="table-responsive mb-5">
-                                                    <table>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Date</th>
-                                                                <th>Sale</th>
-                                                                <th className="!text-center">Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {tableData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.id}>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.name}</div>
-                                                                        </td>
-                                                                        <td>{data.date}</td>
-                                                                        <td>{data.sale}</td>
-                                                                        <td className="text-center">
-                                                                            <ul className="flex items-center justify-center gap-2">
-                                                                                <li>
-                                                                                    <Tippy content="Edit">
-                                                                                        <button type="button">
-                                                                                            <IconPencil className="text-success" />
-                                                                                        </button>
-                                                                                    </Tippy>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <Tippy content="Delete">
-                                                                                        <button type="button">
-                                                                                            <IconTrashLines className="text-danger" />
-                                                                                        </button>
-                                                                                    </Tippy>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
+                                        return <div key={i} className="border border-[#d3d3d3] rounded">
+                                            <button
+                                                type="button"
+                                                className={`p-4 w-full flex items-center text-white-dark ${active === `${i + 1}` ? '!text-primary' : ''}`}
+                                                onClick={() => togglePara(`${i + 1}`)}
+                                            >
+                                                <tr className='flex !w-full justify-between items-center mr-2' >
+                                                    <td>
+                                                        <div className="whitespace-nowrap">{item.name}</div>
+                                                    </td>
+                                                    <td>{item.description}</td>
+                                                    <td>{String(item.status)}</td>
+                                                    <td>{utcToLocal(item.createdAt)}</td>
+                                                    <td className="text-center">
+                                                        <ul className="flex items-center justify-center gap-2">
+                                                            <li>
+                                                                <Tippy content="Edit">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handelEdit(item.id)
+                                                                        }}
+                                                                        className='hover:scale-125'
+                                                                    >
+                                                                        <IconPencil className="text-success" />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </li>
+                                                            <li>
+                                                                <Tippy content="Delete">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handelDelete(item.id)
+                                                                        }}
+                                                                        className='hover:scale-125'
+                                                                    >
+                                                                        <IconTrashLines className="text-danger" />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                                <div className={`ml-auto ${active === `${i + 1}` ? 'rotate-180' : ''}`}>
+                                                    <IconCaretDown />
                                                 </div>
+                                            </button>
+                                            {
+                                                item.subcategories.length > 0
+                                                    ? <div>
+                                                        <AnimateHeight duration={300} height={active === '1' ? 'auto' : 0}>
+                                                            <div className="space-y-2 py-4 text-white-dark text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
 
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
-                                <div className="border border-[#d3d3d3] dark:border-[#1b2e4b] rounded">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === '2' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara('2')}
-                                    >
-                                        Collapsible Group Item #2
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active === '2' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
+                                                                {/* checkboxes */}
+                                                                <div className="table-responsive mb-5">
+                                                                    <table>
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Name</th>
+                                                                                <th>Desc</th>
+                                                                                <th>Status</th>
+                                                                                <th>CreatedAt</th>
+                                                                                <th className="!text-center">Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {item?.subcategories?.map((data) => {
+                                                                                return (
+                                                                                    <tr
+                                                                                        key={data.id}
+                                                                                    >
+                                                                                        <td>
+                                                                                            <div className="whitespace-nowrap">{data.name}</div>
+                                                                                        </td>
+                                                                                        <td>{data.description}</td>
+                                                                                        <td>{String(data.status)}</td>
+                                                                                        <td>{utcToLocal(data.createdAt)}</td>
+                                                                                        <td className="text-center">
+                                                                                            <ul className="flex items-center justify-center gap-2">
+                                                                                                <li>
+                                                                                                    <Tippy content="Edit">
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            onClick={() => handelEdit(data.id)}
+                                                                                                        >
+                                                                                                            <IconPencil className="text-success" />
+                                                                                                        </button>
+                                                                                                    </Tippy>
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    <Tippy content="Delete">
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            onClick={() => handelDelete(data.id)}
+                                                                                                        >
+                                                                                                            <IconTrashLines className="text-danger" />
+                                                                                                        </button>
+                                                                                                    </Tippy>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+
+                                                            </div>
+                                                        </AnimateHeight>
+                                                    </div>
+                                                    : null
+                                            }
                                         </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active === '2' ? 'auto' : 0}>
-                                            <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-                                                <ul className="space-y-1">
-                                                    <li>
-                                                        <button type="button">Apple</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Orange</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Banana</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">list</button>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
-                                <div className="border border-[#d3d3d3] dark:border-[#1b2e4b] rounded">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === '3' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara('3')}
-                                    >
-                                        Collapsible Group Item #3
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active === '3' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active === '3' ? 'auto' : 0}>
-                                            <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-                                                <p>
-                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
-                                                    dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla
-                                                    assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur
-                                                    butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
-                                                    labore sustainable VHS.
-                                                </p>
-                                                <button type="button" className="btn btn-primary mt-4">
-                                                    Accept
-                                                </button>
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
+                                    })
+                                }
                             </div>
                         </div>
                     </div>
@@ -315,6 +339,7 @@ const Category = () => {
             >
                 <CategoryForm
                     setIsShow={setIsShow}
+                    data={data}
                 />
             </AddModal>
 

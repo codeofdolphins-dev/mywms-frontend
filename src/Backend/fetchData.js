@@ -4,11 +4,11 @@ import API from ".";
 class FetchData {
     TQAllCategoryList() {
         return useQuery({
-            queryKey: ["category-all-list"],
+            queryKey: ["category-all-list" ],
             queryFn: async () => {
                 const res = await API.get("/category/all-list", {
                     params: {
-                        noLimit: true
+                        noLimit: true,
                     }
                 });
                 return res.data;

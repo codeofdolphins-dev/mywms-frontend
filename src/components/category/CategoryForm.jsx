@@ -8,9 +8,8 @@ import fetchData from '../../Backend/fetchData';
 import master from '../../Backend/category.backend';
 
 
-const CategoryForm = ({ setIsShow }) => {
+const CategoryForm = ({ setIsShow, data }) => {
 
-    const { data, isLoading } = fetchData.TQAllCategoryList();
     const { mutateAsync, isPending } = master.TQCreateMaster();
 
     const {
