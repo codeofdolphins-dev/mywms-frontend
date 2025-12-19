@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
@@ -76,19 +76,27 @@ const Category = () => {
     const [search, setSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
 
-    const { data, isLoading } = fetchData.TQAllCategoryList();
+    const { data, isLoading } = fetchData.TQAllCategoryList({ noLimit: true });
 
 
     const [active, setActive] = useState('1');
-    const togglePara = (value) => {
+    const togglePara = (value) => {   
         setActive((oldValue) => {
             return oldValue === value ? '' : value;
         });
     };
 
+    const [editId, setEditId] = useState(null);
+
+    useEffect(() => {
+        if(!isShow){
+            setEditId(null);
+        }
+    }, [isShow])
 
     function handelEdit(id) {
-        console.log(id);
+        setEditId(id);
+        setIsShow(true);
     }
 
     function handelDelete(id) {
@@ -148,7 +156,7 @@ const Category = () => {
                             <div className="space-y-2 font-semibold">
                                 <table>
                                     <thead>
-                                        <tr className='flex !w-full justify-between items-center pr-5'>
+                                        <tr className='flex !w-full justify-between items-center pr-5 !bg-slate-200'>
                                             <th>Name</th>
                                             <th>Desc</th>
                                             <th>Status</th>
@@ -159,11 +167,13 @@ const Category = () => {
                                 </table>
                                 {
                                     data.map((item, i) => {
+                                        
+                                        const isSubCate = item.subcategories.length > 0;
 
                                         return <div key={i} className="border border-[#d3d3d3] rounded">
                                             <button
                                                 type="button"
-                                                className={`p-4 w-full flex items-center text-white-dark ${active === `${i + 1}` ? '!text-primary' : ''}`}
+                                                className={`p-4 w-full flex items-center text-white-dark bg-[#f6f8fa83] ${(active === `${i + 1}` && isSubCate) ? '!text-primary' : ''} ${isSubCate ? "" : "cursor-default"}`}
                                                 onClick={() => togglePara(`${i + 1}`)}
                                             >
                                                 <tr className='flex !w-full justify-between items-center mr-2' >
@@ -206,20 +216,22 @@ const Category = () => {
                                                         </ul>
                                                     </td>
                                                 </tr>
-                                                <div className={`ml-auto ${active === `${i + 1}` ? 'rotate-180' : ''}`}>
-                                                    <IconCaretDown />
-                                                </div>
+                                                { isSubCate &&
+                                                    <div className={`ml-auto ${active === `${i + 1}` ? 'rotate-180' : ''}`}>
+                                                        <IconCaretDown />
+                                                    </div>
+                                                }
                                             </button>
                                             {
-                                                item.subcategories.length > 0
+                                                isSubCate
                                                     ? <div>
-                                                        <AnimateHeight duration={300} height={active === '1' ? 'auto' : 0}>
-                                                            <div className="space-y-2 py-4 text-white-dark text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
+                                                        <AnimateHeight duration={300} height={active === `${i + 1}` ? 'auto' : 0}>
+                                                            <div className="space-y-2 py-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
 
                                                                 {/* checkboxes */}
                                                                 <div className="table-responsive mb-5">
                                                                     <table>
-                                                                        <thead>
+                                                                        {/* <thead>
                                                                             <tr>
                                                                                 <th>Name</th>
                                                                                 <th>Desc</th>
@@ -227,7 +239,7 @@ const Category = () => {
                                                                                 <th>CreatedAt</th>
                                                                                 <th className="!text-center">Action</th>
                                                                             </tr>
-                                                                        </thead>
+                                                                        </thead> */}
                                                                         <tbody>
                                                                             {item?.subcategories?.map((data) => {
                                                                                 return (
@@ -240,7 +252,7 @@ const Category = () => {
                                                                                         <td>{data.description}</td>
                                                                                         <td>{String(data.status)}</td>
                                                                                         <td>{utcToLocal(data.createdAt)}</td>
-                                                                                        <td className="text-center">
+                                                                                        <td className="">
                                                                                             <ul className="flex items-center justify-center gap-2">
                                                                                                 <li>
                                                                                                     <Tippy content="Edit">
@@ -340,6 +352,7 @@ const Category = () => {
                 <CategoryForm
                     setIsShow={setIsShow}
                     data={data}
+                    editId={editId}
                 />
             </AddModal>
 

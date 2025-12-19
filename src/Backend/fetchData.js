@@ -2,17 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import API from ".";
 
 class FetchData {
-    TQAllCategoryList() {
+    TQAllCategoryList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["category-all-list" ],
+            queryKey: ["category-all-list", params ],
             queryFn: async () => {
                 const res = await API.get("/category/all-list", {
-                    params: {
-                        noLimit: true,
-                    }
+                    params
                 });
                 return res.data;
             },
+            enabled: isEnabled,
             onSuccess: (data) => {
                 console.log(data);
             },

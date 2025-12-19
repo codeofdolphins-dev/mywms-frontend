@@ -1,24 +1,48 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { errorAlert, successAlert } from "../utils/alerts";
 import API from ".";
 
 class MasterData {
-
-    TQCategoryCreate() {
+    TQCreateMaster(key = []) {
+        const QueryClient = useQueryClient()
         return useMutation({
             mutationFn: async (data) => {
-                const res = await API.post("/category/create", data);
-                return res.data;
+                const res = await API.post(data.path, data.formData);
+                return res.data
             },
-            onSuccess: (data) => {
-                console.log(data);
-                // successAlert(data?.message);
+            onSuccess: (res) => {
+                successAlert(res.message);
+                if(res.success){
+                    QueryClient.invalidateQueries(key)
+                }
+
             },
             onError: (error) => {
-                console.log(error.response.data);
-                // errorAlert(error.response.data?.message);
-            },
-        });
+                errorAlert(error.response.data?.message);
+            }
+        })
     }
+    
+    TQUpdateMaster() {
+        const QueryClient = useQueryClient()
+        return useMutation({
+            mutationFn: async ({path, formData}) => {
+                const res = await API.put(path, formData);
+                return res.data
+            },
+            onSuccess: (res) => {
+                successAlert(res.message);
+                if(res.success){
+                    QueryClient.invalidateQueries(["category-all-list"])
+                }
 
+            },
+            onError: (error) => {
+                errorAlert(error.response.data?.message);
+            }
+        })
+    }
 }
+
+const masterData = new MasterData();
+export default masterData;

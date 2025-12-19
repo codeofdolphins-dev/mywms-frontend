@@ -1,16 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import Input from '../inputs/Input';
 import TextArea from '../inputs/TextArea';
 import { Button } from '@mantine/core';
 import RHSelect from "../inputs/RHF/Select.RHF"
 import fetchData from '../../Backend/fetchData';
-import master from '../../Backend/category.backend';
+import FullScreenLoader from '../FullScreenLoader';
+import masterData from '../../Backend/master.backend';
 
 
-const CategoryForm = ({ setIsShow, data }) => {
+const CategoryForm = ({ setIsShow, data = [], editId }) => {
 
-    const { mutateAsync, isPending } = master.TQCreateMaster();
+    const { mutateAsync: create, isPending: isCreatePending } = masterData.TQCreateMaster(["category-all-list"]);
+    const { mutateAsync: update, isPending: isUpdatePending } = masterData.TQUpdateMaster(["category-all-list"]);
+
+    const { data: value, isLoading } = fetchData.TQAllCategoryList({ id: editId }, !!editId);
 
     const {
         register,
@@ -18,11 +22,39 @@ const CategoryForm = ({ setIsShow, data }) => {
         formState: { errors },
         control,
         reset,
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            name: "",
+            description: "",
+            parent_id: null
 
-    const submitForm = async (data) => {
+        }
+    });
+
+
+    useEffect(() => {
+        if (value?.[0]) {
+            reset({
+                name: value[0].name,
+                description: value[0].description,
+                parent_id: value[0].parent_id,
+            })
+        }
+    }, [value, reset]);
+
+
+    const submitForm = async (formData) => {
         try {
-            const res = await mutateAsync({ path: "/category/create", data });
+
+            let res = null;
+
+            if(!editId){
+                res = await create({ path: "/category/create", formData });
+            }else{
+                formData.id = editId;
+                res = await update({ path: "/category/update", formData });
+            }
+
 
             if (res.success) {
                 reset();
@@ -34,6 +66,7 @@ const CategoryForm = ({ setIsShow, data }) => {
         }
     }
 
+    if (isLoading) return <FullScreenLoader />
 
     return (
         <div className="panel" id="forms_grid">
@@ -44,11 +77,9 @@ const CategoryForm = ({ setIsShow, data }) => {
                         <Controller
                             name="parent_id"
                             control={control}
-                            render={({ field: { value, onChange, ref } }) => (
+                            render={({ field }) => (
                                 <RHSelect
-                                    ref={ref}
-                                    value={value}
-                                    onChange={onChange}
+                                    {...field}
 
                                     label="Parent Category"
                                     options={data}
@@ -78,7 +109,9 @@ const CategoryForm = ({ setIsShow, data }) => {
                         />
                     </div>
                     <div className="mt-8 flex items-center justify-end gap-4">
-                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={isPending}>Create Category</Button>
+                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={isCreatePending || isUpdatePending}>
+                            {editId ? "Edit Category" : "Create Category"}
+                        </Button>
                     </div>
                 </form>
             </div>
