@@ -13,7 +13,7 @@ class MasterData {
             onSuccess: (res) => {
                 successAlert(res.message);
                 if(res.success){
-                    QueryClient.invalidateQueries(key)
+                    QueryClient.invalidateQueries(key);
                 }
 
             },
@@ -23,7 +23,7 @@ class MasterData {
         })
     }
     
-    TQUpdateMaster() {
+    TQUpdateMaster(key = []) {
         const QueryClient = useQueryClient()
         return useMutation({
             mutationFn: async ({path, formData}) => {
@@ -33,7 +33,27 @@ class MasterData {
             onSuccess: (res) => {
                 successAlert(res.message);
                 if(res.success){
-                    QueryClient.invalidateQueries(["category-all-list"])
+                    QueryClient.invalidateQueries(key);
+                }
+
+            },
+            onError: (error) => {
+                errorAlert(error.response.data?.message);
+            }
+        })
+    }
+    
+    TQDeleteMaster(key = []) {
+        const QueryClient = useQueryClient()
+        return useMutation({
+            mutationFn: async ({path}) => {
+                const res = await API.delete(path);
+                return res.data
+            },
+            onSuccess: (res) => {
+                successAlert(res.message);
+                if(res.success){
+                    QueryClient.invalidateQueries(key);
                 }
 
             },

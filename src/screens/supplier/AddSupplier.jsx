@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from '../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../components/inputs/TextArea';
@@ -7,6 +7,8 @@ import FileUpload from '../../components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
+import fetchData from '../../Backend/fetchData';
+import masterData from '../../Backend/master.backend';
 
 
 const gstType = [
@@ -21,27 +23,43 @@ const options = [
 ];
 
 const AddSupplier = () => {
+
+    const [stateId, setStateId] = useState(null);
+
     const navigate = useNavigate();
+    const { data: stateData } = fetchData.TQStateList();
+    const { data: districtData } = fetchData.TQDistrictList(stateId);
+
+    const { mutateAsync: ceateSupplier, isPending } = masterData.TQCreateMaster()
 
     const {
         control,
         register,
         handleSubmit,
         formState: { errors },
-        reset
-    } = useForm();
-
-    const submit = (data) => {
-        console.log(data);
-        setTimeout(() => {
-            reset();
-        }, 3000);
-    }
+        reset,
+        watch
+    } = useForm({ mode: "onChange" });
+    const password = watch("password");
+    const accNo = watch("account_number");
 
     const handelCancel = () => {
         reset();
         navigate(-1);
-    };    
+    };
+
+    async function submit(formData) {
+        formData.user_type = "supplier";
+
+        try {
+            const res = await ceateSupplier({ path: "/supplier/create", formData })
+            console.log(res);
+            
+        } catch (error) {
+            console.log(error);
+        }
+
+    };
 
     return (
         <div>
@@ -103,7 +121,10 @@ const AddSupplier = () => {
                                         type="password"
                                         placeholder={"Confirm Password..."}
                                         {...register("confirmPassword", {
-                                            required: "This field is required!!!"
+                                            required: "This field is required!!!",
+                                            validate: (value) => (
+                                                value === password || "Passwords do not match!!!"
+                                            )
                                         })}
                                         error={errors.confirmPassword?.message}
                                         required={true}
@@ -114,7 +135,6 @@ const AddSupplier = () => {
 
                         {/* 2rd row */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
                             {/* Full Name */}
                             <div>
                                 <Input
@@ -131,15 +151,15 @@ const AddSupplier = () => {
                             <div>
                                 <Input
                                     label={"Phone Number"}
+                                    type="number"
                                     placeholder={"Enter Phone Number..."}
-                                    {...register("phone", {
+                                    {...register("phone_no", {
                                         required: "This field is required!!!"
                                     })}
-                                    error={errors.phone?.message}
+                                    error={errors.phone_no?.message}
                                     required={true}
                                 />
                             </div>
-
                         </div>
 
                         {/* 3rd row */}
@@ -162,7 +182,11 @@ const AddSupplier = () => {
                                     label="Address"
                                     placeholder="Enter Address..."
                                     className="text-sm"
-                                    {...register("address")}
+                                    {...register("address", {
+                                        required: "This field is required!!!"
+                                    })}
+                                    required={true}
+                                    error={errors.address?.message}
                                 />
                             </div>
                         </div>
@@ -175,6 +199,7 @@ const AddSupplier = () => {
                                 <div>
                                     <Input
                                         label={"Pincode"}
+                                        type={"number"}
                                         placeholder={"Enter Pincode"}
                                         {...register("pincode", { required: "This field is required!!!" })}
                                         error={errors.pincode?.message}
@@ -186,12 +211,26 @@ const AddSupplier = () => {
                                     <Controller
                                         name="state_id"
                                         control={control}
-                                        render={({ field: { value, onChange } }) => (
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
                                             <RHSelect
-                                                label="Select State"
-                                                options={gstType}
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
                                                 value={value}
-                                                onChange={onChange}
+                                                onChange={(value) => {
+                                                    onChange(value);
+                                                    setStateId(value);
+                                                }}
+
+                                                label="Select State"
+                                                options={stateData}
+                                                required={true}
+                                                error={error?.message}
                                             />
                                         )}
                                     />
@@ -204,12 +243,23 @@ const AddSupplier = () => {
                                     <Controller
                                         name="district_id"
                                         control={control}
-                                        render={({ field: { value, onChange } }) => (
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
                                             <RHSelect
-                                                label="Select district"
-                                                options={gstType}
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
                                                 value={value}
                                                 onChange={onChange}
+
+                                                label="Select district"
+                                                options={districtData}
+                                                required={true}
+                                                error={error?.message}
                                             />
                                         )}
                                     />
@@ -242,7 +292,7 @@ const AddSupplier = () => {
                         </div>
 
                         <div className="panel space-y-5 !mt-0" id='forms_grid'>
-                            <h1 className='text-lg mb-3'>Band Details</h1>
+                            <h1 className='text-lg mb-3'>Bank Info</h1>
 
                             {/* 6th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -251,10 +301,10 @@ const AddSupplier = () => {
                                     <Input
                                         label={"Account Holder Name"}
                                         placeholder={"Enter Email..."}
-                                        {...register("acName", {
+                                        {...register("account_holder_name", {
                                             required: "This field is required!!!"
                                         })}
-                                        error={errors.acName?.message}
+                                        error={errors.account_holder_name?.message}
                                         required={true}
                                     />
                                 </div>
@@ -265,24 +315,23 @@ const AddSupplier = () => {
                                         <Input
                                             label={"Bank Name"}
                                             placeholder={"Enter Bank Name"}
-                                            {...register("bankName", {
+                                            {...register("bank_name", {
                                                 required: "This field is required!!!"
                                             })}
-                                            error={errors.bankName?.message}
+                                            error={errors.bank_name?.message}
                                             required={true}
                                         />
                                     </div>
-                                    
+
                                     {/* ifsc */}
                                     <div>
                                         <Input
                                             label={"IFSC Code"}
                                             placeholder={"Enter Bank Name"}
-                                            type="number"
-                                            {...register("ifsc", {
+                                            {...register("ifsc_code", {
                                                 required: "This field is required!!!"
                                             })}
-                                            error={errors.ifsc?.message}
+                                            error={errors.ifsc_code?.message}
                                             required={true}
                                         />
                                     </div>
@@ -297,10 +346,10 @@ const AddSupplier = () => {
                                         <Input
                                             label={"Branch"}
                                             placeholder={"Enter branch..."}
-                                            {...register("branch", {
+                                            {...register("bank_branch", {
                                                 required: "This field is required!!!"
                                             })}
-                                            error={errors.branch?.message}
+                                            error={errors.bank_branch?.message}
                                             required={true}
                                         />
                                     </div>
@@ -308,7 +357,7 @@ const AddSupplier = () => {
                                     {/* account type */}
                                     <div>
                                         <Controller
-                                            name="accType"
+                                            name="account_type"
                                             control={control}
                                             rules={{
                                                 required: "Please select a account type!",
@@ -342,10 +391,10 @@ const AddSupplier = () => {
                                             label="Account Number"
                                             type="number"
                                             placeholder={"Enter Account Number..."}
-                                            {...register("accountNumber", {
+                                            {...register("account_number", {
                                                 required: "This field is required!!!"
                                             })}
-                                            error={errors.accountNumber?.message}
+                                            error={errors.account_number?.message}
                                             required={true}
                                         />
                                     </div>
@@ -357,7 +406,10 @@ const AddSupplier = () => {
                                             type="number"
                                             placeholder={"Confirm Account Number..."}
                                             {...register("confirmAccountNumber", {
-                                                required: "This field is required!!!"
+                                                required: "This field is required!!!",
+                                                validate: (value) => (
+                                                    value === accNo || "Account number not matching!!!"
+                                                )
                                             })}
                                             error={errors.confirmAccountNumber?.message}
                                             required={true}
@@ -369,7 +421,7 @@ const AddSupplier = () => {
 
                         <div className="flex">
                             <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
-                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Add Product</Button>
+                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={isPending} className='ml-auto'>Add Product</Button>
                         </div>
                     </form>
                 </div>

@@ -11,12 +11,13 @@ import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import { FaPlus } from "react-icons/fa6";
-import CreateCategoryModal from '../../components/category/CreateCategory.modal';
 import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
 import fetchData from '../../Backend/fetchData';
 import FullScreenLoader from '../../components/FullScreenLoader';
 import { utcToLocal } from '../../utils/UTCtoLocal';
+import masterData from '../../Backend/master.backend';
+import { confirmation } from '../../utils/alerts';
 
 
 const tableData = [
@@ -77,10 +78,11 @@ const Category = () => {
     const [isShow, setIsShow] = useState(false);
 
     const { data, isLoading } = fetchData.TQAllCategoryList({ noLimit: true });
+    const { mutate: deleteData, isPending } = masterData.TQDeleteMaster(["category-all-list"]);
 
 
     const [active, setActive] = useState('1');
-    const togglePara = (value) => {   
+    const togglePara = (value) => {
         setActive((oldValue) => {
             return oldValue === value ? '' : value;
         });
@@ -89,7 +91,7 @@ const Category = () => {
     const [editId, setEditId] = useState(null);
 
     useEffect(() => {
-        if(!isShow){
+        if (!isShow) {
             setEditId(null);
         }
     }, [isShow])
@@ -99,8 +101,12 @@ const Category = () => {
         setIsShow(true);
     }
 
-    function handelDelete(id) {
-        console.log(id);
+    async function handelDelete(id) {
+        // console.log(id);
+        const isSuccess = await confirmation();
+        if (isSuccess) {
+            deleteData({ path: `/category/delete/${id}` });
+        }
     }
 
 
@@ -167,7 +173,7 @@ const Category = () => {
                                 </table>
                                 {
                                     data.map((item, i) => {
-                                        
+
                                         const isSubCate = item.subcategories.length > 0;
 
                                         return <div key={i} className="border border-[#d3d3d3] rounded">
@@ -216,7 +222,7 @@ const Category = () => {
                                                         </ul>
                                                     </td>
                                                 </tr>
-                                                { isSubCate &&
+                                                {isSubCate &&
                                                     <div className={`ml-auto ${active === `${i + 1}` ? 'rotate-180' : ''}`}>
                                                         <IconCaretDown />
                                                     </div>
