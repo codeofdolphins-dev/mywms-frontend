@@ -15,7 +15,7 @@ import IconLockDots from '../Icon/IconLockDots';
 import IconLogout from '../Icon/IconLogout';
 import { storeLogout } from '../../store/AuthSlice';
 import authService from '../../Backend/Auth.backend';
-import FullScreenLoader from '../FullScreenLoader';
+import FullScreenLoader from '../loader/FullScreenLoader';
 
 
 const Header = () => {

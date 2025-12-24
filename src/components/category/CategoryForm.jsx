@@ -5,8 +5,8 @@ import TextArea from '../inputs/TextArea';
 import { Button } from '@mantine/core';
 import RHSelect from "../inputs/RHF/Select.RHF"
 import fetchData from '../../Backend/fetchData';
-import FullScreenLoader from '../FullScreenLoader';
 import masterData from '../../Backend/master.backend';
+import FullScreenLoader from '../loader/FullScreenLoader';
 
 
 const CategoryForm = ({ setIsShow, data = [], editId }) => {
@@ -22,6 +22,7 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
         formState: { errors },
         control,
         reset,
+        
     } = useForm({
         defaultValues: {
             name: "",

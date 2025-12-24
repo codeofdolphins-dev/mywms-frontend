@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
@@ -9,69 +9,72 @@ import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
+import fetchData from '../../Backend/fetchData';
+import FullScreenLoader from '../../components/loader/FullScreenLoader';
+import { debounce } from 'lodash';
 
 
-const tableData = [
-    {
-        "Id": 1,
-        "Email": "arjun.patel@example.com",
-        "Name": "Arjun Patel",
-        "Phone No.": "9876543210",
-        "Address": "12 Ashok Nagar, Ahmedabad, Gujarat",
-        "Account Holder Name": "Arjun Patel",
-        "Account Number": "123456789012",
-        "IFSC Code": "HDFC0001234",
-        "Branch": "Ashram Road",
-        "Bank Name": "HDFC Bank"
-    },
-    {
-        "Id": 2,
-        "Email": "neha.sharma@example.com",
-        "Name": "Neha Sharma",
-        "Phone No.": "9123456789",
-        "Address": "45 Civil Lines, Jaipur, Rajasthan",
-        "Account Holder Name": "Neha Sharma",
-        "Account Number": "234567890123",
-        "IFSC Code": "SBIN0005678",
-        "Branch": "Civil Lines",
-        "Bank Name": "State Bank of India"
-    },
-    {
-        "Id": 3,
-        "Email": "rohit.verma@example.com",
-        "Name": "Rohit Verma",
-        "Phone No.": "9988776655",
-        "Address": "78 MG Road, Indore, Madhya Pradesh",
-        "Account Holder Name": "Rohit Verma",
-        "Account Number": "345678901234",
-        "IFSC Code": "ICIC0004321",
-        "Branch": "MG Road",
-        "Bank Name": "ICICI Bank"
-    },
-    {
-        "Id": 4,
-        "Email": "kavita.iyer@example.com",
-        "Name": "Kavita Iyer",
-        "Phone No.": "9012345678",
-        "Address": "9 T Nagar, Chennai, Tamil Nadu",
-        "Account Holder Name": "Kavita Iyer",
-        "Account Number": "456789012345",
-        "IFSC Code": "AXIS0008765",
-        "Branch": "T Nagar",
-        "Bank Name": "Axis Bank"
-    }
+const colName = [
+    { key: "id", label: "ID" },
+    { key: "email", label: "Email" },
+    { key: "full_name", label: "Name" },
+    { key: "company_name", label: "Company" },
+    { key: "phone_no", label: "Phone" },
+    { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" },
+    { key: "address.address", label: "Address" },
+    { key: "supplierBankDetails.account_holder_name", label: "Account Holder Name" },
+    { key: "supplierBankDetails.account_number", label: "Account Number" },
+    { key: "supplierBankDetails.account_type", label: "Account Type" },
+    { key: "supplierBankDetails.ifsc_code", label: "IFSC Code" },
+    { key: "supplierBankDetails.bank_branch", label: "Branch" },
+    { key: "supplierBankDetails.bank_name", label: "Bank Name" },
 ];
 
-const colName = ["Id", "Email", "Name", "Phone No.", "Address", "Account Holder Name", "Account Number", "IFSC Code", "Branch", "Bank Name", "Actions"];
-
 const Supplier = () => {
+    const navigate = useNavigate();
 
     const [search, setSearch] = useState('');
+    const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
 
+    const params = {
+        text: debounceSearch || null,
+        page: currentPage || null,
+        limit: limit || null
+    };
 
-    const navigate = useNavigate();
+    const { data, isLoading } = fetchData.TQAllSupplierList(params);
+
+    const handleEdit = (id) => {
+        navigate("add-supplier", {
+            state: { id }
+        })
+    };
+
+    const handleDelete = (id) => {
+        console.log(id);
+    };
+
+    const debounceFn = useCallback(
+        debounce((value) => {
+            setDebounceSearch(value);
+        }, 500),
+        []
+    );
+    const handelSearch = (value) => {
+        setSearch(value);
+        debounceFn(value);
+    }
+
+    useEffect(() => {
+        setCurrentPage(1);
+
+        return () => debounceFn.cancel();
+    }, [debounceSearch])
+
 
     return (
         <div>
@@ -108,24 +111,22 @@ const Supplier = () => {
                     placeholder="Search by name or description..."
                     className="bg- border-pink-500"
                     value={search}
-                    setValue={setSearch}
+                    setValue={handelSearch}
                 />
             </div>
 
             <ItemTable
-                colName={colName}
-                items={tableData}
+                columns={colName}
+                items={data?.data}
                 edit={true}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                totalPage={data?.meta?.totalPages}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                isLoading={isLoading}
             />
-
-            <AddModal
-                isShow={isShow}
-                setIsShow={setIsShow}
-                title="Add New HSN"
-                maxWidth={'50'}
-            >
-                
-            </AddModal>
 
         </div >
     )

@@ -8,7 +8,7 @@ import SearchableSelect from '../../components/inputs/SearchableSelect';
 import IconEye from '../../components/Icon/IconEye';
 import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 import AuthService from '../../Backend/Auth.backend';
-import FullScreenLoader from '../../components/FullScreenLoader';
+import FullScreenLoader from '../../components/loader/FullScreenLoader';
 
 
 

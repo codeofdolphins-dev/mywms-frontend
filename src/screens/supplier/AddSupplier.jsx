@@ -1,36 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from '../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../components/inputs/TextArea';
 import Input from '../../components/inputs/Input';
 import FileUpload from '../../components/inputs/File';
 import { Button } from '@mantine/core';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
 import fetchData from '../../Backend/fetchData';
 import masterData from '../../Backend/master.backend';
+import FullScreenLoader from '../../components/loader/FullScreenLoader';
 
-
-const gstType = [
-    { value: "include", label: "Shoes" },
-    { value: "exclude", label: "Hats" },
-]
-
-const options = [
-    { value: 'orange', label: 'Orange' },
-    { value: 'white', label: 'White' },
-    { value: 'purple', label: 'Purple' },
-];
 
 const AddSupplier = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const id = location?.state?.id || null;
+    // const useParams()
 
     const [stateId, setStateId] = useState(null);
 
-    const navigate = useNavigate();
     const { data: stateData } = fetchData.TQStateList();
     const { data: districtData } = fetchData.TQDistrictList(stateId);
+    const { data: supplierData, isLoading } = fetchData.TQAllSupplierList({ id, isEnabled: !!id })
 
-    const { mutateAsync: ceateSupplier, isPending } = masterData.TQCreateMaster()
+    const { mutateAsync: ceateSupplier, isPending: createIsPending } = masterData.TQCreateMaster(["supplier-all-list"]);
+    const { mutateAsync: updateSupplier, isPending: updateIsPending } = masterData.TQUpdateMaster(["supplier-all-list"])
 
     const {
         control,
@@ -39,27 +34,92 @@ const AddSupplier = () => {
         formState: { errors },
         reset,
         watch
-    } = useForm({ mode: "onChange" });
+    } = useForm({
+        mode: "onChange",
+        defaultValues: {
+            account_holder_name: "",
+            account_number: "",
+            account_type: "",
+            address: "",
+            bank_branch: "",
+            bank_name: "",
+            company_name: "",
+            confirmAccountNumber: "",
+            confirmPassword: "",
+            desc: "",
+            district_id: null,
+            email: "",
+            full_name: "",
+            ifsc_code: "",
+            image: null,
+            password: "",
+            phone_no: "",
+            pincode: "",
+            state_id: null
+        }
+    });
     const password = watch("password");
     const accNo = watch("account_number");
 
-    const handelCancel = () => {
-        reset();
-        navigate(-1);
-    };
+    useEffect(() => {
+        if (supplierData?.data?.[0]) {
+            const data = supplierData?.data[0];
+            setStateId(data?.address?.state_id);
+
+            reset({
+                company_name: data?.company_name,
+                email: data?.email,
+                full_name: data?.full_name,
+                phone_no: data?.phone_no,
+                desc: data?.meta?.desc,
+
+                address: data?.address?.address,
+                district_id: data?.address?.district_id,
+                state_id: data?.address?.state_id,
+                pincode: data?.address?.pincode,
+
+                account_holder_name: data?.supplierBankDetails?.account_holder_name,
+                account_number: data?.supplierBankDetails?.account_number,
+                confirmAccountNumber: data?.supplierBankDetails?.account_number,
+                account_type: data?.supplierBankDetails?.account_type,
+                bank_branch: data?.supplierBankDetails?.bank_branch,
+                bank_name: data?.supplierBankDetails?.bank_name,
+                ifsc_code: data?.supplierBankDetails?.ifsc_code
+            })
+        }
+    }, [reset, supplierData, isLoading])
 
     async function submit(formData) {
-        formData.user_type = "supplier";
-
         try {
-            const res = await ceateSupplier({ path: "/supplier/create", formData })
-            console.log(res);
-            
+            if (id) {
+
+                console.log(formData);return
+                
+
+                const res = await updateSupplier({ path: "/supplier/update", formData })
+                console.log(res);
+                if (res.success) {
+                    reset();
+                    navigate(-1);
+                }
+
+            } else {
+                formData.user_type = "supplier";
+
+                const res = await ceateSupplier({ path: "/supplier/create", formData })
+                console.log(res);
+                if (res.success) {
+                    reset();
+                    navigate(-1);
+                }
+
+            }
         } catch (error) {
             console.log(error);
         }
-
     };
+
+    if (isLoading) return <FullScreenLoader />;
 
     return (
         <div>
@@ -96,6 +156,7 @@ const AddSupplier = () => {
                                     })}
                                     error={errors.email?.message}
                                     required={true}
+                                    disabled={id}
                                 />
                             </div>
 
@@ -108,10 +169,13 @@ const AddSupplier = () => {
                                         type="password"
                                         placeholder={"Enter Password..."}
                                         {...register("password", {
-                                            required: "This field is required!!!"
+                                            required: {
+                                                message: "This field is required!!!",
+                                                value: !id
+                                            }
                                         })}
                                         error={errors.password?.message}
-                                        required={true}
+                                        required={!id}
                                     />
                                 </div>
                                 {/* Confirm Password */}
@@ -121,13 +185,16 @@ const AddSupplier = () => {
                                         type="password"
                                         placeholder={"Confirm Password..."}
                                         {...register("confirmPassword", {
-                                            required: "This field is required!!!",
+                                            required: {
+                                                message: "This field is required!!!",
+                                                value: !id
+                                            },
                                             validate: (value) => (
                                                 value === password || "Passwords do not match!!!"
                                             )
                                         })}
                                         error={errors.confirmPassword?.message}
-                                        required={true}
+                                        required={!id}
                                     />
                                 </div>
                             </div>
@@ -420,8 +487,21 @@ const AddSupplier = () => {
                         </div>
 
                         <div className="flex">
-                            <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
-                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={isPending} className='ml-auto'>Add Product</Button>
+                            <Button
+                                variant="outline"
+                                color="gray"
+                                size="md"
+                                radius="md"
+                                onClick={() => {
+                                    reset();
+                                    navigate(-1);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createIsPending || updateIsPending} className='ml-auto'>
+                                {id ? "Update Product" : "Add Product"}
+                            </Button>
                         </div>
                     </form>
                 </div>

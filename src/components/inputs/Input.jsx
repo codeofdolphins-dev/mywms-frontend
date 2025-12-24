@@ -30,7 +30,7 @@ const Input = React.forwardRef(({
                 <input
                     id={_id}
                     type={ isPasswordSeen ? "text" : type}
-                    className={`px-3 py-2 text-sm rounded-md bg-white text-black focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${className}`}
+                    className={`px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${ props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black" } ${className}`}
                     ref={ref}
                     {...props}
                 />

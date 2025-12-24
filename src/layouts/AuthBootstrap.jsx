@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
 import authService from '../Backend/Auth.backend';
 import { storeLogin } from '../store/AuthSlice';
-import FullScreenLoader from '../components/FullScreenLoader';
+import FullScreenLoader from '../components/loader/FullScreenLoader';
 
 const AuthBootstrap = ({ children }) => {
 
