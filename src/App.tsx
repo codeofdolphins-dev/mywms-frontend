@@ -19,6 +19,7 @@ import Inward from './screens/inward/Inward';
 import CreateInward from './screens/inward/CreateInward';
 import Requisition from './screens/requisition/Requisition';
 import AppLayout from './layouts/App.layout';
+import AuthLayout from './layouts/Auth.layout';
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
         createRoutesFromElements(
             <Route>
                 {/* auth */}
-                <Route path="auth" >
+                <Route path="auth" element={<AuthLayout />}>
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
                 </Route>

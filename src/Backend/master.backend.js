@@ -6,53 +6,51 @@ class MasterData {
     TQCreateMaster(key = []) {
         const QueryClient = useQueryClient()
         return useMutation({
-            mutationFn: async (data) => {
-                const res = await API.post(data.path, data.formData);
+            mutationFn: async ({ path, formData }) => {
+                const res = await API.post(path, formData);
                 return res.data
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if(res.success){
+                if (res.success) {
                     QueryClient.invalidateQueries(key);
                 }
-
             },
             onError: (error) => {
                 errorAlert(error.response.data?.message);
             }
         })
     }
-    
+
     TQUpdateMaster(key = []) {
         const QueryClient = useQueryClient()
         return useMutation({
-            mutationFn: async ({path, formData}) => {
+            mutationFn: async ({ path, formData }) => {
                 const res = await API.put(path, formData);
                 return res.data
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if(res.success){
+                if (res.success) {
                     QueryClient.invalidateQueries(key);
                 }
-
             },
             onError: (error) => {
                 errorAlert(error.response.data?.message);
             }
         })
     }
-    
+
     TQDeleteMaster(key = []) {
         const QueryClient = useQueryClient()
         return useMutation({
-            mutationFn: async ({path}) => {
+            mutationFn: async ({ path }) => {
                 const res = await API.delete(path);
                 return res.data
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if(res.success){
+                if (res.success) {
                     QueryClient.invalidateQueries(key);
                 }
 

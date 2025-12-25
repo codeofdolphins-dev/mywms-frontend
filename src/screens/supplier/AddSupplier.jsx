@@ -10,22 +10,24 @@ import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
 import fetchData from '../../Backend/fetchData';
 import masterData from '../../Backend/master.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
+import { RHFToFormData } from '../../utils/RHFtoFD';
 
 
 const AddSupplier = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const id = location?.state?.id || null;
-    // const useParams()
+    const id = location?.state?.id ?? null;
 
     const [stateId, setStateId] = useState(null);
 
     const { data: stateData } = fetchData.TQStateList();
     const { data: districtData } = fetchData.TQDistrictList(stateId);
-    const { data: supplierData, isLoading } = fetchData.TQAllSupplierList({ id, isEnabled: !!id })
+
+    const params = id ? { id } : {};
+    const { data: supplierData, isLoading } = fetchData.TQAllSupplierList(params, !!id);
 
     const { mutateAsync: ceateSupplier, isPending: createIsPending } = masterData.TQCreateMaster(["supplier-all-list"]);
-    const { mutateAsync: updateSupplier, isPending: updateIsPending } = masterData.TQUpdateMaster(["supplier-all-list"])
+    const { mutateAsync: updateSupplier, isPending: updateIsPending } = masterData.TQUpdateMaster(["supplier-all-list"]);
 
     const {
         control,
@@ -36,27 +38,27 @@ const AddSupplier = () => {
         watch
     } = useForm({
         mode: "onChange",
-        defaultValues: {
-            account_holder_name: "",
-            account_number: "",
-            account_type: "",
-            address: "",
-            bank_branch: "",
-            bank_name: "",
-            company_name: "",
-            confirmAccountNumber: "",
-            confirmPassword: "",
-            desc: "",
-            district_id: null,
-            email: "",
-            full_name: "",
-            ifsc_code: "",
-            image: null,
-            password: "",
-            phone_no: "",
-            pincode: "",
-            state_id: null
-        }
+        // defaultValues: {
+        //     account_holder_name: "",
+        //     account_number: "",
+        //     account_type: "",
+        //     address: "",
+        //     bank_branch: "",
+        //     bank_name: "",
+        //     company_name: "",
+        //     confirmAccountNumber: "",
+        //     confirmPassword: "",
+        //     desc: "",
+        //     district_id: null,
+        //     email: "",
+        //     full_name: "",
+        //     ifsc_code: "",
+        //     image: null,
+        //     password: "",
+        //     phone_no: "",
+        //     pincode: "",
+        //     state_id: null
+        // }
     });
     const password = watch("password");
     const accNo = watch("account_number");
@@ -89,30 +91,29 @@ const AddSupplier = () => {
         }
     }, [reset, supplierData, isLoading])
 
-    async function submit(formData) {
+    async function submit(data) {
         try {
             if (id) {
+                data.id = id;
 
-                console.log(formData);return
-                
+                const formData = RHFToFormData(data);
 
-                const res = await updateSupplier({ path: "/supplier/update", formData })
-                console.log(res);
+                const res = await updateSupplier({ path: "/supplier/update", formData });
                 if (res.success) {
                     reset();
                     navigate(-1);
                 }
 
             } else {
-                formData.user_type = "supplier";
+                data.user_type = "supplier";
 
-                const res = await ceateSupplier({ path: "/supplier/create", formData })
-                console.log(res);
+                const formData = RHFToFormData(data);
+
+                const res = await ceateSupplier({ path: "/supplier/create", formData });
                 if (res.success) {
                     reset();
                     navigate(-1);
                 }
-
             }
         } catch (error) {
             console.log(error);
@@ -341,6 +342,7 @@ const AddSupplier = () => {
                                             <FileUpload
                                                 label="Profile Image"
                                                 onChange={onChange} // gets File object
+                                                name="image"
                                             />
                                         )}
                                     />

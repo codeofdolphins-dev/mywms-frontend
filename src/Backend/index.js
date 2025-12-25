@@ -4,7 +4,6 @@ import secureLocalStorage from 'react-secure-storage';
 
 const API = axios.create({
     baseURL: String(import.meta.env.VITE_SERVER_URL),
-    headers: { "Content-Type": "application/json" }
 });
 
 // Add a request interceptor

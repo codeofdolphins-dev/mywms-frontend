@@ -4,6 +4,7 @@ function FileUpload({
   label = "Product Image",
   helperText = "Accepted formats: JPG, PNG (Max 5MB)",
   onChange,
+  ...rest
 }) {
   const [fileName, setFileName] = useState("No file chosen");
   const inputRef = useRef(null);
@@ -37,6 +38,7 @@ function FileUpload({
           accept="image/jpeg,image/png"
           className="hidden"
           onChange={handleFileChange}
+          {...rest}
         />
       </div>
 

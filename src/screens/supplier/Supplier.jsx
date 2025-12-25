@@ -12,6 +12,8 @@ import AddModal from '../../components/Add.modal';
 import fetchData from '../../Backend/fetchData';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import { debounce } from 'lodash';
+import masterData from '../../Backend/master.backend';
+import { confirmation, successAlert } from '../../utils/alerts';
 
 
 const colName = [
@@ -33,6 +35,8 @@ const colName = [
 const Supplier = () => {
     const navigate = useNavigate();
 
+    const { mutateAsync: deleteSupplier } = masterData.TQDeleteMaster([]);
+
     const [search, setSearch] = useState('');
     const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
@@ -45,8 +49,8 @@ const Supplier = () => {
         page: currentPage || null,
         limit: limit || null
     };
-
     const { data, isLoading } = fetchData.TQAllSupplierList(params);
+    
 
     const handleEdit = (id) => {
         navigate("add-supplier", {
@@ -54,8 +58,17 @@ const Supplier = () => {
         })
     };
 
-    const handleDelete = (id) => {
-        console.log(id);
+    const handleDelete = async (id) => {
+        try {            
+            const isSuccess = await confirmation();
+            if(!isSuccess) return;
+
+            const res = await deleteSupplier({ path: `/supplier/delete/${id}` });
+            if(res.success) successAlert(res.message);
+
+        } catch (error) {
+            console.log(error);            
+        }
     };
 
     const debounceFn = useCallback(
