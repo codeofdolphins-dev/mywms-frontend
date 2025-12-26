@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
@@ -13,46 +13,61 @@ import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import Form from '../../components/brand/Form';
+import fetchData from '../../Backend/fetchData';
+import masterData from '../../Backend/master.backend';
+import { confirmation, successAlert } from '../../utils/alerts';
 
 
-const tableData = [
-    {
-        id: 1,
-        name: 'John Doe',
-        email: 'johndoe@yahoo.com',
-        date: '10/08/2020',
-        sale: 120,
-    },
-    {
-        id: 2,
-        name: 'Shaun Park',
-        email: 'shaunpark@gmail.com',
-        date: '11/08/2020',
-        sale: 400,
-    },
-    {
-        id: 3,
-        name: 'Alma Clarke',
-        email: 'alma@gmail.com',
-        date: '12/02/2020',
-        sale: 310,
-    },
-    {
-        id: 4,
-        name: 'Vincent Carpenter',
-        email: 'vincent@gmail.com',
-        date: '13/08/2020',
-        sale: 100,
-    },
+const colName = [
+    { key: "id", label: "ID" },
+    { key: "logo", label: "Logo", type: "image" },
+    { key: "name", label: "Brand Name" },
+    { key: "slug", label: "Slug" },
+    { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
 
 
 const Brand = () => {
+    const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster();
 
-    const [search, setSearch] = useState('');
+    const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
-    const [items, setItems] = useState(tableData);
-    const colName = ["Id", "Logo", "Brand Name", "Status", "CreatedAt", "Actions"];
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [editId, setEditId] = useState(null);
+
+    const params = {
+        text: debounceSearch || null,
+        page: currentPage || null,
+        limit: limit || null
+    };
+    const { data, isLoading } = fetchData.TQAllBrandList(params);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debounceSearch]);
+
+    useEffect(() => {
+        setEditId(null);
+    }, [isShow]);
+
+
+    function handleEdit(id) {
+        setEditId(id);
+        setIsShow(true);
+    };
+
+    async function handleDelete(id) {
+        try {
+            const isSuccess = await confirmation();
+            if (!isSuccess) return;
+
+            const res = await deleteData({ path: `/brand/delete/${id}` });
+            if (res.success) successAlert(res.message);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <div>
@@ -88,18 +103,22 @@ const Brand = () => {
                     type="text"
                     placeholder="Search by brand name..."
                     className="bg- border-pink-500"
-                    value={search}
-                    setValue={setSearch}
+                    setValue={setDebounceSearch}
                 />
             </div>
 
             {/* Item table */}
             <ItemTable
-                colName={colName}
-                items={items}
-                setItems={setItems}
-                upperCase={true}
+                columns={colName}
+                items={data?.data}
                 edit={true}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                totalPage={data?.meta?.totalPages}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                isLoading={isLoading}
             />
 
 
@@ -108,7 +127,10 @@ const Brand = () => {
                 setIsShow={setIsShow}
                 title="Add New Brand"
             >
-                <Form />
+                <Form
+                    editId={editId}
+                    setIsShow={setIsShow}
+                />
             </AddModal>
 
         </div >

@@ -2,6 +2,7 @@ import React from "react";
 import Select from "react-select";
 
 function RHSelect({
+    selectKey = "name",
     label,
     options = [],
     value,
@@ -51,7 +52,7 @@ function RHSelect({
                     }
                 }}
                 options={options}
-                getOptionLabel={option => option.name}
+                getOptionLabel={option => option[selectKey]}
                 getOptionValue={option => option.id}
                 isMulti={isMulti}
                 isDisabled={disabled}

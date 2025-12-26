@@ -11,7 +11,6 @@ import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import fetchData from '../../Backend/fetchData';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
-import { debounce } from 'lodash';
 import masterData from '../../Backend/master.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
 
@@ -37,9 +36,7 @@ const Supplier = () => {
 
     const { mutateAsync: deleteSupplier } = masterData.TQDeleteMaster([]);
 
-    const [search, setSearch] = useState('');
     const [debounceSearch, setDebounceSearch] = useState('');
-    const [isShow, setIsShow] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -71,21 +68,8 @@ const Supplier = () => {
         }
     };
 
-    const debounceFn = useCallback(
-        debounce((value) => {
-            setDebounceSearch(value);
-        }, 500),
-        []
-    );
-    const handelSearch = (value) => {
-        setSearch(value);
-        debounceFn(value);
-    }
-
     useEffect(() => {
         setCurrentPage(1);
-
-        return () => debounceFn.cancel();
     }, [debounceSearch])
 
 
@@ -111,7 +95,6 @@ const Supplier = () => {
                 </div>
                 <button
                     className="btn btn-primary"
-                    // onClick={() => setIsShow(true)}
                     onClick={() => navigate('add-supplier')}
                 >Create Supplier</button>
             </div>
@@ -123,8 +106,7 @@ const Supplier = () => {
                     type="text"
                     placeholder="Search by name or description..."
                     className="bg- border-pink-500"
-                    value={search}
-                    setValue={handelSearch}
+                    setValue={setDebounceSearch}
                 />
             </div>
 

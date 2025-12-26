@@ -73,12 +73,33 @@ class FetchData {
                 return res.data;
             },
             enabled: isEnabled,
-            onSuccess: (data) => {
-                console.log(data);
+        });
+    };
+    
+    TQAllBrandList(params = {}, isEnabled = true) {
+        // console.log("first", params, isEnabled)
+        return useQuery({
+            queryKey: ["brand-all-list", params.id],
+            queryFn: async () => {
+                const res = await API.get("/brand/all", {
+                    params
+                });
+                return res.data;
             },
-            onError: (error) => {
-                console.log("error", error);
-            }
+            // enabled: isEnabled,
+        });
+    };
+    
+    TQAllBrandList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["brand-all-list", params.id],
+            queryFn: async () => {
+                const res = await API.get("/hsn/all", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
         });
     };
 }

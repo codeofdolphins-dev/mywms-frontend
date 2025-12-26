@@ -2,9 +2,12 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Input from '../inputs/Input';
 import { Button } from '@mantine/core';
+import masterData from '../../Backend/master.backend';
 
 
-const CreateHSNForm = () => {
+const CreateHSNForm = ({ setIsShow }) => {
+
+    const { mutateAsync: createData, isPending } = masterData.TQCreateMaster()
 
     const {
         register,
@@ -13,11 +16,19 @@ const CreateHSNForm = () => {
         reset
     } = useForm();
 
-    const submit = (data) => {
-        console.log(data);
-        setTimeout(() => {
-            reset();
-        }, 3000);
+    const submit = async (data) => {
+        try {
+            
+            if (false) {
+            } else {
+                const res = await createData({ path: "/hsn/create", formData: data });
+                reset();
+                setIsShow(false);
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -55,7 +66,7 @@ const CreateHSNForm = () => {
 
 
                     <div className="flex">
-                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Create HSN</Button>
+                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={isPending} className='ml-auto'>Create HSN</Button>
                     </div>
                 </form>
             </div>

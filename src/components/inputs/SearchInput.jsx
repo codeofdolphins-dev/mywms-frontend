@@ -1,16 +1,33 @@
-import React, { useId } from 'react'
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useId, useState } from 'react'
 import { FaRegTimesCircle } from "react-icons/fa";
 
 const SearchInput = ({
     label = '',
     type = 'text',
     className = '',
-    value = '',
-    setValue = () => { },
+    setValue,
     ...rest
 }) => {
 
     const _id = useId();
+    const [search, setSearch] = useState('');
+
+    const deBounceFn = useCallback(
+        debounce((value) => {
+            setValue(value);
+        }, 500),
+        []
+    )
+
+    function handelSearch(value) {
+        setSearch(value);
+        deBounceFn(value);
+    }
+
+    useEffect(() => {
+        return() => deBounceFn.cancel();
+    },[])
 
     return (
         <div className='w-full'>
@@ -20,15 +37,15 @@ const SearchInput = ({
                     id={_id}
                     type={type}
                     className={`w-full focus:outline-none pe-3 text-base ${className}`}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
+                    value={search}
+                    onChange={(e) => handelSearch(e.target.value)}
                     {...rest}
                 />
                 {
-                    (value !== '') &&
+                    (search !== '') &&
                     <FaRegTimesCircle
                         className='cursor-pointer hover:text-danger hover:scale-105'
-                        onClick={() => setValue('')}
+                        onClick={() => handelSearch('')}
                     />
                 }
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
@@ -13,6 +13,7 @@ import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import CreateHSNForm from '../../components/HSN/CreateHSN.Form';
+import fetchData from '../../Backend/fetchData';
 
 
 const tableData = [
@@ -38,16 +39,37 @@ const tableData = [
     },
 ];
 
-const colName = ["Id", "Hsn Code", "Rate%", "Actions"];
-
+const colName = [
+    { key: "id", label: "ID" },
+    { key: "hsn_code", label: "HSN Code", },
+    { key: "rate", label: "Rate %" },
+    { key: "staus", label: "Status", render: v => v ? "Active" : "Inactive" }
+];
 
 const HSN = () => {
     const navigate = useNavigate();
 
-    const [search, setSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
+    const [debounceSearch, setDebounceSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [editId, setEditId] = useState(null);
 
     const { register } = useForm();
+
+    const params = {
+
+    }
+
+    const {} = fetchData
+
+
+    const handleEdit = (id) => { };
+    const handleDelete = (id) => { };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debounceSearch])
 
     return (
         <div>
@@ -75,31 +97,38 @@ const HSN = () => {
                 >Create HSN</button>
             </div>
 
-
             {/* Search and Add Button */}
             <div className="flex flex-col sm:flex-row gap-4 my-6">
                 <SearchInput
                     type="text"
                     placeholder="Search by name or description..."
                     className="bg- border-pink-500"
-                    value={search}
-                    setValue={setSearch}
+                    setValue={setDebounceSearch}
                 />
             </div>
 
             <ItemTable
-                colName={colName}
+                columns={colName}
                 items={tableData}
                 edit={true}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                // totalPage={data?.meta?.totalPages}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                isLoading={false}
             />
 
-            <AddModal 
+            <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Add New HSN"
                 maxWidth={'50'}
             >
-                <CreateHSNForm />
+                <CreateHSNForm
+                    setIsShow={setIsShow}
+                />
             </AddModal>
 
         </div >
