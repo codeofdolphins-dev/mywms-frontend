@@ -19,8 +19,8 @@ class AuthService {
 
             },
             onError: (error) => {
-                // console.log(error.response.data);
-                errorAlert(err.response.data || "something Wrong!!!");
+                console.log(error.response.data);
+                errorAlert(error.response.data?.message || "something Wrong!!!");
             },
         });
     };

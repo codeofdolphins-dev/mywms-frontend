@@ -81,7 +81,7 @@ const ItemTable = ({
                                                     );
                                                 })}
                                                 <td className="text-center">
-                                                    <ul className="flex items-center justify-center gap-2">
+                                                    <ul className="flex items-center gap-2">
                                                         {edit &&
                                                             <li>
                                                                 <Tippy content="Edit">

@@ -90,11 +90,11 @@ class FetchData {
         });
     };
     
-    TQAllBrandList(params = {}, isEnabled = true) {
+    TQAllHsnList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["brand-all-list", params.id],
+            queryKey: ["hsnList", params],
             queryFn: async () => {
-                const res = await API.get("/hsn/all", {
+                const res = await API.get("/hsn/all-list", {
                     params
                 });
                 return res.data;

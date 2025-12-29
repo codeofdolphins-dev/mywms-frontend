@@ -14,40 +14,21 @@ import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import CreateHSNForm from '../../components/HSN/CreateHSN.Form';
 import fetchData from '../../Backend/fetchData';
+import { confirmation, successAlert } from '../../utils/alerts';
+import masterData from '../../Backend/master.backend';
 
-
-const tableData = [
-    {
-        id: 1,
-        name: 'John Doe',
-        email: '18'
-    },
-    {
-        id: 2,
-        name: 'Shaun Park',
-        email: '20'
-    },
-    {
-        id: 3,
-        name: 'Alma Clarke',
-        email: '15'
-    },
-    {
-        id: 4,
-        name: 'Vincent Carpenter',
-        email: '18'
-    },
-];
 
 const colName = [
     { key: "id", label: "ID" },
     { key: "hsn_code", label: "HSN Code", },
     { key: "rate", label: "Rate %" },
-    { key: "staus", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "status", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
 
 const HSN = () => {
     const navigate = useNavigate();
+
+    const { mutateAsync: deleteData, isLoading } = masterData.TQDeleteMaster();
 
     const [isShow, setIsShow] = useState(false);
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -55,17 +36,40 @@ const HSN = () => {
     const [limit, setLimit] = useState(10);
     const [editId, setEditId] = useState(null);
 
-    const { register } = useForm();
-
     const params = {
+        ...(debounceSearch.includes('%')
+            ? { rate: debounceSearch.trim().slice(0, -1) }
+            : { search: debounceSearch }
+        ),
+        page: currentPage || null,
+        limit: limit || null
+    };
+    const { data, isLoading: deleteIsLoading } = fetchData.TQAllHsnList(params);
 
+
+    function handleEdit(id) {
+        setEditId(id);
+        setIsShow(true);
     }
 
-    const {} = fetchData
+    const handleDelete = async (id) => {
+        try {
 
+            const isConfirm = await confirmation();
+            if (isConfirm) {
+                const res = await deleteData({ path: `/hsn/delete/${id}` });
+                if (res.success) successAlert(res.message);
+            };
+        } catch (error) {
+            console.log(error);
+        };
+    };
 
-    const handleEdit = (id) => { };
-    const handleDelete = (id) => { };
+    useEffect(() => {
+        if (!isShow) {
+            setEditId(null);
+        }
+    }, [isShow]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -101,7 +105,7 @@ const HSN = () => {
             <div className="flex flex-col sm:flex-row gap-4 my-6">
                 <SearchInput
                     type="text"
-                    placeholder="Search by name or description..."
+                    placeholder="Search by HSN code or rate. use % for rates"
                     className="bg- border-pink-500"
                     setValue={setDebounceSearch}
                 />
@@ -109,12 +113,12 @@ const HSN = () => {
 
             <ItemTable
                 columns={colName}
-                items={tableData}
+                items={data?.data}
                 edit={true}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
                 setLimit={setLimit}
-                // totalPage={data?.meta?.totalPages}
+                totalPage={data?.meta?.totalPages}
                 handleEdit={handleEdit}
                 handleDelete={handleDelete}
                 isLoading={false}
@@ -128,6 +132,7 @@ const HSN = () => {
             >
                 <CreateHSNForm
                     setIsShow={setIsShow}
+                    editId={editId}
                 />
             </AddModal>
 
