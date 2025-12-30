@@ -75,21 +75,20 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-    
+
     TQAllBrandList(params = {}, isEnabled = true) {
-        // console.log("first", params, isEnabled)
         return useQuery({
-            queryKey: ["brand-all-list", params.id],
+            queryKey: ["brandList", params],
             queryFn: async () => {
                 const res = await API.get("/brand/all", {
                     params
                 });
                 return res.data;
             },
-            // enabled: isEnabled,
+            enabled: isEnabled
         });
     };
-    
+
     TQAllHsnList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["hsnList", params],
@@ -100,6 +99,26 @@ class FetchData {
                 return res.data;
             },
             enabled: isEnabled,
+        });
+    };
+
+    TQWarehouseTypes() {
+        return useQuery({
+            queryKey: ["warehouseTypes"],
+            queryFn: async () => {
+                const res = await API.get("/warehouse/types");
+                return res.data.data;
+            },
+        });
+    };
+    
+    TQWarehouseTypes() {
+        return useQuery({
+            queryKey: ["warehouseTypeList"],
+            queryFn: async () => {
+                const res = await API.get("/warehouse/types");
+                return res.data.data;
+            },
         });
     };
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from '../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../components/inputs/TextArea';
@@ -7,6 +7,11 @@ import FileUpload from '../../components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
+import fetchData from '../../Backend/fetchData';
+import SearchableSelect from '../../components/inputs/SearchableSelect';
+import masterData from '../../Backend/master.backend';
+import { RHFToFormData } from '../../utils/RHFtoFD';
+import CategoryTree from './CategoryTree';
 
 
 const gstType = [
@@ -14,28 +19,54 @@ const gstType = [
     { value: "exclude", label: "Hats" },
 ]
 
-const options = [
-    { value: 'orange', label: 'Orange' },
-    { value: 'white', label: 'White' },
-    { value: 'purple', label: 'Purple' },
+
+const packageType = [
+    { value: 'tetra pack', label: 'Tetra Pack' },
+    { value: 'plastic', label: 'Plastic' },
 ];
 
-const AddProduct = () => {
+const unitType = [
+    { value: 'box', label: 'Box' },
+    { value: 'kg', label: 'Kg' },
+    { value: 'ml', label: 'Ml' },
+    { value: 'piece', label: 'Piece' },
+    { value: 'bottol', label: 'Bottol' },
+];
+
+const AddProduct = ({ editId = null }) => {
     const navigate = useNavigate();
+
+    const { data: categoryData, isLoading: cateLoading } = fetchData.TQAllCategoryList();
+    const { data: brandData, isLoading: brandLoading } = fetchData.TQAllBrandList();
+    const { data: hsnData, isLoading: hsnLoading } = fetchData.TQAllHsnList();
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster();
 
     const {
         control,
         register,
         handleSubmit,
         formState: { errors },
-        reset
+        reset,
+        watch
     } = useForm();
 
-    const submit = (data) => {
+    const submit = async (data) => {
         console.log(data);
-        setTimeout(() => {
-            reset();
-        }, 3000);
+        // try {
+
+        //     if (editId) {
+
+        //     } else {
+        //         const fd = RHFToFormData(data)
+        //         const res = await createData({ path: "/product/create", formdata: fd });
+        //         console.log(res)
+        //     }
+
+        // } catch (error) {
+        //     console.log(error);
+        // }
     }
 
     const handelCancel = () => {
@@ -69,205 +100,32 @@ const AddProduct = () => {
                         <div className="text-3xl mb-5">
                             <h1>Add Product</h1>
                         </div>
+
                         <form onSubmit={handleSubmit(submit)} className="space-y-5">
+
                             {/* 2nd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Input
-                                        label={"Product Name"}
-                                        placeholder={"Enter product name..."}
-                                        {...register("productName", {
-                                            required: "This field is required!!!"
-                                        })}
-                                        error={errors.productName?.message}
-                                        required={true}
-                                    />
-                                </div>
-                                <div>
-                                    <Controller
-                                        name="category"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
 
-                                                label="Category"
-                                                options={options}
-                                                error={error?.message}
-                                                isMulti={true}
-                                                required={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                            </div>
+                                {/* left */}
+                                <div className="grid grid-cols-1 gap-2">
 
-                            {/* 3rd row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Controller
-                                        name="subCat"
-                                        control={control}
-                                        render={({ field: { value, onChange } }) => (
-                                            <RHSelect
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="Sub Category"
-                                                options={options}
-                                                isMulti={true}
-                                                disabled={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                                <div>
-                                    <Controller
-                                        name="brand"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="Brand"
-                                                options={options}
-                                                error={error?.message}
-                                                isMulti={true}
-                                                required={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* 4th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Controller
-                                        name="hsn"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="HSN Code"
-                                                options={options}
-                                                error={error?.message}
-                                                required={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                                <div>
-                                    <Input
-                                        label={"SKU"}
-                                        placeholder={"Enter SKU"}
-                                        {...register("sku", { required: "This field is required!!!" })}
-                                        error={errors.sku?.message}
-                                        required={true}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* 5th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Input
-                                        label={"Barcode"}
-                                        placeholder={"Enter Barcode"}
-                                        {...register("barcode", { required: "This field is required!!!" })}
-                                        error={errors.barcode?.message}
-                                        required={true}
-                                    />
-                                </div>
-                                <div>
-                                    <Controller
-                                        name="gstType"
-                                        control={control}
-                                        rules={{
-                                            required: "Please select a GST type!",
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHRadioGroup
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-                                                label="GST Type"
-                                                required={true}
-                                                options={[
-                                                    { label: "Include", value: "include" },
-                                                    { label: "Exclude", value: "exclude" },
-                                                ]}
-                                                error={error?.message}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* 6th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <div>
-                                        <Controller
-                                            name="packageType"
-                                            control={control}
-                                            render={({ field: { value, onChange } }) => (
-                                                <RHSelect
-                                                    label="Package Type"
-                                                    options={gstType}
-                                                    value={value}
-                                                    onChange={onChange}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Product Name */}
                                     <div>
                                         <Input
-                                            type={"number"}
-                                            label={"Measure"}
-                                            placeholder={"Enter Measure"}
-                                            {...register("measure", { required: "This field is required!!!" })}
-                                            error={errors.measure?.message}
+                                            label={"Product Name"}
+                                            placeholder={"Enter product name..."}
+                                            {...register("name", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.name?.message}
                                             required={true}
                                         />
                                     </div>
+
+                                    {/* hsn_code */}
                                     <div>
                                         <Controller
-                                            name="unit"
+                                            name="hsn_code"
                                             control={control}
                                             rules={{
                                                 required: "This field is required!!!"
@@ -282,10 +140,165 @@ const AddProduct = () => {
                                                     value={value}
                                                     onChange={onChange}
 
-                                                    label="Unit"
-                                                    options={options}
+                                                    label="HSN Code"
+                                                    selectKey='hsn_code'
+                                                    options={hsnData?.data}
                                                     error={error?.message}
                                                     required={true}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* sku */}
+                                    <div>
+                                        <Input
+                                            label={"SKU"}
+                                            placeholder={"Enter SKU"}
+                                            {...register("sku", { required: "This field is required!!!" })}
+                                            error={errors.sku?.message}
+                                            required={true}
+                                        />
+                                    </div>
+
+                                    {/* Barcode */}
+                                    <div>
+                                        <Input
+                                            label={"Barcode"}
+                                            placeholder={"Enter Barcode"}
+                                            {...register("barcode", { required: "This field is required!!!" })}
+                                            error={errors.barcode?.message}
+                                            required={true}
+                                        />
+                                    </div>
+
+                                    {/* gstType */}
+                                    <div>
+                                        <Controller
+                                            name="gstType"
+                                            control={control}
+                                            rules={{
+                                                required: "Please select a GST type!",
+                                            }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHRadioGroup
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    label="GST Type"
+                                                    required={true}
+                                                    options={[
+                                                        { label: "Include", value: "include" },
+                                                        { label: "Exclude", value: "exclude" },
+                                                    ]}
+                                                    error={error?.message}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                </div>
+
+                                {/* right */}
+                                <div className="grid grid-cols-1 gap-2">
+
+                                    {/* brand */}
+                                    <div className="">
+                                        <Controller
+                                            name="brand"
+                                            control={control}
+                                            rules={{
+                                                required: "This field is required!!!"
+                                            }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+
+                                                    label="Brand"
+                                                    options={brandData?.data}
+                                                    error={error?.message}
+                                                    isMulti={true}
+                                                    required={true}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* category */}
+                                    <div className="">
+                                        <Controller
+                                            name="category"
+                                            control={control}
+                                            rules={{
+                                                validate: (v) =>
+                                                    v?.length > 0 || "Please select at least one category",
+                                            }}
+                                            render={({ field, fieldState }) => (
+                                                <>
+                                                    <CategoryTree
+                                                        data={categoryData}
+                                                        value={field.value || []}
+                                                        onChange={field.onChange}
+                                                    />
+
+                                                    {fieldState.error && (
+                                                        <p className="text-red-500 text-xs mt-1">
+                                                            {fieldState.error.message}
+                                                        </p>
+                                                    )}
+                                                </>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* 6th row */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <div>
+                                        <Controller
+                                            name="package_type"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <SearchableSelect
+                                                    {...field}
+                                                    label='Package Type'
+                                                    options={packageType}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <Input
+                                            type={"number"}
+                                            label={"Measure"}
+                                            placeholder={"Enter Measure"}
+                                            {...register("measure")}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Controller
+                                            name="unitType"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <SearchableSelect
+                                                    {...field}
+                                                    label="Unit Type"
+                                                    options={unitType}
                                                 />
                                             )}
                                         />
@@ -296,28 +309,11 @@ const AddProduct = () => {
                             {/* 7th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <Controller
-                                        name="unitType"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="Unit Type"
-                                                options={options}
-                                                error={error?.message}
-                                                required={true}
-                                            />
-                                        )}
+                                    <Input
+                                        type={"number"}
+                                        label={"Unit"}
+                                        placeholder={"Enter unit"}
+                                        {...register("unit")}
                                     />
                                 </div>
                                 <div>
@@ -325,8 +321,8 @@ const AddProduct = () => {
                                         type={"number"}
                                         label={"Selling Price"}
                                         placeholder={"Enter Selling Price"}
-                                        {...register("sellPrice", { required: "This field is required!!!" })}
-                                        error={errors.sellPrice?.message}
+                                        {...register("selling_price", { required: "This field is required!!!" })}
+                                        error={errors.selling_price?.message}
                                         required={true}
                                     />
                                 </div>
@@ -339,8 +335,8 @@ const AddProduct = () => {
                                         type={"number"}
                                         label={"MRP"}
                                         placeholder={"₹ Enter MRP"}
-                                        {...register("mrp", { required: "This field is required!!!" })}
-                                        error={errors.mrp?.message}
+                                        {...register("MRP", { required: "This field is required!!!" })}
+                                        error={errors.MRP?.message}
                                         required={true}
                                     />
                                 </div>
@@ -349,9 +345,7 @@ const AddProduct = () => {
                                         type={"number"}
                                         label={"Reorder Level"}
                                         placeholder={"Enter Reorder Level"}
-                                        {...register("reorderLevel", { required: "This field is required!!!" })}
-                                        error={errors.reorderLevel?.message}
-                                        required={true}
+                                        {...register("reorder_level")}
                                     />
                                 </div>
                             </div>
@@ -363,13 +357,13 @@ const AddProduct = () => {
                                         label="Description"
                                         placeholder="Enter Description"
                                         className="text-sm"
-                                        {...register("desc")}
+                                        {...register("description")}
                                     />
                                 </div>
                                 {/* file upload */}
                                 <div className="grid grid-cols-1">
                                     <Controller
-                                        name="productImage"
+                                        name="image"
                                         control={control}
                                         defaultValue={null}
                                         render={({ field: { onChange } }) => (
@@ -383,7 +377,7 @@ const AddProduct = () => {
                             </div>
                             <div className="flex">
                                 <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
-                                
+
                                 <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Add Product</Button>
                             </div>
                         </form>

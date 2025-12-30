@@ -11,13 +11,13 @@ import { RHFToFormData } from '../../utils/RHFtoFD'
 import Loader from '../loader/Loader'
 
 
-const Form = ({ editId = null, setIsShow }) => {
-
-    const { data: editData, isLoading } = fetchData.TQAllBrandList({ id: editId }, !!editId);
+const Form = ({ editId = null, setIsShow = false }) => {
 
     const { data: supplierData, isLoading: supplierLoading } = fetchData.TQAllSupplierList({ noLimit: true });
-    const { mutateAsync: createData, isLoading: createLoading } = masterData.TQCreateMaster(["brand-all-list"]);
-    const { mutateAsync: updateData, isLoading: updateLoading } = masterData.TQUpdateMaster("brand-all-list");
+
+    const { data: editData, isLoading } = fetchData.TQAllBrandList({ id: editId }, !!editId);
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["brandList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["brandList"]);
 
     const {
         control,
@@ -29,24 +29,23 @@ const Form = ({ editId = null, setIsShow }) => {
     } = useForm();
 
     useEffect(() => {
-        if (editData?.data?.[0]) {
-            const data = editData?.data?.[0];
+        if (!editData) return;
 
-            reset({
-                name: data?.name,
-                suppliers: data?.suppliers?.map(item => item.id),
-                website: data?.website,
-                origin_country: data?.origin_country,
-                description: data?.description,
-            })
-        }
-    }, [editId]);
+        const data = editData?.data?.[0];
+        reset({
+            name: data?.name,
+            suppliers: data?.suppliers?.map(item => item.id),
+            website: data?.website,
+            origin_country: data?.origin_country,
+            description: data?.description,
+        })
+    }, [editData]);
 
     const submit = async (data) => {
         try {
-            const id = editId || null;
 
-            if (id) {
+            if (editId) {
+                data.id = editId;
                 const formData = RHFToFormData(data);
                 const res = await updateData({ path: "/brand/update", formData });
                 reset();
@@ -154,7 +153,9 @@ const Form = ({ editId = null, setIsShow }) => {
                         </div>
 
                         <div className="flex">
-                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Create Brand</Button>
+                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} className='ml-auto'>
+                                {editId ? "Update Brand" : "Create Brand"}
+                            </Button>
                         </div>
                     </form>
                 }

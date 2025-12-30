@@ -193,7 +193,7 @@ const NavBar = () => {
             </li>
 
             {/* production */}
-            <li className="menu nav-item relative !ml-0" >
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/production' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <BiSolidFactory />
@@ -210,7 +210,7 @@ const NavBar = () => {
                         </li>
                     ))}
                 </ul>
-            </li>
+            </li> */}
 
             {/* requisition */}
             <li className="menu nav-item relative !ml-0" >

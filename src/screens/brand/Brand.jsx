@@ -37,7 +37,7 @@ const Brand = () => {
     const [editId, setEditId] = useState(null);
 
     const params = {
-        text: debounceSearch || null,
+        ...(debounceSearch && { text: debounceSearch }),
         page: currentPage || null,
         limit: limit || null
     };
@@ -48,7 +48,7 @@ const Brand = () => {
     }, [debounceSearch]);
 
     useEffect(() => {
-        setEditId(null);
+        if(!isShow) setEditId(null);
     }, [isShow]);
 
 

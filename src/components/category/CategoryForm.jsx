@@ -46,7 +46,6 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
 
     const submitForm = async (formData) => {
         try {
-
             let res = null;
 
             if(!editId){

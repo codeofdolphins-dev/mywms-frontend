@@ -21,7 +21,7 @@ const Input = React.forwardRef(({
             {
                 label && <label
                     htmlFor={_id}
-                    className='inline-block mb-0 pl-1 text-sm text-gray-600'
+                    className='inline-block mb-1 pl-1 text-sm text-gray-600'
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
@@ -11,7 +11,9 @@ import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
-import RHSelect from '../../components/inputs/RHF/Select.RHF'
+import SearchableSelect from '../../components/inputs/SearchableSelect';
+import fetchData from '../../Backend/fetchData';
+import SelectRHF from '../../components/inputs/RHF/Select.RHF';
 
 
 const tableData = [
@@ -67,18 +69,32 @@ const tableData = [
 
 const colName = ["Id", "Email", "Name", "Number", "GST No.", "License No.", "Type", "Address", "Lat.", "Long.", "Actions"];
 
-const options = [
-    { value: 'orange', label: 'Orange' },
-    { value: 'white', label: 'White' },
-    { value: 'purple', label: 'Purple' },
-];
-
 const Warehouse = () => {
 
-    const [search, setSearch] = useState('');
-    const [isShow, setIsShow] = useState(false);
+    const [debounceSearch, setDebounceSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [options, setOptions] = useState([]);
+    const [type, setType] = useState();
 
-    const { register } = useForm();
+    const { data: warehouseTypes, isSuccess } = fetchData.TQWarehouseTypes();
+
+    useEffect(() => {
+        const optionsArr = warehouseTypes?.map(item => ({
+            value: item.warehouse_type,
+            label: item.warehouse_type,
+        }));
+        setOptions(optionsArr);
+        setType(optionsArr?.[0]?.value);
+
+    }, [isSuccess, warehouseTypes]);
+
+    
+
+    function handleEdit(id) { };
+    async function handleDelete(id) { };
+
+    // console.log(type)
 
     return (
         <div>
@@ -113,22 +129,31 @@ const Warehouse = () => {
                     <SearchInput
                         type="text"
                         placeholder="Search by name or description..."
-                        value={search}
-                        setValue={setSearch}
+                        setValue={setDebounceSearch}
                     />
                 </div>
                 <div>
-                    <RHSelect
+                    <SearchableSelect
                         placeholder='Sort by warehouse type...'
                         options={options}
+                        selectKey='warehouse_type'
+                        value={type}
+                        onChange={setType}
                     />
                 </div>
             </div>
 
             <ItemTable
-                colName={colName}
-                items={tableData}
+                columns={colName}
+                // items={data?.data}
                 edit={true}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                // totalPage={data?.meta?.totalPages}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                isLoading={false}
             />
 
         </div >
