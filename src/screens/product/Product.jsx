@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
@@ -12,119 +12,53 @@ import Input from '../../components/inputs/Input';
 import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
 import { FiPlus } from 'react-icons/fi';
+import fetchData from '../../Backend/fetchData';
 
-
-const tableData = [
-    {
-        Id: 1,
-        Product: "Sample Product 1",
-        Sku: "SKU001",
-        Category: "Category A",
-        "Hsn Code": "1001",
-        Price: 199,
-        Mrp: 249,
-        Type: "Physical",
-        Status: "Active",
-
-    },
-    {
-        Id: 2,
-        Product: "Sample Product 2",
-        Sku: "SKU002",
-        Category: "Category B",
-        "Hsn Code": "1002",
-        Price: 299,
-        Mrp: 349,
-        Type: "Digital",
-        Status: "Inactive",
-
-    },
-    {
-        Id: 3,
-        Product: "Sample Product 3",
-        Sku: "SKU003",
-        Category: "Category A",
-        "Hsn Code": "1003",
-        Price: 149,
-        Mrp: 199,
-        Type: "Physical",
-        Status: "Active",
-
-    },
-    {
-        Id: 4,
-        Product: "Sample Product 4",
-        Sku: "SKU004",
-        Category: "Category C",
-        "Hsn Code": "1004",
-        Price: 499,
-        Mrp: 599,
-        Type: "Digital",
-        Status: "Active",
-
-    },
-    {
-        Id: 5,
-        Product: "Sample Product 5",
-        Sku: "SKU005",
-        Category: "Category B",
-        "Hsn Code": "1005",
-        Price: 259,
-        Mrp: 299,
-        Type: "Physical",
-        Status: "Inactive",
-
-    },
-    {
-        Id: 6,
-        Product: "Sample Product 6",
-        Sku: "SKU006",
-        Category: "Category A",
-        "Hsn Code": "1006",
-        Price: 99,
-        Mrp: 149,
-        Type: "Digital",
-        Status: "Active",
-
-    },
-    {
-        Id: 7,
-        Product: "Sample Product 7",
-        Sku: "SKU007",
-        Category: "Category C",
-        "Hsn Code": "1007",
-        Price: 350,
-        Mrp: 400,
-        Type: "Physical",
-        Status: "Inactive",
-
-    },
-    {
-        Id: 8,
-        Product: "Sample Product 8",
-        Sku: "SKU008",
-        Category: "Category B",
-        "Hsn Code": "1008",
-        Price: 120,
-        Mrp: 180,
-        Type: "Digital",
-        Status: "Active",
-
-    }
+const colName = [
+    { key: "id", label: "ID" },
+    { key: "photo", label: "Logo", type: "image" },
+    { key: "name", label: "Name" },
+    { key: "barcode", label: "Barcode" },
+    { key: "sku", label: "SKU" },
+    { key: "package_type", label: "Package Type" },
+    { key: "selling_price", label: "Selling Price" },
+    { key: "MRP", label: "MRP" },
+    { key: "productBrands", label: "Brands", type: "array", arrayRender: (item) => item.name },
+    { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
+    { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
 
 const Product = () => {
 
     const navigate = useNavigate();
 
-    const [search, setSearch] = useState('');
+    const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
-    const [items, setItems] = useState(tableData);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [editId, setEditId] = useState(null);
 
-    const colName = ["Id", "Product", "Sku", "Category", "Hsn Code", "Price", "Mrp", "Type", "Status", "Actions"];
+    // const colName = ["Id", "Product", "Sku", "Category", "Hsn Code", "Price", "Mrp", "Type", "Status", "Actions"];
 
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const params = {
+        ...(debounceSearch && { text: debounceSearch }),
+        page: currentPage || null,
+        limit: limit || null
+    };
+    const { data: productList, isLoading } = fetchData.TQProductList();
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debounceSearch]);
+
+    useEffect(() => {
+        if (!isShow) setEditId(null);
+    }, [isShow]);
+
+    console.log(productList);
+
+    function handleEdit(id) { };
+    async function handleDelete(id) { };
 
     return (
         <div>
@@ -150,7 +84,7 @@ const Product = () => {
                     className='btn btn-primary'
                     onClick={() => navigate("add-product")}
                 >
-                    <FiPlus size={20} className='mr-2'/>
+                    <FiPlus size={20} className='mr-2' />
                     Add Product
                 </button>
             </div>
@@ -162,19 +96,24 @@ const Product = () => {
                     type="text"
                     placeholder="Search by name, SKU, barcode, category, or HSN..."
                     className="bg- border-pink-500"
-                    value={search}
-                    setValue={setSearch}
+                    setValue={setDebounceSearch}
                 />
             </div>
 
             {/* Item table */}
             <ItemTable
-                colName={colName}
-                items={items}
-                setItems={setItems}
-                upperCase={true}
+                columns={colName}
+                items={productList?.data}
                 edit={true}
-            />  
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+                totalPage={productList?.meta?.totalPages}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                isLoading={isLoading}
+            />
+
         </div >
     )
 }

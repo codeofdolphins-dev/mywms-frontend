@@ -15,13 +15,14 @@ const CategoryTree = ({ data, value, onChange }) => {
     }) {
         const hasChildren = node.subcategories?.length > 0;
         const isExpanded = expanded[node.id];
-        const checked = value.some((v) => v.id === node.id);
+        const checked = value.some((v) => v === node.id);
 
         const toggleCheck = () => {
             if (checked) {
-                onChange(value.filter((v) => v.id !== node.id));
+                onChange(value.filter((v) => v !== node.id));
             } else {
-                onChange([...value, { id: node.id, name: node.name }]);
+                // onChange([...value, { id: node.id, name: node.name }]);
+                onChange([...value, node.id ]);
             }
         };
 

@@ -60,23 +60,61 @@ const ItemTable = ({
                                                     const value = col.key === "id" ? i + 1 : getValue(row, col.key);
 
                                                     return (
+                                                        // <td key={j}>
+                                                        //     {col.render
+                                                        //         ? (
+                                                        //             col.render(value, row)
+                                                        //         ) : col.type === "image"
+                                                        //             ? (
+                                                        //                 value ? (
+                                                        //                     <img
+                                                        //                         src={`${imageUrl}/${value}`}
+                                                        //                         alt="logo"
+                                                        //                         className="h-16 w-16 object-contain"
+                                                        //                     />
+                                                        //                 ) : "-"
+                                                        //             ) : (
+                                                        //                 value ?? "-"
+                                                        //             )
+                                                        //     }
+                                                        // </td>
+
                                                         <td key={j}>
-                                                            {col.render
-                                                                ? (
-                                                                    col.render(value, row)
-                                                                ) : col.type === "image"
-                                                                    ? (
-                                                                        value ? (
-                                                                            <img
-                                                                                src={`${imageUrl}/${value}`}
-                                                                                alt="logo"
-                                                                                className="h-16 w-16 object-contain"
-                                                                            />
-                                                                        ) : "-"
-                                                                    ) : (
-                                                                        value ?? "-"
-                                                                    )
-                                                            }
+                                                            {col.render ? (
+                                                                col.render(value, row)
+
+                                                            ) : col.type === "image" ? (
+                                                                value ? (
+                                                                    <img
+                                                                        src={`${imageUrl}/${value}`}
+                                                                        alt="img"
+                                                                        className="h-16 w-16 object-contain"
+                                                                    />
+                                                                ) : "-"
+
+                                                            ) : col.type === "array" && Array.isArray(value) ? (
+                                                                value.length > 0 ? (
+                                                                    <Tippy
+                                                                        interactive
+                                                                        placement="right"
+                                                                        content={
+                                                                            <div className="max-w-xs p-3">
+                                                                                {renderTwoLevelArray(value, col.arrayRender)}
+                                                                            </div>
+                                                                        }
+                                                                    >
+                                                                        <button
+                                                                            type="button"
+                                                                            className="text-primary font-semibold underline"
+                                                                        >
+                                                                            View ({value.length})
+                                                                        </button>
+                                                                    </Tippy>
+                                                                ) : "-"
+
+                                                            ) : (
+                                                                value ?? "-"
+                                                            )}
                                                         </td>
                                                     );
                                                 })}
@@ -126,3 +164,30 @@ const ItemTable = ({
 }
 
 export default ItemTable;
+
+const renderTwoLevelArray = (items, renderItem) => {
+    return (
+        <div className="space-y-2">
+            {items.map((item, idx) => (
+                <div key={idx}>
+                    {/* Parent category */}
+                    <p className="font-semibold">
+                        {renderItem(item)}
+                    </p>
+
+                    {/* Sub categories */}
+                    {Array.isArray(item.subcategories) && item.subcategories.length > 0 && (
+                        <ul className="ml-4 mt-1 list-disc text-sm">
+                            {item.subcategories.map((sub, subIdx) => (
+                                <li key={subIdx}>
+                                    {renderItem(sub)}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+;

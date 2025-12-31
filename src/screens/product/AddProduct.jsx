@@ -12,6 +12,7 @@ import SearchableSelect from '../../components/inputs/SearchableSelect';
 import masterData from '../../Backend/master.backend';
 import { RHFToFormData } from '../../utils/RHFtoFD';
 import CategoryTree from './CategoryTree';
+import { successAlert } from '../../utils/alerts';
 
 
 const gstType = [
@@ -53,20 +54,22 @@ const AddProduct = ({ editId = null }) => {
     } = useForm();
 
     const submit = async (data) => {
-        console.log(data);
-        // try {
+        // console.log(data);
+        try {
 
-        //     if (editId) {
+            if (editId) {
 
-        //     } else {
-        //         const fd = RHFToFormData(data)
-        //         const res = await createData({ path: "/product/create", formdata: fd });
-        //         console.log(res)
-        //     }
+            } else {
+                const fd = RHFToFormData(data);
+                const res = await createData({ path: "/product/create-raw", formData: fd });
+                if(res.success) successAlert(res.message);
+                reset();
+                navigate(-1);
+            }
 
-        // } catch (error) {
-        //     console.log(error);
-        // }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const handelCancel = () => {
@@ -209,7 +212,7 @@ const AddProduct = ({ editId = null }) => {
                                     {/* brand */}
                                     <div className="">
                                         <Controller
-                                            name="brand"
+                                            name="brands"
                                             control={control}
                                             rules={{
                                                 required: "This field is required!!!"
@@ -237,7 +240,7 @@ const AddProduct = ({ editId = null }) => {
                                     {/* category */}
                                     <div className="">
                                         <Controller
-                                            name="category"
+                                            name="categories"
                                             control={control}
                                             rules={{
                                                 validate: (v) =>

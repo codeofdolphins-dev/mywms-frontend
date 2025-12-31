@@ -121,6 +121,18 @@ class FetchData {
             },
         });
     };
+
+    TQProductList(params = {}) {
+        return useQuery({
+            queryKey: ["productList"],
+            queryFn: async () => {
+                const res = await API.get("/product/list", {
+                    params
+                });
+                return res.data;
+            },
+        });
+    };
 }
 
 const fetchData = new FetchData;
