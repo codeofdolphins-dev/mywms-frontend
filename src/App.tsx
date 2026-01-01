@@ -52,6 +52,7 @@ function App() {
                         <Route path="hsncodes" element={<HSN />} />
                         <Route path="products" element={<Product />} />
                         <Route path="products/add-product" element={<AddProduct />} />
+                        <Route path="products/edit-product/:id" element={<AddProduct />} />
                     </Route>
 
                     {/* access */}

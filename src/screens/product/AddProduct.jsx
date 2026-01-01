@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from '../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../components/inputs/TextArea';
 import Input from '../../components/inputs/Input';
 import FileUpload from '../../components/inputs/File';
 import { Button } from '@mantine/core';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
 import fetchData from '../../Backend/fetchData';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
@@ -13,6 +13,7 @@ import masterData from '../../Backend/master.backend';
 import { RHFToFormData } from '../../utils/RHFtoFD';
 import CategoryTree from './CategoryTree';
 import { successAlert } from '../../utils/alerts';
+import FullScreenLoader from '../../components/loader/FullScreenLoader';
 
 
 const gstType = [
@@ -34,15 +35,19 @@ const unitType = [
     { value: 'bottol', label: 'Bottol' },
 ];
 
-const AddProduct = ({ editId = null }) => {
+const AddProduct = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
 
     const { data: categoryData, isLoading: cateLoading } = fetchData.TQAllCategoryList();
     const { data: brandData, isLoading: brandLoading } = fetchData.TQAllBrandList();
     const { data: hsnData, isLoading: hsnLoading } = fetchData.TQAllHsnList();
 
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster();
+    const param = id ? { id } : {};
+    const { data: product, isLoading } = fetchData.TQProductList(param, Boolean(id));
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["productList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["productList"]);
 
     const {
         control,
@@ -53,16 +58,43 @@ const AddProduct = ({ editId = null }) => {
         watch
     } = useForm();
 
+    useEffect(() => {
+
+        if(!id) return;
+
+        if (product?.data?.[0]) {
+            const data = product?.data?.[0];
+            console.log(data);
+            reset({
+                ...data,
+                brands: data?.productBrands?.map(item => item.id),
+                categories: data?.productCategories?.map(item => item.id),
+                hsn_code: data?.hsn?.id,
+                gstType: data?.gst_type,
+                unitType: data
+            })
+        } else {
+            reset();
+        }
+
+    }, [id, product, isLoading])
+
+
     const submit = async (data) => {
-        // console.log(data);
+        // console.log(data); return
         try {
 
-            if (editId) {
+            if (id) {
+                const fd = RHFToFormData(data);
+                const res = await updateData({ path: "/product/create-raw", formData: fd });
+                if (res.success) successAlert(res.message);
+                reset();
+                navigate(-1);
 
             } else {
                 const fd = RHFToFormData(data);
                 const res = await createData({ path: "/product/create-raw", formData: fd });
-                if(res.success) successAlert(res.message);
+                if (res.success) successAlert(res.message);
                 reset();
                 navigate(-1);
             }
@@ -76,6 +108,8 @@ const AddProduct = ({ editId = null }) => {
         reset();
         navigate(-1);
     }
+
+    if (isLoading) return <FullScreenLoader />;
 
     return (
         <div>
@@ -381,7 +415,9 @@ const AddProduct = ({ editId = null }) => {
                             <div className="flex">
                                 <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
 
-                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>Add Product</Button>
+                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} className='ml-auto'>
+                                    {id ? "Update Product" : "Add Product"}
+                                </Button>
                             </div>
                         </form>
                     </div>

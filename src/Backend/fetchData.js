@@ -111,7 +111,7 @@ class FetchData {
             },
         });
     };
-    
+
     TQWarehouseTypes() {
         return useQuery({
             queryKey: ["warehouseTypeList"],
@@ -122,7 +122,7 @@ class FetchData {
         });
     };
 
-    TQProductList(params = {}) {
+    TQProductList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["productList"],
             queryFn: async () => {
@@ -131,6 +131,7 @@ class FetchData {
                 });
                 return res.data;
             },
+            enabled: isEnabled
         });
     };
 }

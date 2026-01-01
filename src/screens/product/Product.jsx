@@ -13,6 +13,8 @@ import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
 import { FiPlus } from 'react-icons/fi';
 import fetchData from '../../Backend/fetchData';
+import { confirmation, successAlert } from '../../utils/alerts';
+import masterData from '../../Backend/master.backend';
 
 const colName = [
     { key: "id", label: "ID" },
@@ -38,7 +40,7 @@ const Product = () => {
     const [limit, setLimit] = useState(10);
     const [editId, setEditId] = useState(null);
 
-    // const colName = ["Id", "Product", "Sku", "Category", "Hsn Code", "Price", "Mrp", "Type", "Status", "Actions"];
+    const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster();
 
     const params = {
         ...(debounceSearch && { text: debounceSearch }),
@@ -55,10 +57,25 @@ const Product = () => {
         if (!isShow) setEditId(null);
     }, [isShow]);
 
-    console.log(productList);
 
-    function handleEdit(id) { };
-    async function handleDelete(id) { };
+    function handleEdit(id) {
+        navigate(`edit-product/${id}`)
+    };
+
+    async function handleDelete(id) {
+        console.log(id)
+        try {
+            const isConfirm = await confirmation();
+
+            if (isConfirm) {
+                const res = await deleteData({ path: `/product/delete/${id}` });
+                if (res?.success) successAlert();
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
 
     return (
         <div>
