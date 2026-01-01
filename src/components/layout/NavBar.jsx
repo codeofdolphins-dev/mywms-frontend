@@ -149,6 +149,7 @@ const NavBar = () => {
                         <IconCaretDown />
                     </div>
                 </button>
+                {/* role */}
                 <ul className="sub-menu">
                     <li className="relative">
                         <button type="button" className={`nav-link ${location.pathname.includes('/access/role') ? 'active' : ''} !cursor-default`}>
@@ -169,6 +170,7 @@ const NavBar = () => {
                             </li>
                         </ul>
                     </li>
+                    {/* permission */}
                     <li className="relative">
                         <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
                             <span className="px-1 text-black">Permission</span>
@@ -180,12 +182,12 @@ const NavBar = () => {
                             <li>
                                 <NavLink to="/access/permission">All Permission</NavLink>
                             </li>
-                            <li>
+                            {/* <li>
                                 <NavLink to="/access/permission/create">Create Permission</NavLink>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                                 <NavLink to="/access/permission/assign">Assign Permission</NavLink>
-                            </li>
+                            </li> */}
 
                         </ul>
                     </li>

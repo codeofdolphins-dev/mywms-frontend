@@ -86,21 +86,24 @@ const Header = () => {
         setNotifications(notifications.filter((user) => user.id !== value));
     };
 
-    const { mutate: logout , isLoading } = authService.TQLogout();
+    const { mutateAsync: logout, isLoading } = authService.TQLogout();
 
 
-    const handelLogout = () => {
+    const handelLogout = async () => {
         console.log("logout");
 
-        logout(undefined, {
-            onSuccess: () => {
+        try {
+            const res = await logout();
+            if (res.success) {
                 dispatch(storeLogout());
                 navigate("/auth/login");
             }
-        });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    if(isLoading) return <FullScreenLoader />;
+    if (isLoading) return <FullScreenLoader />;
 
     return (
         <header className="z-40 horizontal">

@@ -12,6 +12,7 @@ const ItemTable = ({
     items = [],
     columns = [],
     edit = false,
+    deleteBtn = true,
     handleEdit, handleDelete,
     currentPage, setCurrentPage,
     totalPage, setLimit,
@@ -41,7 +42,9 @@ const ItemTable = ({
                                         <p className='font-bold text-gray-600'>{col.label}</p>
                                     </th>
                                 )}
-                                <th className="px-3 py-2 font-bold text-gray-600">Action</th>
+                                {
+                                    (edit || deleteBtn) && <th className="px-3 py-2 font-bold text-gray-600">Action</th>
+                                }
                             </tr>
                         </thead>
 
@@ -58,27 +61,9 @@ const ItemTable = ({
                                             <tr key={i}>
                                                 {columns.map((col, j) => {
                                                     const value = col.key === "id" ? i + 1 : getValue(row, col.key);
+                                                    // const value = getValue(row, col.key);
 
                                                     return (
-                                                        // <td key={j}>
-                                                        //     {col.render
-                                                        //         ? (
-                                                        //             col.render(value, row)
-                                                        //         ) : col.type === "image"
-                                                        //             ? (
-                                                        //                 value ? (
-                                                        //                     <img
-                                                        //                         src={`${imageUrl}/${value}`}
-                                                        //                         alt="logo"
-                                                        //                         className="h-16 w-16 object-contain"
-                                                        //                     />
-                                                        //                 ) : "-"
-                                                        //             ) : (
-                                                        //                 value ?? "-"
-                                                        //             )
-                                                        //     }
-                                                        // </td>
-
                                                         <td key={j}>
                                                             {col.render ? (
                                                                 col.render(value, row)
@@ -118,32 +103,35 @@ const ItemTable = ({
                                                         </td>
                                                     );
                                                 })}
-                                                <td className="text-center">
-                                                    <ul className="flex items-center gap-2">
-                                                        {edit &&
+                                                {
+                                                    (edit || deleteBtn) &&
+                                                    <td className="text-center">
+                                                        <ul className="flex items-center gap-2">
+                                                            {edit &&
+                                                                <li>
+                                                                    <Tippy content="Edit">
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => handleEdit(row?.id)}
+                                                                        >
+                                                                            <IconPencil className="text-success" />
+                                                                        </button>
+                                                                    </Tippy>
+                                                                </li>
+                                                            }
                                                             <li>
-                                                                <Tippy content="Edit">
+                                                                <Tippy content="Delete">
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => handleEdit(row?.id)}
+                                                                        onClick={() => handleDelete(row?.id)}
                                                                     >
-                                                                        <IconPencil className="text-success" />
+                                                                        <IconTrashLines className="text-danger" />
                                                                     </button>
                                                                 </Tippy>
                                                             </li>
-                                                        }
-                                                        <li>
-                                                            <Tippy content="Delete">
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => handleDelete(row?.id)}
-                                                                >
-                                                                    <IconTrashLines className="text-danger" />
-                                                                </button>
-                                                            </Tippy>
-                                                        </li>
-                                                    </ul>
-                                                </td>
+                                                        </ul>
+                                                    </td>
+                                                }
                                             </tr>
                                         );
                                     })}

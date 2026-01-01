@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
 import authService from '../Backend/Auth.backend';
 import { storeLogin } from '../store/AuthSlice';
@@ -11,6 +11,7 @@ const AuthBootstrap = ({ children }) => {
     const isLogin = useSelector(state => state.auth.status);
     const token = secureLocalStorage.getItem("token");
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { isError, isSuccess, data, isLoading } = authService.TQCurrentUser(!!token);
 

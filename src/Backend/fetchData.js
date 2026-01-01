@@ -124,9 +124,22 @@ class FetchData {
 
     TQProductList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["productList"],
+            queryKey: ["productList", params],
             queryFn: async () => {
                 const res = await API.get("/product/list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled
+        });
+    };
+    
+    TQPermissionList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["permissionList", params],
+            queryFn: async () => {
+                const res = await API.get("/permission/all-permission", {
                     params
                 });
                 return res.data;

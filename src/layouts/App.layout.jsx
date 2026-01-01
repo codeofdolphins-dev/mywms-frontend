@@ -36,7 +36,7 @@ const AppLayout = () => {
         }
 
         return () => {
-            window.removeEventListener('onscroll', onScrollHandler);
+            window.removeEventListener('scroll', onScrollHandler);
         };
     }, []);
 

@@ -36,7 +36,7 @@ class AuthService {
                 secureLocalStorage.clear();
             },
             onError: (err) => {
-                errorAlert(err.response.data || "something Wrong!!!");``
+                errorAlert(err.response.data?.message || "something Wrong while logging out!!!");``
             }
         })
     };

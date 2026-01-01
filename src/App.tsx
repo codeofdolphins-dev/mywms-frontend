@@ -20,6 +20,9 @@ import CreateInward from './screens/inward/CreateInward';
 import Requisition from './screens/requisition/Requisition';
 import AppLayout from './layouts/App.layout';
 import AuthLayout from './layouts/Auth.layout';
+import Permission from './screens/access/Permission';
+import AuthBootstrap from './layouts/AuthBootstrap';
+import Role from './screens/access/Role';
 
 function App() {
 
@@ -57,10 +60,10 @@ function App() {
 
                     {/* access */}
                     <Route path="access" >
-                        <Route path="role" element={<Master />} />
+                        <Route path="role" element={<Role />} />
                         <Route path="role/create" element={<Master />} />
                         <Route path="role/assign" element={<Master />} />
-                        <Route path="permission" element={<Master />} />
+                        <Route path="permission" element={<Permission />} />
                         <Route path="permission/create" element={<Master />} />
                         <Route path="permission/assign" element={<Master />} />
                     </Route>
