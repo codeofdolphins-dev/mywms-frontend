@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import ButtonBasic from '../../components/inputs/ButtonBasic'
+import ButtonBoolean from '../../components/inputs/ButtonBoolean'
 import SearchInput from '../../components/inputs/SearchInput'
 import ItemTable from '../../components/ItemTable'
 import fetchData from '../../Backend/fetchData'
@@ -40,11 +40,11 @@ const Permission = () => {
                     <h1 className="text-5xl font-bold my-3">Permissions</h1>
                     <p className='text-gray-600 text-base'>Manage and view all Permissions</p>
                 </div>
-                <ButtonBasic
+                <ButtonBoolean
                 // setState={setIsShow}
                 >
                     Add Permissions
-                </ButtonBasic>
+                </ButtonBoolean>
             </div>
 
 

@@ -9,7 +9,7 @@ import IconCode from '../../components/Icon/IconCode';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
-import ButtonBasic from '../../components/inputs/ButtonBasic';
+import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import { FaPlus } from "react-icons/fa6";
 import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
@@ -81,11 +81,11 @@ const Category = () => {
                     <h1 className="text-5xl font-bold my-3">Categories</h1>
                     <p className='text-gray-600 text-base'>Manage and view all categories</p>
                 </div>
-                <ButtonBasic
+                <ButtonBoolean
                     setState={setIsShow}
                 >
                     Add Categories
-                </ButtonBasic>
+                </ButtonBoolean>
             </div>
 
 

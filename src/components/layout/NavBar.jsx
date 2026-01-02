@@ -142,7 +142,9 @@ const NavBar = () => {
             <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname.includes('/access') ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
-                        <MdAdminPanelSettings />
+                        <MdAdminPanelSettings
+                            size={120}
+                        />
                         <span className="px-1 whitespace-nowrap">Manage Access</span>
                     </div>
                     <div className="right_arrow">
@@ -162,12 +164,6 @@ const NavBar = () => {
                             <li>
                                 <NavLink to="/access/role">All Roles</NavLink>
                             </li>
-                            <li>
-                                <NavLink to="/access/role/create">Create Roles</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/access/role/assign">Assign Roles</NavLink>
-                            </li>
                         </ul>
                     </li>
                     {/* permission */}
@@ -182,12 +178,6 @@ const NavBar = () => {
                             <li>
                                 <NavLink to="/access/permission">All Permission</NavLink>
                             </li>
-                            {/* <li>
-                                <NavLink to="/access/permission/create">Create Permission</NavLink>
-                            </li> */}
-                            {/* <li>
-                                <NavLink to="/access/permission/assign">Assign Permission</NavLink>
-                            </li> */}
 
                         </ul>
                     </li>
@@ -231,7 +221,7 @@ const NavBar = () => {
                             <NavLink
                                 to={item.path}
                                 end={item.path}
-                                className={({ isActive }) => isActive ? "active" : "" }
+                                className={({ isActive }) => isActive ? "active" : ""}
                             >
                                 {item.name}
                             </NavLink>
@@ -242,7 +232,7 @@ const NavBar = () => {
 
             {/* Quotation */}
             <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/quotation' ? 'active' : ''} `}>
+                <button type="button" className={`nav-link ${location.pathname.includes('/quotation') ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
                         <FaQuoteLeft />
                         <span className="px-1">Quotation</span>
@@ -254,7 +244,13 @@ const NavBar = () => {
                 <ul className="sub-menu">
                     {quotationSubMenu.map((item) => (
                         <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
+                            <NavLink
+                                to={item.path}
+                                end={item.path}
+                                className={({ isActive }) => isActive ? "active" : ""}
+                            >
+                                {item.name}
+                            </NavLink>
                         </li>
                     ))}
                 </ul>
@@ -262,9 +258,12 @@ const NavBar = () => {
 
             {/* Purchase Order */}
             <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/purchase-order' ? 'active' : ''} `}>
+                <button type="button" className={`nav-link ${location.pathname.includes('/purchase-order') ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
-                        <MdOutlineReceiptLong />
+                        <MdOutlineReceiptLong
+                            // style={{ fontSize: "1500px" }}
+                            className='text-[500px]'
+                        />
                         <span className="px-1">Purchase Order</span>
                     </div>
                     <div className="right_arrow">
@@ -274,7 +273,13 @@ const NavBar = () => {
                 <ul className="sub-menu">
                     {pOrderSubMenu.map((item) => (
                         <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
+                            <NavLink
+                                to={item.path}
+                                end={item.path}
+                                className={({ isActive }) => isActive ? "active" : ""}
+                            >
+                                {item.name}
+                            </NavLink>
                         </li>
                     ))}
                 </ul>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { FiPlus } from "react-icons/fi";
 
-const ButtonBasic = ({
+const ButtonBoolean = ({
   children,
   setState,
 }) => {
@@ -15,4 +15,4 @@ const ButtonBasic = ({
   )
 }
 
-export default ButtonBasic;
+export default ButtonBoolean;

@@ -1,7 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import ItemTable from '../../components/ItemTable';
+import RHSelect from "../../components/inputs/RHF/Select.RHF";
+import { Button } from '@mantine/core';
+import Input from '../../components/inputs/Input';
+import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
+import { Link } from 'react-router-dom';
 
 
 const tableData = [
@@ -46,12 +51,13 @@ const options = [
 
 const CreateRequisition = () => {
 
-    const [itemCount, setItemCount] = useState(0);
+    const [itemCount, setItemCount] = useState(1);
 
-    const [supplier, setSupplier] = useState('');
+    const [supplier, setSupplier] = useState('1');
     const [warehouse, setWarehouse] = useState('');
     const [items, setItems] = useState(tableData || []);
-    const colName = ["Id", "GSTIN No.", "Brand", "Product", "Pack Size", "Req Qty.", "Actions"];
+
+    const { handleSubmit, control, register, formState: { errors } } = useForm();
 
 
     const addItem = () => {
@@ -63,73 +69,214 @@ const CreateRequisition = () => {
     };
 
     return (
-        <div className="panel" id="forms_grid">
-            <div className="flex items-center justify-between mb-8">
-                <h5 className="font-bold text-2xl">Create Requisition</h5>
+        <div>
+            {/* breadcrumb */}
+            <ul className=" flex space-x-2 ">
+                <li className="">
+                    <Link to="/requisition" className="text-primary hover:underline">
+                        requisition
+                    </Link>
+                </li>
+                <li className="before:content-['/'] before:mr-2 ">
+                    <span>create requisition</span>
+                </li>
+            </ul>
+
+            {/* Header Section */}
+            <div className="flex justify-between items-center mt-3">
+                <div>
+                    <h1 className="text-4xl font-bold my-3">Create Requisition</h1>
+                </div>
             </div>
-            <div className="mb-5">
-                <form className="space-y-5">
 
-                    {/* first row */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className='flex items-center gap-5'>
-                            <label htmlFor="supplier" className='text-lg flex'>Supplier <span className='text-danger'>*</span></label>
-                            <SearchableSelect
-                                setValue={setSupplier}
-                                options={options}
-                            />
-                        </div>
-                        <div className='flex items-center gap-5'>
-                            <label htmlFor="gridPassword" className='text-lg flex'>Warehouse <span className='text-danger'>*</span></label>
-                            <SearchableSelect
-                                setValue={setWarehouse}
-                            />
-                        </div>
-                    </div>
+            <div className="panel mt-3" id="forms_grid">
+                <div className="mb-5">
+                    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
 
-                    {/* second row */}
-                    {supplier &&
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        {/* first row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="gstno">GSTIN no.</label>
-                                <input id="gstno" type="number" placeholder="Enter GSTIN no." className="form-input" />
-                            </div>
-                            <div>
-                                <label htmlFor="brand">Brand</label>
-                                <SearchableSelect />
-                            </div>
-                            <div>
-                                <label htmlFor="product">Product</label>
-                                <SearchableSelect />
-                            </div>
-                            <div>
-                                <label htmlFor="packSize">Pack Size</label>
-                                <input id="packSize" type="text" placeholder="Enter Pack Size" className="form-input" />
-                            </div>
-                            <div>
-                                <label htmlFor="reqQty">Req Qty.</label>
-                                <input id="reqQty" type="text" placeholder="Enter Req Qty." className="form-input" />
-                            </div>
-                            <button
-                                type="button"
-                                className="btn btn-primary !mt-6"
-                                onClick={addItem}
-                            >
-                                Add Item
-                            </button>
-                        </div>
-                    }
+                                <Controller
+                                    name="hsn_code"
+                                    control={control}
+                                    rules={{
+                                        required: "This field is required!!!"
+                                    }}
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                        <RHSelect
+                                            ref={(el) => {
+                                                ref({
+                                                    focus: () => el?.focus(),
+                                                });
+                                            }}
+                                            value={value}
+                                            onChange={onChange}
 
-                    {itemCount > 0 &&
-                        <div className='!mt-10'>
-                            <ItemTable
-                                items={items}
-                                setItems={setItems}
-                                colName={colName}
-                            />
-                            <button type="button" className="btn btn-primary mt-5 ml-auto">Submit Requisition</button>
-                        </div>}
-                </form>
+                                            label="Warehouse"
+                                            selectKey='hsn_code'
+                                            // options={hsnData?.data}
+                                            error={error?.message}
+                                            required={true}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <Controller
+                                    name="hsn_code"
+                                    control={control}
+                                    rules={{
+                                        required: "This field is required!!!"
+                                    }}
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                        <RHSelect
+                                            ref={(el) => {
+                                                ref({
+                                                    focus: () => el?.focus(),
+                                                });
+                                            }}
+                                            value={value}
+                                            onChange={onChange}
+
+                                            label="Supplier"
+                                            selectKey='hsn_code'
+                                            // options={hsnData?.data}
+                                            error={error?.message}
+                                            required={true}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        </div>
+
+                        {/* second row */}
+                        {supplier &&
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                                <div>
+                                    <Input
+                                        type="number"
+                                        label="GST No."
+                                        placeholder="Enter GST number"
+                                        {...register("gst", {
+                                            required: {
+                                                message: "GST no required",
+                                                value: true
+                                            }
+                                        })}
+                                        error={errors.gst?.message}
+                                        required={true}
+                                    />
+                                </div>
+
+                                {/* brand */}
+                                <div>
+                                    <Controller
+                                        name="brand"
+                                        control={control}
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+
+                                                label="Brand"
+                                                selectKey='hsn_code'
+                                                // options={hsnData?.data}
+                                                error={error?.message}
+                                                required={true}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* product */}
+                                <div>
+                                    <Controller
+                                        name="hsn_code"
+                                        control={control}
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+
+                                                label="Product"
+                                                selectKey='hsn_code'
+                                                // options={hsnData?.data}
+                                                error={error?.message}
+                                                required={true}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Pack Size */}
+                                <div>
+                                    <Input
+                                        label="Pack Size"
+                                        placeholder="Enter pack size"
+                                        {...register("packSize", {
+                                            required: {
+                                                message: "pack size required",
+                                                value: true
+                                            }
+                                        })}
+                                        error={errors.packSize?.message}
+                                        required={true}
+                                    />
+                                </div>
+
+                                {/* Req Qty */}
+                                <div>
+                                    <Input
+                                        label="Req Qty."
+                                        placeholder="Enter Qty"
+                                        {...register("ReqQty", {
+                                            required: {
+                                                message: "QTY required",
+                                                value: true
+                                            }
+                                        })}
+                                        error={errors.ReqQty?.message}
+                                        required={true}
+                                    />
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    className="btn btn-primary !mt-6"
+                                    onClick={addItem}
+                                >
+                                    Add Item
+                                </Button>
+                            </div>
+                        }
+
+                        {itemCount > 0 &&
+                            <div className='!mt-10'>
+                                <ItemTable
+                                    columns={REQUISITION_CREATE_COLUMN}
+                                    items={items}
+                                    isLoading={false}
+                                />
+                                <button type="button" className="btn btn-primary mt-5 ml-auto">Submit Requisition</button>
+                            </div>}
+                    </form>
+                </div>
             </div>
         </div>
     )

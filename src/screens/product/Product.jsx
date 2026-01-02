@@ -9,7 +9,6 @@ import IconCode from '../../components/Icon/IconCode';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
-import ButtonBasic from '../../components/inputs/ButtonBasic';
 import ItemTable from '../../components/ItemTable';
 import { FiPlus } from 'react-icons/fi';
 import fetchData from '../../Backend/fetchData';

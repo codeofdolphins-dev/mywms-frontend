@@ -9,7 +9,7 @@ import IconCode from '../../components/Icon/IconCode';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
-import ButtonBasic from '../../components/inputs/ButtonBasic';
+import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import Form from '../../components/brand/Form';
@@ -89,11 +89,11 @@ const Brand = () => {
                     <h1 className="text-5xl font-bold my-3">Brands</h1>
                     <p className='text-gray-600 text-base'>Manage and view all brands</p>
                 </div>
-                <ButtonBasic
+                <ButtonBoolean
                     setState={setIsShow}
                 >
                     Add Brand
-                </ButtonBasic>
+                </ButtonBoolean>
             </div>
 
 

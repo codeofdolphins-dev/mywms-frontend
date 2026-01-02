@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import fetchData from '../../Backend/fetchData';
-import ButtonBasic from '../../components/inputs/ButtonBasic';
+import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import SearchInput from '../../components/inputs/SearchInput';
 import ItemTable from '../../components/ItemTable';
 import TableHeader from '../../components/table/TableHeader';
@@ -10,6 +10,7 @@ import BasicPagination from '../../components/BasicPagination';
 import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
 import RoleForm from '../../components/access/RoleForm';
+import { useNavigate } from 'react-router-dom';
 
 
 const rawProducts = [
@@ -43,6 +44,7 @@ const rawProducts = [
 
 
 const Role = () => {
+    const navigate = useNavigate()
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -77,11 +79,11 @@ const Role = () => {
                     <h1 className="text-5xl font-bold my-3">Role</h1>
                     <p className='text-gray-600 text-base'>Manage and view all Permissions</p>
                 </div>
-                <ButtonBasic
-                setState={setIsShow}
+                <ButtonBoolean
+                    setState={setIsShow}
                 >
                     Add Role
-                </ButtonBasic>
+                </ButtonBoolean>
             </div>
 
 
@@ -113,7 +115,10 @@ const Role = () => {
                                 category: item.category_name,
                                 price: `₹${item.price}`,
                                 action: (
-                                    <button className="text-sm btn btn-primary">
+                                    <button
+                                        className="text-sm btn btn-primary"
+                                        onClick={ () => navigate(`assign/${item?.id}`) }
+                                    >
                                         Assign Permission
                                     </button>
                                 ),

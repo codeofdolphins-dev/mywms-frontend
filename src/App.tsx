@@ -23,6 +23,10 @@ import AuthLayout from './layouts/Auth.layout';
 import Permission from './screens/access/Permission';
 import AuthBootstrap from './layouts/AuthBootstrap';
 import Role from './screens/access/Role';
+import AssignRole from './screens/access/AssignRole';
+import Quotation from './screens/quotation/Quotation';
+import CreateQuotation from './screens/quotation/CreateQuotation';
+import ReceiveQuotation from './screens/requisition/ReceiveQuotation';
 
 function App() {
 
@@ -62,15 +66,26 @@ function App() {
                     <Route path="access" >
                         <Route path="role" element={<Role />} />
                         <Route path="role/create" element={<Master />} />
-                        <Route path="role/assign" element={<Master />} />
+                        <Route path="role/assign/:id" element={<AssignRole />} />
                         <Route path="permission" element={<Permission />} />
                         <Route path="permission/create" element={<Master />} />
-                        <Route path="permission/assign" element={<Master />} />
                     </Route>
 
+                    
                     {/* requisition */}
-                    <Route path="requisition" element={<Requisition />} />
-                    <Route path="requisition/create" element={<CreateRequisition />} />
+                    <Route path="requisition" >
+                        <Route index element={<Requisition />} />
+                        <Route path="create" element={<CreateRequisition />} />
+                        <Route path="receive-quotation/:id" element={<ReceiveQuotation />} />
+                    </Route>
+                    
+                    
+                    {/* requisition */}
+                    <Route path="quotation" >
+                        <Route index element={<Quotation />} />
+                        <Route path="create" element={<CreateQuotation />} />
+                    </Route>
+
 
                     {/* supplier */}
                     <Route path="supplier" >

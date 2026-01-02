@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { usePagination } from '@mantine/hooks';
 import { Pagination } from "@mantine/core";
-import SearchableSelect from './inputs/SearchableSelect';
 
 
 const limitOption = [10, 20, 50];

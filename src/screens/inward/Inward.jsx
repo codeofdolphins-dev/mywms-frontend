@@ -9,7 +9,7 @@ import IconCode from '../../components/Icon/IconCode';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
-import ButtonBasic from '../../components/inputs/ButtonBasic';
+import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import Form from '../../components/brand/Form';
@@ -70,12 +70,12 @@ const Inward = () => {
           <h1 className="text-5xl font-bold my-3">Inward</h1>
           <p className='text-gray-600 text-base'>Manage and view all inwards</p>
         </div>
-        <ButtonBasic
+        <ButtonBoolean
           setState={setIsShow}
         >
           <FiPlus size={20} className='mr-2'/>
           Add New Inward
-        </ButtonBasic>
+        </ButtonBoolean>
       </div>
 
 

@@ -3,7 +3,6 @@ import { useState, Fragment } from 'react';
 import IconX from './Icon/IconX';
 import { Button } from '@mantine/core';
 import { useForm } from "react-hook-form"
-import Input from './inputs/Input';
 import TextArea from './inputs/TextArea';
 
 const AddModal = ({

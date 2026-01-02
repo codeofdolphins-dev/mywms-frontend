@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 // import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
-import SearchableSelect from '../../components/inputs/SearchableSelect';
 import IconEye from '../../components/Icon/IconEye';
 import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 import AuthService from '../../Backend/Auth.backend';
@@ -64,12 +63,6 @@ const Login = () => {
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
                             </div>
                             <form className="space-y-5" onSubmit={submitForm}>
-                                {/* <SearchableSelect
-                                    label="User Type"
-                                    options={options}
-                                    value={userType}
-                                    setValue={setUserType}
-                                /> */}
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
