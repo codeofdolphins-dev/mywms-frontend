@@ -102,7 +102,6 @@ const Brand = () => {
                 <SearchInput
                     type="text"
                     placeholder="Search by brand name..."
-                    className="bg- border-pink-500"
                     setValue={setDebounceSearch}
                 />
             </div>

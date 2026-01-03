@@ -186,15 +186,6 @@ const Category = () => {
                                                                 {/* checkboxes */}
                                                                 <div className="table-responsive mb-5">
                                                                     <table>
-                                                                        {/* <thead>
-                                                                            <tr>
-                                                                                <th>Name</th>
-                                                                                <th>Desc</th>
-                                                                                <th>Status</th>
-                                                                                <th>CreatedAt</th>
-                                                                                <th className="!text-center">Action</th>
-                                                                            </tr>
-                                                                        </thead> */}
                                                                         <tbody>
                                                                             {item?.subcategories?.map((data) => {
                                                                                 return (

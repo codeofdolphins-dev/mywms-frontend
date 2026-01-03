@@ -1,7 +1,8 @@
 const TableHeader = ({
     columns = [],
     sticky = true,
-    className = ""
+    className = "",
+    onClick = () => {}
 }) => {
     const gridTemplate = columns.map(col => col.width || "1fr").join(" ");
 
@@ -9,6 +10,7 @@ const TableHeader = ({
         <div
             className={`grid bg-gray-50 border-b text-sm font-semibold text-gray-700 ${sticky ? "sticky top-0 z-10" : ""} ${className}`}
             style={{ gridTemplateColumns: gridTemplate }}
+            onClick={onClick}
         >
             {columns.map((col) => (
                 <div

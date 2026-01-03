@@ -36,7 +36,7 @@ const SearchInput = ({
                 <input
                     id={_id}
                     type={type}
-                    className={`w-full focus:outline-none pe-3 text-base ${className}`}
+                    className={`w-full focus:outline-none pe-3 text-sm ${className}`}
                     value={search}
                     onChange={(e) => handelSearch(e.target.value)}
                     {...rest}

@@ -53,6 +53,7 @@ const outwardSubMenu = [
 const quotationSubMenu = [
     { name: 'Browse', path: '/quotation' },
     { name: 'Create', path: '/quotation/create' },
+    { name: 'Receive Requisition', path: '/quotation/receive' },
 ];
 const pOrderSubMenu = [
     { name: 'Browse', path: '/purchase-order' },
@@ -66,6 +67,7 @@ const NavBar = () => {
 
     return (
         <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
+
             {/* dashboard */}
             <li
                 className="menu nav-item relative"
@@ -264,7 +266,7 @@ const NavBar = () => {
                             // style={{ fontSize: "1500px" }}
                             className='text-[500px]'
                         />
-                        <span className="px-1">Purchase Order</span>
+                        <span className="px-1 whitespace-nowrap">Purchase Order</span>
                     </div>
                     <div className="right_arrow">
                         <IconCaretDown />

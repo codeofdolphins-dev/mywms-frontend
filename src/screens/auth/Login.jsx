@@ -9,8 +9,6 @@ import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 import AuthService from '../../Backend/Auth.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 
-
-
 const options = [
     { value: 'orange', label: 'Orange' },
     { value: 'white', label: 'White' },

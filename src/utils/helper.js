@@ -1,7 +1,7 @@
 export const PERMISSION_COL = [
     { key: "id", label: "SL" },
     { key: "permission", label: "Name" },
-]
+];
 export const ROLE_COL = [
     {
         key: "id",
@@ -27,6 +27,7 @@ export const ROLE_COL = [
         align: "center"
     },
 ];
+
 export const REQUISITION_CREATE_COLUMN = [
     { key: "id", label: "#" },
     { key: "permission", label: "GSTIN No." },
@@ -35,7 +36,6 @@ export const REQUISITION_CREATE_COLUMN = [
     { key: "permission", label: "Pack Size" },
     { key: "permission", label: "Req Qty." },
 ];
-
 export const REQUISITION_COLUMN = [
     {
         key: "id",
@@ -78,19 +78,38 @@ export const REQUISITION_COLUMN = [
         // width: "120px",
         align: "center"
     },
-]
-
-// {
-//     id: "5",
-//         qno: "QT-FUEL-778",
-//             supplier: {
-//         id: 1,
-//             name: "Prepare invoice",
-//         },
-//     status: "pending",
-//         notes: "New stock arrival from supplier",
-//             total: 7800
-// }
+];
+export const REQUISITION_ITEMS_COLUMN = [
+    {
+        key: "id",
+        label: "#",
+        // width: "0.5fr",
+        // align: "center"
+    },
+    {
+        key: "barcode",
+        label: "Barcode",
+        // width: "2fr"
+    },
+    {
+        key: "productName",
+        label: "Product Name",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "price",
+        label: "Price",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "qty",
+        label: "QTY",
+        // width: "120px",
+        // align: "center"
+    },
+];
 
 export const QUOTATION_COLUMN = [
     {
@@ -133,5 +152,133 @@ export const QUOTATION_COLUMN = [
         label: "Action",
         // width: "120px",
         align: "center"
+    },
+];
+export const QUOTATION_RECEIVE_COLUMN = [
+    {
+        key: "id",
+        label: "#",
+        // width: "0.5fr",
+        // align: "center"
+    },
+    {
+        key: "barcode",
+        label: "Barcode",
+        // width: "2fr"
+    },
+    {
+        key: "productName",
+        label: "Product Name",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "price",
+        label: "Price",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "qty",
+        label: "QTY",
+        // width: "120px",
+        // align: "center"
+    },
+];
+export const REQUISITION_RECEIVE_COLUMN = [
+    {
+        key: "id",
+        label: "#",
+        // width: "0.5fr",
+        // align: "center"
+    },
+    {
+        key: "title",
+        label: "Title",
+        // width: "2fr"
+    },
+    {
+        key: "sender",
+        label: "Sender",
+        // width: "2fr"
+    },
+    {
+        key: "priority",
+        label: "Priority",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "total",
+        label: "Total",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "itemsCount",
+        label: "Total Items",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "action",
+        label: "Action",
+        // width: "120px",
+        // align: "center"
+    },
+]
+
+export const PURCHASE_ORDER = [
+    {
+        key: "id",
+        label: "#",
+        // width: "0.5fr",
+        // align: "center"
+    },
+    {
+        key: "pr_id",
+        label: "PR id",
+        // width: "2fr"
+    },
+    {
+        key: "status",
+        label: "Status",
+        // width: "2fr"
+    },
+    {
+        key: "priority",
+        label: "Priority",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "expected_delivery_date",
+        label: "Expected Delivary Date",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "note",
+        label: "Note",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "created_by",
+        label: "Created By",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "total_amount",
+        label: "Total Amount",
+        // width: "120px",
+        // align: "center"
+    },
+    {
+        key: "action",
+        label: "Action",
+        // width: "120px",
+        // align: "center"
     },
 ]

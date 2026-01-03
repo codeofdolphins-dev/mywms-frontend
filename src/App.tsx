@@ -27,6 +27,8 @@ import AssignRole from './screens/access/AssignRole';
 import Quotation from './screens/quotation/Quotation';
 import CreateQuotation from './screens/quotation/CreateQuotation';
 import ReceiveQuotation from './screens/requisition/ReceiveQuotation';
+import ReceiveRequision from './screens/quotation/ReceiveRequision';
+import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
 
 function App() {
 
@@ -84,6 +86,14 @@ function App() {
                     <Route path="quotation" >
                         <Route index element={<Quotation />} />
                         <Route path="create" element={<CreateQuotation />} />
+                        <Route path="receive" element={<ReceiveRequision />} />
+                    </Route>
+                    
+                    {/* purchase order */}
+                    <Route path="purchase-order" >
+                        <Route index element={<PurchaseOrder />} />
+                        <Route path="create" element={<CreateQuotation />} />
+                        <Route path="receive" element={<ReceiveRequision />} />
                     </Route>
 
 

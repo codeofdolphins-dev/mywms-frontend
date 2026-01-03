@@ -12,28 +12,11 @@ const AddModal = ({
     maxWidth = "75",
     children
 }) => {
-
-    const {
-        reset
-    } = useForm();
-
-    const submitForm = (data) => {
-        setIsSubmit(true);
-
-        setTimeout(() => {
-            setIsSubmit(false);
-            setIsShow(false);
-            reset();
-        }, 1000);
-    }
-
-
     return (
         <div>
             <Transition appear show={isShow} as={Fragment}>
                 <Dialog as="div" open={isShow} onClose={() => {
                     setIsShow(false);
-                    reset();
                 }}>
                     <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
                         <div className="flex min-h-screen items-center justify-center px-4">
@@ -49,13 +32,12 @@ const AddModal = ({
                                 <DialogPanel
                                     as="div"
                                     style={{ maxWidth: `${maxWidth}%` }}
-                                    className={`panel my-8 w-full h-full overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark`}
+                                    className={`panel my-8 w-full h-full overflow-hidden rounded-lg border-0 p-0 text-black`}
                                 >
-                                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+                                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 relative z-10 shadow-lg">
                                         <h5 className="text-lg font-bold">{title}</h5>
                                         <button type="button" className="text-white-dark hover:text-dark" onClick={() => {
                                             setIsShow(false);
-                                            reset();
                                         }}>
                                             <IconX />
                                         </button>
