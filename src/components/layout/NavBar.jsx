@@ -12,12 +12,22 @@ import { LuWarehouse } from "react-icons/lu";
 import { RiAdminFill } from "react-icons/ri";
 import { MdAdminPanelSettings, MdOutlineReceiptLong } from 'react-icons/md';
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
+import { hasRole } from '../../utils/roles';
+import { useSelector } from 'react-redux';
+import {
+    Dashboard,
+    Master,
+    Admin,
+    ManageAccess,
+    Requisition,
+    Quotation,
+    PurchaseOrder,
+    Inward,
+    Outward
+} from '../menu';
 
 
-const requisitionSubMenu = [
-    { name: 'Browse', path: '/requisition' },
-    { name: 'Create', path: '/requisition/create' },
-];
+
 const supplierSubMenu = [
     { name: 'Browse', path: '/supplier' },
     { name: 'Create', path: '/supplier/create' },
@@ -42,68 +52,25 @@ const distributorSubMenu = [
     { name: 'Browse', path: '/distributor' },
     { name: 'Create', path: '/distributor/create' },
 ];
-const inwardSubMenu = [
-    { name: 'Browse', path: '/inward' },
-    { name: 'Create', path: '/inward/create' },
-];
-const outwardSubMenu = [
-    { name: 'Browse', path: '/outward' },
-    { name: 'Create', path: '/outward/create' },
-];
-const quotationSubMenu = [
-    { name: 'Browse', path: '/quotation' },
-    { name: 'Create', path: '/quotation/create' },
-    { name: 'Receive Requisition', path: '/quotation/receive' },
-];
-const pOrderSubMenu = [
-    { name: 'Browse', path: '/purchase-order' },
-    { name: 'Create', path: '/purchase-order/create' },
-];
+
 
 const NavBar = () => {
-
     const navigate = useNavigate();
     const location = useLocation();
+    const roles = useSelector(state => state?.auth?.userData?.roles);
+    const userRoles = roles?.map(r => r.role);
 
     return (
         <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
 
             {/* dashboard */}
-            <li
-                className="menu nav-item relative"
-                onClick={() => navigate("/")}
-            >
-                <button type="button" className={`nav-link ${location.pathname === '/' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <IconMenuDashboard className="shrink-0" />
-                        <span className="px-1">{'dashboard'}</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    <li>
-                        <NavLink to="/">{'sales'}</NavLink>
-                    </li>
-                </ul>
-            </li>
+            {hasRole(["system", "owner"], userRoles) && <Dashboard location={location} />}
 
             {/* master */}
-            <li
-                className="menu nav-item relative !ml-0"
-                onClick={() => navigate("/master")}
-            >
-                <button type="button" className={`nav-link ${location.pathname === '/master' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <HiDatabase />
-                        <span className="px-1">Master</span>
-                    </div>
-                </button>
-            </li>
+            {hasRole(["system", "owner"], userRoles) && <Master location={location} />}
 
             {/* admin */}
-            <li className="menu nav-item relative !ml-0" >
+            {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname.includes('/admin') ? 'active' : ''} !cursor-default`}>
                     <div className="flex items-center">
                         <RiAdminFill />
@@ -117,7 +84,7 @@ const NavBar = () => {
                     <li className="relative">
                         <NavLink to="/admin/business-flow">Business Flow</NavLink>
                     </li>
-                    {/* <li className="relative">
+                    <li className="relative">
                         <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
                             <span className="px-1 text-black">Permission</span>
                             <div className="ml-auto -rotate-90">
@@ -136,55 +103,14 @@ const NavBar = () => {
                             </li>
 
                         </ul>
-                    </li> */}
+                    </li>
                 </ul>
-            </li>
+            </li> */}
+            {hasRole(["system", "owner"], userRoles) && <Admin location={location} />}
 
             {/* manage access */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname.includes('/access') ? 'active' : ''} !cursor-default`}>
-                    <div className="flex items-center">
-                        <MdAdminPanelSettings
-                            size={120}
-                        />
-                        <span className="px-1 whitespace-nowrap">Manage Access</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                {/* role */}
-                <ul className="sub-menu">
-                    <li className="relative">
-                        <button type="button" className={`nav-link ${location.pathname.includes('/access/role') ? 'active' : ''} !cursor-default`}>
-                            <span className="px-1 text-black">Role</span>
-                            <div className="ml-auto -rotate-90">
-                                <IconCaretDown className='text-black' />
-                            </div>
-                        </button>
-                        <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                            <li>
-                                <NavLink to="/access/role">All Roles</NavLink>
-                            </li>
-                        </ul>
-                    </li>
-                    {/* permission */}
-                    <li className="relative">
-                        <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
-                            <span className="px-1 text-black">Permission</span>
-                            <div className="ml-auto -rotate-90">
-                                <IconCaretDown className='text-black' />
-                            </div>
-                        </button>
-                        <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                            <li>
-                                <NavLink to="/access/permission">All Permission</NavLink>
-                            </li>
+            {hasRole(["system", "owner"], userRoles) && <ManageAccess location={location} />}
 
-                        </ul>
-                    </li>
-                </ul>
-            </li>
 
             {/* production */}
             {/* <li className="menu nav-item relative !ml-0" >
@@ -207,125 +133,20 @@ const NavBar = () => {
             </li> */}
 
             {/* requisition */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname.includes("/requisition") ? 'active' : ''} !cursor-default`}>
-                    <div className="flex items-center">
-                        <FaClipboardList />
-                        <span className="px-1">Requisition</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {requisitionSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink
-                                to={item.path}
-                                end={item.path}
-                                className={({ isActive }) => isActive ? "active" : ""}
-                            >
-                                {item.name}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
+            {hasRole(["system"], userRoles) && <Requisition location={location} />}
 
             {/* Quotation */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname.includes('/quotation') ? 'active' : ''} !cursor-default`}>
-                    <div className="flex items-center">
-                        <FaQuoteLeft />
-                        <span className="px-1">Quotation</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {quotationSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink
-                                to={item.path}
-                                end={item.path}
-                                className={({ isActive }) => isActive ? "active" : ""}
-                            >
-                                {item.name}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
+            {hasRole(["system"], userRoles) && <Quotation location={location} />}
 
             {/* Purchase Order */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname.includes('/purchase-order') ? 'active' : ''} !cursor-default`}>
-                    <div className="flex items-center">
-                        <MdOutlineReceiptLong
-                            // style={{ fontSize: "1500px" }}
-                            className='text-[500px]'
-                        />
-                        <span className="px-1 whitespace-nowrap">Purchase Order</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {pOrderSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink
-                                to={item.path}
-                                end={item.path}
-                                className={({ isActive }) => isActive ? "active" : ""}
-                            >
-                                {item.name}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
+            {hasRole(["system"], userRoles) && <PurchaseOrder location={location} />}
 
             {/* Inward */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <BsBoxArrowInDown />
-                        <span className="px-1">Inward</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {inwardSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
-
+            {hasRole(["system"], userRoles) && <Inward location={location} />}
+            
             {/* outward */}
-            <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <BsBoxArrowUp />
-                        <span className="px-1">Outward</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {outwardSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li>
+            {hasRole(["system"], userRoles) && <Outward location={location} />}
+            
 
             {/* supplier */}
             {/* <li className="menu nav-item relative !ml-0" >
