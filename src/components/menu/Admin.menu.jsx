@@ -38,6 +38,9 @@ const Admin = ({ location }) => {
                         </li>
                     </ul>
                 </li>
+                <li className="relative">
+                    <NavLink to="/admin/business/node-create">Create Business Node</NavLink>
+                </li>
             </ul>
         </li>
     );
