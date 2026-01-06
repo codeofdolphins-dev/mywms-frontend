@@ -11,7 +11,8 @@ function RHSelect({
     placeholder = "Select...",
     disabled = false,
     required = false,
-    error = ''
+    error = '',
+    objectReturn = false
 }, ref) {
 
     const selectRef = React.useRef(null);
@@ -24,9 +25,16 @@ function RHSelect({
 
     const getValue = () => {
         if (!value) return isMulti ? [] : null;
-        return isMulti
-            ? options.filter((opt) => value.includes(opt.id))
-            : options.find((opt) => opt.id === value) || null;
+
+        if (isMulti) {
+            return options.filter((opt) => value.includes(opt.id))
+        } else {
+            if(objectReturn){
+                return options.find((opt) => opt.id === value.id) || null;
+            }else{
+                return options.find((opt) => opt.id === value) || null;
+            }
+        }
     };
 
     return (
@@ -46,9 +54,17 @@ function RHSelect({
                 onChange={(selected) => {
                     if (disabled) return; // prevent interaction when disabled
                     if (isMulti) {
-                        onChange(selected ? selected.map((opt) => opt.id) : []);
+                        if (objectReturn) {
+                            onChange(selected || []);
+                        } else {
+                            onChange(selected ? selected.map((opt) => opt.id) : []);
+                        }
                     } else {
-                        onChange(selected ? selected.id : null);
+                        if (objectReturn) {
+                            onChange(selected || []);
+                        } else {
+                            onChange(selected ? selected.id : null);
+                        }
                     }
                 }}
                 options={options}

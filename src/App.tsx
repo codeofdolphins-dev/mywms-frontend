@@ -29,6 +29,7 @@ import CreateQuotation from './screens/quotation/CreateQuotation';
 import ReceiveQuotation from './screens/requisition/ReceiveQuotation';
 import ReceiveRequision from './screens/quotation/ReceiveRequision';
 import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
+import RegisterNode from './screens/admin/RegisterNode';
 
 function App() {
 
@@ -45,9 +46,10 @@ function App() {
                 <Route path="/" element={<AppLayout />}>
                     <Route index element={<Dashboard />} />
 
-                    {/* master */}
+                    {/* admin */}
                     <Route path="admin" >
                         <Route path="business-flow" element={<Rules />} />
+                        <Route path="business/node-register" element={<RegisterNode />} />
                     </Route>
 
                     {/* master */}

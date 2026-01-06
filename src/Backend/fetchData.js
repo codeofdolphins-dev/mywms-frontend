@@ -147,6 +147,17 @@ class FetchData {
             enabled: isEnabled
         });
     };
+
+    TQTenantBusinessNodeList() {
+        return useQuery({
+            queryKey: ["tenantBusinessNodeList"],
+            queryFn: async () => {
+                const res = await API.get("/business/node-list");
+                return res.data;
+            },
+            gcTime: Infinity,
+        });
+    };
 }
 
 const fetchData = new FetchData;

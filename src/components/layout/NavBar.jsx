@@ -64,10 +64,10 @@ const NavBar = () => {
         <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
 
             {/* dashboard */}
-            {hasRole(["system", "owner"], userRoles) && <Dashboard location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Dashboard location={location} />}
 
             {/* master */}
-            {hasRole(["system", "owner"], userRoles) && <Master location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Master location={location} />}
 
             {/* admin */}
             {/* <li className="menu nav-item relative !ml-0" >
@@ -106,10 +106,10 @@ const NavBar = () => {
                     </li>
                 </ul>
             </li> */}
-            {hasRole(["system", "owner"], userRoles) && <Admin location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Admin location={location} />}
 
             {/* manage access */}
-            {hasRole(["system", "owner"], userRoles) && <ManageAccess location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
 
 
             {/* production */}
@@ -133,19 +133,19 @@ const NavBar = () => {
             </li> */}
 
             {/* requisition */}
-            {hasRole(["system"], userRoles) && <Requisition location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Requisition location={location} />}
 
             {/* Quotation */}
-            {hasRole(["system"], userRoles) && <Quotation location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Quotation location={location} />}
 
             {/* Purchase Order */}
-            {hasRole(["system"], userRoles) && <PurchaseOrder location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <PurchaseOrder location={location} />}
 
             {/* Inward */}
-            {hasRole(["system"], userRoles) && <Inward location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Inward location={location} />}
             
             {/* outward */}
-            {hasRole(["system"], userRoles) && <Outward location={location} />}
+            {hasRole(["system", "owner", "company"], userRoles) && <Outward location={location} />}
             
 
             {/* supplier */}

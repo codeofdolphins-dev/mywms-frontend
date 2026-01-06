@@ -23,6 +23,9 @@ const Admin = ({ location }) => {
                     <NavLink to="/admin/business-flow">Business Flow</NavLink>
                 </li>
                 <li className="relative">
+                    <NavLink to="/admin/business/node-register">Register</NavLink>
+                </li>
+                <li className="relative">
                     <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
                         <span className="px-1 text-black">Create</span>
                         <div className="ml-auto -rotate-90">
@@ -38,9 +41,7 @@ const Admin = ({ location }) => {
                         </li>
                     </ul>
                 </li>
-                <li className="relative">
-                    <NavLink to="/admin/business/node-create">Create Business Node</NavLink>
-                </li>
+
             </ul>
         </li>
     );
