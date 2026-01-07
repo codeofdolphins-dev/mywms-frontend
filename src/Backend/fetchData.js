@@ -24,7 +24,7 @@ class FetchData {
 
     TQStateList() {
         return useQuery({
-            queryKey: ["state-list"],
+            queryKey: ["stateList"],
             queryFn: async () => {
                 const res = await API.get("/location/state");
                 return res.data;
@@ -43,7 +43,7 @@ class FetchData {
 
     TQDistrictList(s_id) {
         return useQuery({
-            queryKey: ["district-list", s_id],
+            queryKey: ["districtList", s_id],
             queryFn: async () => {
                 const res = await API.get("/location/district", {
                     params: {

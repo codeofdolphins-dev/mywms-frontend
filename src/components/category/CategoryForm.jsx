@@ -21,14 +21,12 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
         handleSubmit,
         formState: { errors },
         control,
-        reset,
-        
+        reset        
     } = useForm({
         defaultValues: {
             name: "",
             description: "",
             parent_id: null
-
         }
     });
 
@@ -74,6 +72,15 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
                 <form className="p-5" onSubmit={handleSubmit(submitForm)}>
                     <div className="flex flex-col gap-3">
 
+                        <Input
+                            type={"text"}
+                            label={"Category"}
+                            placeholder={"Enter category"}
+                            {...register("name", { required: "This field is required!!!" })}
+                            error={errors.name?.message}
+                            required={true}
+                        />
+
                         <Controller
                             name="parent_id"
                             control={control}
@@ -88,20 +95,6 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
                             )}
                         />
 
-                        <Input
-                            type={"text"}
-                            label={"Category"}
-                            placeholder={"Enter category"}
-                            {...register("name", { required: "This field is required!!!" })}
-                            error={errors.name?.message}
-                            required={true}
-                        />
-                        {/* <Input
-                            type={"text"}
-                            label={"Sub Category"}
-                            placeholder={"Enter Sub-Category (optional)"}
-                            {...register("subCategory")}
-                        /> */}
                         <TextArea
                             label={"Description"}
                             placeholder="Enter desc (optional)"

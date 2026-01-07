@@ -16,6 +16,7 @@ import IconLogout from '../Icon/IconLogout';
 import { storeLogout } from '../../store/AuthSlice';
 import authService from '../../Backend/Auth.backend';
 import FullScreenLoader from '../loader/FullScreenLoader';
+import { destoryLocation } from '../../store/LocationSlice';
 
 
 const Header = () => {
@@ -96,6 +97,7 @@ const Header = () => {
             const res = await logout();
             if (res.success) {
                 dispatch(storeLogout());
+                dispatch(destoryLocation());
                 navigate("/auth/login");
             }
         } catch (error) {

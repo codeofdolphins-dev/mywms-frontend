@@ -32,15 +32,12 @@ const Login = () => {
     };
 
     useEffect(() => {
-
         if (isSuccess) {
             navigate("/");
         }
-
     }, [isSuccess]);
 
-    if(isPending) return <FullScreenLoader />;
-
+    if (isPending) return <FullScreenLoader />;
 
     return (
         <div>
@@ -93,7 +90,7 @@ const Login = () => {
                                     Log in
                                 </button>
                             </form>
-                            <div className="text-center mt-3 dark:text-white">
+                            <div className="text-center mt-3">
                                 Don't have an account ?&nbsp;
                                 <Link to="/auth/register" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
                                     Register

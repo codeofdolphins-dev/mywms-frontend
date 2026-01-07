@@ -5,6 +5,8 @@ import secureLocalStorage from 'react-secure-storage';
 import authService from '../Backend/Auth.backend';
 import { storeLogin } from '../store/AuthSlice';
 import FullScreenLoader from '../components/loader/FullScreenLoader';
+import fetchData from '../Backend/fetchData';
+import { storeLocation } from '../store/LocationSlice';
 
 const AuthBootstrap = ({ children }) => {
 
@@ -14,12 +16,14 @@ const AuthBootstrap = ({ children }) => {
     const navigate = useNavigate();
 
     const { isError, isSuccess, data, isLoading } = authService.TQCurrentUser(!!token);
+    const { isSuccess: locationIsSuccess, data: locationData } = fetchData.TQStateList();
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess && locationIsSuccess) {
             dispatch(storeLogin(data.data));
+            dispatch(storeLocation(locationData));
         }
-    }, [isSuccess, data]);
+    }, [isSuccess, data, locationData, locationIsSuccess]);
 
     if (!token) return <Navigate to="/auth/login" replace />;
 
