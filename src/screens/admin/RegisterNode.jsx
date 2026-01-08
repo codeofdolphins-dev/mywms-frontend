@@ -4,22 +4,34 @@ import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import fetchData from '../../Backend/fetchData';
 import RegisterWarehouseNode from '../../components/admin/register/RegisterWarehouseNode';
 import RegisterPartnerNode from '../../components/admin/register/RegisterPartnerNode';
+import masterData from '../../Backend/master.backend';
 
 const RegisterNode = () => {
 
     const { data: businessNodes, isLoading: businessNodeLoading } = fetchData.TQTenantBusinessNodeList();
+    const { mutateAsync: registerWarehouse, isLoading: isPendingWarehouse } = masterData.TQCreateMaster();
+    const { mutateAsync: registerPartner, isPending: isPendingPartner } = masterData.TQCreateMaster();
 
     const {
         register,
         control,
         handleSubmit,
         formState: { errors },
-        watch
-    } = useForm();
+        watch,
+        reset
+    } = useForm({
+        shouldUnregister: true
+    });
+
     const node = watch("node");
 
     const submitForm = (data) => {
         console.log(data);
+        if(["manufacturing", "warehouse"].includes(node?.category)){
+            console.log("wareouse");
+        }else{
+            console.log("partner");
+        }
     }
 
     return (
@@ -29,6 +41,7 @@ const RegisterNode = () => {
                     <Controller
                         name="node"
                         control={control}
+                        isClearable={false}
                         rules={{
                             required: "This field is required!!!"
                         }}
@@ -40,7 +53,9 @@ const RegisterNode = () => {
                                     });
                                 }}
                                 value={value}
-                                onChange={onChange}
+                                onChange={(val) =>
+                                    reset({ node: val })
+                                }
 
                                 label="Select Model Type"
                                 selectKey='name'
@@ -57,6 +72,7 @@ const RegisterNode = () => {
                     ? ["manufacturing", "warehouse"].includes(node?.category)
                         ?
                         <RegisterWarehouseNode
+                            key={node?.id}
                             register={register}
                             control={control}
                             watch={watch}
@@ -64,6 +80,7 @@ const RegisterNode = () => {
                             header={node}
                         />
                         : <RegisterPartnerNode
+                            key={node?.id}
                             register={register}
                             control={control}
                             watch={watch}

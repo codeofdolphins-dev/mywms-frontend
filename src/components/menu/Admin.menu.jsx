@@ -39,6 +39,9 @@ const Admin = ({ location }) => {
                         <li>
                             <NavLink to="/admin/user">User</NavLink>
                         </li>
+                        <li>
+                            <NavLink to="/master/suppliers/add-supplier">Supplier</NavLink>
+                        </li>
                     </ul>
                 </li>
 
