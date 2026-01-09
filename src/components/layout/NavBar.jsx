@@ -12,7 +12,7 @@ import { LuWarehouse } from "react-icons/lu";
 import { RiAdminFill } from "react-icons/ri";
 import { MdAdminPanelSettings, MdOutlineReceiptLong } from 'react-icons/md';
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
-import { hasRole } from '../../utils/roles';
+import { hasNodeAccess, hasRoleAccess } from '../../utils/roles';
 import { useSelector } from 'react-redux';
 import {
     Dashboard,
@@ -57,17 +57,18 @@ const distributorSubMenu = [
 const NavBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const roles = useSelector(state => state?.auth?.userData?.roles);
-    const userRoles = roles?.map(r => r.role);
+    const userData = useSelector(state => state?.auth?.userData);
+    const userRoles = userData?.roles?.map(r => r.role);
+    const nodeName = userData?.nodeDetails?.name.toLowerCase();
 
     return (
         <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
 
             {/* dashboard */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Dashboard location={location} />}
+            {(hasRoleAccess(["system", "owner", "company"], userRoles)) && <Dashboard location={location} />}
 
             {/* master */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Master location={location} />}
+            {hasRoleAccess(["system", "owner", "company"], userRoles) && <Master location={location} />}
 
             {/* admin */}
             {/* <li className="menu nav-item relative !ml-0" >
@@ -106,10 +107,10 @@ const NavBar = () => {
                     </li>
                 </ul>
             </li> */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Admin location={location} />}
+            {hasRoleAccess(["system", "owner", "company"], userRoles) && <Admin location={location} />}
 
             {/* manage access */}
-            {hasRole(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
+            {hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
 
 
             {/* production */}
@@ -133,20 +134,40 @@ const NavBar = () => {
             </li> */}
 
             {/* requisition */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Requisition location={location} />}
+            {
+                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                || ((hasNodeAccess(["distributor"], nodeName))))
+                && <Requisition location={location} />
+            }
 
             {/* Quotation */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Quotation location={location} />}
+            {
+                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                || ((hasNodeAccess(["distributor"], nodeName))))
+                && <Quotation location={location} />
+            }
 
             {/* Purchase Order */}
-            {hasRole(["system", "owner", "company"], userRoles) && <PurchaseOrder location={location} />}
+            {
+                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                || ((hasNodeAccess(["distributor"], nodeName))))
+                && <PurchaseOrder location={location} />
+            }
 
             {/* Inward */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Inward location={location} />}
-            
+            {
+                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                || ((hasNodeAccess(["distributor"], nodeName))))
+                && <Inward location={location} />
+            }
+
             {/* outward */}
-            {hasRole(["system", "owner", "company"], userRoles) && <Outward location={location} />}
-            
+            {
+                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                || ((hasNodeAccess(["distributor"], nodeName))))
+                && <Outward location={location} />
+            }
+
 
             {/* supplier */}
             {/* <li className="menu nav-item relative !ml-0" >

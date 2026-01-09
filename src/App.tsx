@@ -8,7 +8,7 @@ import Browse from './screens/Browse';
 import CreateRequisition from './screens/requisition/CreateRequisition';
 import Category from './screens/category/Category';
 import Brand from './screens/brand/Brand';
-import Warehouse from './screens/warehouse/Warehouse';
+import Warehouse from './screens/admin/warehouse/Warehouse';
 import Supplier from './screens/supplier/Supplier';
 import HSN from './screens/hsn/HSN';
 import Product from './screens/product/Product';
@@ -50,6 +50,8 @@ function App() {
                     <Route path="admin" >
                         <Route path="business-flow" element={<Rules />} />
                         <Route path="business/node-register" element={<RegisterNode />} />
+                        <Route path="warehouse" element={<Warehouse />} />
+                        <Route path="warehouse/create" element={<Warehouse />} />
                     </Route>
 
                     {/* master */}
@@ -57,7 +59,6 @@ function App() {
                         <Route index element={<Master />} />
                         <Route path="categories" element={<Category />} />
                         <Route path="brands" element={<Brand />} />
-                        <Route path="warehouses" element={<Warehouse />} />
                         <Route path="suppliers" element={<Supplier />} />
                         <Route path="suppliers/add-supplier" element={<AddSupplier />} />
                         <Route path="hsncodes" element={<HSN />} />
@@ -75,22 +76,22 @@ function App() {
                         <Route path="permission/create" element={<Master />} />
                     </Route>
 
-                    
+
                     {/* requisition */}
                     <Route path="requisition" >
                         <Route index element={<Requisition />} />
                         <Route path="create" element={<CreateRequisition />} />
                         <Route path="receive-quotation/:id" element={<ReceiveQuotation />} />
                     </Route>
-                    
-                    
+
+
                     {/* requisition */}
                     <Route path="quotation" >
                         <Route index element={<Quotation />} />
                         <Route path="create" element={<CreateQuotation />} />
                         <Route path="receive" element={<ReceiveRequision />} />
                     </Route>
-                    
+
                     {/* purchase order */}
                     <Route path="purchase-order" >
                         <Route index element={<PurchaseOrder />} />

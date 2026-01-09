@@ -5,6 +5,9 @@ import fetchData from '../../Backend/fetchData';
 import RegisterWarehouseNode from '../../components/admin/register/RegisterWarehouseNode';
 import RegisterPartnerNode from '../../components/admin/register/RegisterPartnerNode';
 import masterData from '../../Backend/master.backend';
+import { RHFToFormData } from '../../utils/RHFtoFD';
+import path from 'path';
+import { Link } from 'react-router-dom';
 
 const RegisterNode = () => {
 
@@ -25,18 +28,38 @@ const RegisterNode = () => {
 
     const node = watch("node");
 
-    const submitForm = (data) => {
+    const submitForm = async (data) => {
         console.log(data);
-        if(["manufacturing", "warehouse"].includes(node?.category)){
-            console.log("wareouse");
-        }else{
-            console.log("partner");
+
+        const formData = RHFToFormData(data);
+
+        try {
+            if (["manufacturing", "warehouse"].includes(node?.category)) {
+                console.log("wareouse");
+
+                const res = await registerWarehouse({ path: "/super-admin/register-node-warehouse", formData })
+                if (res.success) reset();
+
+            } else {
+                console.log("partner");
+                const res = await registerPartner({ path: "/super-admin/register-node-partner", formData });
+                if (res.success) reset();
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 
     return (
         <div>
-            <form onSubmit={handleSubmit(submitForm)} className='space-y-3'>
+            {/* breadcrumb */}
+            <ul className="flex space-x-2 space-x-reverse">
+                <li className="before:content-['/'] before:mr-1">
+                    <span>register</span>
+                </li>
+            </ul>
+
+            <form onSubmit={handleSubmit(submitForm)} className='mt-3 space-y-3'>
                 <div className="panel">
                     <Controller
                         name="node"

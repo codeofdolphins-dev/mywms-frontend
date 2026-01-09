@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import SearchInput from '../../components/inputs/SearchInput'
-import IconSettings from '../../components/Icon/IconSettings';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
+import SearchInput from '../../../components/inputs/SearchInput'
+import IconSettings from '../../../components/Icon/IconSettings';
+import IconPencil from '../../../components/Icon/IconPencil';
+import IconTrashLines from '../../../components/Icon/IconTrashLines';
 import AnimateHeight from 'react-animate-height';
-import IconCode from '../../components/Icon/IconCode';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
+import IconCode from '../../../components/Icon/IconCode';
+import IconCaretDown from '../../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
-import Input from '../../components/inputs/Input';
-import ItemTable from '../../components/ItemTable';
-import SearchableSelect from '../../components/inputs/SearchableSelect';
-import fetchData from '../../Backend/fetchData';
-import SelectRHF from '../../components/inputs/RHF/Select.RHF';
+import Input from '../../../components/inputs/Input';
+import ItemTable from '../../../components/ItemTable';
+import SearchableSelect from '../../../components/inputs/SearchableSelect';
+import fetchData from '../../../Backend/fetchData';
+import SelectRHF from '../../../components/inputs/RHF/Select.RHF';
+import TableHeader from '../../../components/table/TableHeader';
 
 
 const tableData = [
@@ -77,19 +78,6 @@ const Warehouse = () => {
     const [options, setOptions] = useState([]);
     const [type, setType] = useState();
 
-    const { data: warehouseTypes, isSuccess } = fetchData.TQWarehouseTypes();
-
-    useEffect(() => {
-        const optionsArr = warehouseTypes?.map(item => ({
-            value: item.warehouse_type,
-            label: item.warehouse_type,
-        }));
-        setOptions(optionsArr);
-        setType(optionsArr?.[0]?.value);
-
-    }, [isSuccess, warehouseTypes]);
-
-    
 
     function handleEdit(id) { };
     async function handleDelete(id) { };
@@ -124,7 +112,7 @@ const Warehouse = () => {
 
 
             {/* Search and Add Button */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+            <div className="grid grid-cols-1 my-4">
                 <div className='col-span-2'>
                     <SearchInput
                         type="text"
@@ -132,29 +120,11 @@ const Warehouse = () => {
                         setValue={setDebounceSearch}
                     />
                 </div>
-                <div>
-                    <SearchableSelect
-                        placeholder='Sort by warehouse type...'
-                        options={options}
-                        selectKey='warehouse_type'
-                        value={type}
-                        onChange={setType}
-                    />
-                </div>
             </div>
 
-            <ItemTable
-                columns={colName}
-                // items={data?.data}
-                edit={true}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                setLimit={setLimit}
-                // totalPage={data?.meta?.totalPages}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                isLoading={false}
-            />
+            <div className="panel">
+                <TableHeader />
+            </div>
 
         </div >
     )

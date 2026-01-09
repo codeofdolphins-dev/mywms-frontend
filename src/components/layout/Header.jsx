@@ -23,6 +23,8 @@ const Header = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userData = useSelector(state => state.auth.userData);
+    const nodeName = userData?.nodeDetails?.name ?? null;
 
     function createMarkup(messages) {
         return { __html: messages };
@@ -111,15 +113,28 @@ const Header = () => {
         <header className="z-40 horizontal">
             <div className="shadow-sm">
 
-                <div className="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
-                    <div className="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
+                <div className="relative bg-white flex w-full items-center px-5 py-2.5">
+                    <div className="horizontal-logo flex lg:hidden justify-between items-center mr-2">
                         <Link to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle hidden md:inline dark:text-white-light transition-all duration-300">MYWMS</span>
+                            <img className="w-8 -ml-1 inline" src="/assets/images/logo.svg" alt="logo" />
+                            <span className="text-2xl ml-1.5 font-semibold  align-middle hidden md:inline transition-all duration-300">MYWMS</span>
                         </Link>
                     </div>
 
-                    <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
+                    <div className="">
+                        {
+                            nodeName ?
+                                <span className="text-lg ml-1.5 font-semibold  align-middle hidden md:inline transition-all duration-300">
+                                    {`${nodeName} ${userData?.email}`}
+                                </span>
+                                :
+                                <span className="text-lg ml-1.5 font-semibold  align-middle hidden md:inline transition-all duration-300">
+                                    {userData?.company_name}
+                                </span>
+                        }
+                    </div>
+
+                    <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto flex items-center space-x-1.5 lg:space-x-2">
                         <div className="sm:ltr:mr-auto sm:rtl:ml-auto"></div>
 
                         {/* notification badge */}

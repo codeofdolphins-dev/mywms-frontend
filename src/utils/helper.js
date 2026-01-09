@@ -1,3 +1,8 @@
+export const WAREHOUSE_COLUMN = [
+    { key: "id", label: "#" },
+    { key: "permission", label: "Name" },
+];
+
 export const PERMISSION_COL = [
     { key: "id", label: "SL" },
     { key: "permission", label: "Name" },

@@ -102,26 +102,6 @@ class FetchData {
         });
     };
 
-    TQWarehouseTypes() {
-        return useQuery({
-            queryKey: ["warehouseTypes"],
-            queryFn: async () => {
-                const res = await API.get("/warehouse/types");
-                return res.data.data;
-            },
-        });
-    };
-
-    TQWarehouseTypes() {
-        return useQuery({
-            queryKey: ["warehouseTypeList"],
-            queryFn: async () => {
-                const res = await API.get("/warehouse/types");
-                return res.data.data;
-            },
-        });
-    };
-
     TQProductList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["productList", params],

@@ -97,10 +97,10 @@ const RegisterWarehouseNode = ({
                     <Input
                         label={"Warehouse Name"}
                         placeholder={"Enter warehouse Name"}
-                        {...register("name", {
+                        {...register("full_name", {
                             required: "This field is required!!!"
                         })}
-                        error={errors.name?.message}
+                        error={errors.full_name?.message}
                         required={true}
                     />
                 </div>
@@ -226,6 +226,7 @@ const RegisterWarehouseNode = ({
                                     options={districtData}
                                     required={true}
                                     error={error?.message}
+                                    disabled={state_id ? false : true}
                                 />
                             )}
                         />

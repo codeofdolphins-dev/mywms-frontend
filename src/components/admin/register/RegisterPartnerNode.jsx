@@ -38,12 +38,12 @@ const RegisterPartnerNode = ({
                 {/* Full Name */}
                 <div>
                     <Input
-                        label={"Name"}
-                        placeholder={"Enter Name"}
-                        {...register("name", {
+                        label={"Full Name"}
+                        placeholder={"Enter Full Name"}
+                        {...register("full_name", {
                             required: "This field is required!!!"
                         })}
-                        error={errors.name?.message}
+                        error={errors.full_name?.message}
                         required={true}
                     />
                 </div>
@@ -78,7 +78,6 @@ const RegisterPartnerNode = ({
                     />
                 </div>
 
-                {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> */}
                 {/* Password */}
                 <div>
                     <Input
@@ -114,7 +113,6 @@ const RegisterPartnerNode = ({
                     // required={!id}
                     />
                 </div>
-                {/* </div> */}
             </div>
 
             {/* 3rd row */}
@@ -134,7 +132,6 @@ const RegisterPartnerNode = ({
                     />
                 </div>
 
-                {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> */}
                 {/* Pincode */}
                 <div>
                     <Input
@@ -172,13 +169,10 @@ const RegisterPartnerNode = ({
                         )}
                     />
                 </div>
-                {/* </div> */}
             </div>
 
             {/* 4th row */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-                {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> */}
                 <div>
                     {/* district */}
                     <Controller
@@ -201,10 +195,12 @@ const RegisterPartnerNode = ({
                                 options={districtData}
                                 required={true}
                                 error={error?.message}
+                                disabled={state_id ? false : true}
                             />
                         )}
                     />
                 </div>
+
                 {/* file upload */}
                 <div >
                     <Controller
@@ -220,7 +216,6 @@ const RegisterPartnerNode = ({
                         )}
                     />
                 </div>
-                {/* </div> */}
 
                 <div>
                     <TextArea

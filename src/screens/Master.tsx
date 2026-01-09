@@ -24,13 +24,13 @@ const items: Record<string, string>[] = [
         color: "bg-red-500",
         link: "products",
     },
-    {
-        title: "Warehouses",
-        description: "Manage warehouse locations and stock levels.",
-        icon: "warehouse",
-        color: "bg-yellow-500",
-        link: "warehouses",
-    },
+    // {
+    //     title: "Warehouses",
+    //     description: "Manage warehouse locations and stock levels.",
+    //     icon: "warehouse",
+    //     color: "bg-yellow-500",
+    //     link: "warehouses",
+    // },
     {
         title: "HSN Codes",
         description: "Maintain HSN codes for taxation and compliance.",

@@ -12,9 +12,8 @@ class MasterData {
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if (res.success) {
-                    QueryClient.invalidateQueries(key);
-                }
+                if (key.length < 1) return;
+                if (res.success) QueryClient.invalidateQueries(key);
             },
             onError: (error) => {
                 errorAlert(error.response.data?.message);
@@ -31,9 +30,8 @@ class MasterData {
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if (res.success) {
-                    QueryClient.invalidateQueries(key);
-                }
+                if (key.length < 1) return;
+                if (res.success) QueryClient.invalidateQueries(key);
             },
             onError: (error) => {
                 errorAlert(error.response.data?.message);
@@ -50,9 +48,8 @@ class MasterData {
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if (res.success) {
-                    QueryClient.invalidateQueries(key);
-                }
+                if (key.length < 1) return;
+                if (res.success) QueryClient.invalidateQueries(key);
 
             },
             onError: (error) => {
