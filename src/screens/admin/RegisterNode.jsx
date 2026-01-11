@@ -29,19 +29,14 @@ const RegisterNode = () => {
     const node = watch("node");
 
     const submitForm = async (data) => {
-        console.log(data);
-
         const formData = RHFToFormData(data);
 
         try {
             if (["manufacturing", "warehouse"].includes(node?.category)) {
-                console.log("wareouse");
-
                 const res = await registerWarehouse({ path: "/super-admin/register-node-warehouse", formData })
                 if (res.success) reset();
 
             } else {
-                console.log("partner");
                 const res = await registerPartner({ path: "/super-admin/register-node-partner", formData });
                 if (res.success) reset();
             }

@@ -53,7 +53,7 @@ const ItemTable = ({
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 flex flex-col items-center justify-center gap-4">
                                     <BsBoxSeam fontSize={40} color='grey' />
                                     <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
-                                </div>
+                                </div>  
                             </> : <>
                                 <tbody>
                                     {items?.map((row, i) => {
@@ -178,4 +178,3 @@ const renderTwoLevelArray = (items, renderItem) => {
         </div>
     );
 };
-;

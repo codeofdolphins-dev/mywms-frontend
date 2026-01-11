@@ -139,7 +139,7 @@ const AssignRole = () => {
                     </div>
                 ))}
 
-                <div className="flex justify-end">
+                <div className="flex items-center justify-between">
                     <button
                         type='button'
                         onClick={() => navigate(-1)}

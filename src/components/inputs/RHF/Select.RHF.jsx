@@ -3,6 +3,7 @@ import Select from "react-select";
 
 function RHSelect({
     selectKey = "name",
+    selectSubKey = "full_name",
     label,
     options = [],
     value,
@@ -12,6 +13,7 @@ function RHSelect({
     disabled = false,
     required = false,
     error = '',
+    className = '',
     objectReturn = false
 }, ref) {
 
@@ -29,16 +31,16 @@ function RHSelect({
         if (isMulti) {
             return options.filter((opt) => value.includes(opt.id))
         } else {
-            if(objectReturn){
+            if (objectReturn) {
                 return options.find((opt) => opt.id === value.id) || null;
-            }else{
+            } else {
                 return options.find((opt) => opt.id === value) || null;
             }
         }
     };
 
     return (
-        <div className="space-y-1">
+        <div className="space-y-1 w-full">
             {label && (
                 <label
                     className={`block text-sm font-medium mb-0 ${disabled ? "text-gray-400" : "text-gray-700"}`}
@@ -68,7 +70,9 @@ function RHSelect({
                     }
                 }}
                 options={options}
-                getOptionLabel={option => option[selectKey]}
+                getOptionLabel={option => {
+                    return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
+                }}
                 getOptionValue={option => option.id}
                 isMulti={isMulti}
                 isDisabled={disabled}

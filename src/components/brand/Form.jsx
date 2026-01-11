@@ -9,10 +9,12 @@ import fetchData from '../../Backend/fetchData'
 import masterData from '../../Backend/master.backend'
 import { RHFToFormData } from '../../utils/RHFtoFD'
 import Loader from '../loader/Loader'
+import { FiPlus } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 
 
 const Form = ({ editId = null, setIsShow = false }) => {
-
+    const navigate = useNavigate()
     const { data: supplierData, isLoading: supplierLoading } = fetchData.TQAllSupplierList({ noLimit: true });
 
     const { data: editData, isLoading } = fetchData.TQAllBrandList({ id: editId }, !!editId);
@@ -42,6 +44,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
     }, [editData]);
 
     const submit = async (data) => {
+        console.log(data)
         try {
 
             if (editId) {
@@ -61,10 +64,12 @@ const Form = ({ editId = null, setIsShow = false }) => {
         }
     }
 
+    if(supplierLoading) return <Loader />;
+
     return (
         <div className="panel" id="forms_grid">
             <div className="mb-5">
-                {(isLoading || supplierLoading)
+                {isLoading
                     ? <Loader />
                     : <form onSubmit={handleSubmit(submit)} className="space-y-5">
                         {/* 1st row */}
@@ -80,7 +85,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                     required={true}
                                 />
                             </div>
-                            <div>
+                            <div className='flex items-center gap-5'>
                                 <Controller
                                     name="suppliers"
                                     control={control}
@@ -102,10 +107,16 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                             options={supplierData?.data}
                                             required={true}
                                             isMulti={true}
-                                            selectKey={"full_name"}
+                                            selectKey={"name"}
+                                            selectSubKey={"full_name"}
+                                            className='w-full'
                                         />
                                     )}
                                 />
+                                <button
+                                    className='btn btn-primary whitespace-nowrap text-sm'
+                                    onClick={() => navigate("/master/suppliers/add-supplier")}
+                                ><FiPlus size={20}/>Add Supplier</button>
                             </div>
                         </div>
 

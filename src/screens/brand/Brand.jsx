@@ -16,18 +16,18 @@ import Form from '../../components/brand/Form';
 import fetchData from '../../Backend/fetchData';
 import masterData from '../../Backend/master.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
-
-
-const colName = [
-    { key: "id", label: "ID" },
-    { key: "logo", label: "Logo", type: "image" },
-    { key: "name", label: "Brand Name" },
-    { key: "slug", label: "Slug" },
-    { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
-];
+import TableHeader from '../../components/table/TableHeader';
+import { BRAND_COLUMN } from '../../utils/helper';
+import TableRow from '../../components/table/TableRow';
+import CustomeButton from "../../components/inputs/Button";
+import renderTwoLevelArray from '../../utils/twoLevelArrayViewer';
+import TwoLevelArrayViewer from '../../utils/twoLevelArrayViewer';
+import { BsBoxSeam } from 'react-icons/bs';
+import Loader from '../../components/loader/Loader';
 
 
 const Brand = () => {
+    const imageUrl = import.meta.env.VITE_IMAGE_URL;
     const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster();
 
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -48,7 +48,7 @@ const Brand = () => {
     }, [debounceSearch]);
 
     useEffect(() => {
-        if(!isShow) setEditId(null);
+        if (!isShow) setEditId(null);
     }, [isShow]);
 
 
@@ -106,19 +106,67 @@ const Brand = () => {
                 />
             </div>
 
-            {/* Item table */}
-            <ItemTable
-                columns={colName}
-                items={data?.data}
-                edit={true}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                setLimit={setLimit}
-                totalPage={data?.meta?.totalPages}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                isLoading={isLoading}
-            />
+            {/* display table */}
+            <div className="panel">
+                {
+                    isLoading ? (
+                        <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">
+                            <Loader />
+                        </div>
+                    ) : (
+                        <>
+                            <TableHeader columns={BRAND_COLUMN} />
+                            {data?.data.length === 0 ? (
+                                <div className="relative table-responsive mb-5 min-h-56">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 flex flex-col items-center justify-center gap-4">
+                                        <BsBoxSeam fontSize={40} color="grey" />
+                                        <p className="text-base text-gray-400 font-semibold">
+                                            No Records Found
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                data?.data?.map((item, idx) => (
+                                    <TableRow
+                                        key={idx}
+                                        columns={BRAND_COLUMN}
+                                        row={{
+                                            id: item?.id,
+                                            logo: (
+                                                <img
+                                                    src={`${imageUrl}/${item?.logo}`}
+                                                    alt="img"
+                                                    className="h-16 w-16 object-contain"
+                                                />
+                                            ),
+                                            name: item?.name,
+                                            slug: item?.slug,
+                                            supplier: (
+                                                <TwoLevelArrayViewer
+                                                    data={item?.suppliers}
+                                                    labelKey="name.full_name"
+                                                />
+                                            ),
+                                            is_active: item?.isActive ? "Active" : "Inactive",
+                                            action: (
+                                                <div className="flex space-x-3">
+                                                    <CustomeButton onClick={() => handleEdit(item.id)}>
+                                                        <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                    </CustomeButton>
+
+                                                    <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                        <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                                    </CustomeButton>
+                                                </div>
+                                            ),
+                                        }}
+                                    />
+                                )))
+                            }
+                        </>
+                    )
+                }
+            </div>
 
 
             <AddModal

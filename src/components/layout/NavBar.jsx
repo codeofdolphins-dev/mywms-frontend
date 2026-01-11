@@ -107,7 +107,11 @@ const NavBar = () => {
                     </li>
                 </ul>
             </li> */}
-            {hasRoleAccess(["system", "owner", "company"], userRoles) && <Admin location={location} />}
+            {
+                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
+                && <Admin location={location} />
+            }
 
             {/* manage access */}
             {hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
@@ -136,35 +140,35 @@ const NavBar = () => {
             {/* requisition */}
             {
                 ((hasRoleAccess(["system", "owner", "company"], userRoles))
-                || ((hasNodeAccess(["distributor"], nodeName))))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Requisition location={location} />
             }
 
             {/* Quotation */}
             {
                 ((hasRoleAccess(["system", "owner", "company"], userRoles))
-                || ((hasNodeAccess(["distributor"], nodeName))))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Quotation location={location} />
             }
 
             {/* Purchase Order */}
             {
                 ((hasRoleAccess(["system", "owner", "company"], userRoles))
-                || ((hasNodeAccess(["distributor"], nodeName))))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
                 && <PurchaseOrder location={location} />
             }
 
             {/* Inward */}
             {
                 ((hasRoleAccess(["system", "owner", "company"], userRoles))
-                || ((hasNodeAccess(["distributor"], nodeName))))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Inward location={location} />
             }
 
             {/* outward */}
             {
                 ((hasRoleAccess(["system", "owner", "company"], userRoles))
-                || ((hasNodeAccess(["distributor"], nodeName))))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Outward location={location} />
             }
 

@@ -105,8 +105,6 @@ const AddSupplier = () => {
                 }
 
             } else {
-                data.user_type = "supplier";
-
                 const formData = RHFToFormData(data);
 
                 const res = await ceateSupplier({ path: "/supplier/create", formData });
