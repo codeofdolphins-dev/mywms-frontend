@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import { FiPlus } from 'react-icons/fi';
 
 
 
 
-const CategoryTree = ({ data, value, onChange }) => {
-
+const CategoryTree = ({
+    data,
+    value,
+    onChange,
+    buttonOnClick
+}) => {
     function TreeNode({
         node,
         value,
@@ -15,14 +20,24 @@ const CategoryTree = ({ data, value, onChange }) => {
     }) {
         const hasChildren = node.subcategories?.length > 0;
         const isExpanded = expanded[node.id];
-        const checked = value.some((v) => v === node.id);
+
+        const checked =
+            value.includes(node.id) ||
+            (hasChildren && areAllChildrenChecked(node, value));
 
         const toggleCheck = () => {
+            const childIds = getAllChildIds(node);
+
             if (checked) {
-                onChange(value.filter((v) => v !== node.id));
+                // uncheck parent → remove parent + all children
+                onChange(value.filter(
+                    (v) => v !== node.id && !childIds.includes(v)
+                ));
             } else {
-                // onChange([...value, { id: node.id, name: node.name }]);
-                onChange([...value, node.id ]);
+                // check parent → add parent + all children
+                onChange([
+                    ...new Set([...value, node.id, ...childIds])
+                ]);
             }
         };
 
@@ -53,7 +68,7 @@ const CategoryTree = ({ data, value, onChange }) => {
                         onChange={toggleCheck}
                         className="h-4 w-4 rounded border-gray-300"
                     />
-                    <label htmlFor={node.id}>{node.name}</label>
+                    <label htmlFor={node.id} className='cursor-pointer mb-0'>{node.name}</label>
 
                     {/* <span>{node.name}</span> */}
                 </div>
@@ -75,7 +90,6 @@ const CategoryTree = ({ data, value, onChange }) => {
         );
     }
 
-
     const [expanded, setExpanded] = useState({});
 
     const toggleExpand = (id) => {
@@ -85,11 +99,29 @@ const CategoryTree = ({ data, value, onChange }) => {
         }));
     };
 
+    // get all descendant ids of a node
+    const getAllChildIds = (node) => {
+        let ids = [];
+        if (node.subcategories?.length) {
+            node.subcategories.forEach((child) => {
+                ids.push(child.id);
+                ids = ids.concat(getAllChildIds(child));
+            });
+        }
+        return ids;
+    };
+
+    // check if all children are selected
+    const areAllChildrenChecked = (node, value) => {
+        const childIds = getAllChildIds(node);
+        return childIds.every((id) => value.includes(id));
+    };
+
     return (
-        <div className="w-full">
-            <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-primary">
+        <div className="w-full relative">
+            <div className="flex items-center mb-1 text-gray-700 text-sm font-semibold">
                 <span>Category</span>
-                <span className="text-blue-600">+</span>
+                <span className="text-danger">*</span>
             </div>
 
             <div className="border rounded-md p-2 h-[260px] overflow-y-auto">
@@ -103,7 +135,15 @@ const CategoryTree = ({ data, value, onChange }) => {
                         toggleExpand={toggleExpand}
                     />
                 ))}
+
             </div>
+            <button
+                className="btn btn-info text-white flex items-center absolute top-8 right-2 !px-2"
+                onClick={buttonOnClick}
+                type="button"
+            >
+                <FiPlus size={20} />category
+            </button>
         </div>
     );
 }

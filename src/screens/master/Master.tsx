@@ -1,6 +1,6 @@
 import { link } from 'fs';
-import MasterCard from '../components/MasterCard';
 import { Link } from 'react-router-dom';
+import MasterCard from '../../components/master/MasterCard';
 
 const items: Record<string, string>[] = [
     {
@@ -44,6 +44,20 @@ const items: Record<string, string>[] = [
         icon: "supplier",
         color: "bg-pink-500",
         link: "suppliers",
+    },
+    {
+        title: "Unit Types",
+        description: "Manage measurement units for products.",
+        icon: "unit",
+        color: "bg-gray-500",
+        link: "unit-types",
+    },
+    {
+        title: "Package Types",
+        description: "Define and manage different package types for products.",
+        icon: "packageType",
+        color: "bg-orange-500",
+        link: "package-types",
     },
 ]
 

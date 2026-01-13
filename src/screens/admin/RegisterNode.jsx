@@ -76,7 +76,6 @@ const RegisterNode = () => {
                                 }
 
                                 label="Select Model Type"
-                                selectKey='name'
                                 options={businessNodes?.data}
                                 error={error?.message}
                                 required={true}

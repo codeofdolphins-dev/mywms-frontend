@@ -110,13 +110,12 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                             selectKey={"name"}
                                             selectSubKey={"full_name"}
                                             className='w-full'
+
+                                            addButton={true}
+                                            buttonOnClick={() => navigate("/master/suppliers/add-supplier")}
                                         />
                                     )}
                                 />
-                                <button
-                                    className='btn btn-primary whitespace-nowrap text-sm'
-                                    onClick={() => navigate("/master/suppliers/add-supplier")}
-                                ><FiPlus size={20}/>Add Supplier</button>
                             </div>
                         </div>
 

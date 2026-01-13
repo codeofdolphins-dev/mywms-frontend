@@ -143,6 +143,7 @@ const AddSupplier = () => {
                 {/* Grid */}
                 <div className="panel mt-5" id="forms_grid">
                     <form onSubmit={handleSubmit(submit)} className="space-y-5">
+
                         {/* 1st row */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {/* Email */}
@@ -326,6 +327,7 @@ const AddSupplier = () => {
                                                 options={districtData}
                                                 required={true}
                                                 error={error?.message}
+                                                disabled={stateId ? false : true}
                                             />
                                         )}
                                     />
@@ -358,10 +360,10 @@ const AddSupplier = () => {
                             />
                         </div>
 
+                        {/* 6th row */}
                         <div className="panel space-y-5 !mt-0" id='forms_grid'>
                             <h1 className='text-lg mb-3'>Bank Info</h1>
 
-                            {/* 6th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* name */}
                                 <div>
@@ -487,20 +489,18 @@ const AddSupplier = () => {
                         </div>
 
                         <div className="flex">
-                            <Button
-                                variant="outline"
-                                color="gray"
-                                size="md"
-                                radius="md"
+                            <button
+                                type='button'
+                                className='btn btn-outline-dark'
                                 onClick={() => {
                                     reset();
                                     navigate(-1);
                                 }}
                             >
                                 Cancel
-                            </Button>
+                            </button>
                             <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createIsPending || updateIsPending} className='ml-auto'>
-                                {id ? "Update Product" : "Add Product"}
+                                {id ? "Update Supplier" : "Add Supplier"}
                             </Button>
                         </div>
                     </form>

@@ -114,7 +114,7 @@ class FetchData {
             enabled: isEnabled
         });
     };
-    
+
     TQPermissionList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["permissionList", params],
@@ -136,6 +136,32 @@ class FetchData {
                 return res.data;
             },
             gcTime: Infinity,
+        });
+    };
+
+    TQUnitTypeList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["unitTypeList", params],
+            queryFn: async () => {
+                const res = await API.get("/unit/all", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
+    TQPackageTypeList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["packageTypeList", params],
+            queryFn: async () => {
+                const res = await API.get("/package-type/all", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
         });
     };
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { FiPlus } from "react-icons/fi";
 import Select from "react-select";
 
 function RHSelect({
@@ -14,7 +15,11 @@ function RHSelect({
     required = false,
     error = '',
     className = '',
-    objectReturn = false
+    objectReturn = false,
+
+    addButton = false,
+    buttonTitle = "Add",
+    buttonOnClick,
 }, ref) {
 
     const selectRef = React.useRef(null);
@@ -49,37 +54,56 @@ function RHSelect({
                 </label>
             )}
 
-            <Select
-                value={getValue()}
-                ref={selectRef}
-                inputRef={ref}
-                onChange={(selected) => {
-                    if (disabled) return; // prevent interaction when disabled
-                    if (isMulti) {
-                        if (objectReturn) {
-                            onChange(selected || []);
+            <div className="flex">
+                <Select
+                    value={getValue()}
+                    ref={selectRef}
+                    inputRef={ref}
+                    onChange={(selected) => {
+                        if (disabled) return; // prevent interaction when disabled
+                        if (isMulti) {
+                            if (objectReturn) {
+                                onChange(selected || []);
+                            } else {
+                                onChange(selected ? selected.map((opt) => opt.id) : []);
+                            }
                         } else {
-                            onChange(selected ? selected.map((opt) => opt.id) : []);
+                            if (objectReturn) {
+                                onChange(selected || []);
+                            } else {
+                                onChange(selected ? selected.id : null);
+                            }
                         }
-                    } else {
-                        if (objectReturn) {
-                            onChange(selected || []);
-                        } else {
-                            onChange(selected ? selected.id : null);
-                        }
-                    }
-                }}
-                options={options}
-                getOptionLabel={option => {
-                    return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
-                }}
-                getOptionValue={option => option.id}
-                isMulti={isMulti}
-                isDisabled={disabled}
-                placeholder={placeholder}
-                classNamePrefix="react-select"
-                className={`text-sm ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
-            />
+                    }}
+                    options={options}
+                    getOptionLabel={option => {
+                        return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
+                    }}
+                    getOptionValue={option => option.id}
+                    isMulti={isMulti}
+                    isDisabled={disabled}
+                    placeholder={placeholder}
+                    classNamePrefix="react-select"
+                    className={`text-sm flex-1 rounded-r-none ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+                    styles={{
+                        control: (base) => ({
+                            ...base,
+                            borderTopRightRadius: addButton ? 0 : base.borderTopRightRadius,
+                            borderBottomRightRadius: addButton ? 0 : base.borderBottomRightRadius,
+                        }),
+                    }}
+                />
+                {
+                    addButton &&
+                    <button
+                        className="px-4 btn-info text-white rounded-r flex items-center"
+                        onClick={buttonOnClick}
+                        type="button"
+                    >
+                        <FiPlus size={20} />{buttonTitle}
+                    </button>
+                }
+            </div>
             {error && <span className='text-danger'>{error}</span>}
         </div>
     );

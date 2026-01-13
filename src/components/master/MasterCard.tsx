@@ -7,35 +7,39 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { FaTruckRampBox } from "react-icons/fa6";
 import { TbCircleDottedLetterN } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
+import { GiWeight } from "react-icons/gi";
+import { FaBoxArchive } from "react-icons/fa6";
 
 
 const icons: Record<string, any> = {
-  category: MdCategory,
-  brand: GoTag,
-  product: BsBoxSeam,
-  warehouse: LuWarehouse,
-  hsn: IoDocumentTextOutline,
-  supplier: FaTruckRampBox,
+    category: MdCategory,
+    brand: GoTag,
+    product: BsBoxSeam,
+    warehouse: LuWarehouse,
+    hsn: IoDocumentTextOutline,
+    supplier: FaTruckRampBox,
+    unit: GiWeight,
+    packageType: FaBoxArchive,
 };
 
 type MasterCardProps = {
-  title?: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-  link?: string;
+    title?: string;
+    description?: string;
+    icon?: string;
+    color?: string;
+    link?: string;
 };
 
 const MasterCard: React.FC<MasterCardProps> = ({
-  title = "dummy title",
-  description = "dummy description",
-  icon,
-  color = "bg-blue-500",
-  link,
+    title = "dummy title",
+    description = "dummy description",
+    icon,
+    color = "bg-blue-500",
+    link,
 }) => {
 
-  const Icon: any = icons[icon || ""] || TbCircleDottedLetterN;
-  const navigate = useNavigate();
+    const Icon: any = icons[icon || ""] || TbCircleDottedLetterN;
+    const navigate = useNavigate();
 
     return (
         <div

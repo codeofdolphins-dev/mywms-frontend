@@ -1,34 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput'
-import IconSettings from '../../components/Icon/IconSettings';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import AnimateHeight from 'react-animate-height';
-import IconCode from '../../components/Icon/IconCode';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
-import CreateHSNForm from '../../components/HSN/HSN.Form';
 import fetchData from '../../Backend/fetchData';
 import { confirmation, successAlert } from '../../utils/alerts';
 import masterData from '../../Backend/master.backend';
+import ButtonBoolean from '../../components/inputs/ButtonBoolean';
+import UnitTypeForm from '../../components/unit/UnitType.Form';
 
 
 const colName = [
-    { key: "id", label: "ID" },
-    { key: "hsn_code", label: "HSN Code", },
-    { key: "rate", label: "Rate %" },
-    { key: "status", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "id", label: "#" },
+    { key: "name", label: "Unit Type", },
+    { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
 
-const HSN = () => {
+const Unit = () => {
     const navigate = useNavigate();
 
-    const { mutateAsync: deleteData, isLoading } = masterData.TQDeleteMaster();
+    const { mutateAsync: deleteData } = masterData.TQDeleteMaster(["unitTypeList"]);
 
     const [isShow, setIsShow] = useState(false);
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -37,14 +31,11 @@ const HSN = () => {
     const [editId, setEditId] = useState(null);
 
     const params = {
-        ...(debounceSearch.includes('%')
-            ? { rate: debounceSearch.trim().slice(0, -1) }
-            : { search: debounceSearch }
-        ),
-        page: currentPage || null,
-        limit: limit || null
+        name: debounceSearch,
+        page: currentPage,
+        limit: limit
     };
-    const { data, isLoading: deleteIsLoading } = fetchData.TQAllHsnList(params);
+    const { data, isLoading } = fetchData.TQUnitTypeList(params);
 
 
     function handleEdit(id) {
@@ -57,7 +48,7 @@ const HSN = () => {
 
             const isConfirm = await confirmation();
             if (isConfirm) {
-                const res = await deleteData({ path: `/hsn/delete/${id}` });
+                const res = await deleteData({ path: `/unit/delete/${id}` });
                 if (res.success) successAlert(res.message);
             };
         } catch (error) {
@@ -78,34 +69,36 @@ const HSN = () => {
     return (
         <div>
             {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
+            <ul className="flex space-x-2">
                 <li>
                     <Link to="/master" className="text-primary hover:underline">
                         Master
                     </Link>
                 </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>HSN Codes</span>
+                <li className="before:content-['/'] before:mr-2">
+                    <span>unit-type</span>
                 </li>
             </ul>
 
             {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
+            <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-5xl font-bold my-3">HSN Codes</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all HSN Codes</p>
+                    <h1 className="text-5xl font-bold my-3">Unit Types</h1>
+                    <p className='text-gray-600 text-base'>Manage measurement units for products</p>
                 </div>
-                <button
+                <ButtonBoolean
                     className="btn btn-primary"
-                    onClick={() => setIsShow(true)}
-                >Create HSN</button>
+                    setState={setIsShow}
+                >
+                    Create type
+                </ButtonBoolean>
             </div>
 
             {/* Search and Add Button */}
             <div className="flex flex-col sm:flex-row gap-4 my-6">
                 <SearchInput
                     type="text"
-                    placeholder="Search by HSN code or rate. use % for rates"
+                    placeholder="Search by unit type"
                     className="bg- border-pink-500"
                     setValue={setDebounceSearch}
                 />
@@ -121,16 +114,16 @@ const HSN = () => {
                 totalPage={data?.meta?.totalPages}
                 handleEdit={handleEdit}
                 handleDelete={handleDelete}
-                isLoading={false}
+                isLoading={isLoading }
             />
 
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Add New HSN"
+                title="Add New Unit Type"
                 maxWidth={'50'}
             >
-                <CreateHSNForm
+                <UnitTypeForm
                     setIsShow={setIsShow}
                     editId={editId}
                 />
@@ -140,4 +133,4 @@ const HSN = () => {
     )
 }
 
-export default HSN;
+export default Unit;

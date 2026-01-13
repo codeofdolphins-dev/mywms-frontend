@@ -8,26 +8,30 @@ import FullScreenLoader from '../loader/FullScreenLoader';
 import BooleanSwitch from '../inputs/BooleanSwitch';
 
 
-const CreateHSNForm = ({ setIsShow, editId = null }) => {
+const UnitTypeForm = ({ setIsShow, editId = null }) => {
 
-    const { data: editData, isLoading } = fetchData.TQAllHsnList({ id: Number(editId) }, !!editId);
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["hsnList"]);
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["hsnList"]);
+    const { data: editData, isLoading } = fetchData.TQUnitTypeList({ id: Number(editId) }, !!editId);
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["unitTypeList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["unitTypeList"]);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            name: "",
+            isActive: true
+        }
+    });
 
     useEffect(() => {
         if (!editData) return;
         const data = editData.data?.[0];
         reset({
-            code: data?.hsn_code,
-            rate: data?.rate,
-            status: data?.status
+            name: data?.unit,
+            isActive: data?.isActive
         });
     }, [editId, reset, editData]);
 
@@ -36,11 +40,11 @@ const CreateHSNForm = ({ setIsShow, editId = null }) => {
 
             if (editId) {
                 data.id = editId;
-                const res = await updateData({ path: "/hsn/update", formData: data });
+                const res = await updateData({ path: "/unit/update", formData: data });
                 reset();
                 setIsShow(false);
             } else {
-                const res = await createData({ path: "/hsn/create", formData: data });
+                const res = await createData({ path: "/unit/create", formData: data });
                 reset();
                 setIsShow(false);
             }
@@ -58,47 +62,31 @@ const CreateHSNForm = ({ setIsShow, editId = null }) => {
                 <form onSubmit={handleSubmit(submit)} className="space-y-5">
                     {/* 2nd row */}
                     <div className="grid grid-cols-1 gap-4">
-                        {/* Email */}
-                        <div>
-                            <Input
-                                label={"HSN Code"}
-                                placeholder={"Enter HSN Code..."}
-                                {...register("code", {
-                                    required: "This field is required!!!"
-                                })}
-                                error={errors.code?.message}
-                                required={true}
-                            />
-                        </div>
-
                         <div className="grid grid-cols-12 gap-4">
 
-                            {/* Password */}
                             <div className='col-span-9'>
                                 <Input
-                                    label={"HSN Rate %"}
-                                    placeholder={"Enter Rate..."}
-                                    {...register("rate", {
+                                    label={"Unit Type"}
+                                    placeholder={"Enter type..."}
+                                    {...register("name", {
                                         required: "This field is required!!!"
                                     })}
-                                    error={errors.rate?.message}
+                                    error={errors.name?.message}
                                     required={true}
                                 />
                             </div>
                             <div className="col-span-3">
                                 <BooleanSwitch
-                                    {...register("status", {
-                                        value: true
-                                    })}
+                                    {...register("isActive")}
                                 />
                             </div>
                         </div>
                     </div>
 
 
-                    <div className="flex">
-                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} className='ml-auto'>
-                            { editId ? "Update HSN" : "Create HSN" }
+                    <div className="flex justify-center items-center">
+                        <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending}>
+                            { editId ? "Update Unit Type" : "Create Unit Type" }
                         </Button>
                     </div>
                 </form>
@@ -107,4 +95,4 @@ const CreateHSNForm = ({ setIsShow, editId = null }) => {
     )
 }
 
-export default CreateHSNForm;
+export default UnitTypeForm;

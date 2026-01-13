@@ -14,6 +14,12 @@ import { RHFToFormData } from '../../utils/RHFtoFD';
 import CategoryTree from './CategoryTree';
 import { successAlert } from '../../utils/alerts';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
+import AddModal from '../../components/Add.modal';
+import BrandForm from '../../components/brand/Form';
+import HSNForm from '../../components/HSN/HSN.Form';
+import CategoryForm from '../../components/category/CategoryForm';
+import UnitTypeForm from '../../components/unit/UnitType.Form';
+import PackageTypeForm from '../../components/packageType/PackageType.Form';
 
 
 const gstType = [
@@ -27,21 +33,22 @@ const packageType = [
     { value: 'plastic', label: 'Plastic' },
 ];
 
-const unitType = [
-    { value: 'box', label: 'Box' },
-    { value: 'kg', label: 'Kg' },
-    { value: 'ml', label: 'Ml' },
-    { value: 'piece', label: 'Piece' },
-    { value: 'bottol', label: 'Bottol' },
-];
 
 const AddProduct = () => {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const { data: categoryData, isLoading: cateLoading } = fetchData.TQAllCategoryList();
-    const { data: brandData, isLoading: brandLoading } = fetchData.TQAllBrandList();
-    const { data: hsnData, isLoading: hsnLoading } = fetchData.TQAllHsnList();
+    const [showBrand, setShowBrand] = useState(false);
+    const [showHSN, setShowHSN] = useState(false);
+    const [showCategory, setShowCategory] = useState(false);
+    const [showUnitType, setShowUnitType] = useState(false);
+    const [showPackageType, setShowPackageType] = useState(false);
+
+    const { data: categoryData, isLoading: cateLoading } = fetchData.TQAllCategoryList({ noLimit: true });
+    const { data: brandData, isLoading: brandLoading } = fetchData.TQAllBrandList({ noLimit: true });
+    const { data: hsnData, isLoading: hsnLoading } = fetchData.TQAllHsnList({ noLimit: true });
+    const { data: unitTypeData, isLoading: unitTypeLoading } = fetchData.TQUnitTypeList({ noLimit: true });
+    const { data: packageTypeData, isLoading: packageTypeLoading } = fetchData.TQPackageTypeList({ oLimit: true });
 
     const param = id ? { id } : {};
     const { data: product, isLoading } = fetchData.TQProductList(param, Boolean(id));
@@ -60,7 +67,7 @@ const AddProduct = () => {
 
     useEffect(() => {
 
-        if(!id) return;
+        if (!id) return;
 
         if (product?.data?.[0]) {
             const data = product?.data?.[0];
@@ -159,10 +166,10 @@ const AddProduct = () => {
                                         />
                                     </div>
 
-                                    {/* hsn_code */}
+                                    {/* hsn_id */}
                                     <div>
                                         <Controller
-                                            name="hsn_code"
+                                            name="hsn_id"
                                             control={control}
                                             rules={{
                                                 required: "This field is required!!!"
@@ -182,6 +189,10 @@ const AddProduct = () => {
                                                     options={hsnData?.data}
                                                     error={error?.message}
                                                     required={true}
+
+                                                    addButton={true}
+                                                    buttonTitle='HSN'
+                                                    buttonOnClick={() => setShowHSN(true)}
                                                 />
                                             )}
                                         />
@@ -212,7 +223,7 @@ const AddProduct = () => {
                                     {/* gstType */}
                                     <div>
                                         <Controller
-                                            name="gstType"
+                                            name="gst_type"
                                             control={control}
                                             rules={{
                                                 required: "Please select a GST type!",
@@ -266,6 +277,10 @@ const AddProduct = () => {
                                                     error={error?.message}
                                                     isMulti={true}
                                                     required={true}
+
+                                                    addButton={true}
+                                                    buttonTitle='brand'
+                                                    buttonOnClick={() => setShowBrand(true)}
                                                 />
                                             )}
                                         />
@@ -286,6 +301,7 @@ const AddProduct = () => {
                                                         data={categoryData}
                                                         value={field.value || []}
                                                         onChange={field.onChange}
+                                                        buttonOnClick={() => setShowCategory(true)}
                                                     />
 
                                                     {fieldState.error && (
@@ -301,18 +317,34 @@ const AddProduct = () => {
 
                             </div>
 
-                            {/* 6th row */}
+                            {/* 3rd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <div>
                                         <Controller
-                                            name="package_type"
+                                            name="package_type_id"
                                             control={control}
-                                            render={({ field }) => (
-                                                <SearchableSelect
-                                                    {...field}
-                                                    label='Package Type'
-                                                    options={packageType}
+                                            rules={{
+                                                required: "This field is required!!!"
+                                            }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+
+                                                    label="Package Type"
+                                                    options={packageTypeData?.data}
+                                                    error={error?.message}
+                                                    required={true}
+
+                                                    addButton={true}
+                                                    buttonTitle='type'
+                                                    buttonOnClick={() => setShowPackageType(true)}
                                                 />
                                             )}
                                         />
@@ -329,13 +361,29 @@ const AddProduct = () => {
                                     </div>
                                     <div>
                                         <Controller
-                                            name="unitType"
+                                            name="unit_type_id"
                                             control={control}
-                                            render={({ field }) => (
-                                                <SearchableSelect
-                                                    {...field}
+                                            rules={{
+                                                required: "This field is required!!!"
+                                            }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+
                                                     label="Unit Type"
-                                                    options={unitType}
+                                                    options={unitTypeData?.data}
+                                                    error={error?.message}
+                                                    required={true}
+
+                                                    addButton={true}
+                                                    buttonTitle='type'
+                                                    buttonOnClick={() => setShowUnitType(true)}
                                                 />
                                             )}
                                         />
@@ -343,7 +391,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 7th row */}
+                            {/* 4th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <Input
@@ -356,16 +404,16 @@ const AddProduct = () => {
                                 <div>
                                     <Input
                                         type={"number"}
-                                        label={"Selling Price"}
+                                        label={"Purchase Price"}
                                         placeholder={"Enter Selling Price"}
-                                        {...register("selling_price", { required: "This field is required!!!" })}
-                                        error={errors.selling_price?.message}
+                                        {...register("purchase_price", { required: "This field is required!!!" })}
+                                        error={errors.purchase_price?.message}
                                         required={true}
                                     />
                                 </div>
                             </div>
 
-                            {/* 8th row */}
+                            {/* 5th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <Input
@@ -387,7 +435,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 9th row */}
+                            {/* 6th row */}
                             <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
                                 <div>
                                     <TextArea
@@ -423,6 +471,53 @@ const AddProduct = () => {
                     </div>
                 </div>
             </div>
+
+            <AddModal
+                isShow={showBrand}
+                setIsShow={setShowBrand}
+                title="Add New Brand"
+            >
+                <BrandForm setIsShow={setShowBrand} />
+            </AddModal>
+
+            <AddModal
+                isShow={showHSN}
+                setIsShow={setShowHSN}
+                title="Add New HSN"
+                maxWidth={'50'}
+            >
+                <HSNForm setIsShow={setShowHSN} />
+            </AddModal>
+
+            <AddModal
+                isShow={showCategory}
+                setIsShow={setShowCategory}
+                title={"Add New Category"}
+                maxWidth='60'
+            >
+                <CategoryForm
+                    setIsShow={setShowCategory}
+                    data={categoryData}
+                />
+            </AddModal>
+
+            <AddModal
+                isShow={showUnitType}
+                setIsShow={setShowUnitType}
+                title="Add New Unit Type"
+                maxWidth={'50'}
+            >
+                <UnitTypeForm setIsShow={setShowUnitType} />
+            </AddModal>
+
+            <AddModal
+                isShow={showPackageType}
+                setIsShow={setShowPackageType}
+                title="Add New Package Type"
+                maxWidth={'50'}
+            >
+                <PackageTypeForm setIsShow={setShowPackageType} />
+            </AddModal>
 
         </div >
     )

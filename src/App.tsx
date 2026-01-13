@@ -2,7 +2,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import Login from './screens/auth/Login';
 import Register from './screens/auth/Register';
 import Dashboard from './screens/Dashboard';
-import Master from './screens/Master';
+import Master from './screens/master/Master';
 import Error404 from './screens/Error404';
 import Browse from './screens/Browse';
 import CreateRequisition from './screens/requisition/CreateRequisition';
@@ -30,6 +30,8 @@ import ReceiveQuotation from './screens/requisition/ReceiveQuotation';
 import ReceiveRequision from './screens/quotation/ReceiveRequision';
 import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
 import RegisterNode from './screens/admin/RegisterNode';
+import PackageType from './screens/packageType/PackageType';
+import Unit from './screens/unit/Unit';
 
 function App() {
 
@@ -65,6 +67,8 @@ function App() {
                         <Route path="products" element={<Product />} />
                         <Route path="products/add-product" element={<AddProduct />} />
                         <Route path="products/edit-product/:id" element={<AddProduct />} />
+                        <Route path="unit-types" element={<Unit />} />
+                        <Route path="package-types" element={<PackageType />} />
                     </Route>
 
                     {/* access */}

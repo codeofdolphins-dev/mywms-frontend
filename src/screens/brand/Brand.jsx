@@ -24,6 +24,7 @@ import renderTwoLevelArray from '../../utils/twoLevelArrayViewer';
 import TwoLevelArrayViewer from '../../utils/twoLevelArrayViewer';
 import { BsBoxSeam } from 'react-icons/bs';
 import Loader from '../../components/loader/Loader';
+import BasicPagination from '../../components/BasicPagination';
 
 
 const Brand = () => {
@@ -163,6 +164,13 @@ const Brand = () => {
                                     />
                                 )))
                             }
+                            <BasicPagination
+                                totalPage={data?.meta?.currentPage || 1}
+                                currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                limit={limit}
+                                setLimit={setLimit}
+                            />
                         </>
                     )
                 }
