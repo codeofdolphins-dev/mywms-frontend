@@ -8,7 +8,7 @@ import FileUpload from '../../inputs/File';
 import { Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import fetchData from '../../../Backend/fetchData';
+import fetchData from '../../../Backend/fetchData.backend';
 
 const RegisterWarehouseNode = ({
     control,

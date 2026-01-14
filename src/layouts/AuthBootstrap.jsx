@@ -5,7 +5,7 @@ import secureLocalStorage from 'react-secure-storage';
 import authService from '../Backend/Auth.backend';
 import { storeLogin } from '../store/AuthSlice';
 import FullScreenLoader from '../components/loader/FullScreenLoader';
-import fetchData from '../Backend/fetchData';
+import fetchData from '../Backend/fetchData.backend';
 import { storeLocation } from '../store/LocationSlice';
 
 const AuthBootstrap = ({ children }) => {

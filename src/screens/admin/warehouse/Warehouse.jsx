@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import Input from '../../../components/inputs/Input';
 import ItemTable from '../../../components/ItemTable';
 import SearchableSelect from '../../../components/inputs/SearchableSelect';
-import fetchData from '../../../Backend/fetchData';
+import fetchData from '../../../Backend/fetchData.backend';
 import SelectRHF from '../../../components/inputs/RHF/Select.RHF';
 import TableHeader from '../../../components/table/TableHeader';
 

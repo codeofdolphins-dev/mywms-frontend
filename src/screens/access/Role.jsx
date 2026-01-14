@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import SearchInput from '../../components/inputs/SearchInput';
 import ItemTable from '../../components/ItemTable';

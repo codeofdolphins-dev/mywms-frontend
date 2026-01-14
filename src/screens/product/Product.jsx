@@ -11,7 +11,7 @@ import Tippy from '@tippyjs/react';
 import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import { FiPlus } from 'react-icons/fi';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
 import masterData from '../../Backend/master.backend';
 

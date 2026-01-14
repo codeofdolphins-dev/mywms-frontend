@@ -7,7 +7,7 @@ import FileUpload from '../../components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import { RHFToFormData } from '../../utils/RHFtoFD';

@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Input from '../inputs/Input';
 import { Button } from '@mantine/core';
 import masterData from '../../Backend/master.backend';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import FullScreenLoader from '../loader/FullScreenLoader';
 import BooleanSwitch from '../inputs/BooleanSwitch';
 

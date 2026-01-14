@@ -5,7 +5,7 @@ import Input from '../../inputs/Input';
 import { Controller } from 'react-hook-form';
 import FileUpload from '../../inputs/File';
 import RHSelect from "../../inputs/RHF/Select.RHF";
-import fetchData from '../../../Backend/fetchData';
+import fetchData from '../../../Backend/fetchData.backend';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 

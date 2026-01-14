@@ -4,7 +4,7 @@ import Input from '../inputs/Input';
 import TextArea from '../inputs/TextArea';
 import { Button } from '@mantine/core';
 import RHSelect from "../inputs/RHF/Select.RHF"
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import FullScreenLoader from '../loader/FullScreenLoader';
 

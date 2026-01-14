@@ -7,7 +7,7 @@ import FileUpload from '../../components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import masterData from '../../Backend/master.backend';
 import { RHFToFormData } from '../../utils/RHFtoFD';

@@ -13,7 +13,7 @@ import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import { FaPlus } from "react-icons/fa6";
 import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import masterData from '../../Backend/master.backend';

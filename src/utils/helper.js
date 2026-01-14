@@ -314,3 +314,15 @@ export const BRAND_COLUMN = [
     { key: "is_active", label: "Status" },
     { key: "action", label: "Action" }
 ];
+
+export const NODE_COLUMN = [
+    { key: "action", label: "Action", width: ".1fr" },
+    { key: "name", label: "Model", width: "2.5fr", align: "start" },
+    { key: "code", label: "Level Code", align: "start" },
+];
+export const BASIC_NODE_COLUMN = [
+    { key: "id", label: "#", width: ".1fr" },
+    { key: "name", label: "Model", width: "2.5fr", },
+    { key: "code", label: "Level Code" },
+    { key: "action", label: "Action", width: ".5fr", align: "center" },
+];

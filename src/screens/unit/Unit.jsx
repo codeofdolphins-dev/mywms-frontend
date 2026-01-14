@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
 import masterData from '../../Backend/master.backend';
 import ButtonBoolean from '../../components/inputs/ButtonBoolean';

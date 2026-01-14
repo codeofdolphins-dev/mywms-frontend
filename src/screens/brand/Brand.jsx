@@ -13,7 +13,7 @@ import ButtonBoolean from '../../components/inputs/ButtonBoolean';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import Form from '../../components/brand/Form';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
 import TableHeader from '../../components/table/TableHeader';

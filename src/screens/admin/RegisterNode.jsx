@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import RegisterWarehouseNode from '../../components/admin/register/RegisterWarehouseNode';
 import RegisterPartnerNode from '../../components/admin/register/RegisterPartnerNode';
 import masterData from '../../Backend/master.backend';

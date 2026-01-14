@@ -13,7 +13,7 @@ import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import CreateHSNForm from '../../components/HSN/HSN.Form';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
 import masterData from '../../Backend/master.backend';
 

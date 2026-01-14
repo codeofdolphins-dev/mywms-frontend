@@ -9,7 +9,7 @@ import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Input from '../../components/inputs/Input';
 import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
-import fetchData from '../../Backend/fetchData';
+import fetchData from '../../Backend/fetchData.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import masterData from '../../Backend/master.backend';
 import { confirmation, successAlert } from '../../utils/alerts';
