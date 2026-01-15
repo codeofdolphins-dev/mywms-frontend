@@ -8,7 +8,7 @@ import Browse from './screens/Browse';
 import CreateRequisition from './screens/requisition/CreateRequisition';
 import Category from './screens/category/Category';
 import Brand from './screens/brand/Brand';
-import Warehouse from './screens/admin/warehouse/Warehouse';
+import Warehouse from './screens/warehouse/Warehouse';
 import Supplier from './screens/supplier/Supplier';
 import HSN from './screens/hsn/HSN';
 import Product from './screens/product/Product';

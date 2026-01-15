@@ -23,20 +23,20 @@ const RegisterWarehouseNode = ({
     const state_id = watch("state_id");
 
     const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state_id);
-    
+
     return (
         <div className="panel space-y-5">
 
             {/* Header Section */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold my-3">Register <em>{header?.name}</em></h1>
+                    <h1 className="text-xl font-bold my-3">Listing: {header?.name}</h1>
                 </div>
             </div>
 
             {/* 1st row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Email */}
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                Email
                 <div>
                     <Input
                         label={"Email"}
@@ -46,13 +46,12 @@ const RegisterWarehouseNode = ({
                         })}
                         error={errors.email?.message}
                         required={true}
-                    // disabled={id}
                     />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                    {/* Password */}
+                    Password
                     <div>
                         <Input
                             label={"Password"}
@@ -68,7 +67,7 @@ const RegisterWarehouseNode = ({
                             required={true}
                         />
                     </div>
-                    {/* Confirm Password */}
+                    Confirm Password
                     <div>
                         <Input
                             label={"Confirm Password"}
@@ -77,23 +76,21 @@ const RegisterWarehouseNode = ({
                             {...register("confirmPassword", {
                                 required: {
                                     message: "This field is required!!!",
-                                    // value: !id
                                 },
                                 validate: (value) => (
                                     value === password || "Passwords do not match!!!"
                                 )
                             })}
                             error={errors.confirmPassword?.message}
-                        // required={!id}
                         />
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* 2rd row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Full Name */}
-                <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input
                         label={"Warehouse Name"}
                         placeholder={"Enter warehouse Name"}
@@ -103,9 +100,18 @@ const RegisterWarehouseNode = ({
                         error={errors.full_name?.message}
                         required={true}
                     />
+                    <Input
+                        label={"Warehouse Location"}
+                        placeholder={"Enter warehouse Location"}
+                        {...register("location", {
+                            required: "This field is required!!!"
+                        })}
+                        error={errors.location?.message}
+                        required={true}
+                    />
                 </div>
                 {/* Phone Number */}
-                <div>
+                {/* <div>
                     <Input
                         label={"Phone Number"}
                         type="number"
@@ -116,11 +122,7 @@ const RegisterWarehouseNode = ({
                         error={errors.ph_number?.message}
                         required={true}
                     />
-                </div>
-            </div>
-
-            {/* 3rd row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                </div> */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                     <Input
                         type={"number"}
@@ -144,6 +146,11 @@ const RegisterWarehouseNode = ({
                         required={true}
                     />
                 </div>
+            </div>
+
+            {/* 3rd row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
 
                 {/* Address */}
                 <div>
@@ -156,6 +163,29 @@ const RegisterWarehouseNode = ({
                         })}
                         required={true}
                         error={errors.address?.message}
+                    />
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                    <Input
+                        type={"number"}
+                        label={"Latitude"}
+                        placeholder={"Enter Latitude"}
+                        {...register("lat", {
+                            required: "This field is required!!!"
+                        })}
+                        error={errors.lat?.message}
+                        required={true}
+                    />
+
+                    <Input
+                        type={"number"}
+                        label={"Longitude"}
+                        placeholder={"Enter Longitude"}
+                        {...register("long", {
+                            required: "This field is required!!!"
+                        })}
+                        error={errors.long?.message}
+                        required={true}
                     />
                 </div>
             </div>
@@ -249,30 +279,6 @@ const RegisterWarehouseNode = ({
                 </div>
             </div>
 
-            {/* 5th row */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                <Input
-                    type={"number"}
-                    label={"Latitude"}
-                    placeholder={"Enter Latitude"}
-                    {...register("lat", {
-                        required: "This field is required!!!"
-                    })}
-                    error={errors.lat?.message}
-                    required={true}
-                />
-
-                <Input
-                    type={"number"}
-                    label={"Longitude"}
-                    placeholder={"Enter Longitude"}
-                    {...register("long", {
-                        required: "This field is required!!!"
-                    })}
-                    error={errors.long?.message}
-                    required={true}
-                />
-            </div>
 
             {/* 6th row */}
             <div className='grid grid-cols-1 gap-4'>
@@ -285,7 +291,7 @@ const RegisterWarehouseNode = ({
             </div>
 
             <div className="flex items-center justify-end gap-5">
-                <Button variant="outline" color="gray" className='btn' onClick={() => navigate(-1)}>Cancel</Button>
+                <button type='button' className='btn btn-outline-dark' onClick={() => navigate(-1)}>Cancel</button>
                 <Button type='submit' className='btn btn-primary text-lg'>Submit</Button>
             </div>
         </div>

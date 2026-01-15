@@ -47,13 +47,6 @@ const RegisterNode = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2 space-x-reverse">
-                <li className="before:content-['/'] before:mr-1">
-                    <span>register</span>
-                </li>
-            </ul>
-
             <form onSubmit={handleSubmit(submitForm)} className='mt-3 space-y-3'>
                 <div className="panel">
                     <Controller

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import SearchInput from '../../../components/inputs/SearchInput'
-import IconSettings from '../../../components/Icon/IconSettings';
-import IconPencil from '../../../components/Icon/IconPencil';
-import IconTrashLines from '../../../components/Icon/IconTrashLines';
+import SearchInput from '../../components/inputs/SearchInput'
+import IconSettings from '../../components/Icon/IconSettings';
+import IconPencil from '../../components/Icon/IconPencil';
+import IconTrashLines from '../../components/Icon/IconTrashLines';
 import AnimateHeight from 'react-animate-height';
-import IconCode from '../../../components/Icon/IconCode';
-import IconCaretDown from '../../../components/Icon/IconCaretDown';
+import IconCode from '../../components/Icon/IconCode';
+import IconCaretDown from '../../components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
-import Input from '../../../components/inputs/Input';
-import ItemTable from '../../../components/ItemTable';
-import SearchableSelect from '../../../components/inputs/SearchableSelect';
-import fetchData from '../../../Backend/fetchData.backend';
-import SelectRHF from '../../../components/inputs/RHF/Select.RHF';
-import TableHeader from '../../../components/table/TableHeader';
+import Input from '../../components/inputs/Input';
+import ItemTable from '../../components/ItemTable';
+import SearchableSelect from '../../components/inputs/SearchableSelect';
+import fetchData from '../../Backend/fetchData.backend';
+import SelectRHF from '../../components/inputs/RHF/Select.RHF';
+import TableHeader from '../../components/table/TableHeader';
 
 
 const tableData = [

@@ -5,6 +5,7 @@ import TableHeader from '../table/TableHeader';
 import { NODE_COLUMN } from '../../utils/helper';
 import TableRow from '../table/TableRow';
 import Switch from '../inputs/Switch';
+import CheckBox from '../inputs/CheckBox';
 // import { useDispatch } from 'react-redux';
 // import { setPageTitle } from '../../store/themeConfigSlice';
 
@@ -19,6 +20,8 @@ const MasterRecord = ({
     //     dispatch(setPageTitle('Checkbox Table'));
     // });
 
+    const checkAll = rowData.length > 0 && selectedRecords.length === rowData.length;
+
     function handelSelect(item) {
         setSelectedRecords(prev => {
             const exists = prev.some(i => i.id === item.id);
@@ -31,12 +34,27 @@ const MasterRecord = ({
         });
     }
 
+    function checkFn() {
+        if (checkAll) {
+            setSelectedRecords([]);
+        } else {
+            setSelectedRecords([...rowData]);
+        }
+    }
 
     return (
         <div>
             <div className="panel w-full">
-                <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
+                <div className="flex items-center justify-between md:flex-row flex-col mb-5 gap-5">
                     <h5 className="font-semibold text-lg">Business Models</h5>
+                    <div className="">
+                        <CheckBox
+                            label="Check / Uncheck all"
+                            labelPosition="start"
+                            checked={checkAll}
+                            onChange={checkFn}
+                        />
+                    </div>
                 </div>
                 <div className="">
                     <TableHeader columns={NODE_COLUMN} />
@@ -50,9 +68,8 @@ const MasterRecord = ({
                                     onClick={() => handelSelect(item)}
                                     row={{
                                         action: (
-                                            <input type="checkbox" className="form-checkbox outline-primary"
+                                            <CheckBox
                                                 checked={selectedRecords?.some(i => i.id === item.id)}
-                                                onChange={() => {}}
                                             />
                                         ),
                                         name: item.name,
