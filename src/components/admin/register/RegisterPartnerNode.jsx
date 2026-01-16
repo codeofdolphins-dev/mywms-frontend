@@ -29,88 +29,47 @@ const RegisterPartnerNode = ({
             {/* Header Section */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold my-3">Register <em>{header?.name}</em></h1>
+                    <h1 className="text-xl font-bold my-3">Register {header?.name}</h1>
                 </div>
             </div>
 
             {/* 2rd row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Full Name */}
-                <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input
-                        label={"Full Name"}
-                        placeholder={"Enter Full Name"}
+                        label={"Name"}
+                        placeholder={"Enter warehouse Name"}
                         {...register("full_name", {
                             required: "This field is required!!!"
                         })}
                         error={errors.full_name?.message}
                         required={true}
                     />
-                </div>
-                {/* Phone Number */}
-                <div>
                     <Input
-                        label={"Phone Number"}
-                        type="number"
-                        placeholder={"Enter Phone Number..."}
-                        {...register("ph_number", {
+                        label={"Location"}
+                        placeholder={"Enter warehouse Location"}
+                        {...register("location", {
                             required: "This field is required!!!"
                         })}
-                        error={errors.ph_number?.message}
+                        error={errors.location?.message}
                         required={true}
-                    />
-                </div>
-            </div>
-
-            {/* 1st row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Email */}
-                <div>
-                    <Input
-                        label={"Email"}
-                        placeholder={"Enter Email..."}
-                        {...register("email", {
-                            required: "This field is required!!!"
-                        })}
-                        error={errors.email?.message}
-                        required={true}
-                    // disabled={id}
                     />
                 </div>
 
-                {/* Password */}
-                <div>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                     <Input
-                        label={"Password"}
-                        type="password"
-                        placeholder={"Enter Password..."}
-                        {...register("password", {
-                            required: {
-                                message: "This field is required!!!",
-                                value: true
-                            }
-                        })}
-                        error={errors.password?.message}
-                        required={true}
+                        type={"number"}
+                        label={"GST Number"}
+                        placeholder={"Enter GST Number"}
+                        {...register("gst_no")}
                     />
-                </div>
-                {/* Confirm Password */}
-                <div>
+
                     <Input
-                        label={"Confirm Password"}
-                        type="password"
-                        placeholder={"Confirm Password..."}
-                        {...register("confirmPassword", {
-                            required: {
-                                message: "This field is required!!!",
-                                // value: !id
-                            },
-                            validate: (value) => (
-                                value === password || "Passwords do not match!!!"
-                            )
-                        })}
-                        error={errors.confirmPassword?.message}
-                    // required={!id}
+                        type={"number"}
+                        label={"License No"}
+                        placeholder={"Enter licensee No"}
+                        {...register("license_no")}
                     />
                 </div>
             </div>
@@ -133,7 +92,7 @@ const RegisterPartnerNode = ({
                 </div>
 
                 {/* Pincode */}
-                <div>
+                <div className=''>
                     <Input
                         label={"Pincode"}
                         type={"number"}
@@ -143,7 +102,8 @@ const RegisterPartnerNode = ({
                         required={true}
                     />
                 </div>
-                <div>
+                
+                <div className="">
                     {/* State */}
                     <Controller
                         name="state_id"

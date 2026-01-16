@@ -128,22 +128,14 @@ const RegisterWarehouseNode = ({
                         type={"number"}
                         label={"GST Number"}
                         placeholder={"Enter GST Number"}
-                        {...register("gst_no", {
-                            required: "This field is required!!!"
-                        })}
-                        error={errors.gst_no?.message}
-                        required={true}
+                        {...register("gst_no")}
                     />
 
                     <Input
                         type={"number"}
                         label={"License No"}
                         placeholder={"Enter licensee No"}
-                        {...register("license_no", {
-                            required: "This field is required!!!"
-                        })}
-                        error={errors.license_no?.message}
-                        required={true}
+                        {...register("license_no")}
                     />
                 </div>
             </div>

@@ -20,6 +20,9 @@ const Admin = ({ location }) => {
 
             <ul className="sub-menu">
                 <li className="relative">
+                    <NavLink to="/admin/browse">Browse</NavLink>
+                </li>
+                <li className="relative">
                     <NavLink to="/admin/business-flow">Business Flow</NavLink>
                 </li>
                 <li className="relative">
@@ -34,14 +37,11 @@ const Admin = ({ location }) => {
                     </button>
                     <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
                         <li>
-                            <NavLink to="/admin/warehouse">Warehouse</NavLink>
+                            <NavLink to="/admin/business/user-register">User</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/admin/user">User</NavLink>
-                        </li>
-                        <li>
+                        {/* <li>
                             <NavLink to="/master/suppliers/add-supplier">Supplier</NavLink>
-                        </li>
+                        </li> */}
                     </ul>
                 </li>
 

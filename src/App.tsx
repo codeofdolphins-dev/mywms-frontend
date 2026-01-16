@@ -32,6 +32,7 @@ import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
 import RegisterNode from './screens/admin/RegisterNode';
 import PackageType from './screens/packageType/PackageType';
 import Unit from './screens/unit/Unit';
+import CreateUser from './screens/admin/CreateUser';
 
 function App() {
 
@@ -52,6 +53,8 @@ function App() {
                     <Route path="admin" >
                         <Route path="business-flow" element={<Rules />} />
                         <Route path="business/node-register" element={<RegisterNode />} />
+                        <Route path="business/user-register" element={<CreateUser />} />
+
                         <Route path="warehouse" element={<Warehouse />} />
                         <Route path="warehouse/create" element={<Warehouse />} />
                     </Route>

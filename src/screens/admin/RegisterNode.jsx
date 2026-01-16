@@ -32,14 +32,14 @@ const RegisterNode = () => {
         const formData = RHFToFormData(data);
 
         try {
-            if (["manufacturing", "warehouse"].includes(node?.category)) {
-                const res = await registerWarehouse({ path: "/super-admin/register-node-warehouse", formData })
-                if (res.success) reset();
+            const res = await registerWarehouse({ path: "/super-admin/register-node", formData })
+            if (res.success) reset();
+            // if (["manufacturing", "warehouse"].includes(node?.category)) {
 
-            } else {
-                const res = await registerPartner({ path: "/super-admin/register-node-partner", formData });
-                if (res.success) reset();
-            }
+            // } else {
+            //     const res = await registerPartner({ path: "/super-admin/register-node-partner", formData });
+            //     if (res.success) reset();
+            // }
         } catch (error) {
             console.log(error)
         }
