@@ -34,59 +34,6 @@ const RegisterWarehouseNode = ({
                 </div>
             </div>
 
-            {/* 1st row */}
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                Email
-                <div>
-                    <Input
-                        label={"Email"}
-                        placeholder={"Enter Email..."}
-                        {...register("email", {
-                            required: "This field is required!!!"
-                        })}
-                        error={errors.email?.message}
-                        required={true}
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                    Password
-                    <div>
-                        <Input
-                            label={"Password"}
-                            type="password"
-                            placeholder={"Enter Password..."}
-                            {...register("password", {
-                                required: {
-                                    message: "This field is required!!!",
-                                    value: true
-                                }
-                            })}
-                            error={errors.password?.message}
-                            required={true}
-                        />
-                    </div>
-                    Confirm Password
-                    <div>
-                        <Input
-                            label={"Confirm Password"}
-                            type="password"
-                            placeholder={"Confirm Password..."}
-                            {...register("confirmPassword", {
-                                required: {
-                                    message: "This field is required!!!",
-                                },
-                                validate: (value) => (
-                                    value === password || "Passwords do not match!!!"
-                                )
-                            })}
-                            error={errors.confirmPassword?.message}
-                        />
-                    </div>
-                </div>
-            </div> */}
-
             {/* 2rd row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Full Name */}
@@ -142,8 +89,7 @@ const RegisterWarehouseNode = ({
 
             {/* 3rd row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-
+                
                 {/* Address */}
                 <div>
                     <Input
