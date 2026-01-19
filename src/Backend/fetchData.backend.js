@@ -139,6 +139,18 @@ class FetchData {
         });
     };
 
+    TQTenantRegisteredNodeList() {
+        return useQuery({
+            queryKey: ["tenantRegisteredNodeList"],
+            queryFn: async () => {
+                const res = await API.get("/business/registered-node-list");
+                return res.data;
+            },
+        });
+    };
+
+
+
     TQUnitTypeList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["unitTypeList", params],

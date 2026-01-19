@@ -1,17 +1,31 @@
-import React, { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
-import RHSelect from "../../components/inputs/RHF/Select.RHF"
-import Input from '../../components/inputs/Input'
-import TextArea from '../../components/inputs/TextArea'
-import FileUpload from '../../components/inputs/File'
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import RHSelect from "../../components/inputs/RHF/Select.RHF";
+import Input from '../../components/inputs/Input';
+import TextArea from '../../components/inputs/TextArea';
+import FileUpload from '../../components/inputs/File';
+import SearchableSelect from '../../components/inputs/SearchableSelect';
+import fetchData from '../../Backend/fetchData.backend';
+import { useSelector } from 'react-redux';
+
+const USER_TYPE = [
+    { label: "Node Admin", value: "node-admin" },
+    { label: "Node User", value: "node-user" },
+]
 
 const CreateUser = () => {
-
     const { handleSubmit, register, control, reset, watch, formState: { errors } } = useForm();
 
     const password = watch("password");
     const state_id = watch("state_id");
+    const node = watch("node") || null;
+
+    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = fetchData.TQTenantRegisteredNodeList();
+    const stateData = useSelector(state => state.location);
+    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state_id);
+
+
 
     function submitForm(data) { }
 
@@ -40,29 +54,55 @@ const CreateUser = () => {
                 <div className="panel space-y-4">
 
                     {/* select parent node */}
-                    <div className='grid grid-cols-1 gap-4'>
-                        <Controller
-                            name="node"
-                            control={control}
-                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                <RHSelect
-                                    ref={(el) => {
-                                        ref({
-                                            focus: () => el?.focus(),
-                                        });
-                                    }}
-                                    value={value}
-                                    onChange={(val) =>
-                                        reset({ node: val })
-                                    }
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 
-                                    label="Select Location"
-                                    // options={businessNodes?.data}
-                                    error={error?.message}
-                                    objectReturn={true}
-                                />
-                            )}
-                        />
+                        {/* assign location */}
+                        <div className="">
+                            <Controller
+                                name="node"
+                                control={control}
+                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                    <RHSelect
+                                        ref={(el) => {
+                                            ref({
+                                                focus: () => el?.focus(),
+                                            });
+                                        }}
+                                        value={value}
+                                        onChange={onChange}
+
+                                        label="Assign Location"
+                                        options={registeredNodeList?.data}
+                                        error={error?.message}
+                                        objectReturn={true}
+                                        isClearable={true}
+                                    />
+                                )}
+                            />
+                        </div>
+
+                        {/* node type */}
+                        <div className="">
+                            <Controller
+                                name="node_type"
+                                control={control}
+                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                    <SearchableSelect
+                                        ref={(el) => {
+                                            ref({
+                                                focus: () => el?.focus(),
+                                            });
+                                        }}
+                                        value={value}
+                                        onChange={onChange}
+
+                                        label="User Type"
+                                        options={USER_TYPE}
+                                        disabled={node === null ? true : false}
+                                    />
+                                )}
+                            />
+                        </div>
                     </div>
 
                     {/* 1st row */}
@@ -149,17 +189,6 @@ const CreateUser = () => {
 
                     {/* 3rd row */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <Input
-                                label={"Company Name"}
-                                placeholder={"Enter Company Name..."}
-                                {...register("company_name", {
-                                    required: "This field is required!!!"
-                                })}
-                                error={errors.company_name?.message}
-                                required={true}
-                            />
-                        </div>
 
                         {/* Address */}
                         <div>
@@ -174,10 +203,6 @@ const CreateUser = () => {
                                 error={errors.address?.message}
                             />
                         </div>
-                    </div>
-
-                    {/* 4th row */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {/* Pincode */}
@@ -213,7 +238,7 @@ const CreateUser = () => {
                                             }}
 
                                             label="Select State"
-                                            // options={stateData}
+                                            options={stateData}
                                             required={true}
                                             error={error?.message}
                                         />
@@ -221,7 +246,12 @@ const CreateUser = () => {
                                 />
                             </div>
                         </div>
+                    </div>
 
+                    {/* 4th row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        {/* district */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 {/* district */}
@@ -242,7 +272,7 @@ const CreateUser = () => {
                                             onChange={onChange}
 
                                             label="Select district"
-                                            // options={districtData}
+                                            options={districtData}
                                             required={true}
                                             error={error?.message}
                                             disabled={state_id ? false : true}
@@ -266,16 +296,32 @@ const CreateUser = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* desc */}
+                        <div className='grid grid-cols-1 gap-4'>
+                            <TextArea
+                                label="Description"
+                                placeholder="Enter Address..."
+                                className="text-sm"
+                                {...register("desc")}
+                            />
+                        </div>
                     </div>
 
-                    {/* 5th row */}
-                    <div className='grid grid-cols-1 gap-4'>
-                        <TextArea
-                            label="Description"
-                            placeholder="Enter Address..."
-                            className="text-sm"
-                            {...register("desc")}
-                        />
+                    {/* button */}
+                    <div className="flex items-center justify-end gap-11">
+                        <button
+                            type='button'
+                            className='btn btn-outline-dark'
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type='submit'
+                            className='btn btn-info'
+                        >
+                            Submit
+                        </button>
                     </div>
 
                 </div>

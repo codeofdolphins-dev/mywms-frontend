@@ -16,6 +16,7 @@ function RHSelect({
     error = '',
     className = '',
     objectReturn = false,
+    isClearable = false,
 
     addButton = false,
     buttonTitle = "Add",
@@ -34,7 +35,16 @@ function RHSelect({
         if (!value) return isMulti ? [] : null;
 
         if (isMulti) {
-            return options.filter((opt) => value.includes(opt.id))
+            if (objectReturn) {
+                // value = [{ id, name }]
+                return options.filter(opt =>
+                    value.some(v => v.id === opt.id)
+                );
+            } else {
+                // value = [1, 2, 3]
+                return options.filter(opt => value.includes(opt.id));
+            }
+            // return options.filter((opt) => value.includes(opt.id))
         } else {
             if (objectReturn) {
                 return options.find((opt) => opt.id === value.id) || null;
@@ -69,7 +79,7 @@ function RHSelect({
                             }
                         } else {
                             if (objectReturn) {
-                                onChange(selected || []);
+                                onChange(selected || null);
                             } else {
                                 onChange(selected ? selected.id : null);
                             }
@@ -80,6 +90,7 @@ function RHSelect({
                         return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
                     }}
                     getOptionValue={option => option.id}
+                    isClearable={isClearable}
                     isMulti={isMulti}
                     isDisabled={disabled}
                     placeholder={placeholder}

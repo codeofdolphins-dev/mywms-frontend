@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 const RegisterNode = () => {
 
     const { data: businessNodes, isLoading: businessNodeLoading } = fetchData.TQTenantBusinessNodeList();
-    const { mutateAsync: registerWarehouse, isLoading: isPendingWarehouse } = masterData.TQCreateMaster();
-    const { mutateAsync: registerPartner, isPending: isPendingPartner } = masterData.TQCreateMaster();
+    const { mutateAsync: registerWarehouse, isLoading: isPendingWarehouse } = masterData.TQCreateMaster(["tenantRegisteredNodeList"]);
 
     const {
         register,
