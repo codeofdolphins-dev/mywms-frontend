@@ -1,3 +1,5 @@
+export const IMAGE_URL = import.meta.env.VITE_IMAGE_URL
+
 export const WAREHOUSE_COLUMN = [
     { key: "id", label: "#" },
     { key: "permission", label: "Name" },
@@ -329,9 +331,11 @@ export const BASIC_NODE_COLUMN = [
 
 // { key: "action", label: "Action", width: ".5fr", align: "center" },
 export const USER_LIST_COLUMN = [
-    { key: "logo", label: "Image" },
+    { key: "logo", label: "Image", width: ".5fr" },
     { key: "name", label: "Name" },
     { key: "email", label: "Email" },
-    { key: "phone_no", label: "Phone No." },
-    { key: "action", label: "Action" },
+    { key: "phone", label: "Phone No.", width: ".8fr" },
+    { key: "address", label: "Address", width: "1.5fr" },
+    { key: "active", label: "Active", width: ".6fr" },
+    { key: "action", label: "Action", width: ".7fr" },
 ];

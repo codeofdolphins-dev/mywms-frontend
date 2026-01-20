@@ -9,8 +9,8 @@ const ADMIN_MENU = [
     {
         name: 'user',
         children: [
-            { name: 'List', path: '/admin/user' },
-            { name: 'Create', path: '/admin/user/register' },
+            { name: 'List', path: '/user' },
+            { name: 'Create', path: '/user/register' },
         ]
     },
 ];

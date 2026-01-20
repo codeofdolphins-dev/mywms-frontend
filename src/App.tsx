@@ -34,6 +34,7 @@ import PackageType from './screens/packageType/PackageType';
 import Unit from './screens/unit/Unit';
 import CreateUser from './screens/admin/CreateUser';
 import UserBrowse from './screens/user/UserBrowse';
+import UserProfile from './screens/user/UserProfile';
 
 function App() {
 
@@ -57,14 +58,15 @@ function App() {
 
                         <Route path="warehouse" element={<Warehouse />} />
                         <Route path="warehouse/create" element={<Warehouse />} />
-
-                        {/* user */}
-                        <Route path="user" >
-                            <Route index element={<UserBrowse />} />
-                        <Route path="register" element={<CreateUser />} />
-                        </Route>
-
                     </Route>
+
+                    {/* user */}
+                    <Route path="user" >
+                        <Route index element={<UserBrowse />} />
+                        <Route path="register" element={<CreateUser />} />
+                        <Route path="profile" element={<UserProfile />} />
+                    </Route>
+
 
                     {/* master */}
                     <Route path='master'>
