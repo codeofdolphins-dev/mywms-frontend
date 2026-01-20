@@ -2,6 +2,19 @@ import { RiAdminFill } from "react-icons/ri";
 import IconCaretDown from "../Icon/IconCaretDown";
 import { NavLink } from "react-router-dom";
 
+const ADMIN_MENU = [
+    { name: 'Browse', path: '/admin/browse' },
+    { name: 'Business Flow', path: '/admin/business-flow' },
+    { name: 'Register', path: '/admin/business/node-register' },
+    {
+        name: 'user',
+        children: [
+            { name: 'List', path: '/admin/user' },
+            { name: 'Create', path: '/admin/user/register' },
+        ]
+    },
+];
+
 const Admin = ({ location }) => {
     return (
         <li className="menu nav-item relative !ml-0">
@@ -19,32 +32,46 @@ const Admin = ({ location }) => {
             </button>
 
             <ul className="sub-menu">
-                <li className="relative">
-                    <NavLink to="/admin/browse">Browse</NavLink>
-                </li>
-                <li className="relative">
-                    <NavLink to="/admin/business-flow">Business Flow</NavLink>
-                </li>
-                <li className="relative">
-                    <NavLink to="/admin/business/node-register">Register</NavLink>
-                </li>
-                <li className="relative">
-                    <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
-                        <span className="px-1 text-black">Create</span>
-                        <div className="ml-auto -rotate-90">
-                            <IconCaretDown className='text-black' />
-                        </div>
-                    </button>
-                    <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                        <li>
-                            <NavLink to="/admin/business/user-register">User</NavLink>
-                        </li>
-                        {/* <li>
-                            <NavLink to="/master/suppliers/add-supplier">Supplier</NavLink>
-                        </li> */}
-                    </ul>
-                </li>
+                {ADMIN_MENU?.map((item) =>
+                    <li key={item.path} className="relative">
+                        {item?.children
+                            ? <>
+                                <button type="button" className={`nav-link ${location.pathname.includes('/user') ? 'active' : ''} !cursor-default`}>
+                                    <span className="px-1 text-black">User</span>
+                                    <div className="ml-auto -rotate-90">
+                                        <IconCaretDown className='text-black' />
+                                    </div>
+                                </button>
+                                <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                                    {
+                                        item?.children?.map(item => (
+                                            <li
+                                                key={item.path}
+                                            >
+                                                <NavLink
+                                                    to={item.path}
+                                                    end={item.path}
+                                                    className={({ isActive }) => isActive ? "active" : ""}
+                                                >
+                                                    {item.name}
+                                                </NavLink>
+                                            </li>
 
+                                        ))
+                                    }
+                                </ul>
+                            </> : <>
+                                <NavLink
+                                    to={item.path}
+                                    end={item.path}
+                                    className={({ isActive }) => isActive ? "active" : ""}
+                                >
+                                    {item.name}
+                                </NavLink>
+                            </>
+                        }
+                    </li>
+                )}
             </ul>
         </li>
     );

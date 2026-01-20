@@ -128,29 +128,6 @@ class FetchData {
         });
     };
 
-    TQTenantBusinessNodeList() {
-        return useQuery({
-            queryKey: ["tenantBusinessNodeList"],
-            queryFn: async () => {
-                const res = await API.get("/business/node-list");
-                return res.data;
-            },
-            gcTime: Infinity,
-        });
-    };
-
-    TQTenantRegisteredNodeList() {
-        return useQuery({
-            queryKey: ["tenantRegisteredNodeList"],
-            queryFn: async () => {
-                const res = await API.get("/business/registered-node-list");
-                return res.data;
-            },
-        });
-    };
-
-
-
     TQUnitTypeList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["unitTypeList", params],
@@ -176,6 +153,40 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+
+    TQTenantBusinessNodeList() {
+        return useQuery({
+            queryKey: ["tenantBusinessNodeList"],
+            queryFn: async () => {
+                const res = await API.get("/business/node-list");
+                return res.data;
+            },
+            gcTime: Infinity,
+        });
+    };
+
+    TQTenantRegisteredNodeList() {
+        return useQuery({
+            queryKey: ["tenantRegisteredNodeList"],
+            queryFn: async () => {
+                const res = await API.get("/business/registered-node-list");
+                return res.data;
+            },
+        });
+    };
+    
+    TQAllUserList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["allUserList", params],
+            queryFn: async () => {
+                const res = await API.get("/user/list", {
+                    params
+                });
+                return res.data;
+            },
+        });
+    };
+
 }
 
 const fetchData = new FetchData;

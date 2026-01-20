@@ -8,26 +8,41 @@ import FileUpload from '../../components/inputs/File';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import fetchData from '../../Backend/fetchData.backend';
 import { useSelector } from 'react-redux';
+import masterData from '../../Backend/master.backend';
+import { RHFToFormData } from '../../utils/RHFtoFD';
+import { Button } from '@mantine/core';
 
 const USER_TYPE = [
-    { label: "Node Admin", value: "node-admin" },
-    { label: "Node User", value: "node-user" },
+    { label: "Node Admin", value: "NODE_ADMIN" },
+    { label: "Node User", value: "NODE_USER" },
 ]
 
 const CreateUser = () => {
     const { handleSubmit, register, control, reset, watch, formState: { errors } } = useForm();
 
     const password = watch("password");
-    const state_id = watch("state_id");
+    const state = watch("state");
     const node = watch("node") || null;
 
     const { data: registeredNodeList, isLoading: registeredNodeListLoading } = fetchData.TQTenantRegisteredNodeList();
     const stateData = useSelector(state => state.location);
-    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state_id);
+    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state?.id);
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
 
 
 
-    function submitForm(data) { }
+    async function submitForm(data) {
+        const formData = RHFToFormData(data);
+
+        try {
+            const res = await createData({ path: `/business/register-user`, formData });
+            if (res.success) reset();
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div>
@@ -71,7 +86,7 @@ const CreateUser = () => {
                                         value={value}
                                         onChange={onChange}
 
-                                        label="Assign Location"
+                                        label="Assign Place"
                                         options={registeredNodeList?.data}
                                         error={error?.message}
                                         objectReturn={true}
@@ -219,7 +234,7 @@ const CreateUser = () => {
                             <div>
                                 {/* State */}
                                 <Controller
-                                    name="state_id"
+                                    name="state"
                                     control={control}
                                     rules={{
                                         required: "This field is required!!!"
@@ -232,15 +247,13 @@ const CreateUser = () => {
                                                 });
                                             }}
                                             value={value}
-                                            onChange={(value) => {
-                                                onChange(value);
-                                                setStateId(value);
-                                            }}
+                                            onChange={onChange}
 
                                             label="Select State"
                                             options={stateData}
                                             required={true}
                                             error={error?.message}
+                                            objectReturn={true}
                                         />
                                     )}
                                 />
@@ -256,7 +269,7 @@ const CreateUser = () => {
                             <div>
                                 {/* district */}
                                 <Controller
-                                    name="district_id"
+                                    name="district"
                                     control={control}
                                     rules={{
                                         required: "This field is required!!!"
@@ -275,7 +288,8 @@ const CreateUser = () => {
                                             options={districtData}
                                             required={true}
                                             error={error?.message}
-                                            disabled={state_id ? false : true}
+                                            disabled={state ? false : true}
+                                            objectReturn={true}
                                         />
                                     )}
                                 />
@@ -316,12 +330,14 @@ const CreateUser = () => {
                         >
                             Cancel
                         </button>
-                        <button
+
+                        <Button
                             type='submit'
                             className='btn btn-info'
+                            loading={createPending}
                         >
                             Submit
-                        </button>
+                        </Button>
                     </div>
 
                 </div>

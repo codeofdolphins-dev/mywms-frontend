@@ -33,6 +33,7 @@ import RegisterNode from './screens/admin/RegisterNode';
 import PackageType from './screens/packageType/PackageType';
 import Unit from './screens/unit/Unit';
 import CreateUser from './screens/admin/CreateUser';
+import UserBrowse from './screens/user/UserBrowse';
 
 function App() {
 
@@ -53,10 +54,16 @@ function App() {
                     <Route path="admin" >
                         <Route path="business-flow" element={<Rules />} />
                         <Route path="business/node-register" element={<RegisterNode />} />
-                        <Route path="business/user-register" element={<CreateUser />} />
 
                         <Route path="warehouse" element={<Warehouse />} />
                         <Route path="warehouse/create" element={<Warehouse />} />
+
+                        {/* user */}
+                        <Route path="user" >
+                            <Route index element={<UserBrowse />} />
+                        <Route path="register" element={<CreateUser />} />
+                        </Route>
+
                     </Route>
 
                     {/* master */}

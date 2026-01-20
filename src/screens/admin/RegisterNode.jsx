@@ -22,7 +22,9 @@ const RegisterNode = () => {
         watch,
         reset
     } = useForm({
-        shouldUnregister: true
+        defaultValues: {
+            node: null
+        }
     });
 
     const node = watch("node");
@@ -32,7 +34,9 @@ const RegisterNode = () => {
 
         try {
             const res = await registerWarehouse({ path: "/super-admin/register-node", formData })
-            if (res.success) reset();
+            console.log(res)
+            if (res.success) reset({ node: null });
+
             // if (["manufacturing", "warehouse"].includes(node?.category)) {
 
             // } else {

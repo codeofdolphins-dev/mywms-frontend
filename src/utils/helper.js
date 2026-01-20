@@ -326,3 +326,12 @@ export const BASIC_NODE_COLUMN = [
     { key: "code", label: "Level Code" },
     { key: "action", label: "Action", width: ".5fr", align: "center" },
 ];
+
+// { key: "action", label: "Action", width: ".5fr", align: "center" },
+export const USER_LIST_COLUMN = [
+    { key: "logo", label: "Image" },
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "phone_no", label: "Phone No." },
+    { key: "action", label: "Action" },
+];
