@@ -7,12 +7,11 @@ import SearchInput from '../../components/inputs/SearchInput';
 import TableHeader from '../../components/table/TableHeader';
 import { IMAGE_URL, USER_LIST_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
-import CustomeButton from "@/components/inputs/Button"
+import CustomeButton from "../../components/inputs/Button"
 import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import BasicPagination from '../../components/BasicPagination';
-
-const SAMPLE_IMAGE = "/assets/images/user-profile.jpeg"
+import ImageComponent from '../../components/ImageComponent';
 
 const UserBrowse = () => {
     const navigate = useNavigate();
@@ -60,44 +59,24 @@ const UserBrowse = () => {
         }
     };
 
-    function click(data){
-        console.log(data)
-    }
 
     return (
-        <div>{/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <Link to="/master" className="text-primary hover:underline">
-                        Master
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2">
-                    <span>Products</span>
-                </li>
-            </ul>
-
+        <div className='space-y-4'>
             {/* Header Section */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-5xl font-bold my-3">User</h1>
-                </div>
-                <button
-                    className='btn btn-primary'
-                    onClick={() => navigate("add-product")}
-                >
-                    <FiPlus size={20} className='mr-2' />
-                    Add Product
-                </button>
-            </div>
+            <div className="flex flex-col sm:flex-row justify-between items-center">
+                <div className='self-start'>
+                    <h1 className="text-2xl font-bold mb-3 sm:mb-0">All Users</h1>
 
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                </div>
                 <SearchInput
                     type="text"
-                    placeholder="Search by name, SKU, barcode, category, or HSN..."
-                    className="bg- border-pink-500"
+                    placeholder="Search by name, email, phone..."
+                    className=""
                     setValue={setDebounceSearch}
+
+                    addButton={true}
+                    btnTitle={"Add User"}
+                    btnOnClick={() => navigate("register")}
                 />
             </div>
 
@@ -108,17 +87,12 @@ const UserBrowse = () => {
                         <TableRow
                             key={item.id}
                             columns={USER_LIST_COLUMN}
-                            onClick={() => click(item.id)}
+                            onClick={() => navigate(`/user/profile/${item.id}`)}
                             row={{
                                 logo: (
-                                    <img
-                                        class="w-12 h-12 rounded-full overflow-hidden object-cover"
-                                        src={
-                                            item?.profile_image !== null
-                                                ? `${IMAGE_URL}/${item?.profile_image}`
-                                                : SAMPLE_IMAGE
-                                        }
-                                        alt="profile image"
+                                    <ImageComponent
+                                        src={item?.profile_image}
+                                        className={"w-12 h-12"}
                                     />
                                 ),
                                 name: item?.name?.full_name,

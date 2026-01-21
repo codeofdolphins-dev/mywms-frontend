@@ -32,7 +32,7 @@ import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
 import RegisterNode from './screens/admin/RegisterNode';
 import PackageType from './screens/packageType/PackageType';
 import Unit from './screens/unit/Unit';
-import CreateUser from './screens/admin/CreateUser';
+import CreateUser from './screens/user/CreateUser';
 import UserBrowse from './screens/user/UserBrowse';
 import UserProfile from './screens/user/UserProfile';
 
@@ -64,7 +64,7 @@ function App() {
                     <Route path="user" >
                         <Route index element={<UserBrowse />} />
                         <Route path="register" element={<CreateUser />} />
-                        <Route path="profile" element={<UserProfile />} />
+                        <Route path="profile/:id" element={<UserProfile />} />
                     </Route>
 
 

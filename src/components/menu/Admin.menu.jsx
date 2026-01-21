@@ -8,10 +8,11 @@ const ADMIN_MENU = [
     { name: 'Register', path: '/admin/business/node-register' },
     {
         name: 'user',
-        children: [
-            { name: 'List', path: '/user' },
-            { name: 'Create', path: '/user/register' },
-        ]
+        path: '/user',
+        // children: [
+        //     { name: 'List', path: '/user' },
+        //     { name: 'Create', path: '/user/register' },
+        // ]
     },
 ];
 
@@ -32,8 +33,11 @@ const Admin = ({ location }) => {
             </button>
 
             <ul className="sub-menu">
-                {ADMIN_MENU?.map((item) =>
-                    <li key={item.path} className="relative">
+                {ADMIN_MENU?.map((item, idx) =>
+                    <li
+                        key={idx}
+                        className="relative"
+                    >
                         {item?.children
                             ? <>
                                 <button type="button" className={`nav-link ${location.pathname.includes('/user') ? 'active' : ''} !cursor-default`}>
@@ -44,9 +48,9 @@ const Admin = ({ location }) => {
                                 </button>
                                 <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
                                     {
-                                        item?.children?.map(item => (
+                                        item?.children?.map((item, idx) => (
                                             <li
-                                                key={item.path}
+                                                key={idx}
                                             >
                                                 <NavLink
                                                     to={item.path}

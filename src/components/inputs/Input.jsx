@@ -5,6 +5,7 @@ import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 
 const Input = React.forwardRef(({
     label,
+    labelPosition = "",
     type = 'text',
     className = '',
     error,
@@ -17,20 +18,20 @@ const Input = React.forwardRef(({
 
 
     return (
-        <div className="w-full">
+        <div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between" : ""} `}>
             {
                 label && <label
                     htmlFor={_id}
-                    className='inline-block mb-1 pl-1 text-sm text-gray-600'
+                    className={`inline-block mb-1 pl-1 text-sm text-gray-600 ${labelPosition === "inline" ? "w-1/3" : ""}`}
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
             }
-            <div className='relative'>
+            <div className={`relative ${labelPosition === "inline" ? "w-2/3" : ""} `}>
                 <input
                     id={_id}
-                    type={ isPasswordSeen ? "text" : type}
-                    className={`px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${ props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black" } ${className}`}
+                    type={isPasswordSeen ? "text" : type}
+                    className={`px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black"} ${className}`}
                     ref={ref}
                     {...props}
                 />

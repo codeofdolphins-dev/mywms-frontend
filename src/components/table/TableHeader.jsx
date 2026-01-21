@@ -8,7 +8,7 @@ const TableHeader = ({
 
     return (
         <div
-            className={`grid bg-gray-50 border-b text-sm font-semibold text-gray-700 ${sticky ? "sticky top-0 z-10" : ""} ${className}`}
+            className={`grid bg-gray-50 border-b text-sm font-semibold text-gray-700 ${sticky ? "sticky top-0" : ""} ${className}`}
             style={{ gridTemplateColumns: gridTemplate }}
             onClick={onClick}
         >

@@ -6,6 +6,7 @@ function RHSelect({
     selectKey = "name",
     selectSubKey = "full_name",
     label,
+    labelPosition = "",
     options = [],
     value,
     onChange,
@@ -55,67 +56,73 @@ function RHSelect({
     };
 
     return (
-        <div className="space-y-1 w-full">
+        <div className={`space-y-1 w-full ${labelPosition === "inline" ? "flex items-center justify-between" : ""}`}>
             {label && (
                 <label
-                    className={`block text-sm font-medium mb-0 ${disabled ? "text-gray-400" : "text-gray-700"}`}
+                    className={`
+                        block text-sm font-medium mb-0 
+                            ${disabled ? "text-gray-400" : "text-gray-700"} 
+                            ${labelPosition === "inline" ? "w-1/3" : ""}
+                        `}
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
             )}
 
-            <div className="flex">
-                <Select
-                    value={getValue()}
-                    ref={selectRef}
-                    inputRef={ref}
-                    onChange={(selected) => {
-                        if (disabled) return; // prevent interaction when disabled
-                        if (isMulti) {
-                            if (objectReturn) {
-                                onChange(selected || []);
+            <div className={labelPosition === "inline" ? "w-2/3" : ""}>
+                <div className="flex">
+                    <Select
+                        value={getValue()}
+                        ref={selectRef}
+                        inputRef={ref}
+                        onChange={(selected) => {
+                            if (disabled) return; // prevent interaction when disabled
+                            if (isMulti) {
+                                if (objectReturn) {
+                                    onChange(selected || []);
+                                } else {
+                                    onChange(selected ? selected.map((opt) => opt.id) : []);
+                                }
                             } else {
-                                onChange(selected ? selected.map((opt) => opt.id) : []);
+                                if (objectReturn) {
+                                    onChange(selected || null);
+                                } else {
+                                    onChange(selected ? selected.id : null);
+                                }
                             }
-                        } else {
-                            if (objectReturn) {
-                                onChange(selected || null);
-                            } else {
-                                onChange(selected ? selected.id : null);
-                            }
-                        }
-                    }}
-                    options={options}
-                    getOptionLabel={option => {
-                        return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
-                    }}
-                    getOptionValue={option => option.id}
-                    isClearable={isClearable}
-                    isMulti={isMulti}
-                    isDisabled={disabled}
-                    placeholder={placeholder}
-                    classNamePrefix="react-select"
-                    className={`text-sm flex-1 rounded-r-none ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
-                    styles={{
-                        control: (base) => ({
-                            ...base,
-                            borderTopRightRadius: addButton ? 0 : base.borderTopRightRadius,
-                            borderBottomRightRadius: addButton ? 0 : base.borderBottomRightRadius,
-                        }),
-                    }}
-                />
-                {
-                    addButton &&
-                    <button
-                        className="px-4 btn-info text-white rounded-r flex items-center"
-                        onClick={buttonOnClick}
-                        type="button"
-                    >
-                        <FiPlus size={20} />{buttonTitle}
-                    </button>
-                }
+                        }}
+                        options={options}
+                        getOptionLabel={option => {
+                            return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
+                        }}
+                        getOptionValue={option => option.id}
+                        isClearable={isClearable}
+                        isMulti={isMulti}
+                        isDisabled={disabled}
+                        placeholder={placeholder}
+                        classNamePrefix="react-select"
+                        className={`text-sm flex-1 rounded-r-none ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+                        styles={{
+                            control: (base) => ({
+                                ...base,
+                                borderTopRightRadius: addButton ? 0 : base.borderTopRightRadius,
+                                borderBottomRightRadius: addButton ? 0 : base.borderBottomRightRadius,
+                            }),
+                        }}
+                    />
+                    {
+                        addButton &&
+                        <button
+                            className="px-4 btn-info text-white rounded-r flex items-center"
+                            onClick={buttonOnClick}
+                            type="button"
+                        >
+                            <FiPlus size={20} />{buttonTitle}
+                        </button>
+                    }
+                </div>
+                {error && <span className='text-danger'>{error}</span>}
             </div>
-            {error && <span className='text-danger'>{error}</span>}
         </div>
     );
 }

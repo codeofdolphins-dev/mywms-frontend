@@ -1,4 +1,6 @@
-export const IMAGE_URL = import.meta.env.VITE_IMAGE_URL
+export const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+export const SAMPLE_IMAGE1 = "/assets/images/user-profile.jpeg";
+export const SAMPLE_IMAGE2 = "/assets/images/profile-34.jpeg";
 
 export const WAREHOUSE_COLUMN = [
     { key: "id", label: "#" },

@@ -85,7 +85,7 @@ const CreateRequisition = () => {
             {/* Header Section */}
             <div className="flex justify-between items-center mt-3">
                 <div>
-                    <h1 className="text-4xl font-bold my-3">Create Requisition</h1>
+                    <h1 className="text-2xl font-bold mb-3">Create Requisition</h1>
                 </div>
             </div>
 
@@ -97,7 +97,7 @@ const CreateRequisition = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <Controller
-                                    name="hsn_code"
+                                    name="buyer"
                                     control={control}
                                     rules={{
                                         required: "This field is required!!!"
@@ -112,8 +112,8 @@ const CreateRequisition = () => {
                                             value={value}
                                             onChange={onChange}
 
-                                            label="Warehouse"
-                                            selectKey='hsn_code'
+                                            label="Buyer"
+                                            // selectKey=''
                                             // options={hsnData?.data}
                                             error={error?.message}
                                             required={true}

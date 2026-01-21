@@ -26,6 +26,7 @@ import {
     Outward
 } from '../menu';
 
+const DEV_BYPASS = true;
 
 
 const supplierSubMenu = [
@@ -59,13 +60,15 @@ const NavBar = () => {
     const location = useLocation();
     const userData = useSelector(state => state?.auth?.userData);
     const userRoles = userData?.roles?.map(r => r.role);
-    const nodeName = userData?.nodeDetails?.name.toLowerCase();
+    const nodeName = userData?.userBusinessNode?.nodeDetails?.name.toLowerCase();
 
     return (
         <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
 
             {/* dashboard */}
-            {(hasRoleAccess(["system", "owner", "company"], userRoles)) && <Dashboard location={location} />}
+            {
+                ( DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Dashboard location={location} />
+            }
 
             {/* master */}
             {hasRoleAccess(["system", "owner", "company"], userRoles) && <Master location={location} />}
@@ -108,13 +111,13 @@ const NavBar = () => {
                 </ul>
             </li> */}
             {
-                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Admin location={location} />
             }
 
             {/* manage access */}
-            {hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
+            { DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
 
 
             {/* production */}
@@ -139,35 +142,35 @@ const NavBar = () => {
 
             {/* requisition */}
             {
-                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Requisition location={location} />
             }
 
             {/* Quotation */}
             {
-                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Quotation location={location} />
             }
 
             {/* Purchase Order */}
             {
-                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <PurchaseOrder location={location} />
             }
 
             {/* Inward */}
             {
-                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Inward location={location} />
             }
 
             {/* outward */}
             {
-                ((hasRoleAccess(["system", "owner", "company"], userRoles))
+                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Outward location={location} />
             }
