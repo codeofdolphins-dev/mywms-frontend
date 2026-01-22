@@ -64,6 +64,7 @@ function App() {
                     <Route path="user" >
                         <Route index element={<UserBrowse />} />
                         <Route path="register" element={<CreateUser />} />
+                        <Route path="update/:id" element={<CreateUser />} />
                         <Route path="profile/:id" element={<UserProfile />} />
                     </Route>
 

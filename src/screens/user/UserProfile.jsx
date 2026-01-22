@@ -18,9 +18,9 @@ const UserProfile = () => {
     // console.log(locations);
 
     useEffect(() => {
-        setDetails(userDetails?.data?.[0] ?? {});
-        setLocations(userDetails?.data?.[0]?.userBusinessNode ?? []);
-        setRoles(userDetails?.data?.[0]?.roles ?? []);
+        setDetails(userDetails?.data ?? {});
+        setLocations(userDetails?.data?.userBusinessNode ?? []);
+        setRoles(userDetails?.data?.roles ?? []);
     }, [isLoading])
 
     return (
@@ -50,13 +50,13 @@ const UserProfile = () => {
                         buttonTitle='Add Role'
                     >
                         {roles?.length > 0 ?
-                            <>
-                                {
-                                    roles?.map((role, idx) =>
-                                        <BasicCardContent />
-                                    )
-                                }
-
+                            <>{
+                                roles?.map((role, idx) =>
+                                    <BasicCardContent
+                                        key={idx}
+                                    />
+                                )
+                            }
                             </> : <>
                                 <div className="p-6 text-center text-gray-400">
                                     No role assign yet
@@ -78,6 +78,7 @@ const UserProfile = () => {
 
                                     return (
                                         <BasicCardContent
+                                            key={idx}
                                             isBadge={true}
                                             badgeText={role}
                                             primaryText={`Name: ${details?.name}`}

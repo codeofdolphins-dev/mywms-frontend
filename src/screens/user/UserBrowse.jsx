@@ -41,7 +41,7 @@ const UserBrowse = () => {
 
 
     function handleEdit(id) {
-        navigate(`edit-product/${id}`)
+        navigate(`/user/update/${id}`)
     };
 
     async function handleDelete(id) {
@@ -92,20 +92,21 @@ const UserBrowse = () => {
                                 logo: (
                                     <ImageComponent
                                         src={item?.profile_image}
-                                        className={"w-12 h-12"}
+                                        className={"w-12 h-12 object-top"}
                                     />
                                 ),
                                 name: item?.name?.full_name,
                                 email: item?.email,
                                 phone: item?.phone_no,
-                                address: `
-                                        ${item?.address?.address}, ${item?.address?.pincode},
-                                        ${item?.address?.district}, ${item?.address?.state}
-                                    `,
                                 active: item?.is_active ? "Active" : "Inactive",
                                 action: (
                                     <div className="flex space-x-3">
-                                        <CustomeButton onClick={() => handleEdit(item.id)}>
+                                        <CustomeButton
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                handleEdit(item.id)
+                                            }}
+                                        >
                                             <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                                         </CustomeButton>
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useAsyncError, useNavigate, useParams } from 'react-router-dom';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import Input from '../../components/inputs/Input';
 import TextArea from '../../components/inputs/TextArea';
@@ -14,32 +14,108 @@ import { Button } from '@mantine/core';
 import ProfileCard from '../../components/user/userProfile/ProfileCard';
 
 const USER_TYPE = [
-    { label: "Node Admin", value: "NODE_ADMIN" },
-    { label: "Node User", value: "NODE_USER" },
+    { label: "Location Admin", value: "NODE_ADMIN" },
+    { label: "Location User", value: "NODE_USER" },
 ]
 
 const CreateUser = () => {
-    const { handleSubmit, register, control, reset, watch, formState: { errors } } = useForm();
+    const { id } = useParams();
+    const navigate = useNavigate();
 
+
+    const [preview, setPreview] = useState(null);
+    const [oldPreview, setOldPreview] = useState(null);
+    const [fileKey, setFileKey] = useState(0);
+
+    
+    const {
+        handleSubmit, register,
+        control, setValue,
+        reset, watch,
+        formState: { errors }
+    } = useForm({
+        defaultValues: {
+            node: null,
+            node_type: null,
+            image: null,
+        }
+    });
+
+    
     const password = watch("password");
-    const state = watch("state");
     const node = watch("node") || null;
+    const node_type = watch("node_type") || null;
+    const full_name = watch("full_name") || null;
+    const phone_no = watch("phone_no") || null;
+    const image = watch("image") || null;
+    const email = watch("email") || null;
+
 
     const { data: registeredNodeList, isLoading: registeredNodeListLoading } = fetchData.TQTenantRegisteredNodeList();
-    const stateData = useSelector(state => state.location);
-    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state?.id);
-
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
+    const { data: editUserDetails, isLoading: editUserDetailsLoading } = fetchData.TQAllUserList({ id }, !!id);
 
 
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["allUserList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["allUserList"]);
 
+
+    /** generate object url for image preview */
+    useEffect(() => {
+        if (!image) {
+            setPreview(null);
+            return;
+        };
+
+        const objectUrl = URL.createObjectURL(image);
+        setPreview(objectUrl);
+
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [image]);
+
+
+    /** prefill fields for edit details */
+    useEffect(() => {
+        const data = editUserDetails?.data
+        reset({
+            full_name: data?.name?.full_name,
+            phone_no: data?.phone_no,
+            email: data?.email,
+        });
+        setOldPreview(data?.profile_image);
+    }, [editUserDetailsLoading])
+
+    
     async function submitForm(data) {
+        if(id) data.id = id;
         const formData = RHFToFormData(data);
 
         try {
-            const res = await createData({ path: `/business/register-user`, formData });
-            if (res.success) reset();
+            if (id) {
+                const res = await updateData({ path: `/auth/update-user`, formData });
+                if (res.success) {
+                    reset();
+                    setPreview(null);
+                    setFileKey(prev => prev + 1);
+                }
 
+            } else {
+                const res = await createData({ path: `/auth/register-user`, formData });
+                if (res.success) {
+                    reset({
+                        full_name: "",
+                        phone_no: "",
+                        email: "",
+                        password: "",
+                        node: null,
+                        node_type: null,
+                        image: null,
+                    });
+
+                    setPreview(null);
+                    setOldPreview(null);
+                    setFileKey(prev => prev + 1);
+                }
+            }
         } catch (error) {
             console.log(error)
         }
@@ -55,68 +131,78 @@ const CreateUser = () => {
                     </Link>
                 </li>
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>register & Assign User</span>
+                    <span> {id ? "update user" : "register & assign user"}</span>
                 </li>
             </ul>
 
             <form onSubmit={handleSubmit(submitForm)} className='mt-5'>
 
-                <div className="grid grid-cols-1 min-[820px]:grid-cols-2 space-x-10">
+                <div className="grid grid-cols-1 min-[820px]:grid-cols-2 gap-8">
                     <div className="panel space-y-6">
 
-                        {/* select parent node */}
-                        <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
+                        {/* select location node */}
+                        {
+                            id
+                                ?
+                                <></>
+                                :
+                                <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
 
-                            {/* assign location */}
-                            <div className="">
-                                <Controller
-                                    name="node"
-                                    control={control}
-                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                        <RHSelect
-                                            ref={(el) => {
-                                                ref({
-                                                    focus: () => el?.focus(),
-                                                });
-                                            }}
-                                            value={value}
-                                            onChange={onChange}
+                                    {/* assign location */}
+                                    <div className="">
+                                        <Controller
+                                            name="node"
+                                            control={control}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={(e) => {
+                                                        if (e === null) setValue("node_type", null);
+                                                        return onChange(e);
+                                                    }}
 
-                                            label="Assign Place"
-                                            labelPosition={"inline"}
-                                            options={registeredNodeList?.data}
-                                            error={error?.message}
-                                            objectReturn={true}
-                                            isClearable={true}
+                                                    label="Assign Place"
+                                                    labelPosition={"inline"}
+                                                    options={registeredNodeList?.data}
+                                                    error={error?.message}
+                                                    objectReturn={true}
+                                                    isClearable={true}
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                            </div>
+                                    </div>
 
-                            {/* node type */}
-                            <div className="">
-                                <Controller
-                                    name="node_type"
-                                    control={control}
-                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                        <SearchableSelect
-                                            ref={(el) => {
-                                                ref({
-                                                    focus: () => el?.focus(),
-                                                });
-                                            }}
-                                            value={value}
-                                            onChange={onChange}
+                                    {/* node type */}
+                                    <div className="">
+                                        <Controller
+                                            name="node_type"
+                                            control={control}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <SearchableSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    isSearchable={false}
 
-                                            label="User Type"
-                                            labelPosition={"inline"}
-                                            options={USER_TYPE}
-                                            disabled={node === null ? true : false}
+                                                    label="User Type"
+                                                    labelPosition={"inline"}
+                                                    options={USER_TYPE}
+                                                    disabled={node === null ? true : false}
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                            </div>
-                        </div>
+                                    </div>
+                                </div>
+                        }
 
                         {/* 1st row */}
                         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
@@ -151,6 +237,7 @@ const CreateUser = () => {
                                 {/* file upload */}
                                 <div >
                                     <Controller
+                                        key={fileKey}
                                         name="image"
                                         control={control}
                                         defaultValue={null}
@@ -158,8 +245,7 @@ const CreateUser = () => {
                                             <FileUpload
                                                 label="Profile Image"
                                                 labelPosition={"inline"}
-                                                onChange={onChange} // gets File object
-                                                name="image"
+                                                onChange={onChange}
                                             />
                                         )}
                                     />
@@ -180,6 +266,7 @@ const CreateUser = () => {
                                     })}
                                     error={errors.email?.message}
                                     required={true}
+                                    disabled={id ? true : false}
                                 />
                             </div>
 
@@ -207,6 +294,7 @@ const CreateUser = () => {
                             <button
                                 type='button'
                                 className='btn btn-outline-dark'
+                                onClick={() => navigate(-1)}
                             >
                                 Cancel
                             </button>
@@ -214,15 +302,26 @@ const CreateUser = () => {
                             <Button
                                 type='submit'
                                 className='btn btn-info'
-                                loading={createPending}
+                                loading={createPending || updatePending}
                             >
-                                Submit
+                                {id ? "Update" : "Submit"}
                             </Button>
                         </div>
 
                     </div>
 
-                    <ProfileCard />
+                    <ProfileCard
+                        data={{
+                            location: node?.name,
+                            role: node_type,
+                            full_name,
+                            phone_no, image, email
+                        }}
+                        image={preview}
+                        onCreate={true}
+                        onEdit={id ? false : true}
+                        oldPreview={oldPreview}
+                    />
                 </div>
             </form>
 

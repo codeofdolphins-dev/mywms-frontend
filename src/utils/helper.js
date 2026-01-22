@@ -337,7 +337,6 @@ export const USER_LIST_COLUMN = [
     { key: "name", label: "Name" },
     { key: "email", label: "Email" },
     { key: "phone", label: "Phone No.", width: ".8fr" },
-    { key: "address", label: "Address", width: "1.5fr" },
     { key: "active", label: "Active", width: ".6fr" },
     { key: "action", label: "Action", width: ".7fr" },
 ];
