@@ -32,6 +32,7 @@ const UserBrowse = () => {
         limit: limit || null
     };
     const { data: userList, isLoading } = fetchData.TQAllUserList(params);
+    const isEmpty = userList?.data?.length === 0;
 
     useEffect(() => {
         setCurrentPage(1);
@@ -73,11 +74,16 @@ const UserBrowse = () => {
                 btnOnClick={() => navigate("register")}
             />
 
-            <div className={`panel mt-5 relative ${userList?.data?.length === 0 ? "min-h-64" : ""}`}>
+            <div className={`panel mt-5 relative ${ isEmpty ? "min-h-64" : ""}`}>
                 <div className="overflow-x-auto">
                     <TableHeader columns={USER_LIST_COLUMN} />
                     <TableBody
-                        isEmpty={userList?.data?.length === 0}
+                        isEmpty={isEmpty}
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        totalPage={userList?.meta?.totalPages}
                     >
                         {userList?.data?.map((item) =>
                             <TableRow
@@ -114,14 +120,6 @@ const UserBrowse = () => {
                                 }}
                             />
                         )}
-
-                        <BasicPagination
-                            totalPage={userList?.meta?.currentPage || 1}
-                            currentPage={currentPage}
-                            setCurrentPage={setCurrentPage}
-                            limit={limit}
-                            setLimit={setLimit}
-                        />
                     </TableBody>
                 </div>
             </div>

@@ -16,7 +16,6 @@ import fetchData from '@/Backend/fetchData.backend';
 import masterData from '@/Backend/master.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
 import TableHeader from '@/components/table/TableHeader';
-import { BRAND_COLUMN } from '@/utils/helper';
 import TableRow from '@/components/table/TableRow';
 import CustomeButton from "@/components/inputs/Button";
 import renderTwoLevelArray from '@/utils/twoLevelArrayViewer';
@@ -25,6 +24,9 @@ import { BsBoxSeam } from 'react-icons/bs';
 import Loader from '@/components/loader/Loader';
 import BasicPagination from '@/components/BasicPagination';
 import ComponentHeader from '@/components/ComponentHeader';
+import TableBody from '../../../components/table/TableBody';
+import ImageComponent from '../../../components/ImageComponent';
+import { BRAND_COLUMN } from '../../../utils/helper';
 
 
 const headerLink = [
@@ -48,6 +50,7 @@ const Brand = () => {
         limit: limit || null
     };
     const { data, isLoading } = fetchData.TQAllBrandList(params);
+    const isEmpty = data?.data?.length === 0;
 
     useEffect(() => {
         setCurrentPage(1);
@@ -89,72 +92,64 @@ const Brand = () => {
             />
 
             {/* display table */}
-            <div className="panel mt-5">
-                {
-                    isLoading ? (
-                        <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">
-                            <Loader />
-                        </div>
-                    ) : (
-                        <>
-                            <TableHeader columns={BRAND_COLUMN} />
-                            {data?.data.length === 0 ? (
-                                <div className="relative table-responsive mb-5 min-h-56">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 flex flex-col items-center justify-center gap-4">
-                                        <BsBoxSeam fontSize={40} color="grey" />
-                                        <p className="text-base text-gray-400 font-semibold">
-                                            No Records Found
-                                        </p>
-                                    </div>
-                                </div>
-                            ) : (
-                                data?.data?.map((item, idx) => (
-                                    <TableRow
-                                        key={idx}
-                                        columns={BRAND_COLUMN}
-                                        row={{
-                                            id: item?.id,
-                                            logo: (
-                                                <img
-                                                    src={`${imageUrl}/${item?.logo}`}
-                                                    alt="img"
-                                                    className="h-16 w-16 object-contain"
-                                                />
-                                            ),
-                                            name: item?.name,
-                                            slug: item?.slug,
-                                            supplier: (
-                                                <TwoLevelArrayViewer
-                                                    data={item?.suppliers}
-                                                    labelKey="name.full_name"
-                                                />
-                                            ),
-                                            is_active: item?.isActive ? "Active" : "Inactive",
-                                            action: (
-                                                <div className="flex space-x-3">
-                                                    <CustomeButton onClick={() => handleEdit(item.id)}>
-                                                        <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                                    </CustomeButton>
+            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
+                <div className="overflow-x-auto">
+                    {
+                        isLoading ? (
+                            <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">
+                                <Loader />
+                            </div>
+                        ) : (
+                            <>
+                                <TableHeader columns={BRAND_COLUMN} />
+                                <TableBody
+                                    isEmpty={isEmpty}
+                                    currentPage={currentPage}
+                                    setCurrentPage={setCurrentPage}
+                                    limit={limit}
+                                    setLimit={setLimit}
+                                    totalPage={data?.meta?.totalPages}
+                                >
+                                    {data?.data?.map((item, idx) => (
+                                        <TableRow
+                                            key={idx}
+                                            columns={BRAND_COLUMN}
+                                            row={{
+                                                id: item?.id,
+                                                logo: (
+                                                    <ImageComponent
+                                                        src={item?.logo}
+                                                        className={"w-12 h-12"}
+                                                    />
+                                                ),
+                                                name: item?.name,
+                                                slug: item?.slug,
+                                                supplier: (
+                                                    <TwoLevelArrayViewer
+                                                        data={item?.suppliers}
+                                                        labelKey="name.full_name"
+                                                    />
+                                                ),
+                                                is_active: item?.isActive ? "Active" : "Inactive",
+                                                action: (
+                                                    <div className="flex space-x-3">
+                                                        <CustomeButton onClick={() => handleEdit(item.id)}>
+                                                            <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                        </CustomeButton>
 
-                                                    <CustomeButton onClick={() => handleDelete(item.id)}>
-                                                        <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                                    </CustomeButton>
-                                                </div>
-                                            ),
-                                        }}
-                                    />
-                                )))
-                            }
-                            <BasicPagination
-                                totalPage={data?.meta?.currentPage || 1}
-                                currentPage={currentPage}
-                                setCurrentPage={setCurrentPage}
-                                limit={limit}
-                                setLimit={setLimit}
-                            />
-                        </>
-                    )
-                }
+                                                        <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                                        </CustomeButton>
+                                                    </div>
+                                                ),
+                                            }}
+                                        />
+                                    ))}
+                                </TableBody>
+                            </>
+                        )
+                    }
+                </div>
             </div>
 
 

@@ -1,9 +1,15 @@
 import React from 'react'
 import { BsBoxSeam } from 'react-icons/bs';
+import BasicPagination from '../BasicPagination';
 
 const TableBody = ({
     isEmpty = true,
-    children
+    children,
+    currentPage,
+    setCurrentPage,
+    limit,
+    setLimit,
+    totalPage,
 }) => {
 
     if (isEmpty)
@@ -14,7 +20,16 @@ const TableBody = ({
                 <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
             </div>
         )
-    return <>{children}</>;
+    return <>
+        {children}
+        <BasicPagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            limit={limit}
+            setLimit={setLimit}
+            totalPage={totalPage}
+        />
+    </>;
 }
 
 export default TableBody

@@ -65,9 +65,9 @@ class FetchData {
 
     TQAllSupplierList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["supplier-all-list", params],
+            queryKey: ["supplierList", params],
             queryFn: async () => {
-                const res = await API.get("/supplier/all", {
+                const res = await API.get("/supplier/list", {
                     params
                 });
                 return res.data;

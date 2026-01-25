@@ -34,6 +34,7 @@ import Product from './screens/master/product/Product';
 import AddProduct from './screens/master/product/AddProduct';
 import Unit from './screens/master/unit/Unit';
 import PackageType from './screens/master/packageType/PackageType';
+import SupplierForm from './components/supplier/SupplierForm';
 
 function App() {
 
@@ -74,7 +75,8 @@ function App() {
                         <Route path="categories" element={<Category />} />
                         <Route path="brands" element={<Brand />} />
                         <Route path="suppliers" element={<Supplier />} />
-                        <Route path="suppliers/add-supplier" element={<AddSupplier />} />
+                        {/* <Route path="suppliers/add-supplier" element={<AddSupplier />} /> */}
+                        {/* <Route path="suppliers/add-supplier" element={<SupplierForm />} /> */}
                         <Route path="hsncodes" element={<HSN />} />
                         <Route path="products" element={<Product />} />
                         <Route path="products/add-product" element={<AddProduct />} />

@@ -3,7 +3,7 @@ const TableRow = ({
     row = {},
     index,
     className = "",
-    onClick = () => { }
+    onClick
 }) => {
     const gridTemplate = columns.map(col => col.width || "1fr").join(" ");
 

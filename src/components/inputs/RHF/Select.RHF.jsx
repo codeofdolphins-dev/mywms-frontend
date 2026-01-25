@@ -102,7 +102,14 @@ function RHSelect({
                         placeholder={placeholder}
                         classNamePrefix="react-select"
                         className={`text-sm flex-1 rounded-r-none ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
                         styles={{
+                            menuPortal: (base) => ({
+                                ...base,
+                                zIndex: 9999,
+                                fontSize: '0.875rem',
+                            }),
                             control: (base) => ({
                                 ...base,
                                 borderTopRightRadius: addButton ? 0 : base.borderTopRightRadius,

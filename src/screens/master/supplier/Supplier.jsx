@@ -9,16 +9,18 @@ import IconCaretDown from '@/components/Icon/IconCaretDown';
 import Input from '@/components/inputs/Input';
 import ItemTable from '@/components/ItemTable';
 import AddModal from '@/components/Add.modal';
-import fetchData from '@/Backend/fetchData.backend';
 import FullScreenLoader from '@/components/loader/FullScreenLoader';
 import masterData from '@/Backend/master.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
-import TableHeader from '@/components/table/TableHeader';
-import { SUPPLIER_COLUMN } from '@/utils/helper';
-import TableRow from '@/components/table/TableRow';
 import CustomeButton from "@/components/inputs/Button";
 import ComponentHeader from '@/components/ComponentHeader';
 import TableBody from '../../../components/table/TableBody';
+import SupplierForm from '../../../components/supplier/SupplierForm';
+import fetchData from '../../../Backend/fetchData.backend';
+import { SUPPLIER_COLUMN } from '../../../utils/helper';
+import BasicPagination from '../../../components/BasicPagination';
+import TableHeader from '../../../components/table/TableHeader';
+import TableRow from '../../../components/table/TableRow';
 
 
 const headerLink = [
@@ -29,9 +31,11 @@ const headerLink = [
 const Supplier = () => {
     const navigate = useNavigate();
 
-    const { mutateAsync: deleteSupplier } = masterData.TQDeleteMaster([]);
+    const { mutateAsync: deleteSupplier } = masterData.TQDeleteMaster(["supplierList"]);
 
     const [debounceSearch, setDebounceSearch] = useState('');
+    const [isShow, setIsShow] = useState(false);
+    const [editId, setEditId] = useState(null);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -42,12 +46,12 @@ const Supplier = () => {
         limit: limit || null
     };
     const { data, isLoading } = fetchData.TQAllSupplierList(params);
+    const isEmpty = data?.data?.length === 0;
 
 
     const handleEdit = (id) => {
-        navigate("add-supplier", {
-            state: { id }
-        })
+        setEditId(id);
+        setIsShow(true);
     };
 
     const handleDelete = async (id) => {
@@ -67,8 +71,6 @@ const Supplier = () => {
         setCurrentPage(1);
     }, [debounceSearch])
 
-    console.log(data)
-
 
     return (
         <div>
@@ -77,17 +79,23 @@ const Supplier = () => {
                 headerLink={headerLink}
                 primaryText='Suppliers'
                 secondaryText='Manage and view all Suppliers'
-                btnOnClick={() => navigate('add-supplier')}
+                // btnOnClick={() => navigate('add-supplier')}
+                btnOnClick={() => setIsShow(true)}
                 searchPlaceholder='Search by name or description...'
                 btnTitle='Add Supplier'
                 setDebounceSearch={setDebounceSearch}
             />
 
-            <div className="panel mt-5 min-h-64 relative">
+            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
                 <div className="overflow-x-auto">
                     <TableHeader columns={SUPPLIER_COLUMN} />
                     <TableBody
-                        isEmpty={(data?.data?.length === 0) || (data?.data ?? true)}
+                        isEmpty={isEmpty}
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        totalPage={data?.meta?.totalPages}
                     >
                         {data?.data?.map((item, idx) => (
                             <TableRow
@@ -95,23 +103,16 @@ const Supplier = () => {
                                 columns={SUPPLIER_COLUMN}
                                 row={{
                                     id: item?.id,
-                                    email: item?.email,
+                                    email: item?.contact_email,
                                     full_name: item?.name?.full_name,
-                                    company_name: item?.company_name,
-                                    phone_no: item?.phone_no,
-                                    is_active: item?.is_active ? "Active" : "Inactive",
+                                    phone_no: item?.contact_phone,
+                                    is_active: item?.status ? "Active" : "Inactive",
                                     address: item?.address?.address,
 
-                                    account_holder_name: item?.supplierBankDetails?.account_holder_name,
-                                    account_number: item?.supplierBankDetails?.account_number,
-                                    account_type: item?.supplierBankDetails?.account_type,
-                                    bank_branch: item?.supplierBankDetails?.bank_branch,
-                                    bank_name: item?.supplierBankDetails?.bank_name,
-                                    ifsc_code: item?.supplierBankDetails?.ifsc_code,
                                     action: (
                                         <div className='flex space-x-3'>
                                             <CustomeButton
-                                                onClick={() => handelEdit(item.id)}
+                                                onClick={() => handleEdit(item.id)}
                                             >
                                                 <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                                             </CustomeButton>
@@ -129,6 +130,19 @@ const Supplier = () => {
                     </TableBody>
                 </div>
             </div>
+
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title={"Add New Supplier"}
+                maxWidth='60'
+            >
+                <SupplierForm
+                    setIsShow={setIsShow}
+                    editId={editId}
+                />
+            </AddModal>
+
         </div >
     )
 }

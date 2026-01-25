@@ -294,24 +294,17 @@ export const PURCHASE_ORDER = [
 
 export const SUPPLIER_COLUMN = [
     { key: "id", label: "#", width: "0.5fr", },
-    { key: "email", label: "Email", width: "2fr" },
+    { key: "email", label: "Email" },
     { key: "full_name", label: "Name" },
-    { key: "company_name", label: "Company" },
     { key: "phone_no", label: "Phone" },
-    { key: "is_active", label: "Status" },
+    { key: "is_active", label: "Status", width: "0.5fr" },
     { key: "address", label: "Address" },
-    { key: "account_holder_name", label: "A/C Holder Name" },
-    { key: "account_number", label: "A/C Number" },
-    { key: "account_type", label: "Type" },
-    { key: "ifsc_code", label: "IFSC Code" },
-    { key: "bank_branch", label: "Branch" },
-    { key: "bank_name", label: "Bank Name" },
     { key: "action", label: "Action" }
 ];
 
 export const BRAND_COLUMN = [
-    { key: "id", label: "#" },
-    { key: "logo", label: "Logo" },
+    { key: "id", label: "#", width: "0.2fr" },
+    { key: "logo", label: "Logo", width: "0.6fr" },
     { key: "name", label: "Brand Name" },
     { key: "slug", label: "Slug" },
     { key: "supplier", label: "Supplier" },

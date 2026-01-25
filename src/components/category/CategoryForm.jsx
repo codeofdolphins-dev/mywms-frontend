@@ -64,7 +64,7 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
         }
     }
 
-    if (isLoading) return <FullScreenLoader />
+    if (isLoading) return <FullScreenLoader />;
 
     return (
         <div className="panel" id="forms_grid">
