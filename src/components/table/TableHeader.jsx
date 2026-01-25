@@ -15,7 +15,7 @@ const TableHeader = ({
             {columns.map((col) => (
                 <div
                     key={col.key}
-                    className={`px-3 py-2 flex items-center ${col.align === "center" ? "justify-center text-center" : ""} ${col.align === "right" ? "justify-end text-right" : "justify-start"} `}
+                    className={`px-3 py-2 flex items-center whitespace-nowrap ${col.align === "center" ? "justify-center text-center" : ""} ${col.align === "right" ? "justify-end text-right" : "justify-start"} `}
                 >
                     {col.label}
                 </div>

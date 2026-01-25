@@ -21,10 +21,7 @@ const ItemTable = ({
     const imageUrl = import.meta.env.VITE_IMAGE_URL;
     const getValue = (obj, path) => path?.split('.')?.reduce((acc, key) => acc?.[key], obj);
     return (
-        <div className="panel">
-            {/* <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-lg">{title || "Data table"}</h5>
-            </div> */}
+        <div className="panel mt-5">
             <div className="relative table-responsive mb-5 min-h-56">
                 {isLoading ?
                     <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">
@@ -53,7 +50,7 @@ const ItemTable = ({
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 flex flex-col items-center justify-center gap-4">
                                     <BsBoxSeam fontSize={40} color='grey' />
                                     <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
-                                </div>  
+                                </div>
                             </> : <>
                                 <tbody>
                                     {items?.map((row, i) => {
@@ -141,12 +138,15 @@ const ItemTable = ({
                     </table>
                 }
             </div>
-            <BasicPagination
-                totalPage={totalPage}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                setLimit={setLimit}
-            />
+
+            {items.length !== 0 &&
+                <BasicPagination
+                    totalPage={totalPage}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    setLimit={setLimit}
+                />
+            }
         </div>
     )
 }

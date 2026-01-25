@@ -3,13 +3,13 @@ const TableRow = ({
     row = {},
     index,
     className = "",
-    onClick = () => {}
+    onClick = () => { }
 }) => {
     const gridTemplate = columns.map(col => col.width || "1fr").join(" ");
 
     return (
         <div
-            className={`grid border-b text-sm text-gray-700 hover:bg-gray-50 transition ${onClick ? "cursor-pointer" : ""} ${className}`}
+            className={`grid border-b text-sm text-gray-700 hover:bg-gray-50 transition relative min-h-12 ${onClick ? "cursor-pointer" : ""} ${className}`}
             style={{ gridTemplateColumns: gridTemplate }}
             onClick={onClick}
         >
@@ -17,19 +17,6 @@ const TableRow = ({
                 const value = row[col.key];
 
                 return (
-                    // <div
-                    //     key={col.key}
-                    //     className={`px-2 py-2 flex items-center ${col.align === "center" ? "justify-center text-center" : ""} ${col.align === "right" ? "justify-end text-right" : "justify-start"}`}
-                    // >
-                    //     {/* 
-                    //         If value is JSX → render as-is
-                    //         Else render plain text / fallback
-                    //     */}
-                    //     {value !== undefined && value !== null
-                    //         ? value
-                    //         : <span className="text-gray-400">—</span>
-                    //     }
-                    // </div>
                     <div
                         key={col.key}
                         title={value}

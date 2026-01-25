@@ -1,5 +1,5 @@
 import React from "react";
-import BrowseTable from "../components/BrowseTable";
+import BrowseTable from "@/components/BrowseTable";
 
 const Browse = ({
   pageName = "Unknown",

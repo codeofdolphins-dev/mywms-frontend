@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import ProfileCard from '../../components/user/userProfile/ProfileCard'
-import ActivityCard from '../../components/user/userProfile/ActivityCard';
-import BasicCardContent from '../../components/user/userProfile/components/BasicCardContent';
-import fetchData from '../../Backend/fetchData.backend';
+import ProfileCard from '@/components/user/userProfile/ProfileCard'
+import ActivityCard from '@/components/user/userProfile/ActivityCard';
+import BasicCardContent from '@/components/user/userProfile/components/BasicCardContent';
+import fetchData from '@/Backend/fetchData.backend';
 
 const UserProfile = () => {
     const { id } = useParams();

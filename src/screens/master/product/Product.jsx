@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import SearchInput from '../../components/inputs/SearchInput'
-import IconSettings from '../../components/Icon/IconSettings';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
+import SearchInput from '@/components/inputs/SearchInput'
+import IconSettings from '@/components/Icon/IconSettings';
+import IconPencil from '@/components/Icon/IconPencil';
+import IconTrashLines from '@/components/Icon/IconTrashLines';
 import AnimateHeight from 'react-animate-height';
-import IconCode from '../../components/Icon/IconCode';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
+import IconCode from '@/components/Icon/IconCode';
+import IconCaretDown from '@/components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
-import Input from '../../components/inputs/Input';
-import ItemTable from '../../components/ItemTable';
+import Input from '@/components/inputs/Input';
+import ItemTable from '@/components/ItemTable';
 import { FiPlus } from 'react-icons/fi';
-import fetchData from '../../Backend/fetchData.backend';
-import { confirmation, successAlert } from '../../utils/alerts';
-import masterData from '../../Backend/master.backend';
+import fetchData from '@/Backend/fetchData.backend';
+import { confirmation, successAlert } from '@/utils/alerts';
+import masterData from '@/Backend/master.backend';
+import ComponentHeader from '@/components/ComponentHeader';
 
 const colName = [
     { key: "id", label: "ID" },
@@ -28,6 +29,11 @@ const colName = [
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
+
+const headerLink = [
+    { title: "Master", link: "/master" },
+    { title: "Products" },
+]
 
 const Product = () => {
 
@@ -78,43 +84,16 @@ const Product = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <Link to="/master" className="text-primary hover:underline">
-                        Master
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2">
-                    <span>Products</span>
-                </li>
-            </ul>
-
             {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
-                <div>
-                    <h1 className="text-5xl font-bold my-3">Products</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all products in your inventory</p>
-                </div>
-                <button
-                    className='btn btn-primary'
-                    onClick={() => navigate("add-product")}
-                >
-                    <FiPlus size={20} className='mr-2' />
-                    Add Product
-                </button>
-            </div>
-
-
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by name, SKU, barcode, category, or HSN..."
-                    className="bg- border-pink-500"
-                    setValue={setDebounceSearch}
-                />
-            </div>
+            <ComponentHeader
+                headerLink={headerLink}
+                primaryText='Products'
+                secondaryText='Manage and view all products in your inventory'
+                searchPlaceholder='Search by name, SKU, barcode, category, or HSN...'
+                setDebounceSearch={setDebounceSearch}
+                btnTitle='Add Product'
+                btnOnClick={() => navigate("add-product")}
+            />
 
             {/* Item table */}
             <ItemTable

@@ -64,13 +64,6 @@ const items: Record<string, string>[] = [
 const Master = () => {
     return (
         <>
-            <ul className="flex space-x-2 rtl:space-x-reverse mb-5">
-                <li>
-                    <Link to="/master" className="text-primary hover:underline">
-                        Master
-                    </Link>
-                </li>
-            </ul>
             <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 xl:grid-cols-3">
                 {items.map((item, index) => (
                     <div key={index}>

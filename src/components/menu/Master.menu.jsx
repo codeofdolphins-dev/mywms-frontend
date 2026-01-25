@@ -9,7 +9,7 @@ const Master = ({ location }) => {
             className="menu nav-item relative !ml-0"
             onClick={() => navigate("/master")}
         >
-            <button type="button" className={`nav-link ${location.pathname === '/master' ? 'active' : ''} `}>
+            <button type="button" className={`nav-link ${location.pathname.includes('/master') ? 'active' : ''} `}>
                 <div className="flex items-center">
                     <HiDatabase />
                     <span className="px-1">Master</span>

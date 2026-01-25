@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import masterData from '../../Backend/master.backend';
-import fetchData from '../../Backend/fetchData.backend';
+import masterData from '@/Backend/master.backend';
+import fetchData from '@/Backend/fetchData.backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
-import SearchInput from '../../components/inputs/SearchInput';
-import TableHeader from '../../components/table/TableHeader';
-import { IMAGE_URL, USER_LIST_COLUMN } from '../../utils/helper';
-import TableRow from '../../components/table/TableRow';
-import CustomeButton from "../../components/inputs/Button"
-import IconPencil from '../../components/Icon/IconPencil';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import BasicPagination from '../../components/BasicPagination';
-import ImageComponent from '../../components/ImageComponent';
+import SearchInput from '@/components/inputs/SearchInput';
+import TableHeader from '@/components/table/TableHeader';
+import { IMAGE_URL, USER_LIST_COLUMN } from '@/utils/helper';
+import TableRow from '@/components/table/TableRow';
+import CustomeButton from "@/components/inputs/Button"
+import IconPencil from '@/components/Icon/IconPencil';
+import IconTrashLines from '@/components/Icon/IconTrashLines';
+import BasicPagination from '@/components/BasicPagination';
+import ImageComponent from '@/components/ImageComponent';
+import ComponentHeader from '../../components/ComponentHeader';
+import TableBody from '../../components/table/TableBody';
 
 const UserBrowse = () => {
     const navigate = useNavigate();
@@ -63,69 +65,65 @@ const UserBrowse = () => {
     return (
         <div className='space-y-4'>
             {/* Header Section */}
-            <div className="flex flex-col sm:flex-row justify-between items-center">
-                <div className='self-start'>
-                    <h1 className="text-2xl font-bold mb-3 sm:mb-0">All Users</h1>
+            <ComponentHeader
+                primaryText='All Users'
+                searchPlaceholder='Search by name, email, phone...'
+                setDebounceSearch={setDebounceSearch}
+                btnTitle='Add User'
+                btnOnClick={() => navigate("register")}
+            />
 
-                </div>
-                <SearchInput
-                    type="text"
-                    placeholder="Search by name, email, phone..."
-                    className=""
-                    setValue={setDebounceSearch}
+            <div className={`panel mt-5 relative ${userList?.data?.length === 0 ? "min-h-64" : ""}`}>
+                <div className="overflow-x-auto">
+                    <TableHeader columns={USER_LIST_COLUMN} />
+                    <TableBody
+                        isEmpty={userList?.data?.length === 0}
+                    >
+                        {userList?.data?.map((item) =>
+                            <TableRow
+                                key={item.id}
+                                columns={USER_LIST_COLUMN}
+                                onClick={() => navigate(`/user/profile/${item.id}`)}
+                                row={{
+                                    logo: (
+                                        <ImageComponent
+                                            src={item?.profile_image}
+                                            className={"w-12 h-12 object-top"}
+                                        />
+                                    ),
+                                    name: item?.name?.full_name,
+                                    email: item?.email,
+                                    phone: item?.phone_no,
+                                    active: item?.is_active ? "Active" : "Inactive",
+                                    action: (
+                                        <div className="flex space-x-3">
+                                            <CustomeButton
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    handleEdit(item.id)
+                                                }}
+                                            >
+                                                <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
 
-                    addButton={true}
-                    btnTitle={"Add User"}
-                    btnOnClick={() => navigate("register")}
-                />
-            </div>
+                                            <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
+                                        </div>
+                                    )
+                                }}
+                            />
+                        )}
 
-            <div className="panel">
-                <TableHeader columns={USER_LIST_COLUMN} />
-                {
-                    userList?.data?.map((item) =>
-                        <TableRow
-                            key={item.id}
-                            columns={USER_LIST_COLUMN}
-                            onClick={() => navigate(`/user/profile/${item.id}`)}
-                            row={{
-                                logo: (
-                                    <ImageComponent
-                                        src={item?.profile_image}
-                                        className={"w-12 h-12 object-top"}
-                                    />
-                                ),
-                                name: item?.name?.full_name,
-                                email: item?.email,
-                                phone: item?.phone_no,
-                                active: item?.is_active ? "Active" : "Inactive",
-                                action: (
-                                    <div className="flex space-x-3">
-                                        <CustomeButton
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleEdit(item.id)
-                                            }}
-                                        >
-                                            <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
-
-                                        <CustomeButton onClick={() => handleDelete(item.id)}>
-                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
-                                    </div>
-                                )
-                            }}
+                        <BasicPagination
+                            totalPage={userList?.meta?.currentPage || 1}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            limit={limit}
+                            setLimit={setLimit}
                         />
-                    )
-                }
-                <BasicPagination
-                    totalPage={userList?.meta?.currentPage || 1}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    limit={limit}
-                    setLimit={setLimit}
-                />
+                    </TableBody>
+                </div>
             </div>
         </div>
     )

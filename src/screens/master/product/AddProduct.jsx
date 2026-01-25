@@ -1,37 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import RHSelect from '../../components/inputs/RHF/Select.RHF';
-import TextArea from '../../components/inputs/TextArea';
-import Input from '../../components/inputs/Input';
-import FileUpload from '../../components/inputs/File';
+import RHSelect from '@/components/inputs/RHF/Select.RHF';
+import TextArea from '@/components/inputs/TextArea';
+import Input from '@/components/inputs/Input';
+import FileUpload from '@/components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
-import fetchData from '../../Backend/fetchData.backend';
-import SearchableSelect from '../../components/inputs/SearchableSelect';
-import masterData from '../../Backend/master.backend';
-import { RHFToFormData } from '../../utils/RHFtoFD';
+import RHRadioGroup from '@/components/inputs/RHF/RHRadioGroup';
+import fetchData from '@/Backend/fetchData.backend';
+import SearchableSelect from '@/components/inputs/SearchableSelect';
+import masterData from '@/Backend/master.backend';
+import { RHFToFormData } from '@/utils/RHFtoFD';
 import CategoryTree from './CategoryTree';
-import { successAlert } from '../../utils/alerts';
-import FullScreenLoader from '../../components/loader/FullScreenLoader';
-import AddModal from '../../components/Add.modal';
-import BrandForm from '../../components/brand/Form';
-import HSNForm from '../../components/HSN/HSN.Form';
-import CategoryForm from '../../components/category/CategoryForm';
-import UnitTypeForm from '../../components/unit/UnitType.Form';
-import PackageTypeForm from '../../components/packageType/PackageType.Form';
-
-
-const gstType = [
-    { value: "include", label: "Shoes" },
-    { value: "exclude", label: "Hats" },
-]
-
-
-const packageType = [
-    { value: 'tetra pack', label: 'Tetra Pack' },
-    { value: 'plastic', label: 'Plastic' },
-];
+import { successAlert } from '@/utils/alerts';
+import FullScreenLoader from '@/components/loader/FullScreenLoader';
+import AddModal from '@/components/Add.modal';
+import BrandForm from '@/components/brand/Form';
+import HSNForm from '@/components/HSN/HSN.Form';
+import CategoryForm from '@/components/category/CategoryForm';
+import UnitTypeForm from '@/components/unit/UnitType.Form';
+import PackageTypeForm from '@/components/packageType/PackageType.Form';
 
 
 const AddProduct = () => {

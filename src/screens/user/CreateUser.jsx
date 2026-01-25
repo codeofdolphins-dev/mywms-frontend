@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useAsyncError, useNavigate, useParams } from 'react-router-dom';
-import RHSelect from "../../components/inputs/RHF/Select.RHF";
-import Input from '../../components/inputs/Input';
-import TextArea from '../../components/inputs/TextArea';
-import FileUpload from '../../components/inputs/File';
-import SearchableSelect from '../../components/inputs/SearchableSelect';
-import fetchData from '../../Backend/fetchData.backend';
+import RHSelect from "@/components/inputs/RHF/Select.RHF";
+import Input from '@/components/inputs/Input';
+import TextArea from '@/components/inputs/TextArea';
+import FileUpload from '@/components/inputs/File';
+import SearchableSelect from '@/components/inputs/SearchableSelect';
+import fetchData from '@/Backend/fetchData.backend';
 import { useSelector } from 'react-redux';
-import masterData from '../../Backend/master.backend';
-import { RHFToFormData } from '../../utils/RHFtoFD';
+import masterData from '@/Backend/master.backend';
+import { RHFToFormData } from '@/utils/RHFtoFD';
 import { Button } from '@mantine/core';
-import ProfileCard from '../../components/user/userProfile/ProfileCard';
+import ProfileCard from '@/components/user/userProfile/ProfileCard';
 
 const USER_TYPE = [
     { label: "Location Admin", value: "NODE_ADMIN" },
@@ -27,7 +27,7 @@ const CreateUser = () => {
     const [oldPreview, setOldPreview] = useState(null);
     const [fileKey, setFileKey] = useState(0);
 
-    
+
     const {
         handleSubmit, register,
         control, setValue,
@@ -41,7 +41,7 @@ const CreateUser = () => {
         }
     });
 
-    
+
     const password = watch("password");
     const node = watch("node") || null;
     const node_type = watch("node_type") || null;
@@ -84,9 +84,9 @@ const CreateUser = () => {
         setOldPreview(data?.profile_image);
     }, [editUserDetailsLoading])
 
-    
+
     async function submitForm(data) {
-        if(id) data.id = id;
+        if (id) data.id = id;
         const formData = RHFToFormData(data);
 
         try {
@@ -124,84 +124,81 @@ const CreateUser = () => {
     return (
         <div>
             {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
+            <ul className="flex space-x-2">
                 <li>
                     <Link to="/user" className="text-primary hover:underline">
                         user
                     </Link>
                 </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                <li className="before:content-['/'] before:mr-2">
                     <span> {id ? "update user" : "register & assign user"}</span>
                 </li>
             </ul>
 
             <form onSubmit={handleSubmit(submitForm)} className='mt-5'>
-
                 <div className="grid grid-cols-1 min-[820px]:grid-cols-2 gap-8">
                     <div className="panel space-y-6">
 
                         {/* select location node */}
-                        {
-                            id
-                                ?
-                                <></>
-                                :
-                                <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
+                        {id
+                            ?
+                            <></>
+                            :
+                            <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
+                                {/* assign location */}
+                                <div className="">
+                                    <Controller
+                                        name="node"
+                                        control={control}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={(e) => {
+                                                    if (e === null) setValue("node_type", null);
+                                                    return onChange(e);
+                                                }}
 
-                                    {/* assign location */}
-                                    <div className="">
-                                        <Controller
-                                            name="node"
-                                            control={control}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={(e) => {
-                                                        if (e === null) setValue("node_type", null);
-                                                        return onChange(e);
-                                                    }}
-
-                                                    label="Assign Place"
-                                                    labelPosition={"inline"}
-                                                    options={registeredNodeList?.data}
-                                                    error={error?.message}
-                                                    objectReturn={true}
-                                                    isClearable={true}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    {/* node type */}
-                                    <div className="">
-                                        <Controller
-                                            name="node_type"
-                                            control={control}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <SearchableSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
-                                                    isSearchable={false}
-
-                                                    label="User Type"
-                                                    labelPosition={"inline"}
-                                                    options={USER_TYPE}
-                                                    disabled={node === null ? true : false}
-                                                />
-                                            )}
-                                        />
-                                    </div>
+                                                label="Assign Place"
+                                                labelPosition={"inline"}
+                                                options={registeredNodeList?.data}
+                                                error={error?.message}
+                                                objectReturn={true}
+                                                isClearable={true}
+                                            />
+                                        )}
+                                    />
                                 </div>
+
+                                {/* node type */}
+                                <div className="">
+                                    <Controller
+                                        name="node_type"
+                                        control={control}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <SearchableSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+                                                isSearchable={false}
+
+                                                label="User Type"
+                                                labelPosition={"inline"}
+                                                options={USER_TYPE}
+                                                disabled={node === null ? true : false}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </div>
                         }
 
                         {/* 1st row */}
@@ -213,10 +210,13 @@ const CreateUser = () => {
                                     labelPosition={"inline"}
                                     placeholder={"Enter Full Name..."}
                                     {...register("full_name", {
-                                        required: "This field is required!!!"
+                                        required: {
+                                            value: id ? false : true,
+                                            message: "This field is required!!!",
+                                        }
                                     })}
                                     error={errors.full_name?.message}
-                                    required={true}
+                                    required={id ? false : true}
                                 />
                             </div>
                             {/* Phone Number */}
@@ -228,10 +228,13 @@ const CreateUser = () => {
                                         type="number"
                                         placeholder={"Enter Phone Number..."}
                                         {...register("phone_no", {
-                                            required: "This field is required!!!"
+                                            required: {
+                                                value: id ? false : true,
+                                                message: "This field is required!!!",
+                                            }
                                         })}
                                         error={errors.phone_no?.message}
-                                        required={true}
+                                        required={id ? false : true}
                                     />
                                 </div>
                                 {/* file upload */}
@@ -253,7 +256,6 @@ const CreateUser = () => {
                             </div>
                         </div>
 
-
                         {/* 2rd row */}
                         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                             <div>
@@ -262,14 +264,16 @@ const CreateUser = () => {
                                     labelPosition={"inline"}
                                     placeholder={"Enter Email..."}
                                     {...register("email", {
-                                        required: "This field is required!!!"
+                                        required: {
+                                            value: id ? false : true,
+                                            message: "This field is required!!!",
+                                        }
                                     })}
                                     error={errors.email?.message}
                                     required={true}
                                     disabled={id ? true : false}
                                 />
                             </div>
-
 
                             <div>
                                 <Input
@@ -279,12 +283,12 @@ const CreateUser = () => {
                                     placeholder={"Enter Password..."}
                                     {...register("password", {
                                         required: {
+                                            value: id ? false : true,
                                             message: "This field is required!!!",
-                                            value: true
                                         }
                                     })}
                                     error={errors.password?.message}
-                                    required={true}
+                                    required={id ? false : true}
                                 />
                             </div>
                         </div>
@@ -307,7 +311,6 @@ const CreateUser = () => {
                                 {id ? "Update" : "Submit"}
                             </Button>
                         </div>
-
                     </div>
 
                     <ProfileCard

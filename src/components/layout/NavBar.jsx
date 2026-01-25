@@ -63,7 +63,7 @@ const NavBar = () => {
     const nodeName = userData?.userBusinessNode?.nodeDetails?.name.toLowerCase();
 
     return (
-        <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] text-black">
+        <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 bg-white border-t border-[#ebedf2] text-black">
 
             {/* dashboard */}
             {

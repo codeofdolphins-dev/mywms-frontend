@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import SearchInput from '../../components/inputs/SearchInput'
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
-import Input from '../../components/inputs/Input';
-import ItemTable from '../../components/ItemTable';
-import AddModal from '../../components/Add.modal';
-import fetchData from '../../Backend/fetchData.backend';
-import { confirmation, successAlert } from '../../utils/alerts';
-import masterData from '../../Backend/master.backend';
-import ButtonBoolean from '../../components/inputs/ButtonBoolean';
-import UnitTypeForm from '../../components/unit/UnitType.Form';
-import PackageTypeForm from '../../components/packageType/PackageType.Form';
+import Input from '@/components/inputs/Input';
+import ItemTable from '@/components/ItemTable';
+import AddModal from '@/components/Add.modal';
+import fetchData from '@/Backend/fetchData.backend';
+import { confirmation, successAlert } from '@/utils/alerts';
+import masterData from '@/Backend/master.backend';
+import ButtonBoolean from '@/components/inputs/ButtonBoolean';
+import UnitTypeForm from '@/components/unit/UnitType.Form';
+import PackageTypeForm from '@/components/packageType/PackageType.Form';
+import SearchInput from '@/components/inputs/SearchInput';
+import ComponentHeader from '@/components/ComponentHeader';
 
 
 const colName = [
@@ -19,6 +20,11 @@ const colName = [
     { key: "name", label: "Package Type", },
     { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
+
+const headerLink = [
+    { title: "master", link: "/master" },
+    { title: "package-type" },
+]
 
 const PackageType = () => {
     const navigate = useNavigate();
@@ -68,41 +74,16 @@ const PackageType = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2">
-                <li>
-                    <Link to="/master" className="text-primary hover:underline">
-                        Master
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2">
-                    <span>package-type</span>
-                </li>
-            </ul>
-
             {/* Header Section */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-5xl font-bold my-3">Package Types</h1>
-                    <p className='text-gray-600 text-base'>Define and manage different package types for products</p>
-                </div>
-                <ButtonBoolean
-                    className="btn btn-primary"
-                    setState={setIsShow}
-                >
-                    Create type
-                </ButtonBoolean>
-            </div>
-
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by type"
-                    className="bg- border-pink-500"
-                    setValue={setDebounceSearch}
-                />
-            </div>
+            <ComponentHeader
+                headerLink={headerLink}
+                primaryText='Package Types'
+                secondaryText='Define and manage different package types for products'
+                btnOnClick={() => setIsShow(p => !p)}
+                searchPlaceholder='Search by type...'
+                btnTitle='Add type'
+                setDebounceSearch={setDebounceSearch}
+            />
 
             <ItemTable
                 columns={colName}
