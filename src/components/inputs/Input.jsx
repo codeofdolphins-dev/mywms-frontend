@@ -1,6 +1,7 @@
 
 import React, { useId, useState } from 'react'
 import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 const Input = React.forwardRef(({
@@ -10,6 +11,7 @@ const Input = React.forwardRef(({
     className = '',
     error,
     required = false,
+    isLoading = false,
     ...props
 }, ref) => {
 
@@ -46,6 +48,16 @@ const Input = React.forwardRef(({
                                 ? <PiEyeBold size={22} />
                                 : <PiEyeClosed size={22} />
                         }
+                    </span>
+                }
+                {
+                    isLoading &&
+                    <span
+                        className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
+                    >
+                        <AiOutlineLoading3Quarters
+                            className='animate-spin'
+                        />
                     </span>
                 }
             </div>

@@ -137,7 +137,7 @@ const AddProduct = () => {
 
                         <form onSubmit={handleSubmit(submit)} className="space-y-5">
 
-                            {/* 2nd row */}
+                            {/* 1st row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                                 {/* left */}
@@ -308,7 +308,7 @@ const AddProduct = () => {
 
                             </div>
 
-                            {/* 3rd row */}
+                            {/* 2nd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <div>
@@ -382,7 +382,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 4th row */}
+                            {/* 3rd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <Input
@@ -404,7 +404,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 5th row */}
+                            {/* 4th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <Input
@@ -426,7 +426,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 6th row */}
+                            {/* 5th row */}
                             <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
                                 <div>
                                     <TextArea
@@ -451,10 +451,18 @@ const AddProduct = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="flex">
-                                <Button variant="outline" color="gray" size="md" radius="md" onClick={handelCancel} >Cancel</Button>
 
-                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} className='ml-auto'>
+                            {/* 5th row */}
+                            <div className="flex items-center justify-end gap-14">
+                                <button
+                                    className='btn btn-outline-dark'
+                                    type='button'
+                                    onClick={() => navigate(-1)}
+                                >
+                                    Cancel
+                                </button>
+
+                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} >
                                     {id ? "Update Product" : "Add Product"}
                                 </Button>
                             </div>

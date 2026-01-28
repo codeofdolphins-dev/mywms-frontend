@@ -14,6 +14,7 @@ import ImageComponent from '@/components/ImageComponent';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import { USER_LIST_COLUMN } from '../../utils/helper';
+import { confirmation } from '../../utils/alerts';
 
 const UserBrowse = () => {
     const navigate = useNavigate();
@@ -74,7 +75,7 @@ const UserBrowse = () => {
                 btnOnClick={() => navigate("register")}
             />
 
-            <div className={`panel mt-5 relative ${ isEmpty ? "min-h-64" : ""}`}>
+            <div className={`panel mt-5 relative ${isEmpty ? "min-h-64" : ""}`}>
                 <div className="overflow-x-auto">
                     <TableHeader columns={USER_LIST_COLUMN} />
                     <TableBody
@@ -112,7 +113,10 @@ const UserBrowse = () => {
                                                 <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                                             </CustomeButton>
 
-                                            <CustomeButton onClick={() => handleDelete(item.id)}>
+                                            <CustomeButton onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(item.id)
+                                            }}>
                                                 <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                                             </CustomeButton>
                                         </div>

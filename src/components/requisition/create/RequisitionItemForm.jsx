@@ -1,14 +1,49 @@
-import React from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Input from '../../inputs/Input';
 import Button from '../../inputs/Button';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../inputs/RHF/Select.RHF";
+import { debounce } from 'lodash';
+import fetchData from '../../../Backend/fetchData.backend';
 
 const RequisitionItemForm = ({
     setSelectedItems = () => { }
 }) => {
 
-    const { handleSubmit, control, register, reset, formState: { errors } } = useForm();
+    const { handleSubmit, control, register, reset, watch, formState: { errors } } = useForm();
+    const barcode = watch("barcode");
+
+    const [searchText, setSearchText] = useState("");
+
+    const { data, isLoading } = fetchData.TQProductList({ barcode: searchText }, !!searchText);
+    const product = data?.data?.[0];
+
+    const deBounceFn = useMemo(() =>
+        debounce((value) => {
+            setSearchText(value);
+            console.log("Searching for:", value);
+        }, 500),
+        []
+    );
+
+    useEffect(() => {
+
+        return () => {
+            deBounceFn.cancel();
+        };
+    }, []);
+
+    // set value
+    useEffect(() => {
+        if (!product) return;
+
+        reset({
+            productName: product?.name,
+            packSize: `${product?.measure} ${product?.unit_type}`,
+            packageType: product?.package_type,
+        });
+    }, [product])
+
 
     function submitForm(data) {
         console.log(data);
@@ -32,8 +67,10 @@ const RequisitionItemForm = ({
                                     value: true
                                 }
                             })}
+                            onChange={(e) => deBounceFn(e.target.value)}
                             error={errors.barcode?.message}
                             required={true}
+                            isLoading={isLoading}
                         />
                     </div>
 
@@ -42,9 +79,9 @@ const RequisitionItemForm = ({
                         <Controller
                             name="category"
                             control={control}
-                            rules={{
-                                required: "This field is required!!!"
-                            }}
+                            // rules={{
+                            //     required: "This field is required!!!"
+                            // }}
                             render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                 <RHSelect
                                     ref={(el) => {
@@ -59,38 +96,29 @@ const RequisitionItemForm = ({
                                     selectKey='hsn_code'
                                     // options={hsnData?.data}
                                     error={error?.message}
-                                    required={true}
+                                    // required={true}
                                 />
                             )}
                         />
                     </div>
 
-                    {/* product */}
+                    {/* product name */}
                     <div>
                         <Input
                             label="Product Name"
                             placeholder="Enter product name"
-                            {...register("productName", {
-                                required: true
-                            })}
-                            error={errors.productName?.message}
-                            required={true}
+                            {...register("productName")}
+                            disabled={true}
                         />
                     </div>
 
                     {/* unit type */}
                     <div>
                         <Input
-                            label="Unit Type"
+                            label="Package Type"
                             placeholder="Enter unit type"
-                            {...register("unitType", {
-                                required: {
-                                    message: "pack size required",
-                                    value: true
-                                }
-                            })}
-                            error={errors.unitType?.message}
-                            required={true}
+                            {...register("packageType")}
+                            disabled={true}
                         />
                     </div>
 
@@ -99,14 +127,8 @@ const RequisitionItemForm = ({
                         <Input
                             label="Pack Size"
                             placeholder="Enter pack size"
-                            {...register("packSize", {
-                                required: {
-                                    message: "pack size required",
-                                    value: true
-                                }
-                            })}
-                            error={errors.packSize?.message}
-                            required={true}
+                            {...register("packSize")}
+                            disabled={true}
                         />
                     </div>
 
