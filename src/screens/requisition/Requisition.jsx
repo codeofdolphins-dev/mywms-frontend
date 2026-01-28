@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
-import SearchInput from '../../components/inputs/SearchInput'
 import ItemTable from '../../components/ItemTable'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiPlus } from 'react-icons/fi';
 import TableHeader from '../../components/table/TableHeader';
 import { REQUISITION_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
-import { Button } from '@mantine/core';
 import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconNotes from '../../components/Icon/IconNotes';
@@ -16,6 +14,8 @@ import AddModal from '../../components/Add.modal';
 import RequisitionDetails from '../../components/requisition/RequisitionDetails';
 import CustomeButton from "../../components/inputs/Button";
 import { confirmation } from '../../utils/alerts';
+import ComponentHeader from '../../components/ComponentHeader';
+import TableBody from '../../components/table/TableBody';
 
 const sampleData = [
     {
@@ -69,6 +69,8 @@ const Requisition = () => {
 
     const [isShow, setIsShow] = useState(false);
 
+    const isEmpty = false;
+
     function handelShow(id) {
         setIsShow(true);
         console.log(id)
@@ -89,89 +91,71 @@ const Requisition = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li className="">
-                    <span>Requisition</span>
-                </li>
-            </ul>
-
             {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
-                <div>
-                    <h1 className="text-4xl font-bold my-3">Requisition</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all Requisitions</p>
-                </div>
-                <button
-                    className="btn btn-primary"
-                    onClick={() => navigate('/requisition/create')}
-                >
-                    <FiPlus size={20} className='mr-2' />
-                    Create Requisition
-                </button>
-            </div>
-
-
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by name or description..."
-                    className="bg- border-pink-500"
-                    setValue={debounceSearch}
-                />
-            </div>
+            <ComponentHeader
+                primaryText='Requisition'
+                secondaryText='Manage and view all Requisitions'
+                searchPlaceholder='Search by name or description...'
+                setDebounceSearch={setDebounceSearch}
+                btnTitle='Add Requisition'
+                btnOnClick={() => navigate('/requisition/create')}
+            />
 
             {/* table */}
-            <div className="panel border rounded overflow-hidden">
-                <TableHeader columns={REQUISITION_COLUMN} />
-                {
-                    sampleData?.map((item, idx) => (
-                        <TableRow
-                            key={item.id}
-                            columns={REQUISITION_COLUMN}
-                            row={{
-                                id: (
-                                    <Link to={`receive-quotation/${item.id}`} className='hover:underline text-primary' >
-                                        {item?.id}
-                                    </Link>
-                                ),
-                                title: item?.title,
-                                status: item?.status,
-                                priority: item?.priority,
-                                notes: item?.notes,
-                                total: item?.total,
-                                action: (
-                                    <div className='flex space-x-3'>
-                                        <CustomeButton
-                                            onClick={() => handelEdit(item.id)}
-                                        >
-                                            <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
+            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
+                <div className="overflow-x-auto">
+                    <TableHeader columns={REQUISITION_COLUMN} />
+                    <TableBody
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        totalPage={1}
+                        isEmpty={isEmpty}
+                    >
+                        {
+                            sampleData?.map((item, idx) => (
+                                <TableRow
+                                    key={item.id}
+                                    columns={REQUISITION_COLUMN}
+                                    row={{
+                                        id: (
+                                            <Link to={`receive-quotation/${item.id}`} className='hover:underline text-primary' >
+                                                {item?.id}
+                                            </Link>
+                                        ),
+                                        title: item?.title,
+                                        status: item?.status,
+                                        priority: item?.priority,
+                                        notes: item?.notes,
+                                        total: item?.total,
+                                        action: (
+                                            <div className='flex space-x-3'>
+                                                <CustomeButton
+                                                    onClick={() => handelEdit(item.id)}
+                                                >
+                                                    <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
 
-                                        <CustomeButton
-                                            onClick={() => handleDelete(item.id)}
-                                        >
-                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
+                                                <CustomeButton
+                                                    onClick={() => handleDelete(item.id)}
+                                                >
+                                                    <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
 
-                                        <CustomeButton
-                                            onClick={() => handelShow(item.id)}
-                                        >
-                                            <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
-                                    </div>
-                                )
-                            }}
-                        />
-                    ))
-                }
-                <BasicPagination
-                    totalPage={5}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    setLimit={setLimit}
-                />
+                                                <CustomeButton
+                                                    onClick={() => handelShow(item.id)}
+                                                >
+                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
+                                            </div>
+                                        )
+                                    }}
+                                />
+                            ))
+                        }
+                    </TableBody>
+                </div>
             </div>
 
             <AddModal

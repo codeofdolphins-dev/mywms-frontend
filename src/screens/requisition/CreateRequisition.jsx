@@ -7,6 +7,8 @@ import { Button } from '@mantine/core';
 import Input from '../../components/inputs/Input';
 import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
 import { Link } from 'react-router-dom';
+import AddModal from '../../components/Add.modal';
+import RequisitionItemForm from "../../components/requisition/create/RequisitionItemForm";
 
 
 const tableData = [
@@ -50,12 +52,9 @@ const options = [
 ];
 
 const CreateRequisition = () => {
-
-    const [itemCount, setItemCount] = useState(1);
-
-    const [supplier, setSupplier] = useState('1');
-    const [warehouse, setWarehouse] = useState('');
     const [items, setItems] = useState(tableData || []);
+    const [isShow, setIsShow] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
 
     const { handleSubmit, control, register, formState: { errors } } = useForm();
 
@@ -95,6 +94,8 @@ const CreateRequisition = () => {
 
                         {/* first row */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                            {/* buyer */}
                             <div>
                                 <Controller
                                     name="buyer"
@@ -121,9 +122,11 @@ const CreateRequisition = () => {
                                     )}
                                 />
                             </div>
+
+                            {/* supplier */}
                             <div>
                                 <Controller
-                                    name="hsn_code"
+                                    name="supplier"
                                     control={control}
                                     rules={{
                                         required: "This field is required!!!"
@@ -147,137 +150,41 @@ const CreateRequisition = () => {
                                     )}
                                 />
                             </div>
+
+                            <Button
+                                type="button"
+                                className="btn btn-primary !mt-6"
+                                onClick={() => setIsShow(true)}
+                            >
+                                Add Item
+                            </Button>
                         </div>
 
                         {/* second row */}
-                        {supplier &&
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                                <div>
-                                    <Input
-                                        type="number"
-                                        label="GST No."
-                                        placeholder="Enter GST number"
-                                        {...register("gst", {
-                                            required: {
-                                                message: "GST no required",
-                                                value: true
-                                            }
-                                        })}
-                                        error={errors.gst?.message}
-                                        required={true}
-                                    />
-                                </div>
-
-                                {/* brand */}
-                                <div>
-                                    <Controller
-                                        name="brand"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="Brand"
-                                                selectKey='hsn_code'
-                                                // options={hsnData?.data}
-                                                error={error?.message}
-                                                required={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-
-                                {/* product */}
-                                <div>
-                                    <Controller
-                                        name="hsn_code"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-
-                                                label="Product"
-                                                selectKey='hsn_code'
-                                                // options={hsnData?.data}
-                                                error={error?.message}
-                                                required={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-
-                                {/* Pack Size */}
-                                <div>
-                                    <Input
-                                        label="Pack Size"
-                                        placeholder="Enter pack size"
-                                        {...register("packSize", {
-                                            required: {
-                                                message: "pack size required",
-                                                value: true
-                                            }
-                                        })}
-                                        error={errors.packSize?.message}
-                                        required={true}
-                                    />
-                                </div>
-
-                                {/* Req Qty */}
-                                <div>
-                                    <Input
-                                        label="Req Qty."
-                                        placeholder="Enter Qty"
-                                        {...register("ReqQty", {
-                                            required: {
-                                                message: "QTY required",
-                                                value: true
-                                            }
-                                        })}
-                                        error={errors.ReqQty?.message}
-                                        required={true}
-                                    />
-                                </div>
-
-                                <Button
-                                    type="submit"
-                                    className="btn btn-primary !mt-6"
-                                    onClick={addItem}
-                                >
-                                    Add Item
-                                </Button>
-                            </div>
-                        }
-
-                        {itemCount > 0 &&
-                            <div className='!mt-10'>
-                                <ItemTable
-                                    columns={REQUISITION_CREATE_COLUMN}
-                                    items={items}
-                                    isLoading={false}
-                                />
-                                <button type="button" className="btn btn-primary mt-5 ml-auto">Submit Requisition</button>
-                            </div>}
+                        <div className='!mt-10'>
+                            <ItemTable
+                                columns={REQUISITION_CREATE_COLUMN}
+                                items={items}
+                                isLoading={false}
+                            />
+                            <button type="button" className="btn btn-primary mt-5 ml-auto">Submit Requisition</button>
+                        </div>
                     </form>
                 </div>
             </div>
+
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title={"Add Item"}
+                maxWidth='55'
+            >
+                <RequisitionItemForm
+                    setSelectedItems={setSelectedItems}
+                />
+            </AddModal>
+
+
         </div>
     )
 }

@@ -10,8 +10,6 @@ import Tippy from '@tippyjs/react';
 import Input from '@/components/inputs/Input';
 import ButtonBoolean from '@/components/inputs/ButtonBoolean';
 import ItemTable from '@/components/ItemTable';
-import AddModal from '@/components/Add.modal';
-import Form from '@/components/brand/Form';
 import fetchData from '@/Backend/fetchData.backend';
 import masterData from '@/Backend/master.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
@@ -27,6 +25,8 @@ import ComponentHeader from '@/components/ComponentHeader';
 import TableBody from '../../../components/table/TableBody';
 import ImageComponent from '../../../components/ImageComponent';
 import { BRAND_COLUMN } from '../../../utils/helper';
+import Form from '../../../components/brand/Form';
+import AddModal from '../../../components/Add.modal';
 
 
 const headerLink = [
@@ -157,6 +157,7 @@ const Brand = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Add New Brand"
+                maxWidth='55'
             >
                 <Form
                     editId={editId}

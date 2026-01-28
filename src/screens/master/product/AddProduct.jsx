@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from '@/components/inputs/RHF/Select.RHF';
 import TextArea from '@/components/inputs/TextArea';
-import Input from '@/components/inputs/Input';
 import FileUpload from '@/components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -20,6 +19,7 @@ import HSNForm from '@/components/HSN/HSN.Form';
 import CategoryForm from '@/components/category/CategoryForm';
 import UnitTypeForm from '@/components/unit/UnitType.Form';
 import PackageTypeForm from '@/components/packageType/PackageType.Form';
+import Input from '../../../components/inputs/Input';
 
 
 const AddProduct = () => {
@@ -66,7 +66,8 @@ const AddProduct = () => {
                 categories: data?.productCategories?.map(item => item.id),
                 hsn_code: data?.hsn?.id,
                 gstType: data?.gst_type,
-                unitType: data
+                unit_type_id: data?.unitRef?.id,
+                package_type_id: data?.packageType?.id,
             })
         } else {
             reset();
@@ -80,8 +81,9 @@ const AddProduct = () => {
         try {
 
             if (id) {
+                data.id = id;
                 const fd = RHFToFormData(data);
-                const res = await updateData({ path: "/product/create-raw", formData: fd });
+                const res = await updateData({ path: "/product/update", formData: fd });
                 if (res.success) successAlert(res.message);
                 reset();
                 navigate(-1);
@@ -205,6 +207,7 @@ const AddProduct = () => {
                                             {...register("barcode", { required: "This field is required!!!" })}
                                             error={errors.barcode?.message}
                                             required={true}
+                                            disabled={id ? true : false}
                                         />
                                     </div>
 

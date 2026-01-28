@@ -96,6 +96,7 @@ const CreateUser = () => {
                     reset();
                     setPreview(null);
                     setFileKey(prev => prev + 1);
+                    navigate(-1);
                 }
 
             } else {

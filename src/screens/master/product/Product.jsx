@@ -68,7 +68,6 @@ const Product = () => {
     };
 
     async function handleDelete(id) {
-        console.log(id)
         try {
             const isConfirm = await confirmation();
 

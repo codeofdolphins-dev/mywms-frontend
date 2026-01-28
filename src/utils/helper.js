@@ -324,12 +324,11 @@ export const BASIC_NODE_COLUMN = [
     { key: "action", label: "Action", width: ".5fr", align: "center" },
 ];
 
-// { key: "action", label: "Action", width: ".5fr", align: "center" },
 export const USER_LIST_COLUMN = [
     { key: "logo", label: "Image", width: ".5fr" },
     { key: "name", label: "Name" },
-    { key: "email", label: "Email" },
-    { key: "phone", label: "Phone No.", width: ".8fr" },
-    { key: "active", label: "Active", width: ".6fr" },
+    { key: "email", label: "Email", width: "1.2fr" },
+    { key: "phone", label: "Phone No.", width: ".6fr" },
+    { key: "active", label: "Active", width: ".5fr" },
     { key: "action", label: "Action", width: ".7fr" },
 ];

@@ -1,5 +1,5 @@
 import { Button } from '@mantine/core'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import FileUpload from '../inputs/File'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../inputs/Input'
@@ -11,10 +11,15 @@ import { RHFToFormData } from '../../utils/RHFtoFD'
 import Loader from '../loader/Loader'
 import { FiPlus } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
+import AddModal from '../Add.modal'
+import SupplierForm from '../supplier/SupplierForm'
 
 
 const Form = ({ editId = null, setIsShow = false }) => {
     const navigate = useNavigate()
+    
+    const [isSupplierPopup, setIsSupplierPopup] = useState(false);
+
     const { data: supplierData, isLoading: supplierLoading } = fetchData.TQAllSupplierList({ noLimit: true });
 
     const { data: editData, isLoading } = fetchData.TQAllBrandList({ id: editId }, !!editId);
@@ -64,7 +69,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
         }
     }
 
-    if(supplierLoading) return <Loader />;
+    if (supplierLoading) return <Loader />;
 
     return (
         <div className="panel" id="forms_grid">
@@ -112,7 +117,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                             className='w-full'
 
                                             addButton={true}
-                                            buttonOnClick={() => navigate("/master/suppliers/add-supplier")}
+                                            buttonOnClick={() => setIsSupplierPopup(true)}
                                         />
                                     )}
                                 />
@@ -170,6 +175,18 @@ const Form = ({ editId = null, setIsShow = false }) => {
                     </form>
                 }
             </div>
+
+            <AddModal
+                isShow={isSupplierPopup}
+                setIsShow={setIsSupplierPopup}
+                title={"Add New Supplier"}
+                maxWidth='60'
+            >
+                <SupplierForm
+                    setIsShow={setIsSupplierPopup}
+                />
+            </AddModal>
+
         </div>
     )
 }

@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import SearchInput from '@/components/inputs/SearchInput';
 import TableHeader from '@/components/table/TableHeader';
-import { IMAGE_URL, USER_LIST_COLUMN } from '@/utils/helper';
 import TableRow from '@/components/table/TableRow';
 import CustomeButton from "@/components/inputs/Button"
 import IconPencil from '@/components/Icon/IconPencil';
@@ -14,6 +13,7 @@ import BasicPagination from '@/components/BasicPagination';
 import ImageComponent from '@/components/ImageComponent';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
+import { USER_LIST_COLUMN } from '../../utils/helper';
 
 const UserBrowse = () => {
     const navigate = useNavigate();
