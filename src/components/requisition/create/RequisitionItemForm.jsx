@@ -10,39 +10,61 @@ const RequisitionItemForm = ({
     setSelectedItems = () => { }
 }) => {
 
-    const { handleSubmit, control, register, reset, watch, formState: { errors } } = useForm();
+    const {
+        handleSubmit, control,
+        register, watch, setValue,
+        resetField, reset,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            barcode: "",
+            category: "",
+            productName: "",
+            packSize: "",
+            packageType: "",
+            ReqQty: "",
+        }
+    });
+
     const barcode = watch("barcode");
 
     const [searchText, setSearchText] = useState("");
+    const [errorText, setErrorText] = useState("");
 
-    const { data, isLoading } = fetchData.TQProductList({ barcode: searchText }, !!searchText);
-    const product = data?.data?.[0];
-
-    const deBounceFn = useMemo(() =>
-        debounce((value) => {
-            setSearchText(value);
-            console.log("Searching for:", value);
-        }, 500),
-        []
-    );
-
-    useEffect(() => {
-
-        return () => {
-            deBounceFn.cancel();
-        };
-    }, []);
+    const { data, isLoading, error, isError } = fetchData.TQProductList({ barcode: searchText }, !!searchText);
 
     // set value
     useEffect(() => {
-        if (!product) return;
+        if (!barcode?.length) return;
+        const product = data?.data;
 
-        reset({
-            productName: product?.name,
-            packSize: `${product?.measure} ${product?.unit_type}`,
-            packageType: product?.package_type,
-        });
-    }, [product])
+        if (product?.length) {
+            setErrorText("");
+
+            setValue("productName", product?.[0]?.name);
+            setValue("packSize", `${product?.[0]?.measure} ${product?.[0]?.unit_type}`);
+            setValue("packageType", product?.[0]?.package_type);
+        } else {
+            setErrorText("Product not found!!!");
+
+            resetField("productName");
+            resetField("packSize");
+            resetField("packageType");
+            resetField("ReqQty");
+        }
+    }, [barcode, data]);
+
+
+    // debounce function
+    const deBounceFn = useMemo(() =>
+        debounce((value) => {
+            setSearchText(value);
+        }, 500),
+        []
+    );
+    useEffect(() => {
+        return () => deBounceFn.cancel();
+    }, []);
 
 
     function submitForm(data) {
@@ -52,13 +74,13 @@ const RequisitionItemForm = ({
     return (
         <div className="panel" id="forms_grid">
 
-            <form onSubmit={handleSubmit(submitForm)}>
+            <form onSubmit={handleSubmit(submitForm)} className='space-y-5'>
                 {/* form */}
                 <div className="grid grid-cols-2 gap-5">
                     {/* barcode */}
                     <div>
                         <Input
-                            type="text"
+                            type="number"
                             label="Barcode"
                             placeholder="Enter barcode number"
                             {...register("barcode", {
@@ -67,8 +89,11 @@ const RequisitionItemForm = ({
                                     value: true
                                 }
                             })}
-                            onChange={(e) => deBounceFn(e.target.value)}
-                            error={errors.barcode?.message}
+                            onChange={(e) => {
+                                register("barcode").onChange(e);
+                                deBounceFn(e.target.value);
+                            }}
+                            error={errors.barcode?.message || errorText}
                             required={true}
                             isLoading={isLoading}
                         />
@@ -96,7 +121,7 @@ const RequisitionItemForm = ({
                                     selectKey='hsn_code'
                                     // options={hsnData?.data}
                                     error={error?.message}
-                                    // required={true}
+                                // required={true}
                                 />
                             )}
                         />
@@ -149,10 +174,15 @@ const RequisitionItemForm = ({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end">
+                <div className="flex items-center justify-end gap-10">
+                    <button
+                        className='btn btn-outline-dark'
+                        onClick={() => reset()}
+                        type='button'
+                    >Reset</button>
                     <Button
                         type="submit"
-                        className="btn btn-primary !mt-6"
+                        className="btn btn-primary"
                     >
                         Add Item
                     </Button>

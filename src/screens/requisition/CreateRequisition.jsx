@@ -9,6 +9,9 @@ import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
 import { Link } from 'react-router-dom';
 import AddModal from '../../components/Add.modal';
 import RequisitionItemForm from "../../components/requisition/create/RequisitionItemForm";
+import fetchData from '../../Backend/fetchData.backend';
+import { useSelector } from 'react-redux';
+import { FiPlus } from 'react-icons/fi';
 
 
 const tableData = [
@@ -51,12 +54,27 @@ const options = [
     { value: 'purple', label: 'Purple' },
 ];
 
+const PRIORITY = [
+    { label: "Low", value: "low" },
+    { label: "Normal", value: "normal" },
+    { label: "High", value: "high" },
+]
+
 const CreateRequisition = () => {
+    const user = useSelector(state => state.auth.userData);
+    const currentLocation = user?.userBusinessNode?.[0]?.nodeDetails?.name
+
     const [items, setItems] = useState(tableData || []);
+
     const [isShow, setIsShow] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const { handleSubmit, control, register, formState: { errors } } = useForm();
+    const { handleSubmit, control, register, formState: { errors }, setValue } = useForm();
+
+    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
+
+    // console.log(allownodeList);
+    setValue("buyer", currentLocation)
 
 
     const addItem = () => {
@@ -76,98 +94,154 @@ const CreateRequisition = () => {
                         requisition
                     </Link>
                 </li>
-                <li className="before:content-['/'] before:mr-2 ">
+                <li className="before:content-['/'] before:mr-2">
                     <span>create requisition</span>
                 </li>
             </ul>
 
             {/* Header Section */}
-            <div className="flex justify-between items-center mt-3">
-                <div>
-                    <h1 className="text-2xl font-bold mb-3">Create Requisition</h1>
+            <div className="flex justify-between items-center mt-1">
+                <div className='flex items-center gap-6'>
+
+                    <h1 className="text-2xl font-bold">Create Requisition</h1>
+
+                    <div
+                        title='Add Item'
+                        className="w-8 h-8 rounded-full bg-primary flex justify-center items-center cursor-pointer"
+                        onClick={() => setIsShow(true)}
+                    >
+                        <FiPlus size={22} color='white' />
+                    </div>
                 </div>
             </div>
 
-            <div className="panel mt-3" id="forms_grid">
+            <div className="mt-1" id="forms_grid">
                 <div className="mb-5">
-                    <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-
-                        {/* first row */}
+                    <form className="" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                            {/* buyer */}
-                            <div>
-                                <Controller
-                                    name="buyer"
-                                    control={control}
-                                    rules={{
-                                        required: "This field is required!!!"
-                                    }}
-                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                        <RHSelect
-                                            ref={(el) => {
-                                                ref({
-                                                    focus: () => el?.focus(),
-                                                });
-                                            }}
-                                            value={value}
-                                            onChange={onChange}
+                            {/* first row */}
+                            <div className="panel">
 
+                                <div className="grid grid-cols-1 gap-5">
+                                    {/* buyer */}
+                                    <div>
+                                        <Input
                                             label="Buyer"
-                                            // selectKey=''
-                                            // options={hsnData?.data}
-                                            error={error?.message}
+                                            labelPosition="inline"
+                                            {...register("buyer")}
                                             required={true}
+                                            disabled={true}
                                         />
-                                    )}
-                                />
-                            </div>
+                                    </div>
 
-                            {/* supplier */}
-                            <div>
-                                <Controller
-                                    name="supplier"
-                                    control={control}
-                                    rules={{
-                                        required: "This field is required!!!"
-                                    }}
-                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                        <RHSelect
-                                            ref={(el) => {
-                                                ref({
-                                                    focus: () => el?.focus(),
-                                                });
+                                    {/* supplier */}
+                                    <div>
+                                        <Controller
+                                            name="supplier"
+                                            control={control}
+                                            rules={{
+                                                required: "This field is required!!!"
                                             }}
-                                            value={value}
-                                            onChange={onChange}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
 
-                                            label="Supplier"
-                                            selectKey='hsn_code'
-                                            // options={hsnData?.data}
-                                            error={error?.message}
+                                                    label="Supplier"
+                                                    labelPosition='inline'
+                                                    selectKey='nodeDetails'
+                                                    selectSubKey='name'
+                                                    options={allownodeList?.data}
+                                                    error={error?.message}
+                                                    required={true}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* title */}
+                                    <div>
+                                        <Input
+                                            label="Title"
+                                            labelPosition="inline"
+                                            placeholder="Enter title"
+                                            {...register("title", {
+                                                required: "Title Required"
+                                            })}
+                                            error={errors.title?.message}
                                             required={true}
                                         />
-                                    )}
-                                />
+                                    </div>
+
+                                    {/* required date */}
+                                    <div>
+                                        <Input
+                                            type="date"
+                                            label="Required Date"
+                                            labelPosition="inline"
+                                            {...register("required_by_date")}
+                                        />
+                                    </div>
+
+                                    {/* node type */}
+                                    <div className="">
+                                        <Controller
+                                            name="node_type"
+                                            control={control}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <SearchableSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    isSearchable={false}
+
+                                                    label="User Type"
+                                                    labelPosition={"inline"}
+                                                    options={PRIORITY}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="mt-10 flex items-center justify-end gap-5">
+                                    {/* <Button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => setIsShow(true)}
+                                        // loading={true}
+                                    >
+                                        Add Item
+                                    </Button> */}
+                                    <Button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => setIsShow(true)}
+                                    // loading={true}
+                                    >
+                                        Submit
+                                    </Button>
+                                </div>
                             </div>
 
-                            <Button
-                                type="button"
-                                className="btn btn-primary !mt-6"
-                                onClick={() => setIsShow(true)}
-                            >
-                                Add Item
-                            </Button>
-                        </div>
-
-                        {/* second row */}
-                        <div className='!mt-10'>
-                            <ItemTable
-                                columns={REQUISITION_CREATE_COLUMN}
-                                items={items}
-                                isLoading={false}
-                            />
-                            <button type="button" className="btn btn-primary mt-5 ml-auto">Submit Requisition</button>
+                            {/* second row */}
+                            <div className=''>
+                                <ItemTable
+                                    columns={REQUISITION_CREATE_COLUMN}
+                                    items={items}
+                                    isLoading={false}
+                                />
+                            </div>
                         </div>
                     </form>
                 </div>

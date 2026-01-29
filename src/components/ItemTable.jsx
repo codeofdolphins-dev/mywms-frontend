@@ -21,7 +21,7 @@ const ItemTable = ({
     const imageUrl = import.meta.env.VITE_IMAGE_URL;
     const getValue = (obj, path) => path?.split('.')?.reduce((acc, key) => acc?.[key], obj);
     return (
-        <div className="panel mt-5">
+        <div className="panel">
             <div className="relative table-responsive mb-5 min-h-56">
                 {isLoading ?
                     <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">

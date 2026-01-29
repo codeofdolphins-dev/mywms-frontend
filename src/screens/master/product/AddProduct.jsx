@@ -7,7 +7,6 @@ import { Button } from '@mantine/core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import RHRadioGroup from '@/components/inputs/RHF/RHRadioGroup';
 import fetchData from '@/Backend/fetchData.backend';
-import SearchableSelect from '@/components/inputs/SearchableSelect';
 import masterData from '@/Backend/master.backend';
 import { RHFToFormData } from '@/utils/RHFtoFD';
 import CategoryTree from './CategoryTree';
@@ -54,7 +53,6 @@ const AddProduct = () => {
     } = useForm();
 
     useEffect(() => {
-
         if (!id) return;
 
         if (product?.data?.[0]) {

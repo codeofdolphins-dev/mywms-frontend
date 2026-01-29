@@ -186,6 +186,16 @@ class FetchData {
             },
         });
     };
+    
+    TQAllowNodeList(isEnabled = true) {
+        return useQuery({
+            queryKey: ["AllowNodeList"],
+            queryFn: async () => {
+                const res = await API.get("/requisition/allow-node");
+                return res.data;
+            },
+        });
+    };
 
 }
 

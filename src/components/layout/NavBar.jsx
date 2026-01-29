@@ -67,11 +67,13 @@ const NavBar = () => {
 
             {/* dashboard */}
             {
-                ( DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Dashboard location={location} />
+                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Dashboard location={location} />
             }
 
             {/* master */}
-            {hasRoleAccess(["system", "owner", "company"], userRoles) && <Master location={location} />}
+            {
+                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Master location={location} />
+            }
 
             {/* admin */}
             {/* <li className="menu nav-item relative !ml-0" >
@@ -111,13 +113,13 @@ const NavBar = () => {
                 </ul>
             </li> */}
             {
-                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Admin location={location} />
             }
 
             {/* manage access */}
-            { DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
+            {DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
 
 
             {/* production */}
@@ -142,35 +144,35 @@ const NavBar = () => {
 
             {/* requisition */}
             {
-                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Requisition location={location} />
             }
 
             {/* Quotation */}
             {
-                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Quotation location={location} />
             }
 
             {/* Purchase Order */}
             {
-                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <PurchaseOrder location={location} />
             }
 
             {/* Inward */}
             {
-                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Inward location={location} />
             }
 
             {/* outward */}
             {
-                ( DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
                 && <Outward location={location} />
             }
