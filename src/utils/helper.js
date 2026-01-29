@@ -11,6 +11,7 @@ export const PERMISSION_COL = [
     { key: "id", label: "SL" },
     { key: "permission", label: "Name" },
 ];
+
 export const ROLE_COL = [
     {
         key: "id",
@@ -38,13 +39,14 @@ export const ROLE_COL = [
 ];
 
 export const REQUISITION_CREATE_COLUMN = [
-    { key: "id", label: "#" },
-    { key: "permission", label: "GSTIN No." },
-    { key: "permission", label: "Brand" },
-    { key: "permission", label: "Product" },
-    { key: "permission", label: "Pack Size" },
-    { key: "permission", label: "Req Qty." },
+    { key: "id", label: "#", width: "0.2fr" },
+    { key: "barcode", label: "Barcode" },
+    { key: "brand", label: "Brand" },
+    { key: "product", label: "Product" },
+    { key: "packSize", label: "Pack Size" },
+    { key: "reqQty", label: "Req Qty." },
 ];
+
 export const REQUISITION_COLUMN = [
     {
         key: "id",
@@ -88,6 +90,7 @@ export const REQUISITION_COLUMN = [
         align: "center"
     },
 ];
+
 export const REQUISITION_ITEMS_COLUMN = [
     {
         key: "id",
@@ -163,6 +166,7 @@ export const QUOTATION_COLUMN = [
         align: "center"
     },
 ];
+
 export const QUOTATION_RECEIVE_COLUMN = [
     {
         key: "id",
@@ -194,6 +198,7 @@ export const QUOTATION_RECEIVE_COLUMN = [
         // align: "center"
     },
 ];
+
 export const REQUISITION_RECEIVE_COLUMN = [
     {
         key: "id",
@@ -235,7 +240,7 @@ export const REQUISITION_RECEIVE_COLUMN = [
         // width: "120px",
         // align: "center"
     },
-]
+];
 
 export const PURCHASE_ORDER = [
     {
@@ -290,7 +295,7 @@ export const PURCHASE_ORDER = [
         // width: "120px",
         // align: "center"
     },
-]
+];
 
 export const SUPPLIER_COLUMN = [
     { key: "id", label: "#", width: "0.5fr", },

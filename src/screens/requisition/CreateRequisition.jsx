@@ -12,6 +12,7 @@ import RequisitionItemForm from "../../components/requisition/create/Requisition
 import fetchData from '../../Backend/fetchData.backend';
 import { useSelector } from 'react-redux';
 import { FiPlus } from 'react-icons/fi';
+import TableHeader from '../../components/table/TableHeader';
 
 
 const tableData = [
@@ -192,7 +193,7 @@ const CreateRequisition = () => {
                                     {/* node type */}
                                     <div className="">
                                         <Controller
-                                            name="node_type"
+                                            name="priority"
                                             control={control}
                                             render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                                 <SearchableSelect
@@ -205,28 +206,30 @@ const CreateRequisition = () => {
                                                     onChange={onChange}
                                                     isSearchable={false}
 
-                                                    label="User Type"
+                                                    label="Priority"
                                                     labelPosition={"inline"}
                                                     options={PRIORITY}
                                                 />
                                             )}
                                         />
                                     </div>
+
+                                    {/* node type */}
+                                    <div className="">
+                                        <Input
+                                            type="number"
+                                            label="Total"
+                                            labelPosition="inline"
+                                            {...register("total")}
+                                            disabled={true}
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="mt-10 flex items-center justify-end gap-5">
-                                    {/* <Button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={() => setIsShow(true)}
-                                        // loading={true}
-                                    >
-                                        Add Item
-                                    </Button> */}
+                                <div className="mt-10">
                                     <Button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={() => setIsShow(true)}
+                                        type="submit"
+                                        className="btn btn-primary ml-auto"
                                     // loading={true}
                                     >
                                         Submit
@@ -235,11 +238,14 @@ const CreateRequisition = () => {
                             </div>
 
                             {/* second row */}
-                            <div className=''>
-                                <ItemTable
+                            <div className="panel">
+                                {/* <ItemTable
                                     columns={REQUISITION_CREATE_COLUMN}
                                     items={items}
                                     isLoading={false}
+                                /> */}
+                                <TableHeader
+                                    columns={REQUISITION_CREATE_COLUMN}
                                 />
                             </div>
                         </div>
