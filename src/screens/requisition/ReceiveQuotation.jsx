@@ -6,6 +6,7 @@ import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'
 import { QUOTATION_RECEIVE_COLUMN } from '../../utils/helper'
 import TableRow from '../../components/table/TableRow'
+import ComponentHeader from '../../components/ComponentHeader'
 
 const dataSet = [
     {
@@ -66,6 +67,10 @@ const dataSet = [
     }
 ];
 
+const headerLink = [
+    { title: "requisition", link: "/requisition" },
+    { title: "receive-quotation" },
+]
 
 const ReceiveQuotation = () => {
 
@@ -73,41 +78,13 @@ const ReceiveQuotation = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2">
-                <li className="">
-                    <Link to="/requisition" className="text-primary hover:underline">
-                        requisition
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2 ">
-                    <span>Receive quotation</span>
-                </li>
-            </ul>
-
-            {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
-                <div>
-                    <h1 className="text-4xl font-bold my-3">Receive Quotation</h1>
-                </div>
-                {/* <button
-                    className="btn btn-primary"
-                    onClick={() => navigate('/requisition')}
-                >
-                    <FiPlus size={20} className='mr-2' />
-                    Create Quotation
-                </button> */}
-            </div>
-
-
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by supplier name..."
-                    setValue={setDebounceSearch}
-                />
-            </div>
+            <ComponentHeader
+                headerLink={headerLink}
+                searchPlaceholder='Search by name or description...'
+                setDebounceSearch={setDebounceSearch}
+                addButton={false}
+                className='mb-5 justify-between'
+            />
 
             <div className="panel space-y-4">
                 {

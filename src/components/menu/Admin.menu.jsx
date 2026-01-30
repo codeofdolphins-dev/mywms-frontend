@@ -7,8 +7,7 @@ const ADMIN_MENU = [
     { name: 'Business Flow', path: '/admin/business-flow' },
     { name: 'Register', path: '/admin/business/node-register' },
     {
-        name: 'user',
-        path: '/user',
+        name: 'user', path: '/user',
         // children: [
         //     { name: 'List', path: '/user' },
         //     { name: 'Create', path: '/user/register' },
@@ -21,7 +20,7 @@ const Admin = ({ location }) => {
         <li className="menu nav-item relative !ml-0">
             <button
                 type="button"
-                className={`nav-link ${location.pathname.includes('/admin') ? 'active' : ''} !cursor-default`}
+                className={`nav-link ${["/admin", "user"].some(a => location.pathname.includes(a)) ? 'active' : ''} !cursor-default`}
             >
                 <div className="flex items-center">
                     <RiAdminFill />

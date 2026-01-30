@@ -35,7 +35,7 @@ const SearchInput = ({
     }, [])
 
     return (
-        <div className='sm:w-10/12'>
+        <div className='md:w-8/12 lg:w-10/12'>
             <div className="w-full flex">
                 {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
                 <div className={`w-full flex items-center border border-[#b3b3b398] bg-white py-1.5 px-2 ${addButton ? "rounded-l-md" : "rounded-md" }`}>

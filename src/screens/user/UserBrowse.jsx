@@ -16,6 +16,12 @@ import TableBody from '../../components/table/TableBody';
 import { USER_LIST_COLUMN } from '../../utils/helper';
 import { confirmation } from '../../utils/alerts';
 
+
+const headerLink = [
+    // { title: "master", link: "/master" },
+    { title: "user" },
+]
+
 const UserBrowse = () => {
     const navigate = useNavigate();
 
@@ -68,6 +74,7 @@ const UserBrowse = () => {
         <div className='space-y-4'>
             {/* Header Section */}
             <ComponentHeader
+                headerLink={headerLink}
                 primaryText='All Users'
                 searchPlaceholder='Search by name, email, phone...'
                 setDebounceSearch={setDebounceSearch}

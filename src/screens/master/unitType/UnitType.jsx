@@ -25,7 +25,7 @@ const headerLink = [
     { title: "unit-type" },
 ]
 
-const Unit = () => {
+const UnitType = () => {
     const navigate = useNavigate();
 
     const { mutateAsync: deleteData } = masterData.TQDeleteMaster(["unitTypeList"]);
@@ -83,6 +83,7 @@ const Unit = () => {
                 searchPlaceholder='Search by unit type...'
                 btnTitle='Add Type'
                 setDebounceSearch={setDebounceSearch}
+                className={"mb-5 justify-between"}
             />
 
             <ItemTable
@@ -114,4 +115,4 @@ const Unit = () => {
     )
 }
 
-export default Unit;
+export default UnitType;

@@ -74,12 +74,12 @@ const Requisition = () => {
     const { data: requisitionList, isLoading: requisitionListLoading } = fetchData.TQRequisitionList();
 
 
-    console.log(requisitionList)
+    // console.log(requisitionList?.data)
     
-    const isEmpty = false;
+    const isEmpty = requisitionList?.data?.length < 1;
 
     function handelShow(id) {
-        setIsShow(true);
+        // setIsShow(true);
         console.log(id)
     }
     function handelEdit(id) {
@@ -120,23 +120,22 @@ const Requisition = () => {
                         isEmpty={isEmpty}
                     >
                         {
-                            sampleData?.map((item, idx) => (
+                            requisitionList?.data?.map((item, idx) => (
                                 <TableRow
                                     key={item.id}
                                     columns={REQUISITION_COLUMN}
                                     row={{
                                         id: (
-                                            <Link to={`receive-quotation/${item.id}`} className='hover:underline text-primary' >
-                                                {item?.id}
+                                            <Link to={`receive-quotation/${item.requisition_no}`} className='hover:underline text-primary' >
+                                                {item?.requisition_no}
                                             </Link>
                                         ),
                                         title: item?.title,
                                         status: item?.status,
                                         priority: item?.priority,
                                         notes: item?.notes,
-                                        total: item?.total,
                                         action: (
-                                            <div className='flex space-x-3'>
+                                            <div className='flex items-center justify-center space-x-3'>
                                                 <CustomeButton
                                                     onClick={() => handelEdit(item.id)}
                                                 >
@@ -150,7 +149,7 @@ const Requisition = () => {
                                                 </CustomeButton>
 
                                                 <CustomeButton
-                                                    onClick={() => handelShow(item.id)}
+                                                    onClick={() => handelShow(item.items)}
                                                 >
                                                     <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                                 </CustomeButton>

@@ -78,12 +78,6 @@ export const REQUISITION_COLUMN = [
         align: "center"
     },
     {
-        key: "total",
-        label: "Total",
-        // width: "120px",
-        align: "center"
-    },
-    {
         key: "action",
         label: "Action",
         // width: "120px",

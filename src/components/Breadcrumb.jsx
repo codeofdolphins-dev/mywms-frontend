@@ -16,7 +16,7 @@ const Breadcrumb = ({
                         </li>
                     ) : (
                         <li key={idx} className="before:content-['/'] before:mr-2 ">
-                            <span>{item?.title}</span>
+                            <span className='whitespace-nowrap'>{item?.title}</span>
                         </li>
                     )
                 })

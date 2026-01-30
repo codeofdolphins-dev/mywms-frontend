@@ -62,7 +62,7 @@ const AppLayout = () => {
                             <NavBar />
 
                             <Suspense>
-                                <div className={`p-6 animate__animated`}>
+                                <div className={`px-6 py-3 animate__animated`}>
                                     <Outlet />
                                 </div>
                             </Suspense>

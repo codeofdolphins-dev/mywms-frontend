@@ -32,9 +32,9 @@ import Supplier from './screens/master/supplier/Supplier';
 import AddSupplier from './screens/master/supplier/AddSupplier';
 import Product from './screens/master/product/Product';
 import AddProduct from './screens/master/product/AddProduct';
-import Unit from './screens/master/unit/Unit';
 import PackageType from './screens/master/packageType/PackageType';
 import SupplierForm from './components/supplier/SupplierForm';
+import UnitType from './screens/master/unitType/UnitType';
 
 function App() {
 
@@ -81,7 +81,7 @@ function App() {
                         <Route path="products" element={<Product />} />
                         <Route path="products/add-product" element={<AddProduct />} />
                         <Route path="products/edit-product/:id" element={<AddProduct />} />
-                        <Route path="unit-types" element={<Unit />} />
+                        <Route path="unit-types" element={<UnitType />} />
                         <Route path="package-types" element={<PackageType />} />
                     </Route>
 

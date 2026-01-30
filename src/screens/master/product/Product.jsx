@@ -31,7 +31,7 @@ const colName = [
 ];
 
 const headerLink = [
-    { title: "Master", link: "/master" },
+    { title: "master", link: "/master" },
     { title: "Products" },
 ]
 
@@ -92,6 +92,7 @@ const Product = () => {
                 setDebounceSearch={setDebounceSearch}
                 btnTitle='Add Product'
                 btnOnClick={() => navigate("add-product")}
+                className={"mb-5 justify-between"}
             />
 
             {/* Item table */}

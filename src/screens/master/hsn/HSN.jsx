@@ -92,6 +92,7 @@ const HSN = () => {
                 setDebounceSearch={setDebounceSearch}
                 btnTitle='Add HSN'
                 btnOnClick={() => setIsShow(p => !p)}
+                className={"mb-5 justify-between"}
             />
 
             <ItemTable

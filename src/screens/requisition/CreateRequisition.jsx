@@ -81,7 +81,7 @@ const CreateRequisition = () => {
     }
 
     return (
-        <div className='!mt-0'>
+        <div className='abc'>
             {/* breadcrumb */}
             <div className="flex items-center gap-5 ">
                 <ul className=" flex space-x-2 ">
@@ -105,106 +105,105 @@ const CreateRequisition = () => {
             </div>
 
 
-            <div className="" id="forms_grid">
-                <div className="mb-5">
-                    <form className="" onSubmit={handleSubmit(onSubmit)}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="mt-5" id="forms_grid">
+                <form className="" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                            {/* left side */}
-                            <div className="panel">
+                        {/* left side */}
+                        <div className="panel">
 
-                                <div className="grid grid-cols-1 gap-5">
-                                    {/* buyer */}
-                                    <div>
-                                        <Input
-                                            label="Buyer"
-                                            labelPosition="inline"
-                                            {...register("buyer")}
-                                            required={true}
-                                            disabled={true}
-                                        />
-                                    </div>
+                            <div className="grid grid-cols-1 gap-5">
+                                {/* buyer */}
+                                <div>
+                                    <Input
+                                        label="Buyer"
+                                        labelPosition="inline"
+                                        {...register("buyer")}
+                                        required={true}
+                                        disabled={true}
+                                    />
+                                </div>
 
-                                    {/* supplier */}
-                                    <div>
-                                        <Controller
-                                            name="supplier_node"
-                                            control={control}
-                                            rules={{
-                                                required: "This field is required!!!"
-                                            }}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
+                                {/* supplier */}
+                                <div>
+                                    <Controller
+                                        name="supplier_node"
+                                        control={control}
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
 
-                                                    label="Supplier"
-                                                    labelPosition='inline'
-                                                    selectKey='nodeDetails'
-                                                    selectSubKey='name'
-                                                    options={allownodeList?.data}
-                                                    error={error?.message}
-                                                    required={true}
-                                                />
-                                            )}
-                                        />
-                                    </div>
+                                                label="Supplier"
+                                                labelPosition='inline'
+                                                selectKey='nodeDetails'
+                                                selectSubKey='name'
+                                                options={allownodeList?.data}
+                                                error={error?.message}
+                                                required={true}
+                                            />
+                                        )}
+                                    />
+                                </div>
 
-                                    {/* title */}
-                                    <div>
-                                        <Input
-                                            label="Title"
-                                            labelPosition="inline"
-                                            placeholder="Enter title"
-                                            {...register("title", {
-                                                required: "Title Required"
-                                            })}
-                                            error={errors.title?.message}
-                                            required={true}
-                                        />
-                                    </div>
+                                {/* title */}
+                                <div>
+                                    <Input
+                                        label="Title"
+                                        labelPosition="inline"
+                                        placeholder="Enter title"
+                                        {...register("title", {
+                                            required: "Title Required"
+                                        })}
+                                        error={errors.title?.message}
+                                        required={true}
+                                    />
+                                </div>
 
-                                    {/* required date */}
-                                    <div>
-                                        <Input
-                                            type="date"
-                                            label="Required Date"
-                                            labelPosition="inline"
-                                            {...register("required_by_date")}
-                                        />
-                                    </div>
+                                {/* required date */}
+                                <div>
+                                    <Input
+                                        type="date"
+                                        label="Required Date"
+                                        labelPosition="inline"
+                                        {...register("required_by_date")}
+                                    />
+                                </div>
 
-                                    {/* node type */}
-                                    <div className="">
-                                        <Controller
-                                            name="priority"
-                                            control={control}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <SearchableSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
-                                                    isSearchable={false}
+                                {/* node type */}
+                                <div className="">
+                                    <Controller
+                                        name="priority"
+                                        control={control}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <SearchableSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+                                                isSearchable={false}
 
-                                                    label="Priority"
-                                                    labelPosition={"inline"}
-                                                    options={PRIORITY}
-                                                />
-                                            )}
-                                        />
-                                    </div>
+                                                label="Priority"
+                                                labelPosition={"inline"}
+                                                options={PRIORITY}
+                                            />
+                                        )}
+                                    />
+                                </div>
 
-                                    {/* total cost price */}
-                                    {/* <div className="">
+                                {/* total cost price */}
+                                {/* <div className="">
                                         <Input
                                             type="number"
                                             label="Total Cost Price"
@@ -214,8 +213,8 @@ const CreateRequisition = () => {
                                         />
                                     </div> */}
 
-                                    {/* total MRP */}
-                                    {/* <div className="">
+                                {/* total MRP */}
+                                {/* <div className="">
                                         <Input
                                             type="number"
                                             label="Total MRP"
@@ -224,63 +223,62 @@ const CreateRequisition = () => {
                                             disabled={true}
                                         />
                                     </div> */}
-                                </div>
-
-                                <div className="mt-10">
-                                    <Button
-                                        type="submit"
-                                        className="btn btn-primary ml-auto"
-                                        disabled={isEmpty}
-                                    >
-                                        Submit
-                                    </Button>
-                                </div>
                             </div>
 
-                            {/* right side */}
-                            <div className={`panel ${isEmpty ? "min-h-64" : ""} relative`}>
-                                <div className="overflow-x-auto">
-                                    <TableHeader columns={REQUISITION_CREATE_COLUMN} />
-                                    <TableBody
-                                        isEmpty={isEmpty}
-                                        showPagination={false}
-                                    >
-                                        {selectedItems?.map((item, idx) => (
-                                            <TableRow
-                                                key={idx}
-                                                columns={REQUISITION_CREATE_COLUMN}
-                                                row={{
-                                                    // id: item?.id,
-                                                    barcode: item?.barcode,
-                                                    brand: item?.name?.full_name,
-                                                    product: item?.productName,
-                                                    packSize: item?.packSize,
-                                                    reqQty: item?.reqQty,
-                                                    action: (
-                                                        <div className='flex items-center justify-center'>
-                                                            {/* <CustomeButton
+                            <div className="mt-10">
+                                <Button
+                                    type="submit"
+                                    className="btn btn-primary ml-auto"
+                                    disabled={isEmpty}
+                                >
+                                    Submit
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* right side */}
+                        <div className={`panel ${isEmpty ? "min-h-64" : ""} relative`}>
+                            <div className="overflow-x-auto">
+                                <TableHeader columns={REQUISITION_CREATE_COLUMN} />
+                                <TableBody
+                                    isEmpty={isEmpty}
+                                    showPagination={false}
+                                >
+                                    {selectedItems?.map((item, idx) => (
+                                        <TableRow
+                                            key={idx}
+                                            columns={REQUISITION_CREATE_COLUMN}
+                                            row={{
+                                                // id: item?.id,
+                                                barcode: item?.barcode,
+                                                brand: item?.name?.full_name,
+                                                product: item?.productName,
+                                                packSize: item?.packSize,
+                                                reqQty: item?.reqQty,
+                                                action: (
+                                                    <div className='flex items-center justify-center'>
+                                                        {/* <CustomeButton
                                                                 onClick={() => handleEdit(item.id)}
                                                             >
                                                                 <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                                                             </CustomeButton> */}
 
-                                                            <CustomeButton
-                                                                onClick={() => handleDelete(item.barcode)}
-                                                            >
-                                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer text-center" />
-                                                            </CustomeButton>
-                                                        </div>
-                                                    )
-                                                }}
-                                            />
-                                        ))}
-                                    </TableBody>
-                                </div>
+                                                        <CustomeButton
+                                                            onClick={() => handleDelete(item.barcode)}
+                                                        >
+                                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer text-center" />
+                                                        </CustomeButton>
+                                                    </div>
+                                                )
+                                            }}
+                                        />
+                                    ))}
+                                </TableBody>
                             </div>
-
                         </div>
-                    </form>
-                </div>
+
+                    </div>
+                </form>
             </div>
 
             <AddModal

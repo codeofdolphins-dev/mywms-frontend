@@ -83,6 +83,7 @@ const PackageType = () => {
                 searchPlaceholder='Search by type...'
                 btnTitle='Add type'
                 setDebounceSearch={setDebounceSearch}
+                className={"mb-5 justify-between"}
             />
 
             <ItemTable
