@@ -196,6 +196,16 @@ class FetchData {
             },
         });
     };
+    
+    TQRequisitionList(isEnabled = true) {
+        return useQuery({
+            queryKey: ["requisitionList"],
+            queryFn: async () => {
+                const res = await API.get("/requisition/list");
+                return res.data;
+            },
+        });
+    };
 
 }
 

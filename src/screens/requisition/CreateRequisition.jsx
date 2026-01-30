@@ -6,54 +6,20 @@ import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import { Button } from '@mantine/core';
 import Input from '../../components/inputs/Input';
 import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddModal from '../../components/Add.modal';
 import RequisitionItemForm from "../../components/requisition/create/RequisitionItemForm";
 import fetchData from '../../Backend/fetchData.backend';
 import { useSelector } from 'react-redux';
 import { FiPlus } from 'react-icons/fi';
 import TableHeader from '../../components/table/TableHeader';
+import TableBody from '../../components/table/TableBody';
+import TableRow from '../../components/table/TableRow';
+import CustomeButton from "../../components/inputs/Button"
+import IconPencil from '../../components/Icon/IconPencil';
+import IconTrashLines from '../../components/Icon/IconTrashLines';
+import masterData from '../../Backend/master.backend';
 
-
-const tableData = [
-    {
-        id: 1,
-        gstin: "27AAEPM1234Q1Z5",
-        brand: "Brand A",
-        product: "Product A",
-        packSize: "500ml",
-        reqQty: 120,
-    },
-    {
-        id: 2,
-        gstin: "29BBBPX2345R2Z7",
-        brand: "Brand B",
-        product: "Product B",
-        packSize: "1L",
-        reqQty: 400,
-    },
-    {
-        id: 3,
-        gstin: "07AACCM3456H1Z2",
-        brand: "Brand C",
-        product: "Product C",
-        packSize: "250ml",
-        reqQty: 310,
-    },
-    {
-        id: 4,
-        gstin: "19AAECS5678T1Z4",
-        brand: "Brand D",
-        product: "Product D",
-        packSize: "750ml",
-        reqQty: 100,
-    },
-];
-const options = [
-    { value: 'orange', label: 'Orange' },
-    { value: 'white', label: 'White' },
-    { value: 'purple', label: 'Purple' },
-];
 
 const PRIORITY = [
     { label: "Low", value: "low" },
@@ -62,66 +28,89 @@ const PRIORITY = [
 ]
 
 const CreateRequisition = () => {
+    const navigate = useNavigate()
     const user = useSelector(state => state.auth.userData);
     const currentLocation = user?.userBusinessNode?.[0]?.nodeDetails?.name
-
-    const [items, setItems] = useState(tableData || []);
+    const { handleSubmit, control, register, formState: { errors }, setValue, reset } = useForm({
+        defaultValues: {
+            supplier_node: "",
+            title: "",
+            required_by_date: "",
+            priority: "",
+        }
+    });
 
     const [isShow, setIsShow] = useState(false);
+    const [isEmpty, setIsEmpty] = useState(true);
+    const [item, setItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const { handleSubmit, control, register, formState: { errors }, setValue } = useForm();
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster();
 
     const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
 
-    // console.log(allownodeList);
-    setValue("buyer", currentLocation)
+
+    setValue("buyer", currentLocation);
+
+    useEffect(() => {
+        setIsEmpty(Boolean(!selectedItems?.length));
+
+    }, [selectedItems, setItem])
 
 
-    const addItem = () => {
-        setItemCount(prev => prev + 1);
-    };
-
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        data.items = selectedItems
         console.log(data);
+
+        try {
+            const res = await createData({ path: "/requisition/create", formData: data });
+            if (res.success) {
+                reset();
+                setSelectedItems([]);
+                navigate(-1);
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
     };
+
+    function handleDelete(id) {
+        setSelectedItems(prev => prev.filter(item => item.barcode !== id));
+    }
 
     return (
-        <div>
+        <div className='!mt-0'>
             {/* breadcrumb */}
-            <ul className=" flex space-x-2 ">
-                <li className="">
-                    <Link to="/requisition" className="text-primary hover:underline">
-                        requisition
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2">
-                    <span>create requisition</span>
-                </li>
-            </ul>
+            <div className="flex items-center gap-5 ">
+                <ul className=" flex space-x-2 ">
+                    <li className="">
+                        <Link to="/requisition" className="text-primary hover:underline">
+                            requisition
+                        </Link>
+                    </li>
+                    <li className="before:content-['/'] before:mr-2">
+                        <span>create requisition</span>
+                    </li>
+                </ul>
 
-            {/* Header Section */}
-            <div className="flex justify-between items-center mt-1">
-                <div className='flex items-center gap-6'>
-
-                    <h1 className="text-2xl font-bold">Create Requisition</h1>
-
-                    <div
-                        title='Add Item'
-                        className="w-8 h-8 rounded-full bg-primary flex justify-center items-center cursor-pointer"
-                        onClick={() => setIsShow(true)}
-                    >
-                        <FiPlus size={22} color='white' />
-                    </div>
+                <div
+                    title='Add Item'
+                    className="w-8 h-8 rounded-full bg-primary flex justify-center items-center cursor-pointer"
+                    onClick={() => setIsShow(true)}
+                >
+                    <FiPlus size={22} color='white' />
                 </div>
             </div>
 
-            <div className="mt-1" id="forms_grid">
+
+            <div className="" id="forms_grid">
                 <div className="mb-5">
                     <form className="" onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                            {/* first row */}
+                            {/* left side */}
                             <div className="panel">
 
                                 <div className="grid grid-cols-1 gap-5">
@@ -139,7 +128,7 @@ const CreateRequisition = () => {
                                     {/* supplier */}
                                     <div>
                                         <Controller
-                                            name="supplier"
+                                            name="supplier_node"
                                             control={control}
                                             rules={{
                                                 required: "This field is required!!!"
@@ -214,40 +203,81 @@ const CreateRequisition = () => {
                                         />
                                     </div>
 
-                                    {/* node type */}
-                                    <div className="">
+                                    {/* total cost price */}
+                                    {/* <div className="">
                                         <Input
                                             type="number"
-                                            label="Total"
+                                            label="Total Cost Price"
                                             labelPosition="inline"
-                                            {...register("total")}
+                                            {...register("totalCost")}
                                             disabled={true}
                                         />
-                                    </div>
+                                    </div> */}
+
+                                    {/* total MRP */}
+                                    {/* <div className="">
+                                        <Input
+                                            type="number"
+                                            label="Total MRP"
+                                            labelPosition="inline"
+                                            {...register("totalMRP")}
+                                            disabled={true}
+                                        />
+                                    </div> */}
                                 </div>
 
                                 <div className="mt-10">
                                     <Button
                                         type="submit"
                                         className="btn btn-primary ml-auto"
-                                    // loading={true}
+                                        disabled={isEmpty}
                                     >
                                         Submit
                                     </Button>
                                 </div>
                             </div>
 
-                            {/* second row */}
-                            <div className="panel">
-                                {/* <ItemTable
-                                    columns={REQUISITION_CREATE_COLUMN}
-                                    items={items}
-                                    isLoading={false}
-                                /> */}
-                                <TableHeader
-                                    columns={REQUISITION_CREATE_COLUMN}
-                                />
+                            {/* right side */}
+                            <div className={`panel ${isEmpty ? "min-h-64" : ""} relative`}>
+                                <div className="overflow-x-auto">
+                                    <TableHeader columns={REQUISITION_CREATE_COLUMN} />
+                                    <TableBody
+                                        isEmpty={isEmpty}
+                                        showPagination={false}
+                                    >
+                                        {selectedItems?.map((item, idx) => (
+                                            <TableRow
+                                                key={idx}
+                                                columns={REQUISITION_CREATE_COLUMN}
+                                                row={{
+                                                    // id: item?.id,
+                                                    barcode: item?.barcode,
+                                                    brand: item?.name?.full_name,
+                                                    product: item?.productName,
+                                                    packSize: item?.packSize,
+                                                    reqQty: item?.reqQty,
+                                                    action: (
+                                                        <div className='flex items-center justify-center'>
+                                                            {/* <CustomeButton
+                                                                onClick={() => handleEdit(item.id)}
+                                                            >
+                                                                <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                            </CustomeButton> */}
+
+                                                            <CustomeButton
+                                                                onClick={() => handleDelete(item.barcode)}
+                                                            >
+                                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer text-center" />
+                                                            </CustomeButton>
+                                                        </div>
+                                                    )
+                                                }}
+                                            />
+                                        ))}
+                                    </TableBody>
+                                </div>
                             </div>
+
                         </div>
                     </form>
                 </div>
@@ -261,6 +291,8 @@ const CreateRequisition = () => {
             >
                 <RequisitionItemForm
                     setSelectedItems={setSelectedItems}
+                    setIsShow={setIsShow}
+                    setItem={setItem}
                 />
             </AddModal>
 

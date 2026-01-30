@@ -21,12 +21,13 @@ import TwoLevelArrayViewer from '@/utils/twoLevelArrayViewer';
 import { BsBoxSeam } from 'react-icons/bs';
 import Loader from '@/components/loader/Loader';
 import BasicPagination from '@/components/BasicPagination';
-import ComponentHeader from '@/components/ComponentHeader';
+// import ComponentHeader from '@/components/ComponentHeader';
 import TableBody from '../../../components/table/TableBody';
 import ImageComponent from '../../../components/ImageComponent';
 import { BRAND_COLUMN } from '../../../utils/helper';
 import Form from '../../../components/brand/Form';
 import AddModal from '../../../components/Add.modal';
+import ComponentHeader from '../../../components/ComponentHeader';
 
 
 const headerLink = [
@@ -83,8 +84,8 @@ const Brand = () => {
             {/* Header Section */}
             <ComponentHeader
                 headerLink={headerLink}
-                primaryText='Brands'
-                secondaryText='Manage and view all brands'
+                // primaryText='Brands'
+                // secondaryText='Manage and view all brands'
                 searchPlaceholder='Search by brand name, slug...'
                 setDebounceSearch={setDebounceSearch}
                 btnTitle='Add Brand'

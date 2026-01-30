@@ -12,33 +12,34 @@ const ComponentHeader = ({
     btnTitle = "",
     setDebounceSearch,
     btnOnClick,
+    className = "justify-between",
 }) => {
     return (
-        <div className='space-y-3'>
+        <div className={`flex items-center ${className}`}>
             {
                 headerLink.length > 0 &&
                 <Breadcrumb
                     options={headerLink}
                 />
             }
+            <SearchInput
+                type="text"
+                placeholder={searchPlaceholder}
+                className={searchClassName}
+                setValue={setDebounceSearch}
 
-            <div className="flex justify-between items-center">
+                addButton={true}
+                btnTitle={btnTitle}
+                btnOnClick={btnOnClick}
+            />
+
+            {/* <div className="flex justify-between items-center">
                 <div>
                     {primaryText && <h1 className="text-2xl font-bold">{primaryText}</h1>}
                     {secondaryText && <p className='text-gray-600 text-base'>{secondaryText}</p>}
                 </div>
 
-                <SearchInput
-                    type="text"
-                    placeholder={searchPlaceholder}
-                    className={searchClassName}
-                    setValue={setDebounceSearch}
-
-                    addButton={true}
-                    btnTitle={btnTitle}
-                    btnOnClick={btnOnClick}
-                />
-            </div >
+            </div > */}
         </div>
     )
 }

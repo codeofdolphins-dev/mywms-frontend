@@ -7,7 +7,9 @@ import { debounce } from 'lodash';
 import fetchData from '../../../Backend/fetchData.backend';
 
 const RequisitionItemForm = ({
-    setSelectedItems = () => { }
+    setIsShow,
+    setItem,
+    setSelectedItems = () => { },
 }) => {
 
     const {
@@ -22,7 +24,7 @@ const RequisitionItemForm = ({
             productName: "",
             packSize: "",
             packageType: "",
-            ReqQty: "",
+            reqQty: "",
         }
     });
 
@@ -32,6 +34,18 @@ const RequisitionItemForm = ({
     const [errorText, setErrorText] = useState("");
 
     const { data, isLoading, error, isError } = fetchData.TQProductList({ barcode: searchText }, !!searchText);
+
+    // debounce function
+    const deBounceFn = useMemo(() =>
+        debounce((value) => {
+            setSearchText(value);
+        }, 500),
+        []
+    );
+    useEffect(() => {
+        return () => deBounceFn.cancel();
+    }, []);
+
 
     // set value
     useEffect(() => {
@@ -55,20 +69,11 @@ const RequisitionItemForm = ({
     }, [barcode, data]);
 
 
-    // debounce function
-    const deBounceFn = useMemo(() =>
-        debounce((value) => {
-            setSearchText(value);
-        }, 500),
-        []
-    );
-    useEffect(() => {
-        return () => deBounceFn.cancel();
-    }, []);
-
-
     function submitForm(data) {
-        console.log(data);
+        setSelectedItems(prev => [...prev, data]);
+
+        reset();
+        setIsShow(false);
     }
 
     return (
@@ -77,6 +82,7 @@ const RequisitionItemForm = ({
             <form onSubmit={handleSubmit(submitForm)} className='space-y-5'>
                 {/* form */}
                 <div className="grid grid-cols-2 gap-5">
+
                     {/* barcode */}
                     <div>
                         <Input
@@ -162,7 +168,7 @@ const RequisitionItemForm = ({
                         <Input
                             label="Req Qty."
                             placeholder="Enter Qty"
-                            {...register("ReqQty", {
+                            {...register("reqQty", {
                                 required: {
                                     message: "QTY required",
                                     value: true

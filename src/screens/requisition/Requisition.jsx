@@ -16,6 +16,7 @@ import CustomeButton from "../../components/inputs/Button";
 import { confirmation } from '../../utils/alerts';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
+import fetchData from '../../Backend/fetchData.backend';
 
 const sampleData = [
     {
@@ -59,16 +60,22 @@ const sampleData = [
         total: 7800
     }
 ];
-
+const headerLink = [
+    { title: "requisition" },
+]
 
 const Requisition = () => {
     const navigate = useNavigate();
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-
     const [isShow, setIsShow] = useState(false);
 
+    const { data: requisitionList, isLoading: requisitionListLoading } = fetchData.TQRequisitionList();
+
+
+    console.log(requisitionList)
+    
     const isEmpty = false;
 
     function handelShow(id) {
@@ -93,8 +100,7 @@ const Requisition = () => {
         <div>
             {/* Header Section */}
             <ComponentHeader
-                primaryText='Requisition'
-                secondaryText='Manage and view all Requisitions'
+                headerLink={headerLink}
                 searchPlaceholder='Search by name or description...'
                 setDebounceSearch={setDebounceSearch}
                 btnTitle='Add Requisition'

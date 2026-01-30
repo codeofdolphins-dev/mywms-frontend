@@ -39,12 +39,12 @@ export const ROLE_COL = [
 ];
 
 export const REQUISITION_CREATE_COLUMN = [
-    { key: "id", label: "#", width: "0.2fr" },
     { key: "barcode", label: "Barcode" },
     { key: "brand", label: "Brand" },
     { key: "product", label: "Product" },
     { key: "packSize", label: "Pack Size" },
-    { key: "reqQty", label: "Req Qty." },
+    { key: "reqQty", label: "Req Qty.", width: "100px" },
+    { key: "action", label: "Action", align: "center" },
 ];
 
 export const REQUISITION_COLUMN = [
@@ -330,10 +330,10 @@ export const BASIC_NODE_COLUMN = [
 ];
 
 export const USER_LIST_COLUMN = [
-    { key: "logo", label: "Image", width: ".5fr" },
+    { key: "logo", label: "Image", width: "100px" },
     { key: "name", label: "Name" },
-    { key: "email", label: "Email", width: "1.2fr" },
-    { key: "phone", label: "Phone No.", width: ".6fr" },
-    { key: "active", label: "Active", width: ".5fr" },
-    { key: "action", label: "Action", width: ".7fr" },
+    { key: "email", label: "Email" },
+    { key: "phone", label: "Phone No." },
+    { key: "active", label: "Active" },
+    { key: "action", label: "Action" },
 ];
