@@ -38,12 +38,15 @@ export const ROLE_COL = [
     },
 ];
 
+
+
+
 export const REQUISITION_CREATE_COLUMN = [
     { key: "barcode", label: "Barcode" },
-    { key: "brand", label: "Brand" },
+    // { key: "brand", label: "Brand" },
     { key: "product", label: "Product" },
     { key: "packSize", label: "Pack Size" },
-    { key: "reqQty", label: "Req Qty.", width: "100px" },
+    { key: "reqQty", label: "Req Qty." },
     { key: "action", label: "Action", align: "center" },
 ];
 
@@ -89,7 +92,7 @@ export const REQUISITION_ITEMS_COLUMN = [
     {
         key: "id",
         label: "#",
-        // width: "0.5fr",
+        width: "0.3fr",
         // align: "center"
     },
     {
@@ -104,8 +107,8 @@ export const REQUISITION_ITEMS_COLUMN = [
         // align: "center"
     },
     {
-        key: "price",
-        label: "Price",
+        key: "productType",
+        label: "Product Type",
         // width: "120px",
         // align: "center"
     },
@@ -116,6 +119,9 @@ export const REQUISITION_ITEMS_COLUMN = [
         // align: "center"
     },
 ];
+
+
+
 
 export const QUOTATION_COLUMN = [
     {

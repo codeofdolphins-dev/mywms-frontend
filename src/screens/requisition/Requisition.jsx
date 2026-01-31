@@ -70,17 +70,16 @@ const Requisition = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [isShow, setIsShow] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
 
     const { data: requisitionList, isLoading: requisitionListLoading } = fetchData.TQRequisitionList();
 
-
-    // console.log(requisitionList?.data)
-    
     const isEmpty = requisitionList?.data?.length < 1;
 
-    function handelShow(id) {
-        // setIsShow(true);
-        console.log(id)
+    function handelShow(items) {
+        setIsShow(true);
+        setSelectedItems(items)
+        console.log(items)
     }
     function handelEdit(id) {
         console.log(id)
@@ -130,6 +129,7 @@ const Requisition = () => {
                                                 {item?.requisition_no}
                                             </Link>
                                         ),
+                                        // id: item?.requisition_no,
                                         title: item?.title,
                                         status: item?.status,
                                         priority: item?.priority,
@@ -167,10 +167,11 @@ const Requisition = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title={"Requisition Items"}
-                maxWidth='60'
+                maxWidth='75'
             >
                 <RequisitionDetails
                     setIsShow={setIsShow}
+                    selectedItems={selectedItems}
                 />
             </AddModal>
 

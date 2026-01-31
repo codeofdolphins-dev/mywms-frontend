@@ -23,8 +23,8 @@ const colName = [
     { key: "barcode", label: "Barcode" },
     { key: "sku", label: "SKU" },
     { key: "package_type", label: "Package Type" },
-    { key: "purchase_price", label: "Purchase Price" },
-    { key: "MRP", label: "MRP" },
+    // { key: "purchase_price", label: "Purchase Price" },
+    // { key: "MRP", label: "MRP" },
     { key: "productBrands", label: "Brands", type: "array", arrayRender: (item) => item.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }

@@ -58,6 +58,7 @@ const CreateRequisition = () => {
 
     }, [selectedItems, setItem])
 
+    console.log(selectedItems);
 
     const onSubmit = async (data) => {
         data.items = selectedItems
@@ -178,7 +179,7 @@ const CreateRequisition = () => {
                                     />
                                 </div>
 
-                                {/* node type */}
+                                {/* priority */}
                                 <div className="">
                                     <Controller
                                         name="priority"
@@ -201,28 +202,6 @@ const CreateRequisition = () => {
                                         )}
                                     />
                                 </div>
-
-                                {/* total cost price */}
-                                {/* <div className="">
-                                        <Input
-                                            type="number"
-                                            label="Total Cost Price"
-                                            labelPosition="inline"
-                                            {...register("totalCost")}
-                                            disabled={true}
-                                        />
-                                    </div> */}
-
-                                {/* total MRP */}
-                                {/* <div className="">
-                                        <Input
-                                            type="number"
-                                            label="Total MRP"
-                                            labelPosition="inline"
-                                            {...register("totalMRP")}
-                                            disabled={true}
-                                        />
-                                    </div> */}
                             </div>
 
                             <div className="mt-10">
@@ -251,7 +230,6 @@ const CreateRequisition = () => {
                                             row={{
                                                 // id: item?.id,
                                                 barcode: item?.barcode,
-                                                brand: item?.name?.full_name,
                                                 product: item?.productName,
                                                 packSize: item?.packSize,
                                                 reqQty: item?.reqQty,

@@ -56,12 +56,12 @@ const TableRow = ({
     return (
         <div
             className={`
-        grid w-full border-b text-sm text-gray-700
-        hover:bg-gray-50 transition
-        min-h-12
-        ${onClick ? "cursor-pointer" : ""}
-        ${className}
-      `}
+                    grid w-full border-b text-sm text-gray-700
+                    hover:bg-gray-50 transition
+                    min-h-12
+                    ${onClick ? "cursor-pointer" : ""}
+                    ${className}
+                `}
             style={{ gridTemplateColumns: gridTemplate }}
             onClick={onClick}
         >
@@ -72,13 +72,13 @@ const TableRow = ({
                     <div
                         key={col.key}
                         className={`
-              px-2 py-2 flex items-center min-w-0
-              ${col.align === "center" ? "justify-center text-center" : ""}
-              ${col.align === "right" ? "justify-end text-right" : "justify-start"}
-            `}
+                                px-2 py-2 flex items-center min-w-0
+                                ${col.align === "center" ? "justify-center text-center" : ""}
+                                ${col.align === "right" ? "justify-end text-right" : "justify-start"}
+                            `}
                         title={value}
                     >
-                        <span className="truncate block w-full">
+                        <span className="block w-full">
                             {value !== undefined && value !== null
                                 ? value
                                 : <span className="text-gray-400">—</span>

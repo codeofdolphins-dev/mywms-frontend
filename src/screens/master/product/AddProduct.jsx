@@ -382,59 +382,22 @@ const AddProduct = () => {
 
                             {/* 3rd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
+                                {/* <div>
                                     <Input
                                         type={"number"}
                                         label={"Unit"}
                                         placeholder={"Enter unit"}
                                         {...register("unit")}
                                     />
-                                </div>
+                                </div> */}
                                 <div>
                                     <Input
                                         type={"number"}
-                                        label={"Purchase Price"}
-                                        placeholder={"Enter Selling Price"}
-                                        {...register("purchase_price", { required: "This field is required!!!" })}
-                                        error={errors.purchase_price?.message}
-                                        required={true}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* 4th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Input
-                                        type={"number"}
-                                        label={"MRP"}
-                                        placeholder={"₹ Enter MRP"}
-                                        {...register("MRP", { required: "This field is required!!!" })}
-                                        error={errors.MRP?.message}
-                                        required={true}
-                                    />
-                                </div>
-                                <div>
-                                    <Input
-                                        type={"number"}
-                                        label={"Reorder Level"}
+                                        label={"Minimum Stock Level"}
                                         placeholder={"Enter Reorder Level"}
                                         {...register("reorder_level")}
                                     />
                                 </div>
-                            </div>
-
-                            {/* 5th row */}
-                            <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <TextArea
-                                        label="Description"
-                                        placeholder="Enter Description"
-                                        className="text-sm"
-                                        {...register("description")}
-                                    />
-                                </div>
-                                {/* file upload */}
                                 <div className="grid grid-cols-1">
                                     <Controller
                                         name="image"
@@ -450,8 +413,44 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
+                            {/* 4th row */}
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <Input
+                                        type={"number"}
+                                        label={"MRP"}
+                                        placeholder={"₹ Enter MRP"}
+                                        {...register("MRP", { required: "This field is required!!!" })}
+                                        error={errors.MRP?.message}
+                                        required={true}
+                                    />
+                                </div>
+                                <div>
+                                    <Input
+                                        type={"number"}
+                                        label={"Purchase Price"}
+                                        placeholder={"Enter Selling Price"}
+                                        {...register("purchase_price", { required: "This field is required!!!" })}
+                                        error={errors.purchase_price?.message}
+                                        required={true}
+                                    />
+                                </div>
+                            </div> */}
+
                             {/* 5th row */}
-                            <div className="flex items-center justify-end gap-14">
+                            <div className="grid grid-cols-1 gap-4">
+                                <div>
+                                    <TextArea
+                                        label="Description"
+                                        placeholder="Enter Description"
+                                        className="text-sm"
+                                        {...register("description")}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* 5th row */}
+                            <div className="flex items-center justify-end gap-14 mr-5">
                                 <button
                                     className='btn btn-outline-dark'
                                     type='button'
