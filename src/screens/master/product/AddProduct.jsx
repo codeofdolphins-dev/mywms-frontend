@@ -9,7 +9,7 @@ import RHRadioGroup from '@/components/inputs/RHF/RHRadioGroup';
 import fetchData from '@/Backend/fetchData.backend';
 import masterData from '@/Backend/master.backend';
 import { RHFToFormData } from '@/utils/RHFtoFD';
-import CategoryTree from './CategoryTree';
+import CategoryTree from '../../../components/CategoryTree';
 import { successAlert } from '@/utils/alerts';
 import FullScreenLoader from '@/components/loader/FullScreenLoader';
 import AddModal from '@/components/Add.modal';
@@ -61,7 +61,7 @@ const AddProduct = () => {
             reset({
                 ...data,
                 brands: data?.productBrands?.map(item => item.id),
-                categories: data?.productCategories?.map(item => item.id),
+                categories: data?.selectedCategoryIds,
                 hsn_code: data?.hsn?.id,
                 gstType: data?.gst_type,
                 unit_type_id: data?.unitRef?.id,
@@ -138,21 +138,57 @@ const AddProduct = () => {
                             {/* 1st row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
+                                {/* Product Name */}
+                                <div>
+                                    <Input
+                                        label={"Product Name"}
+                                        placeholder={"Enter product name..."}
+                                        {...register("name", {
+                                            required: "This field is required!!!"
+                                        })}
+                                        error={errors.name?.message}
+                                        required={true}
+                                    />
+                                </div>
+
+                                {/* brand */}
+                                <div className="">
+                                    <Controller
+                                        name="brands"
+                                        control={control}
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+
+                                                label="Brand"
+                                                options={brandData?.data}
+                                                error={error?.message}
+                                                isMulti={true}
+                                                required={true}
+
+                                                addButton={true}
+                                                buttonTitle='brand'
+                                                buttonOnClick={() => setShowBrand(true)}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* 2nd row */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
                                 {/* left */}
                                 <div className="grid grid-cols-1 gap-2">
-
-                                    {/* Product Name */}
-                                    <div>
-                                        <Input
-                                            label={"Product Name"}
-                                            placeholder={"Enter product name..."}
-                                            {...register("name", {
-                                                required: "This field is required!!!"
-                                            })}
-                                            error={errors.name?.message}
-                                            required={true}
-                                        />
-                                    </div>
 
                                     {/* hsn_id */}
                                     <div>
@@ -242,39 +278,6 @@ const AddProduct = () => {
 
                                 {/* right */}
                                 <div className="grid grid-cols-1 gap-2">
-
-                                    {/* brand */}
-                                    <div className="">
-                                        <Controller
-                                            name="brands"
-                                            control={control}
-                                            rules={{
-                                                required: "This field is required!!!"
-                                            }}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
-
-                                                    label="Brand"
-                                                    options={brandData?.data}
-                                                    error={error?.message}
-                                                    isMulti={true}
-                                                    required={true}
-
-                                                    addButton={true}
-                                                    buttonTitle='brand'
-                                                    buttonOnClick={() => setShowBrand(true)}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
                                     {/* category */}
                                     <div className="">
                                         <Controller
@@ -284,12 +287,14 @@ const AddProduct = () => {
                                                 validate: (v) =>
                                                     v?.length > 0 || "Please select at least one category",
                                             }}
-                                            render={({ field, fieldState }) => (
+                                            render={({ field: { value, onChange }, fieldState }) => (
                                                 <>
                                                     <CategoryTree
                                                         data={categoryData}
-                                                        value={field.value || []}
-                                                        onChange={field.onChange}
+                                                        value={value || []}
+                                                        onChange={onChange}
+                                                        showSelectAllbtn={true}
+                                                        addButtton={true}
                                                         buttonOnClick={() => setShowCategory(true)}
                                                     />
 
@@ -303,10 +308,9 @@ const AddProduct = () => {
                                         />
                                     </div>
                                 </div>
-
                             </div>
 
-                            {/* 2nd row */}
+                            {/* 3rd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <div>
@@ -380,7 +384,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 3rd row */}
+                            {/* 4th row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* <div>
                                     <Input
@@ -449,7 +453,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 5th row */}
+                            {/* 6th row */}
                             <div className="flex items-center justify-end gap-14 mr-5">
                                 <button
                                     className='btn btn-outline-dark'

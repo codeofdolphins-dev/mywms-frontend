@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../inputs/RHF/Select.RHF";
 import { debounce } from 'lodash';
 import fetchData from '../../../Backend/fetchData.backend';
+import CategoryTree from '../../CategoryTree';
 
 const RequisitionItemForm = ({
     setIsShow,
@@ -58,6 +59,7 @@ const RequisitionItemForm = ({
             setValue("productName", product?.[0]?.name);
             setValue("packSize", `${product?.[0]?.measure} ${product?.[0]?.unit_type}`);
             setValue("packageType", product?.[0]?.package_type);
+            setValue("categories", product?.[0]?.selectedCategoryIds);
         } else {
             setErrorText("Product not found!!!");
 
@@ -83,73 +85,75 @@ const RequisitionItemForm = ({
                 {/* form */}
                 <div className="grid grid-cols-2 gap-5">
 
-                    {/* barcode */}
-                    <div>
-                        <Input
-                            type="number"
-                            label="Barcode"
-                            placeholder="Enter barcode number"
-                            {...register("barcode", {
-                                required: {
-                                    message: "Barcode required",
-                                    value: true
-                                }
-                            })}
-                            onChange={(e) => {
-                                register("barcode").onChange(e);
-                                deBounceFn(e.target.value);
-                            }}
-                            error={errors.barcode?.message || errorText}
-                            required={true}
-                            isLoading={isLoading}
-                        />
+                    <div className="grid grid-cols-1">
+                        {/* barcode */}
+                        <div>
+                            <Input
+                                type="number"
+                                label="Barcode"
+                                placeholder="Enter barcode number"
+                                {...register("barcode", {
+                                    required: {
+                                        message: "Barcode required",
+                                        value: true
+                                    }
+                                })}
+                                onChange={(e) => {
+                                    register("barcode").onChange(e);
+                                    deBounceFn(e.target.value);
+                                }}
+                                error={errors.barcode?.message || errorText}
+                                required={true}
+                                isLoading={isLoading}
+                            />
+                        </div>
+
+                        {/* product name */}
+                        <div>
+                            <Input
+                                label="Product Name"
+                                placeholder="Enter product name"
+                                {...register("productName")}
+                                disabled={true}
+                            />
+                        </div>
+
+                        {/* unit type */}
+                        <div>
+                            <Input
+                                label="Package Type"
+                                placeholder="Enter unit type"
+                                {...register("packageType")}
+                                disabled={true}
+                            />
+                        </div>
                     </div>
 
                     {/* category */}
                     <div>
                         <Controller
-                            name="category"
+                            name="categories"
                             control={control}
-                            // rules={{
-                            //     required: "This field is required!!!"
-                            // }}
-                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                <RHSelect
-                                    ref={(el) => {
-                                        ref({
-                                            focus: () => el?.focus(),
-                                        });
-                                    }}
-                                    value={value}
-                                    onChange={onChange}
+                            rules={{
+                                validate: (v) =>
+                                    v?.length > 0 || "Please select at least one category",
+                            }}
+                            render={({ field: { value, onChange }, fieldState }) => (
+                                <>
+                                    <CategoryTree
+                                        data={data?.data?.[0]?.productCategories}
+                                        value={value || []}
+                                        onChange={onChange}
+                                        disabled={true}
+                                    />
 
-                                    label="Category"
-                                    selectKey='hsn_code'
-                                    // options={hsnData?.data}
-                                    error={error?.message}
-                                // required={true}
-                                />
+                                    {fieldState.error && (
+                                        <p className="text-red-500 text-xs mt-1">
+                                            {fieldState.error.message}
+                                        </p>
+                                    )}
+                                </>
                             )}
-                        />
-                    </div>
-
-                    {/* product name */}
-                    <div>
-                        <Input
-                            label="Product Name"
-                            placeholder="Enter product name"
-                            {...register("productName")}
-                            disabled={true}
-                        />
-                    </div>
-
-                    {/* unit type */}
-                    <div>
-                        <Input
-                            label="Package Type"
-                            placeholder="Enter unit type"
-                            {...register("packageType")}
-                            disabled={true}
                         />
                     </div>
 

@@ -9,12 +9,12 @@ import IconCode from '@/components/Icon/IconCode';
 import IconCaretDown from '@/components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import Input from '@/components/inputs/Input';
-import ItemTable from '@/components/ItemTable';
 import { FiPlus } from 'react-icons/fi';
 import fetchData from '@/Backend/fetchData.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
 import masterData from '@/Backend/master.backend';
 import ComponentHeader from '@/components/ComponentHeader';
+import ItemTable from '../../../components/ItemTable';
 
 const colName = [
     { key: "id", label: "ID" },
