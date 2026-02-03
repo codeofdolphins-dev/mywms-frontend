@@ -1,6 +1,6 @@
 import React from 'react'
 import TableHeader from '../table/TableHeader'
-import { REQUISITION_ITEMS_COLUMN } from '../../utils/helper'
+import { REQUISITION_CREATE_COLUMN } from '../../utils/helper'
 import TableRow from '../table/TableRow'
 
 const RequisitionDetails = ({
@@ -8,20 +8,22 @@ const RequisitionDetails = ({
   selectedItems = []
 }) => {
   return (
-    <div className="panel">
-      <div className="overflow-x-auto">
-        <TableHeader columns={REQUISITION_ITEMS_COLUMN} />
+    <div className="panel h-52">
+      <div className="overflow-auto">
+        <TableHeader columns={REQUISITION_CREATE_COLUMN} />
         {
-          selectedItems?.map((item, idx) => 
+          selectedItems?.map((item, idx) =>
             <TableRow
               key={idx}
-              columns={REQUISITION_ITEMS_COLUMN}
+              columns={REQUISITION_CREATE_COLUMN}
               row={{
-                id: idx+1,
                 barcode: item?.product?.barcode,
-                productName: item?.product?.name,
-                productType: `${item?.product?.measure} ${item?.product?.unit_type} ${item?.product?.package_type}`,
-                qty: item?.qty,
+                product: item?.product?.name,
+                brand: item?.brand?.name,
+                category: item?.category?.name,
+                subCategory: item?.subCategory?.name,
+                packSize: `${item?.product?.measure} ${item?.product?.unit_type} ${item?.product?.package_type}`,
+                reqQty: item?.qty,
               }}
             />
           )

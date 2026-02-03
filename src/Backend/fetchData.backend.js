@@ -174,7 +174,7 @@ class FetchData {
             },
         });
     };
-    
+
     TQAllUserList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["allUserList", params],
@@ -184,9 +184,10 @@ class FetchData {
                 });
                 return res.data;
             },
+            enabled: isEnabled,
         });
     };
-    
+
     TQAllowNodeList(isEnabled = true) {
         return useQuery({
             queryKey: ["AllowNodeList"],
@@ -194,16 +195,31 @@ class FetchData {
                 const res = await API.get("/requisition/allow-node");
                 return res.data;
             },
+            enabled: isEnabled,
         });
     };
-    
-    TQRequisitionList(isEnabled = true) {
+
+    TQRequisitionList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["requisitionList"],
+            queryKey: ["requisitionList", params],
             queryFn: async () => {
-                const res = await API.get("/requisition/list");
+                const res = await API.get("/requisition/list", {
+                    params
+                });
                 return res.data;
             },
+            enabled: isEnabled,
+        });
+    };
+
+    TQRequisitionReceiveList(isEnabled = true) {
+        return useQuery({
+            queryKey: ["requisitionReceiveList"],
+            queryFn: async () => {
+                const res = await API.get("/requisition/receive-list");
+                return res.data;
+            },
+            enabled: isEnabled,
         });
     };
 

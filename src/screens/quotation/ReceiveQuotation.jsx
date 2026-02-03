@@ -73,7 +73,6 @@ const headerLink = [
 ]
 
 const ReceiveQuotation = () => {
-
     const [debounceSearch, setDebounceSearch] = useState('');
 
     return (

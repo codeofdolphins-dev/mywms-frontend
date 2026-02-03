@@ -6,7 +6,7 @@ import { FaQuoteLeft } from 'react-icons/fa6'
 const quotationSubMenu = [
     { name: 'Browse', path: '/quotation' },
     { name: 'Create', path: '/quotation/create' },
-    { name: 'Receive Requisition', path: '/quotation/receive' },
+    { name: 'Receive Requisition', path: '/requisition/receive' },
 ];
 
 const Quotation = ({ location }) => {

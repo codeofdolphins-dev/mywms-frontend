@@ -5,7 +5,6 @@ import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../inputs/RHF/Select.RHF";
 import { debounce } from 'lodash';
 import fetchData from '../../../Backend/fetchData.backend';
-import CategoryTree from '../../CategoryTree';
 
 const RequisitionItemForm = ({
     setIsShow,
@@ -22,6 +21,8 @@ const RequisitionItemForm = ({
         defaultValues: {
             barcode: "",
             category: "",
+            subCategory: "",
+            brand: "",
             productName: "",
             packSize: "",
             packageType: "",
@@ -30,9 +31,11 @@ const RequisitionItemForm = ({
     });
 
     const barcode = watch("barcode");
+    const category = watch("category");
 
     const [searchText, setSearchText] = useState("");
     const [errorText, setErrorText] = useState("");
+    const [availCategory, setAvailCategory] = useState(null);
 
     const { data, isLoading, error, isError } = fetchData.TQProductList({ barcode: searchText }, !!searchText);
 
@@ -47,19 +50,27 @@ const RequisitionItemForm = ({
         return () => deBounceFn.cancel();
     }, []);
 
+    const product = data?.data[0];
+
+    // set sub-category option
+    useEffect(() => {
+        setAvailCategory(
+            product?.productCategories.flatMap(item => item.id === category.id ? item.subcategories : [])
+        )
+    }, [category]);
+    
 
     // set value
     useEffect(() => {
         if (!barcode?.length) return;
-        const product = data?.data;
 
-        if (product?.length) {
+        if (product) {
             setErrorText("");
 
-            setValue("productName", product?.[0]?.name);
-            setValue("packSize", `${product?.[0]?.measure} ${product?.[0]?.unit_type}`);
-            setValue("packageType", product?.[0]?.package_type);
-            setValue("categories", product?.[0]?.selectedCategoryIds);
+            setValue("productName", product?.name);
+            setValue("packSize", `${product?.measure} ${product?.unit_type}`);
+            setValue("packageType", product?.package_type);
+            // setValue("categories", product?.[0]?.selectedCategoryIds);
         } else {
             setErrorText("Product not found!!!");
 
@@ -85,52 +96,131 @@ const RequisitionItemForm = ({
                 {/* form */}
                 <div className="grid grid-cols-2 gap-5">
 
-                    <div className="grid grid-cols-1">
-                        {/* barcode */}
-                        <div>
-                            <Input
-                                type="number"
-                                label="Barcode"
-                                placeholder="Enter barcode number"
-                                {...register("barcode", {
-                                    required: {
-                                        message: "Barcode required",
-                                        value: true
-                                    }
-                                })}
-                                onChange={(e) => {
-                                    register("barcode").onChange(e);
-                                    deBounceFn(e.target.value);
-                                }}
-                                error={errors.barcode?.message || errorText}
-                                required={true}
-                                isLoading={isLoading}
-                            />
-                        </div>
+                    {/* barcode */}
+                    <div>
+                        <Input
+                            type="number"
+                            label="Barcode"
+                            placeholder="Enter barcode number"
+                            {...register("barcode", {
+                                required: {
+                                    message: "Barcode required",
+                                    value: true
+                                }
+                            })}
+                            onChange={(e) => {
+                                register("barcode").onChange(e);
+                                deBounceFn(e.target.value);
+                            }}
+                            error={errors.barcode?.message || errorText}
+                            required={true}
+                            isLoading={isLoading}
+                        />
+                    </div>
 
-                        {/* product name */}
-                        <div>
-                            <Input
-                                label="Product Name"
-                                placeholder="Enter product name"
-                                {...register("productName")}
-                                disabled={true}
-                            />
-                        </div>
+                    {/* product name */}
+                    <div>
+                        <Input
+                            label="Product Name"
+                            placeholder="Enter product name"
+                            {...register("productName")}
+                            disabled={true}
+                        />
+                    </div>
 
-                        {/* unit type */}
-                        <div>
-                            <Input
-                                label="Package Type"
-                                placeholder="Enter unit type"
-                                {...register("packageType")}
-                                disabled={true}
-                            />
-                        </div>
+                    {/* product category */}
+                    <div>
+                        <Controller
+                            name="category"
+                            control={control}
+                            rules={{
+                                required: "category is required"
+                            }}
+                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                <>
+                                    <RHSelect
+                                        ref={(el) => {
+                                            ref({
+                                                focus: () => el?.focus()
+                                            });
+                                        }}
+                                        value={value}
+                                        onChange={onChange}
+                                        error={error?.message}
+
+                                        label={"Category"}
+                                        options={product?.productCategories}
+                                        required={true}
+                                        objectReturn={true}
+                                    />
+                                </>
+                            )}
+                        />
+                    </div>
+
+                    {/* product sub-category */}
+                    <div>
+                        <Controller
+                            name="subCategory"
+                            control={control}
+                            render={({ field: { value, onChange }, fieldState: { error } }) => (
+                                <>
+                                    <RHSelect
+                                        value={value}
+                                        onChange={onChange}
+
+                                        label={"Sub Category"}
+                                        options={availCategory}
+                                        disabled={!category}
+                                        objectReturn={true}
+                                    />
+                                </>
+                            )}
+                        />
+                    </div>
+
+                    {/* product brand */}
+                    <div>
+                        <Controller
+                            name="brand"
+                            control={control}
+                            rules={{
+                                required: "Brand is required",
+                            }}
+                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                <>
+                                    <RHSelect
+                                        ref={(el) => {
+                                            ref({
+                                                focus: () => el?.focus()
+                                            });
+                                        }}
+                                        value={value}
+                                        onChange={onChange}
+                                        error={error?.message}
+
+                                        label={"Brand"}
+                                        options={product?.productBrands}
+                                        required={true}
+                                        objectReturn={true}
+                                    />
+                                </>
+                            )}
+                        />
+                    </div>
+
+                    {/* Package type */}
+                    <div>
+                        <Input
+                            label="Package Type"
+                            placeholder="Enter unit type"
+                            {...register("packageType")}
+                            disabled={true}
+                        />
                     </div>
 
                     {/* category */}
-                    <div>
+                    {/* <div>
                         <Controller
                             name="categories"
                             control={control}
@@ -155,7 +245,7 @@ const RequisitionItemForm = ({
                                 </>
                             )}
                         />
-                    </div>
+                    </div> */}
 
                     {/* pack size */}
                     <div>

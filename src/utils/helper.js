@@ -43,11 +43,13 @@ export const ROLE_COL = [
 
 export const REQUISITION_CREATE_COLUMN = [
     { key: "barcode", label: "Barcode" },
-    // { key: "brand", label: "Brand" },
-    { key: "product", label: "Product" },
+    { key: "product", label: "Name" },
+    { key: "brand", label: "Brand" },
+    { key: "category", label: "Category" },
+    { key: "subCategory", label: "Sub Category" },
     { key: "packSize", label: "Pack Size" },
     { key: "reqQty", label: "Req Qty." },
-    { key: "action", label: "Action", align: "center" },
+    { key: "action", label: "Action", align: "center" }
 ];
 
 export const REQUISITION_COLUMN = [
@@ -201,46 +203,34 @@ export const QUOTATION_RECEIVE_COLUMN = [
 
 export const REQUISITION_RECEIVE_COLUMN = [
     {
-        key: "id",
-        label: "#",
+        key: "id", label: "#",
         // width: "0.5fr",
         // align: "center"
     },
-    {
-        key: "title",
-        label: "Title",
-        // width: "2fr"
-    },
-    {
-        key: "sender",
-        label: "Sender",
-        // width: "2fr"
-    },
-    {
-        key: "priority",
-        label: "Priority",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "total",
-        label: "Total",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "itemsCount",
-        label: "Total Items",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "action",
-        label: "Action",
-        // width: "120px",
-        // align: "center"
-    },
+    { key: "title", label: "Title" },
+    { key: "sender", label: "Sender" },
+    { key: "priority", label: "Priority" },
+    { key: "itemsCount", label: "Total Items" },
+    { key: "action", label: "Action" },
 ];
+
+export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
+    { key: "barcode", label: "Barcode" },
+    { key: "product", label: "Name" },
+    { key: "brand", label: "Brand" },
+    { key: "category", label: "Category" },
+    { key: "subCategory", label: "Sub Category" },
+    { key: "packSize", label: "Pack Size" },
+    { key: "reqQty", label: "Req Qty." },
+
+    { key: "unit_price", label: "Unit Price" },
+    { key: "tax_percent", label: "Tax Percent" },
+    { key: "total_price", label: "Total Price" },
+    { key: "note", label: "Note" },
+];
+
+
+
 
 export const PURCHASE_ORDER = [
     {

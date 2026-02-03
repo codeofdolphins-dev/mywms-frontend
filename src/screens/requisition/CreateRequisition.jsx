@@ -57,8 +57,7 @@ const CreateRequisition = () => {
         setIsEmpty(Boolean(!selectedItems?.length));
 
     }, [selectedItems, setItem])
-
-    console.log(selectedItems);
+    console.log(selectedItems)
 
     const onSubmit = async (data) => {
         data.items = selectedItems
@@ -228,9 +227,11 @@ const CreateRequisition = () => {
                                             key={idx}
                                             columns={REQUISITION_CREATE_COLUMN}
                                             row={{
-                                                // id: item?.id,
                                                 barcode: item?.barcode,
                                                 product: item?.productName,
+                                                brand: item?.brand?.name,
+                                                category: item?.category?.name,
+                                                subCategory: item?.subCategory?.name,
                                                 packSize: item?.packSize,
                                                 reqQty: item?.reqQty,
                                                 action: (
