@@ -214,13 +214,14 @@ export const REQUISITION_RECEIVE_COLUMN = [
     {
         key: "id", label: "#",
         // width: "0.5fr",
-        // align: "center"
+        align: "center"
     },
     { key: "title", label: "Title" },
     { key: "sender", label: "Sender" },
-    { key: "priority", label: "Priority" },
-    { key: "itemsCount", label: "Total Items" },
-    { key: "action", label: "Action" },
+    { key: "priority", label: "Priority", align: "center" },
+    { key: "status", label: "Status", align: "center" },
+    { key: "itemsCount", label: "Total Items", align: "center" },
+    { key: "action", label: "Action", align: "center" },
 ];
 
 export const REQUISITION_RECEIVE_DETAILS_COLUMN = [

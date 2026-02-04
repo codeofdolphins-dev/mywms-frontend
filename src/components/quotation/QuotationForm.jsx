@@ -15,7 +15,6 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
     const offerPrice = watch("offerPrice");
 
     function submit(data) {
-        // console.log(data);
         setIsShowEditDetails(false);
         setQuoteItem(prev => [...prev, data]);
     }
@@ -40,7 +39,7 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
             setValue("qty", editItem?.qty);
             setValue("total", editItem?.qty * offerPrice);
         }
-    }, [editItem, offerPrice])
+    }, [editItem, offerPrice]);
 
     return (
         <div>
@@ -50,25 +49,23 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                         <input type="hidden" {...register("id")} />
 
                         {/* 1st row */}
-                        <div className="flex items-center gap-5">
+                        <div className="grid grid-cols-1 gap-5">
                             <Input
                                 label={"Barcode"}
                                 labelPosition="inline"
-                                placeholder={"Enter website URL (e.g., https://example.com)"}
                                 {...register("barcode")}
                                 disabled={true}
                             />
                             <Input
                                 label={"Name"}
                                 labelPosition="inline"
-                                placeholder={"Enter website URL (e.g., https://example.com)"}
                                 {...register("name")}
                                 disabled={true}
                             />
                         </div>
 
                         {/* 2nd row */}
-                        <div className="grid grid-cols-2 gap-5">
+                        <div className="grid grid-cols-1 gap-5">
                             <Input
                                 label="Qty."
                                 labelPosition="inline"
@@ -91,22 +88,24 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                                         },
                                     })}
                                     error={errors.offerPrice?.message}
+                                    disabled={editId ? true : false}
                                 />
                             </div>
                         </div>
 
 
                         {/* 3rd row */}
-                        <div className="flex items-center gap-5">
+                        <div className="grid grid-cols-1 gap-5">
                             <Input
                                 label={"Tax Percent %"}
                                 labelPosition="inline"
-                                placeholder={"Enter brand name..."}
+                                placeholder={"Enter tax percent..."}
                                 {...register("tax", {
                                     required: "This field is required!!!"
                                 })}
                                 error={errors.tax?.message}
                                 required={true}
+                                disabled={editId ? true : false}
                             />
 
                             <Input
@@ -119,9 +118,17 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                         </div>
 
                         <div className="flex">
-                            <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>
-                                {editId ? "Close" : "Add"}
-                            </Button>
+                            {editId ?
+                                <button
+                                    onClick={() => setIsShowEditDetails(false)}
+                                    className='btn btn-info ml-auto'
+                                    type='button'
+                                >Close</button>
+                                :
+                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false} className='ml-auto'>
+                                    Add
+                                </Button>
+                            }
                         </div>
                     </form>
                 </div>
