@@ -1,3 +1,5 @@
+import { getGridTemplate } from "../../helper/calculateGridTemplate";
+
 // const TableRow = ({
 //     columns = [],
 //     row = {},
@@ -6,6 +8,7 @@
 //     onClick
 // }) => {
 //     const gridTemplate = columns.map(col => col.width || "1fr").join(" ");
+
 
 //     return (
 //         <div
@@ -45,24 +48,25 @@
 const TableRow = ({
     columns = [],
     row = {},
-    index,
     className = "",
     onClick
 }) => {
-    const gridTemplate = columns
-        .map(col => col.width ? col.width : "minmax(0, 1fr)")
-        .join(" ");
+    const gridTemplate = getGridTemplate(columns);
 
     return (
         <div
             className={`
-                    grid w-full border-b text-sm text-gray-700
-                    hover:bg-gray-50 transition
-                    min-h-12
-                    ${onClick ? "cursor-pointer" : ""}
-                    ${className}
-                `}
-            style={{ gridTemplateColumns: gridTemplate }}
+                grid border-b text-sm text-gray-700
+                hover:bg-gray-50 transition
+                min-h-12
+                ${onClick ? "cursor-pointer" : ""}
+                ${className}
+            `}
+            style={{
+                gridTemplateColumns: gridTemplate,
+                // width: "max-content",   // 🔥 key fix
+                minWidth: "100%"
+            }}
             onClick={onClick}
         >
             {columns.map((col) => {
@@ -72,23 +76,23 @@ const TableRow = ({
                     <div
                         key={col.key}
                         className={`
-                                px-2 py-2 flex items-center min-w-0
-                                ${col.align === "center" ? "justify-center text-center" : ""}
-                                ${col.align === "right" ? "justify-end text-right" : "justify-start"}
-                            `}
+                            px-2 py-2 flex items-start 
+                            min-w-0                 // 🔥 THIS IS THE FIX
+                            ${col.align === "center" ? "justify-center text-center" : ""}
+                            ${col.align === "right" ? "justify-end text-right" : "justify-start"}
+                        `}
                         title={value}
                     >
-                        <span className="block w-full">
-                            {value !== undefined && value !== null
-                                ? value
-                                : <span className="text-gray-400">—</span>
-                            }
+                        <span className="block w-full break-words">
+                            {value ?? <span className="text-gray-400">—</span>}
                         </span>
                     </div>
+
                 );
             })}
         </div>
     );
 };
+
 
 export default TableRow;

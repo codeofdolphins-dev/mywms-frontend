@@ -35,7 +35,6 @@ import AddProduct from './screens/master/product/AddProduct';
 import PackageType from './screens/master/packageType/PackageType';
 import SupplierForm from './components/supplier/SupplierForm';
 import UnitType from './screens/master/unitType/UnitType';
-import RequisitionDetails from './screens/requisition/RequisitionDetails';
 
 function App() {
 
@@ -108,8 +107,7 @@ function App() {
                     <Route path="requisition" >
                         <Route index element={<Requisition />} />
                         <Route path="create" element={<CreateRequisition />} />
-                        <Route path="receive" element={<ReceiveRequision />} />
-                        <Route path="receive/:id" element={<RequisitionDetails />} />
+                        <Route path="received-quotation/:id" element={<ReceiveQuotation />} />
                     </Route>
 
 
@@ -117,7 +115,7 @@ function App() {
                     <Route path="quotation" >
                         <Route index element={<Quotation />} />
                         <Route path="create" element={<CreateQuotation />} />
-                        <Route path="receive-quotation/:id" element={<ReceiveQuotation />} />
+                        <Route path="received-requisition" element={<ReceiveRequision />} />
                     </Route>
 
 

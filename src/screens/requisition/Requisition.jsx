@@ -83,7 +83,7 @@ const Requisition = () => {
                                     columns={REQUISITION_COLUMN}
                                     row={{
                                         id: (
-                                            <Link to={`/quotation/receive-quotation/${item.requisition_no}`} className='hover:underline text-primary' >
+                                            <Link to={`/requisition/received-quotation/${item.requisition_no}`} className='hover:underline text-primary' >
                                                 {item?.requisition_no}
                                             </Link>
                                         ),
@@ -91,6 +91,7 @@ const Requisition = () => {
                                         status: item?.status,
                                         priority: item?.priority,
                                         notes: item?.notes,
+                                        grandTotal: item?.grandTotal,
                                         action: (
                                             <div className='flex items-center justify-center space-x-3'>
                                                 {/* <CustomeButton

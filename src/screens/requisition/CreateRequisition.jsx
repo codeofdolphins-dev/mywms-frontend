@@ -5,7 +5,7 @@ import ItemTable from '../../components/ItemTable';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import { Button } from '@mantine/core';
 import Input from '../../components/inputs/Input';
-import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
+import { REQUISITION_CREATE_COLUMN_ACTION } from '../../utils/helper';
 import { Link, useNavigate } from 'react-router-dom';
 import AddModal from '../../components/Add.modal';
 import RequisitionItemForm from "../../components/requisition/create/RequisitionItemForm";
@@ -19,6 +19,7 @@ import CustomeButton from "../../components/inputs/Button"
 import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import masterData from '../../Backend/master.backend';
+import { calculateTotals } from '../../helper/calculateTotals';
 
 
 const PRIORITY = [
@@ -55,9 +56,9 @@ const CreateRequisition = () => {
 
     useEffect(() => {
         setIsEmpty(Boolean(!selectedItems?.length));
+        setValue("total", calculateTotals(selectedItems))
 
-    }, [selectedItems, setItem])
-    console.log(selectedItems)
+    }, [selectedItems, setItem]);
 
     const onSubmit = async (data) => {
         data.items = selectedItems
@@ -149,6 +150,8 @@ const CreateRequisition = () => {
                                                 options={allownodeList?.data}
                                                 error={error?.message}
                                                 required={true}
+                                                isMulti={true}
+                                                isClearable={true}
                                             />
                                         )}
                                     />
@@ -201,6 +204,16 @@ const CreateRequisition = () => {
                                         )}
                                     />
                                 </div>
+
+                                {/* priority */}
+                                <div className="">
+                                    <Input
+                                        label="Total"
+                                        labelPosition="inline"
+                                        disabled={true}
+                                        {...register("total")}
+                                    />
+                                </div>
                             </div>
 
                             <div className="mt-10">
@@ -217,7 +230,7 @@ const CreateRequisition = () => {
                         {/* right side */}
                         <div className={`panel ${isEmpty ? "min-h-64" : ""} relative`}>
                             <div className="overflow-x-auto">
-                                <TableHeader columns={REQUISITION_CREATE_COLUMN} />
+                                <TableHeader columns={REQUISITION_CREATE_COLUMN_ACTION} />
                                 <TableBody
                                     isEmpty={isEmpty}
                                     showPagination={false}
@@ -225,7 +238,7 @@ const CreateRequisition = () => {
                                     {selectedItems?.map((item, idx) => (
                                         <TableRow
                                             key={idx}
-                                            columns={REQUISITION_CREATE_COLUMN}
+                                            columns={REQUISITION_CREATE_COLUMN_ACTION}
                                             row={{
                                                 barcode: item?.barcode,
                                                 product: item?.productName,
@@ -233,6 +246,7 @@ const CreateRequisition = () => {
                                                 category: item?.category?.name,
                                                 subCategory: item?.subCategory?.name,
                                                 packSize: item?.packSize,
+                                                priceLimit: item?.priceLimit,
                                                 reqQty: item?.reqQty,
                                                 action: (
                                                     <div className='flex items-center justify-center'>

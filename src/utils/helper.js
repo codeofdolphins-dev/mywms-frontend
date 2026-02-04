@@ -49,6 +49,17 @@ export const REQUISITION_CREATE_COLUMN = [
     { key: "subCategory", label: "Sub Category" },
     { key: "packSize", label: "Pack Size" },
     { key: "reqQty", label: "Req Qty." },
+    { key: "priceLimit", label: "Price Limit" },
+];
+export const REQUISITION_CREATE_COLUMN_ACTION = [
+    { key: "barcode", label: "Barcode" },
+    { key: "product", label: "Name" },
+    { key: "brand", label: "Brand" },
+    { key: "category", label: "Category" },
+    { key: "subCategory", label: "Sub Category" },
+    { key: "packSize", label: "Pack Size" },
+    { key: "reqQty", label: "Req Qty." },
+    { key: "priceLimit", label: "Price Limit" },
     { key: "action", label: "Action", align: "center" }
 ];
 
@@ -56,36 +67,34 @@ export const REQUISITION_COLUMN = [
     {
         key: "id",
         label: "#",
-        // width: "0.5fr",
         align: "center"
     },
     {
         key: "title",
         label: "Title",
-        // width: "2fr"
     },
     {
         key: "status",
         label: "Status",
-        // width: "120px",
         align: "center"
     },
     {
         key: "priority",
         label: "Priority",
-        // width: "120px",
         align: "center"
     },
     {
         key: "notes",
         label: "Notes",
-        // width: "120px",
         align: "center"
+    },
+    {
+        key: "grandTotal",
+        label: "Total",
     },
     {
         key: "action",
         label: "Action",
-        // width: "120px",
         align: "center"
     },
 ];

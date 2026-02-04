@@ -24,6 +24,7 @@ const RequisitionDetails = ({
                 subCategory: item?.subCategory?.name,
                 packSize: `${item?.product?.measure} ${item?.product?.unit_type} ${item?.product?.package_type}`,
                 reqQty: item?.qty,
+                priceLimit: item?.priceLimit,
               }}
             />
           )
