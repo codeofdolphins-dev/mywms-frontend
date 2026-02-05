@@ -212,11 +212,38 @@ class FetchData {
         });
     };
 
-    TQRequisitionReceiveList(isEnabled = true) {
+    TQReceiveRequisitionList(isEnabled = true) {
         return useQuery({
-            queryKey: ["requisitionReceiveList"],
+            queryKey: ["receiveRequisitionList"],
             queryFn: async () => {
-                const res = await API.get("/requisition/receive-list");
+                const res = await API.get("/quotation/receive-requisition-list");
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
+    TQReceiveQuotationList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["receiveQuotationList", params],
+            queryFn: async () => {
+                const res = await API.get("/requisition/receive-quotation-list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
+    /** QUOTATION */
+    TQQuotationList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["quotationList", params],
+            queryFn: async () => {
+                const res = await API.get("/quotation/list", {
+                    params
+                });
                 return res.data;
             },
             enabled: isEnabled,

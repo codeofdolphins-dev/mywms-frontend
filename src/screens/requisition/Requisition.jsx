@@ -65,7 +65,7 @@ const Requisition = () => {
             />
 
             {/* table */}
-            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
+            <div className={`panel mt-5 z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
                 <div className="overflow-x-auto">
                     <TableHeader columns={REQUISITION_COLUMN} />
                     <TableBody

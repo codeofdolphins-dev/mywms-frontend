@@ -82,7 +82,7 @@ const UserBrowse = () => {
                 btnOnClick={() => navigate("register")}
             />
 
-            <div className={`panel mt-5 relative ${isEmpty ? "min-h-64" : ""}`}>
+            <div className={`panel mt-5 relative z-0 ${isEmpty ? "min-h-64" : ""}`}>
                 <div className="overflow-x-auto">
                     <TableHeader columns={USER_LIST_COLUMN} />
                     <TableBody

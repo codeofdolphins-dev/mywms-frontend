@@ -41,7 +41,7 @@ const ReceiveRequision = () => {
     const [isShowDetails, setIsShowDetails] = useState(false);
     const [isShowEditDetails, setIsShowEditDetails] = useState(false);
 
-    const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQRequisitionReceiveList();
+    const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
     const { mutateAsync: create, isPending: createPending } = masterData.TQCreateMaster();
 
     const isEmpty = !receiveRequisitionList?.data || receiveRequisitionList?.data?.length < 1;
@@ -72,7 +72,7 @@ const ReceiveRequision = () => {
 
     /** reset all state as fresh */
     useEffect(() => {
-        if(isShowDetails)return;
+        if (isShowDetails) return;
 
         setItemDetails([]);
         setEditItem([]);
@@ -86,14 +86,15 @@ const ReceiveRequision = () => {
 
     async function submit(data) {
         data.items = quoteItem;
+        data.grandTotal = quoteItem.reduce((grandTotal, item) => grandTotal + Number(item.total), 0);
         console.log(data);
 
         try {
-            const res = await create({path: "", formData: data});
-            if(res.success) successAlert();``
+            const res = await create({ path: "/quotation/create", formData: data });
+            if (res.success) successAlert(res?.message);
 
         } catch (error) {
-            console.log(error);            
+            console.log(error);
         }
     }
 
@@ -108,7 +109,7 @@ const ReceiveRequision = () => {
             />
 
             {/* table view */}
-            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
+            <div className={`panel mt-5 z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
                 <div className="overflow-x-auto">
                     <TableHeader columns={REQUISITION_RECEIVE_COLUMN} />
                     <TableBody

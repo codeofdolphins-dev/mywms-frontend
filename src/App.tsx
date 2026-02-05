@@ -18,9 +18,8 @@ import Permission from './screens/access/Permission';
 import Role from './screens/access/Role';
 import AssignRole from './screens/access/AssignRole';
 import Quotation from './screens/quotation/Quotation';
-import CreateQuotation from './screens/quotation/CreateQuotation';
-import ReceiveQuotation from './screens/quotation/ReceiveQuotation';
-import ReceiveRequision from './screens/requisition/ReceiveRequision';
+import ReceiveQuotation from './screens/requisition/ReceiveQuotation';
+import ReceiveRequision from './screens/quotation/ReceiveRequision';
 import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
 import RegisterNode from './screens/admin/RegisterNode';
 import CreateUser from './screens/user/CreateUser';
@@ -94,52 +93,24 @@ function App() {
                         <Route path="permission/create" element={<Master />} />
                     </Route>
 
-
-
-
-
-
-
-
-
-
                     {/* requisition */}
                     <Route path="requisition" >
                         <Route index element={<Requisition />} />
                         <Route path="create" element={<CreateRequisition />} />
-                        <Route path="received-quotation/:id" element={<ReceiveQuotation />} />
+                        <Route path="received-quotation/:reqNo" element={<ReceiveQuotation />} />
                     </Route>
 
 
                     {/* quotation */}
                     <Route path="quotation" >
                         <Route index element={<Quotation />} />
-                        <Route path="create" element={<CreateQuotation />} />
                         <Route path="received-requisition" element={<ReceiveRequision />} />
                     </Route>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                     {/* purchase order */}
                     <Route path="purchase-order" >
                         <Route index element={<PurchaseOrder />} />
-                        <Route path="create" element={<CreateQuotation />} />
                         <Route path="receive" element={<ReceiveRequision />} />
                     </Route>
 

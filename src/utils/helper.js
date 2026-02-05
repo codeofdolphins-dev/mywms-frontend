@@ -136,44 +136,33 @@ export const REQUISITION_ITEMS_COLUMN = [
 
 export const QUOTATION_COLUMN = [
     {
-        key: "id",
-        label: "#",
-        // width: "0.5fr",
-        align: "center"
-    },
-    {
         key: "qno",
-        label: "QNo",
-        // width: "2fr"
+        label: "#",
+        align: "center"
     },
     {
         key: "name",
         label: "Supplier Name",
-        // width: "120px",
         align: "center"
     },
     {
         key: "status",
         label: "Status",
-        // width: "120px",
         align: "center"
     },
     {
         key: "notes",
         label: "Notes",
-        // width: "120px",
         align: "center"
     },
     {
-        key: "total",
+        key: "grandTotal",
         label: "Total",
-        // width: "120px",
         align: "center"
     },
     {
         key: "action",
         label: "Action",
-        // width: "120px",
         align: "center"
     },
 ];

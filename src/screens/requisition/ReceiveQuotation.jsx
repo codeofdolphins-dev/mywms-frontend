@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'
 import { QUOTATION_RECEIVE_COLUMN } from '../../utils/helper'
 import TableRow from '../../components/table/TableRow'
 import ComponentHeader from '../../components/ComponentHeader'
+import fetchData from '../../Backend/fetchData.backend'
+import AnimateHeight from 'react-animate-height'
+import IconCaretDown from '../../components/Icon/IconCaretDown'
 
 const dataSet = [
     {
@@ -73,7 +76,21 @@ const headerLink = [
 ]
 
 const ReceiveQuotation = () => {
+    const { reqNo } = useParams();
     const [debounceSearch, setDebounceSearch] = useState('');
+
+    const [active, setActive] = useState('0');
+    const togglePara = (value) => {
+        setActive((oldValue) => {
+            return oldValue === value ? '' : value;
+        });
+    };
+
+    const { data, isLoading } = fetchData.TQReceiveQuotationList({ reqNo });
+
+    const suppliers = data?.data?.suppliers;
+
+    console.log(suppliers);
 
     return (
         <div>
@@ -87,29 +104,46 @@ const ReceiveQuotation = () => {
 
             <div className="panel space-y-4">
                 {
-                    dataSet?.map((item, idx) => (
-                        <Accordian
-                            key={idx}
-                            id={idx}
-                            header={item?.supplier?.name}
-                        >
-                            <TableHeader columns={QUOTATION_RECEIVE_COLUMN} />
-                            {
-                                item?.items?.map((product, j) => (
-                                    <TableRow
-                                        key={j}
-                                        columns={QUOTATION_RECEIVE_COLUMN}
-                                        row={{
-                                            id: product?.id,
-                                            barcode: product?.barcode,
-                                            productName: product?.productName,
-                                            price: product?.price,
-                                            qty: product?.qty,
-                                        }}
-                                    />
-                                ))
-                            }
-                        </Accordian>
+                    suppliers?.map((item, idx) => (
+                        <div className="border border-[#d3d3d3] rounded" key={idx}>
+                            <div
+                                className="flex items-center justify-between pr-5"
+                                onClick={() => togglePara(`${item.id}`)}
+                            >
+                                <div className={`p-4 w-full flex items-center justify-between text-white-dark ${(active === `${item.id}`) ? '!text-primary' : ''}`}>
+                                    <p>{item?.nodeDetails?.name}</p>
+                                    <p>{item?.nodeDetails?.location}</p>
+                                    <p>{item?.RequisitionSupplier?.status}</p>
+                                    <p>{item?.quotation?.grandTotal}</p>
+                                </div>
+
+                                <div className={`ml-auto ${active === `${item.id}` ? 'rotate-180' : ''}`}>
+                                    <IconCaretDown />
+                                </div>
+                            </div>
+
+                            <AnimateHeight duration={300} height={active === `${item.id}` ? 'auto' : 0}>
+                                <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
+
+                                    <TableHeader columns={QUOTATION_RECEIVE_COLUMN} />
+                                    {
+                                        item?.items?.map((product, j) => (
+                                            <TableRow
+                                                key={j}
+                                                columns={QUOTATION_RECEIVE_COLUMN}
+                                                row={{
+                                                    id: product?.id,
+                                                    barcode: product?.barcode,
+                                                    productName: product?.productName,
+                                                    price: product?.price,
+                                                    qty: product?.qty,
+                                                }}
+                                            />
+                                        ))
+                                    }
+                                </div>
+                            </AnimateHeight>
+                        </div>
                     ))
                 }
             </div>

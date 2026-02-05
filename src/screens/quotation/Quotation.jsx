@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BasicPagination from '../../components/BasicPagination';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
@@ -10,6 +10,9 @@ import TableRow from '../../components/table/TableRow';
 import TableHeader from '../../components/table/TableHeader';
 import CustomeButton from '../../components/inputs/Button'
 import { QUOTATION_COLUMN } from '../../utils/helper';
+import ComponentHeader from '../../components/ComponentHeader';
+import fetchData from '../../Backend/fetchData.backend';
+import TableBody from '../../components/table/TableBody';
 
 
 const sampleData = [
@@ -70,6 +73,10 @@ const sampleData = [
     }
 ];
 
+const headerLink = [
+    { title: "quotation" },
+];
+
 
 const Quotation = () => {
     const navigate = useNavigate();
@@ -79,99 +86,80 @@ const Quotation = () => {
 
     const [isShow, setIsShow] = useState(false);
 
+    const { data: quotationList, loading } = fetchData.TQQuotationList();
+    const isEmpty = quotationList?.data?.length < 1;
+
+
     function handelEdit(id) {
         console.log(id)
     }
     async function handleDelete(id) {
         console.log(id)
     }
-    function handelShow(id) {
-        console.log(id)
+    function handelShow(items) {
+        console.log(items)
     }
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li className="">
-                    <span>quotation</span>
-                </li>
-            </ul>
 
-            {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
-                <div>
-                    <h1 className="text-4xl font-bold my-3">Quotation</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all Quotation</p>
-                </div>
-                <button
-                    className="btn btn-primary"
-                    onClick={() => navigate('/quotation/create')}
-                >
-                    <FiPlus size={20} className='mr-2' />
-                    Create Quotation
-                </button>
-            </div>
-
-
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by name or description..."
-                    className="bg- border-pink-500"
-                    setValue={debounceSearch}
-                />
-            </div>
+            <ComponentHeader
+                headerLink={headerLink}
+                addButton={false}
+                searchPlaceholder=''
+                setDebounceSearch={debounceSearch}
+            />
 
             {/* table */}
-            <div className="panel border rounded overflow-hidden">
-                <TableHeader columns={QUOTATION_COLUMN} />
-                {
-                    sampleData?.map((item, idx) => (
-                        <TableRow
-                            key={item.id}
-                            columns={QUOTATION_COLUMN}
-                            row={{
-                                id: item?.id,
-                                qno: item?.qno,
-                                name: item?.supplier.name,
-                                status: item?.status,
-                                notes: (
-                                    <p className='text-xs text-justify'>{item?.notes}</p>
-                                ),
-                                total: item?.total,
-                                action: (
-                                    <div className='flex space-x-3'>
-                                        <CustomeButton
-                                            onClick={() => handelEdit(item.id)}
-                                        >
-                                            <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
+            <div className={`panel mt-5 z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
+                <div className="overflow-x-auto">
+                    <TableHeader columns={QUOTATION_COLUMN} />
+                    <TableBody
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        totalPage={quotationList?.meta?.totalPages || 1}
+                        isEmpty={isEmpty}
+                    >
+                        {
+                            quotationList?.data?.map((item, idx) => (
+                                <TableRow
+                                    key={item.id}
+                                    columns={QUOTATION_COLUMN}
+                                    row={{
+                                        qno: item?.quotation_no,
+                                        name: item?.toBusinessNode?.nodeDetails?.name,
+                                        status: item?.status,
+                                        notes: item?.notes,
+                                        grandTotal: item?.grandTotal,
+                                        action: (
+                                            <div className='flex items-center justify-center space-x-3'>
+                                                <CustomeButton
+                                                    onClick={() => handelEdit(item.id)}
+                                                >
+                                                    <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
 
-                                        <CustomeButton
-                                            onClick={() => handleDelete(item.id)}
-                                        >
-                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
+                                                {/* <CustomeButton
+                                                    onClick={() => handleDelete(item.id)}
+                                                >
+                                                    <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                                </CustomeButton> */}
 
-                                        <CustomeButton
-                                            onClick={() => handelShow(item.id)}
-                                        >
-                                            <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
-                                    </div>
-                                )
-                            }}
-                        />
-                    ))
-                }
-                <BasicPagination
-                    totalPage={5}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    setLimit={setLimit}
-                />
+                                                <CustomeButton
+                                                    onClick={() => handelShow(item.quotationItem)}
+                                                >
+                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
+                                            </div>
+                                        )
+                                    }}
+                                />
+                            ))
+                        }
+                    </TableBody>
+                </div>
             </div>
 
         </div>
