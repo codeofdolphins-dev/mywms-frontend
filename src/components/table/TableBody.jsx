@@ -1,6 +1,7 @@
 import React from 'react'
 import { BsBoxSeam } from 'react-icons/bs';
 import BasicPagination from '../BasicPagination';
+import TableHeader from './TableHeader';
 
 const TableBody = ({
     isEmpty = true,
@@ -11,6 +12,7 @@ const TableBody = ({
     limit,
     setLimit,
     totalPage,
+    columns
 }) => {
 
     if (isEmpty) {
@@ -23,7 +25,10 @@ const TableBody = ({
         )
     }
     return <>
-        {children}
+        <div className="overflow-x-auto">
+            <TableHeader columns={columns} />
+            {children}
+        </div>
         {
             showPagination &&
             <BasicPagination

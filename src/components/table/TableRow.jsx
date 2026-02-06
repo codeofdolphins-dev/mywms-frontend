@@ -77,9 +77,10 @@ const TableRow = ({
                         key={col.key}
                         className={`
                             px-2 py-2 flex items-start 
-                            min-w-0                 // 🔥 THIS IS THE FIX
+                            min-w-0
                             ${col.align === "center" ? "justify-center text-center" : ""}
                             ${col.align === "right" ? "justify-end text-right" : "justify-start"}
+                            ${col.textBlur ? "text-gray-400" : ""}
                         `}
                         title={value}
                     >

@@ -13,65 +13,8 @@ import { QUOTATION_COLUMN } from '../../utils/helper';
 import ComponentHeader from '../../components/ComponentHeader';
 import fetchData from '../../Backend/fetchData.backend';
 import TableBody from '../../components/table/TableBody';
+import { utcToLocal } from '../../utils/UTCtoLocal';
 
-
-const sampleData = [
-    {
-        id: "1",
-        qno: "QT-FUEL-778",
-        supplier: {
-            id: 1,
-            name: "Prepare invoice",
-        },
-        status: "pending",
-        notes: "Invoice needs to be prepared before end of day",
-        total: 1250
-    },
-    {
-        id: "2",
-        qno: "QT-FUEL-778",
-        supplier: {
-            id: 1,
-            name: "Prepare invoice",
-        },
-        status: "in-progress",
-        notes: "Oil change and tire rotation scheduled",
-        total: 450
-    },
-    {
-        id: "3",
-        qno: "QT-FUEL-778",
-        supplier: {
-            id: 1,
-            name: "Prepare invoice",
-        },
-        status: "done",
-        notes: "All documents collected and verified",
-        total: 12310
-    },
-    {
-        id: "4",
-        qno: "QT-FUEL-778",
-        supplier: {
-            id: 1,
-            name: "Prepare invoice",
-        },
-        status: "complete",
-        notes: "Submit report to management",
-        total: 3000
-    },
-    {
-        id: "5",
-        qno: "QT-FUEL-778",
-        supplier: {
-            id: 1,
-            name: "Prepare invoice",
-        },
-        status: "pending",
-        notes: "New stock arrival from supplier",
-        total: 7800
-    }
-];
 
 const headerLink = [
     { title: "quotation" },
@@ -133,6 +76,7 @@ const Quotation = () => {
                                         status: item?.status,
                                         notes: item?.notes,
                                         grandTotal: item?.grandTotal,
+                                        validity: utcToLocal(item?.valid_till),
                                         action: (
                                             <div className='flex items-center justify-center space-x-3'>
                                                 <CustomeButton

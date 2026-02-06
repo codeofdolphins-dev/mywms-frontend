@@ -19,7 +19,7 @@ import { successAlert } from '../../utils/alerts';
 
 
 const headerLink = [
-    { title: "quotation", link: "/quotation" },
+    { title: "requisition", link: "/requisition" },
     { title: "received-requisition" },
 ];
 
@@ -232,12 +232,6 @@ const ReceiveRequision = () => {
                                                             >
                                                                 <IconPencil className="text-danger hover:scale-110 cursor-pointer" />
                                                             </CustomeButton>
-
-                                                            <CustomeButton
-                                                                onClick={() => handelShow(item.id)}
-                                                            >
-                                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                                            </CustomeButton>
                                                         </div>
                                                     )
                                                 }}
@@ -257,43 +251,18 @@ const ReceiveRequision = () => {
                                             {...register("buyer")}
                                             disabled={true}
                                         />
-                                        <Input
-                                            label="Requisition No"
-                                            labelPosition="inline"
-                                            {...register("reqNo")}
-                                            disabled={true}
-                                        />
-                                        <Input
-                                            label="Title"
-                                            labelPosition="inline"
-                                            {...register("title")}
-                                            disabled={true}
-                                        />
-                                        <Input
-                                            label="Deadline"
-                                            labelPosition="inline"
-                                            type="date"
-                                            {...register("deadline")}
-                                            disabled={true}
-                                        />
-                                        <Input
-                                            label="Priority"
-                                            labelPosition="inline"
-                                            {...register("priority")}
-                                            disabled={true}
-                                        />
-                                        <Input
-                                            label="Valide Till"
-                                            labelPosition="inline"
-                                            type="date"
-                                            {...register("validTill")}
-                                        />
                                     </div>
                                 </div>
                             </div> */}
                         </div>
 
-                        <div className="">
+                        <div className="flex iteCms-center mt-5">
+                            <button
+                                type='button'
+                                className='btn btn-secondary ml-auto mt-5'
+                            >
+                                Preview
+                            </button>
                             <button
                                 type='submit'
                                 className='btn btn-info ml-auto mt-5'
@@ -312,7 +281,6 @@ const ReceiveRequision = () => {
                 setIsShow={setIsShowEditDetails}
                 title={"Edit Item"}
                 maxWidth='45'
-            // blur={false}
             >
                 <QuotationForm
                     editId={editId}

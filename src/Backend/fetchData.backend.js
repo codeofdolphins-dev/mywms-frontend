@@ -216,7 +216,7 @@ class FetchData {
         return useQuery({
             queryKey: ["receiveRequisitionList"],
             queryFn: async () => {
-                const res = await API.get("/quotation/receive-requisition-list");
+                const res = await API.get("/requisition/receive-list");
                 return res.data;
             },
             enabled: isEnabled,
@@ -227,7 +227,7 @@ class FetchData {
         return useQuery({
             queryKey: ["receiveQuotationList", params],
             queryFn: async () => {
-                const res = await API.get("/requisition/receive-quotation-list", {
+                const res = await API.get("/quotation/receive-list", {
                     params
                 });
                 return res.data;

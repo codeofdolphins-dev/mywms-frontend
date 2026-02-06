@@ -93,19 +93,31 @@ function App() {
                         <Route path="permission/create" element={<Master />} />
                     </Route>
 
+
+
+
                     {/* requisition */}
                     <Route path="requisition" >
                         <Route index element={<Requisition />} />
                         <Route path="create" element={<CreateRequisition />} />
-                        <Route path="received-quotation/:reqNo" element={<ReceiveQuotation />} />
+                        <Route path="received-requisition" element={<ReceiveRequision />} />
                     </Route>
 
 
                     {/* quotation */}
                     <Route path="quotation" >
                         <Route index element={<Quotation />} />
-                        <Route path="received-requisition" element={<ReceiveRequision />} />
+                        <Route path="received-quotation" element={<ReceiveQuotation />} />
                     </Route>
+
+
+
+
+
+
+
+
+
 
 
                     {/* purchase order */}

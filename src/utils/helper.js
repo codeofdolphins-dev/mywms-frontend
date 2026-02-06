@@ -161,6 +161,11 @@ export const QUOTATION_COLUMN = [
         align: "center"
     },
     {
+        key: "validity",
+        label: "Validity",
+        align: "center"
+    },
+    {
         key: "action",
         label: "Action",
         align: "center"
@@ -169,35 +174,56 @@ export const QUOTATION_COLUMN = [
 
 export const QUOTATION_RECEIVE_COLUMN = [
     {
-        key: "id",
-        label: "#",
-        // width: "0.5fr",
-        // align: "center"
-    },
-    {
         key: "barcode",
         label: "Barcode",
-        // width: "2fr"
+        textBlur: true
     },
     {
-        key: "productName",
+        key: "product",
         label: "Product Name",
-        // width: "120px",
-        // align: "center"
+        textBlur: true
     },
     {
-        key: "price",
-        label: "Price",
-        // width: "120px",
-        // align: "center"
+        key: "brand",
+        label: "Brand",
+        textBlur: true
+    },
+    {
+        key: "category",
+        label: "Category",
+        textBlur: true
+    },
+    {
+        key: "subCategory",
+        label: "Sub Category",
+        textBlur: true
     },
     {
         key: "qty",
         label: "QTY",
-        // width: "120px",
-        // align: "center"
+        textBlur: true
+    },
+    {
+        key: "priceLimit",
+        label: "Price Limit",
+        textBlur: true
+    },
+    {
+        key: "offerPrice",
+        label: "Offer Price",
+    },
+    {
+        key: "tax",
+        label: "TAX %",
+    },
+    {
+        key: "total",
+        label: "Total",
     },
 ];
+
+
+
 
 export const REQUISITION_RECEIVE_COLUMN = [
     {

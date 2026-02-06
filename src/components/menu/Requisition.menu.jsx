@@ -4,8 +4,9 @@ import IconCaretDown from '../Icon/IconCaretDown'
 import { NavLink } from 'react-router-dom'
 
 const requisitionSubMenu = [
-    { name: 'Browse', path: '/requisition' },
+    { name: 'All List', path: '/requisition' },
     { name: 'Create', path: '/requisition/create' },
+    { name: 'Receive Requisition', path: '/requisition/received-requisition' },
 ];
 
 const Requisition = ({ location }) => {

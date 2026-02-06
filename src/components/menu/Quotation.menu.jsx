@@ -4,8 +4,9 @@ import { NavLink } from 'react-router-dom'
 import { FaQuoteLeft } from 'react-icons/fa6'
 
 const quotationSubMenu = [
-    { name: 'Browse', path: '/quotation' },
-    { name: 'Receive Requisition', path: '/quotation/received-requisition' },
+    { name: 'All List', path: '/quotation' },
+    // { name: 'Create', path: '/quotation/create' },
+    { name: 'Receive Quotation', path: '/quotation/received-quotation' },
 ];
 
 const Quotation = ({ location }) => {

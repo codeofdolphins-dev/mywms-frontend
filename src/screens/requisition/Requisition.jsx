@@ -83,7 +83,7 @@ const Requisition = () => {
                                     columns={REQUISITION_COLUMN}
                                     row={{
                                         id: (
-                                            <Link to={`/requisition/received-quotation/${item.requisition_no}`} className='hover:underline text-primary' >
+                                            <Link to={`/quotation/received-quotation?s=${item.requisition_no}`} className='hover:underline text-primary' >
                                                 {item?.requisition_no}
                                             </Link>
                                         ),
