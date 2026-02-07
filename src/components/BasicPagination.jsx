@@ -18,7 +18,7 @@ const BasicPagination = ({
     }
 
     return (
-        <div className="flex items-center justify-between space-y-5">
+        <div className="flex items-center justify-between mt-5">
             <select
                 className='w-14 border-2 rounded-md py-1 px-2 mt-4'
                 onChange={changeValue}

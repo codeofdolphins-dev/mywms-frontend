@@ -15,64 +15,6 @@ import Dropdown from '../../components/Dropdown'
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots'
 import masterData from '../../Backend/master.backend'
 
-const dataSet = [
-    {
-        supplier: {
-            id: 1,
-            name: "ABC",
-            phone: 789654231
-        },
-        items: [
-            { id: 1, barcode: 151616551, productName: "Soap", price: 150, qty: 50 },
-            { id: 2, barcode: 151616552, productName: "Shampoo", price: 320, qty: 30 },
-            { id: 3, barcode: 151616553, productName: "Toothpaste", price: 180, qty: 40 },
-            { id: 4, barcode: 151616554, productName: "Conditioner", price: 280, qty: 25 },
-            { id: 5, barcode: 151616555, productName: "Face Wash", price: 220, qty: 35 },
-        ]
-    },
-    {
-        supplier: {
-            id: 2,
-            name: "XYZ Traders",
-            phone: 987456123
-        },
-        items: [
-            { id: 1, barcode: 251616551, productName: "Rice", price: 60, qty: 500 },
-            { id: 2, barcode: 251616552, productName: "Wheat Flour", price: 55, qty: 300 },
-            { id: 3, barcode: 251616553, productName: "Sugar", price: 45, qty: 200 },
-            { id: 4, barcode: 251616554, productName: "Salt", price: 20, qty: 150 },
-            { id: 5, barcode: 251616555, productName: "Pulses", price: 90, qty: 180 },
-        ]
-    },
-    {
-        supplier: {
-            id: 3,
-            name: "Fresh Farm Supplies",
-            phone: 912345678
-        },
-        items: [
-            { id: 1, barcode: 351616551, productName: "Apples", price: 120, qty: 100 },
-            { id: 2, barcode: 351616552, productName: "Bananas", price: 40, qty: 150 },
-            { id: 3, barcode: 351616553, productName: "Oranges", price: 80, qty: 120 },
-            { id: 4, barcode: 351616554, productName: "Grapes", price: 110, qty: 90 },
-            { id: 5, barcode: 351616555, productName: "Mangoes", price: 150, qty: 70 },
-        ]
-    },
-    {
-        supplier: {
-            id: 4,
-            name: "Tech Components Ltd",
-            phone: 998877665
-        },
-        items: [
-            { id: 1, barcode: 451616551, productName: "USB Cable", price: 250, qty: 60 },
-            { id: 2, barcode: 451616552, productName: "Mouse", price: 600, qty: 40 },
-            { id: 3, barcode: 451616553, productName: "Keyboard", price: 1200, qty: 30 },
-            { id: 4, barcode: 451616554, productName: "Headphones", price: 1800, qty: 25 },
-            { id: 5, barcode: 451616555, productName: "Webcam", price: 2200, qty: 20 },
-        ]
-    }
-];
 
 const headerLink = [
     { title: "requisition", link: "/requisition" },
@@ -83,6 +25,9 @@ const ReceiveQuotation = () => {
     const [searchParams] = useSearchParams();
     const reqNo = searchParams.get("s") ?? "";
     const [debounceSearch, setDebounceSearch] = useState(reqNo);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [selectedQuotationId, setSelectedQuotationId] = useState(null);
 
     /** set reset search value */
     useEffect(() => {
@@ -93,11 +38,18 @@ const ReceiveQuotation = () => {
     const [active, setActive] = useState('0');
     const togglePara = (value) => {
         setActive((oldValue) => {
-            return oldValue === value ? '' : value;
+            return oldValue == value.id ? '' : String(value.id);
         });
+        setSelectedQuotationId(value?.quotation?.id)
     };
 
-    const { data, isLoading } = fetchData.TQReceiveQuotationList({ reqNo: debounceSearch });
+    const params = {
+        reqNo: debounceSearch,
+        ...(selectedQuotationId && { quotationId: selectedQuotationId }),
+        page: currentPage,
+        limit: limit,
+    };
+    const { data, isLoading } = fetchData.TQReceiveQuotationList(params);
 
     const suppliers = data?.data?.suppliers;
     const requisition = data?.data?.requisition;
@@ -138,16 +90,16 @@ const ReceiveQuotation = () => {
                 {
                     suppliers?.map((item, idx) => {
                         const isEmpty = item?.quotation === null ? true : false;
-                        console.log(item);
 
                         return (
                             <div
-                                className={`border border-[#d3d3d3] rounded ${isEmpty ? '' : 'cursor-pointer'}`}
+                                className={`border border-[#d3d3d3] rounded `}
                                 key={idx}
                             >
+                                {/* supplier listing */}
                                 <div
-                                    className={`flex items-center justify-between`}
-                                    onClick={() => !isEmpty ? togglePara(`${item.id}`) : null}
+                                    className={`flex items-center justify-between ${isEmpty ? '' : 'cursor-pointer'}`}
+                                    onClick={() => !isEmpty ? togglePara(item) : null}
                                 >
                                     <table>
                                         <thead>
@@ -208,35 +160,36 @@ const ReceiveQuotation = () => {
                                 </div>
 
                                 <AnimateHeight duration={300} height={active === `${item.id}` ? 'auto' : 0}>
-                                    <div
-                                        className={`space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3] ${isEmpty ? "min-h-64" : ""} `}
-                                    >
+                                    <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
                                         <TableBody
                                             isEmpty={isEmpty}
                                             columns={QUOTATION_RECEIVE_COLUMN}
+                                            currentPage={currentPage}
+                                            setCurrentPage={setCurrentPage}
+                                            limit={limit}
+                                            setLimit={setLimit}
+                                            totalPage={item?.quotation?.meta?.totalPages}
                                         >
-                                            {
-                                                item?.quotation?.item?.map((product, j) => {
-                                                    return (
-                                                        <TableRow
-                                                            key={j}
-                                                            columns={QUOTATION_RECEIVE_COLUMN}
-                                                            row={{
-                                                                barcode: product?.sourceRequisitionItem?.product?.barcode,
-                                                                product: product?.sourceRequisitionItem?.product?.name,
-                                                                brand: product?.sourceRequisitionItem?.brand?.name,
-                                                                category: product?.sourceRequisitionItem?.category?.name,
-                                                                subCategory: product?.sourceRequisitionItem?.subCategory?.name,
-                                                                qty: product?.sourceRequisitionItem?.qty,
-                                                                priceLimit: product?.sourceRequisitionItem?.priceLimit,
-                                                                offerPrice: product?.offer_price,
-                                                                tax: product?.tax_percent,
-                                                                total: product?.total_price,
-                                                            }}
-                                                        />
-                                                    )
-                                                })
-                                            }
+                                            {item?.quotation?.item?.map((product, j) => {
+                                                return (
+                                                    <TableRow
+                                                        key={j}
+                                                        columns={QUOTATION_RECEIVE_COLUMN}
+                                                        row={{
+                                                            barcode: product?.sourceRequisitionItem?.product?.barcode,
+                                                            product: product?.sourceRequisitionItem?.product?.name,
+                                                            brand: product?.sourceRequisitionItem?.brand?.name,
+                                                            category: product?.sourceRequisitionItem?.category?.name,
+                                                            subCategory: product?.sourceRequisitionItem?.subCategory?.name,
+                                                            qty: product?.sourceRequisitionItem?.qty,
+                                                            priceLimit: product?.sourceRequisitionItem?.priceLimit,
+                                                            offerPrice: product?.offer_price,
+                                                            tax: product?.tax_percent,
+                                                            total: product?.total_price,
+                                                        }}
+                                                    />
+                                                )
+                                            })}
                                         </TableBody>
                                     </div>
                                 </AnimateHeight>
@@ -244,8 +197,8 @@ const ReceiveQuotation = () => {
                         )
                     })
                 }
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }
 

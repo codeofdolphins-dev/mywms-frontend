@@ -230,10 +230,10 @@ const CreateRequisition = () => {
                         {/* right side */}
                         <div className={`panel ${isEmpty ? "min-h-64" : ""} relative`}>
                             <div className="overflow-x-auto">
-                                <TableHeader columns={REQUISITION_CREATE_COLUMN_ACTION} />
                                 <TableBody
                                     isEmpty={isEmpty}
                                     showPagination={false}
+                                    columns={REQUISITION_CREATE_COLUMN_ACTION}
                                 >
                                     {selectedItems?.map((item, idx) => (
                                         <TableRow

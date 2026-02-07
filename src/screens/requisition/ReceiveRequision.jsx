@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput';
 import TableHeader from '../../components/table/TableHeader';
-import { REQUISITION_CREATE_COLUMN_ACTION, REQUISITION_RECEIVE_COLUMN } from '../../utils/helper';
+import { QUOTATION_RECEIVE_COLUMN, REQUISITION_CREATE_COLUMN_ACTION, REQUISITION_RECEIVE_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
 import CustomeButton from "../../components/inputs/Button";
@@ -16,6 +16,7 @@ import Input from '../../components/inputs/Input';
 import { useForm } from 'react-hook-form';
 import masterData from '../../Backend/master.backend';
 import { successAlert } from '../../utils/alerts';
+import { useSelector } from 'react-redux';
 
 
 const headerLink = [
@@ -24,33 +25,50 @@ const headerLink = [
 ];
 
 const ReceiveRequision = () => {
+    const userData = useSelector(state => state?.auth?.userData);
+    const nodeId = userData?.userBusinessNode?.id;
     const navigate = useNavigate();
     const { handleSubmit, register, watch, formState: { errors }, reset, setValue } = useForm();
 
+
+    /**************** pagination state *******************/
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
+
+
     const [editId, setEditId] = useState(null);
+    const [requisitionId, setRequisitionId] = useState(null);
 
 
+    /**************** modal state *******************/
     const [itemDetails, setItemDetails] = useState([]);
     const [editItem, setEditItem] = useState([]);
     const [quoteItem, setQuoteItem] = useState([]);
 
 
+    /**************** modal state *******************/
     const [isShowDetails, setIsShowDetails] = useState(false);
     const [isShowEditDetails, setIsShowEditDetails] = useState(false);
+    const [isShowPreview, setIsShowPreview] = useState(false);
 
-    const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
+    /**************** APT mutation *******************/
     const { mutateAsync: create, isPending: createPending } = masterData.TQCreateMaster();
 
+    /**************** data fetching GET *******************/
+    const { data: quotationList, isLoading: quotationListLoading } = fetchData.TQQuotationList({ requisitionId }, Boolean(requisitionId));
+
+    const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
     const isEmpty = !receiveRequisitionList?.data || receiveRequisitionList?.data?.length < 1;
 
 
+
+    /** set selected requisition details */
     function handelShowDetails(data) {
         const item = data?.items
         setItemDetails(item);
         setIsShowDetails(true);
+        setRequisitionId(data.id);
 
         setValue("buyer", data.buyer.nodeDetails.name);
         setValue("reqNo", data.requisition_no);
@@ -70,6 +88,7 @@ const ReceiveRequision = () => {
     };
 
 
+
     /** reset all state as fresh */
     useEffect(() => {
         if (isShowDetails) return;
@@ -87,16 +106,17 @@ const ReceiveRequision = () => {
     async function submit(data) {
         data.items = quoteItem;
         data.grandTotal = quoteItem.reduce((grandTotal, item) => grandTotal + Number(item.total), 0);
-        console.log(data);
 
         try {
             const res = await create({ path: "/quotation/create", formData: data });
-            if (res.success) successAlert(res?.message);
+            if (res.success) setIsShowDetails(false);
 
         } catch (error) {
             console.log(error);
         }
     }
+
+    console.log(quotationList?.data?.[0]);
 
     return (
         <div>
@@ -109,46 +129,44 @@ const ReceiveRequision = () => {
             />
 
             {/* table view */}
-            <div className={`panel mt-5 z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
-                <div className="overflow-x-auto">
-                    <TableHeader columns={REQUISITION_RECEIVE_COLUMN} />
-                    <TableBody
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        limit={limit}
-                        setLimit={setLimit}
-                        totalPage={1}
-                        isEmpty={isEmpty}
-                    >
-                        {receiveRequisitionList?.data?.map((item, idx) => (
-                            <TableRow
-                                key={idx}
-                                columns={REQUISITION_RECEIVE_COLUMN}
-                                row={{
-                                    id: item?.requisition_no,
-                                    title: item?.title,
-                                    sender: item?.buyer?.nodeDetails?.name,
-                                    priority: item?.priority,
-                                    status: item?.status,
-                                    itemsCount: item?.items?.length,
-                                    action: (
-                                        <div className='flex items-center justify-center'>
-                                            <CustomeButton
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handelShowDetails(item);
-                                                }}
-                                                className={"self-center"}
-                                            >
-                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
-                                        </div>
-                                    )
-                                }}
-                            />
-                        ))}
-                    </TableBody>
-                </div>
+            <div className="panel mt-5 z-0 min-h-64 relative">
+                <TableBody
+                    columns={REQUISITION_RECEIVE_COLUMN}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    limit={limit}
+                    setLimit={setLimit}
+                    totalPage={1}
+                    isEmpty={isEmpty}
+                >
+                    {receiveRequisitionList?.data?.map((item, idx) => (
+                        <TableRow
+                            key={idx}
+                            columns={REQUISITION_RECEIVE_COLUMN}
+                            row={{
+                                id: item?.requisition_no,
+                                title: item?.title,
+                                sender: item?.buyer?.nodeDetails?.name,
+                                priority: item?.priority,
+                                status: item?.status,
+                                itemsCount: item?.items?.length,
+                                action: (
+                                    <div className='flex items-center justify-center'>
+                                        <CustomeButton
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handelShowDetails(item);
+                                            }}
+                                            className={"self-center"}
+                                        >
+                                            <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                        </CustomeButton>
+                                    </div>
+                                )
+                            }}
+                        />
+                    ))}
+                </TableBody>
             </div>
 
             {/* Item Details */}
@@ -240,26 +258,13 @@ const ReceiveRequision = () => {
                                     }
                                 </div>
                             </div>
-
-                            {/* preview side */}
-                            {/* <div className="panel" id="forms_grid">
-                                <div className="space-y-5">
-                                    <div className="grid grid-cols-1 gap-3">
-                                        <Input
-                                            label="Buyer"
-                                            labelPosition="inline"
-                                            {...register("buyer")}
-                                            disabled={true}
-                                        />
-                                    </div>
-                                </div>
-                            </div> */}
                         </div>
 
                         <div className="flex iteCms-center mt-5">
                             <button
                                 type='button'
                                 className='btn btn-secondary ml-auto mt-5'
+                                onClick={() => setIsShowPreview(true)}
                             >
                                 Preview
                             </button>
@@ -290,6 +295,49 @@ const ReceiveRequision = () => {
                     setQuoteItem={setQuoteItem}
                 />
             </AddModal >
+
+            {/* preview panel */}
+            <AddModal
+                isShow={isShowPreview}
+                setIsShow={setIsShowPreview}
+                title={"Quotation Preview"}
+                maxWidth='95'
+            >
+                <div className="panel">
+                    {/* preview content */}
+                    <TableBody
+                        isEmpty={isEmpty}
+                        columns={QUOTATION_RECEIVE_COLUMN}
+                        showPagination={false}
+                    >
+                        {itemDetails?.map((item, j) => {
+
+                            const barcode = item?.product?.barcode;
+                            const quotItem = quoteItem?.find(q => q.barcode === barcode);
+
+                            return (
+                                <TableRow
+                                    key={j}
+                                    columns={QUOTATION_RECEIVE_COLUMN}
+                                    row={{
+                                        barcode: item?.product?.barcode,
+                                        product: item?.product?.name,
+                                        brand: item?.brand?.name,
+                                        category: item?.category?.name,
+                                        subCategory: item?.subCategory?.name,
+                                        qty: item?.qty,
+                                        priceLimit: item?.priceLimit,
+
+                                        offerPrice: quotItem?.offerPrice,
+                                        tax: quotItem?.tax,
+                                        total: quotItem?.total
+                                    }}
+                                />
+                            )
+                        })}
+                    </TableBody>
+                </div>
+            </AddModal>
         </div >
     )
 }
