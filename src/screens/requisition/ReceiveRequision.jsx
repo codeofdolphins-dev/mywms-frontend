@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form';
 import masterData from '../../Backend/master.backend';
 import { successAlert } from '../../utils/alerts';
 import { useSelector } from 'react-redux';
+import FullScreenLoader from '../../components/loader/FullScreenLoader';
 
 
 const headerLink = [
@@ -52,12 +53,13 @@ const ReceiveRequision = () => {
     const [isShowEditDetails, setIsShowEditDetails] = useState(false);
     const [isShowPreview, setIsShowPreview] = useState(false);
 
+
     /**************** APT mutation *******************/
-    const { mutateAsync: create, isPending: createPending } = masterData.TQCreateMaster();
+    const { mutateAsync: create, isPending: createPending } = masterData.TQCreateMaster(["receiveRequisitionList"]);
+
 
     /**************** data fetching GET *******************/
     const { data: quotationList, isLoading: quotationListLoading } = fetchData.TQQuotationList({ requisitionId }, Boolean(requisitionId));
-
     const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
     const isEmpty = !receiveRequisitionList?.data || receiveRequisitionList?.data?.length < 1;
 
@@ -65,9 +67,17 @@ const ReceiveRequision = () => {
 
     /** set selected requisition details */
     function handelShowDetails(data) {
-        const item = data?.items
-        setItemDetails(item);
-        setIsShowDetails(true);
+        const item = data?.items;
+        const isQuoted = ["quoted", "accepted", "rejected"].some(s => s.includes(data?.status));
+
+        setItemDetails(isQuoted ? quotationList?.data?.[0]?.quotationItem : item);
+        if (isQuoted) {
+            setIsShowPreview(true);
+        }
+        else {
+            setIsShowDetails(true);
+        };
+
         setRequisitionId(data.id);
 
         setValue("buyer", data.buyer.nodeDetails.name);
@@ -96,7 +106,8 @@ const ReceiveRequision = () => {
         setItemDetails([]);
         setEditItem([]);
         setQuoteItem([]);
-    }, [isShowDetails])
+        setRequisitionId(null);
+    }, [isShowDetails]);
 
     useEffect(() => {
         if (!isShowEditDetails) setEditId(null);
@@ -116,7 +127,10 @@ const ReceiveRequision = () => {
         }
     }
 
-    console.log(quotationList?.data?.[0]);
+    const quotation = quotationList?.data?.[0]?.quotationItem;
+    console.log(quotation)
+
+    if(quotationListLoading || receiveRequisitionListLoading) return <FullScreenLoader />;
 
     return (
         <div>
@@ -260,7 +274,8 @@ const ReceiveRequision = () => {
                             </div>
                         </div>
 
-                        <div className="flex iteCms-center mt-5">
+                        {/* buttton */}
+                        <div className="flex items-center mt-5">
                             <button
                                 type='button'
                                 className='btn btn-secondary ml-auto mt-5'
@@ -304,14 +319,12 @@ const ReceiveRequision = () => {
                 maxWidth='95'
             >
                 <div className="panel">
-                    {/* preview content */}
                     <TableBody
                         isEmpty={isEmpty}
                         columns={QUOTATION_RECEIVE_COLUMN}
                         showPagination={false}
                     >
                         {itemDetails?.map((item, j) => {
-
                             const barcode = item?.product?.barcode;
                             const quotItem = quoteItem?.find(q => q.barcode === barcode);
 

@@ -86,49 +86,47 @@ const Supplier = () => {
                 setDebounceSearch={setDebounceSearch}
             />
 
-            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
-                <div className="overflow-x-auto">
-                    <TableHeader columns={SUPPLIER_COLUMN} />
-                    <TableBody
-                        isEmpty={isEmpty}
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        limit={limit}
-                        setLimit={setLimit}
-                        totalPage={data?.meta?.totalPages}
-                    >
-                        {data?.data?.map((item, idx) => (
-                            <TableRow
-                                key={idx}
-                                columns={SUPPLIER_COLUMN}
-                                row={{
-                                    id: item?.id,
-                                    email: item?.contact_email,
-                                    full_name: item?.name?.full_name,
-                                    phone_no: item?.contact_phone,
-                                    is_active: item?.status ? "Active" : "Inactive",
-                                    address: item?.address?.address,
+            <div className={`panel mt-5 min-h-64 relative`}>
+                <TableBody
+                    columns={SUPPLIER_COLUMN}
+                    isEmpty={isEmpty}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    limit={limit}
+                    setLimit={setLimit}
+                    totalPage={data?.meta?.totalPages}
+                >
+                    {data?.data?.map((item, idx) => (
+                        <TableRow
+                            key={idx}
+                            columns={SUPPLIER_COLUMN}
+                            row={{
+                                id: item?.id,
+                                email: item?.contact_email,
+                                full_name: item?.name?.full_name,
+                                phone_no: item?.contact_phone,
+                                is_active: item?.status ? "Active" : "Inactive",
+                                address: item?.address?.address,
 
-                                    action: (
-                                        <div className='flex space-x-3'>
-                                            <CustomeButton
-                                                onClick={() => handleEdit(item.id)}
-                                            >
-                                                <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
+                                action: (
+                                    <div className='flex space-x-3'>
+                                        <CustomeButton
+                                            onClick={() => handleEdit(item.id)}
+                                        >
+                                            <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                        </CustomeButton>
 
-                                            <CustomeButton
-                                                onClick={() => handleDelete(item.id)}
-                                            >
-                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
-                                        </div>
-                                    )
-                                }}
-                            />
-                        ))}
-                    </TableBody>
-                </div>
+                                        <CustomeButton
+                                            onClick={() => handleDelete(item.id)}
+                                        >
+                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                        </CustomeButton>
+                                    </div>
+                                )
+                            }}
+                        />
+                    ))}
+                </TableBody>
             </div>
 
             <AddModal

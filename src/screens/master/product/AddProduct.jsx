@@ -63,7 +63,6 @@ const AddProduct = () => {
                 brands: data?.productBrands?.map(item => item.id),
                 categories: data?.selectedCategoryIds,
                 hsn_code: data?.hsn?.id,
-                gstType: data?.gst_type,
                 unit_type_id: data?.unitRef?.id,
                 package_type_id: data?.packageType?.id,
             })
@@ -244,36 +243,6 @@ const AddProduct = () => {
                                             disabled={id ? true : false}
                                         />
                                     </div>
-
-                                    {/* gstType */}
-                                    <div>
-                                        <Controller
-                                            name="gst_type"
-                                            control={control}
-                                            rules={{
-                                                required: "Please select a GST type!",
-                                            }}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHRadioGroup
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
-                                                    label="GST Type"
-                                                    required={true}
-                                                    options={[
-                                                        { label: "Include", value: "include" },
-                                                        { label: "Exclude", value: "exclude" },
-                                                    ]}
-                                                    error={error?.message}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
                                 </div>
 
                                 {/* right */}

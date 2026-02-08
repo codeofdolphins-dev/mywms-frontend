@@ -258,73 +258,30 @@ export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
 
 
 export const PURCHASE_ORDER = [
-    {
-        key: "id",
-        label: "#",
-        // width: "0.5fr",
-        // align: "center"
-    },
-    {
-        key: "pr_id",
-        label: "PR id",
-        // width: "2fr"
-    },
-    {
-        key: "status",
-        label: "Status",
-        // width: "2fr"
-    },
-    {
-        key: "priority",
-        label: "Priority",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "expected_delivery_date",
-        label: "Expected Delivary Date",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "note",
-        label: "Note",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "created_by",
-        label: "Created By",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "total_amount",
-        label: "Total Amount",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "action",
-        label: "Action",
-        // width: "120px",
-        // align: "center"
-    },
+    { key: "id", label: "#" },
+    { key: "pr_id", label: "PR id" },
+    { key: "status", label: "Status" },
+    { key: "priority", label: "Priority" },
+    { key: "expected_delivery_date", label: "Expected Delivary Date" },
+    { key: "note", label: "Note" },
+    { key: "created_by", label: "Created By" },
+    { key: "total_amount", label: "Total Amount" },
+    { key: "action", label: "Action" },
 ];
 
 export const SUPPLIER_COLUMN = [
-    { key: "id", label: "#", width: "0.5fr", },
+    // { key: "id", label: "#" },
     { key: "email", label: "Email" },
     { key: "full_name", label: "Name" },
     { key: "phone_no", label: "Phone" },
-    { key: "is_active", label: "Status", width: "0.5fr" },
+    { key: "is_active", label: "Status" },
     { key: "address", label: "Address" },
     { key: "action", label: "Action" }
 ];
 
 export const BRAND_COLUMN = [
-    { key: "id", label: "#", width: "0.2fr" },
-    { key: "logo", label: "Logo", width: "0.6fr" },
+    // { key: "id", label: "#", width: "40px" },
+    { key: "logo", label: "Logo", width: "80px" },
     { key: "name", label: "Brand Name" },
     { key: "slug", label: "Slug" },
     { key: "supplier", label: "Supplier" },

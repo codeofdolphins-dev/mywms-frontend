@@ -93,64 +93,62 @@ const Brand = () => {
             />
 
             {/* display table */}
-            <div className={`panel mt-5 ${isEmpty ? "min-h-64" : ""} relative`}>
-                <div className="overflow-x-auto">
-                    {
-                        isLoading ? (
-                            <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">
-                                <Loader />
-                            </div>
-                        ) : (
-                            <>
-                                <TableHeader columns={BRAND_COLUMN} />
-                                <TableBody
-                                    isEmpty={isEmpty}
-                                    currentPage={currentPage}
-                                    setCurrentPage={setCurrentPage}
-                                    limit={limit}
-                                    setLimit={setLimit}
-                                    totalPage={data?.meta?.totalPages}
-                                >
-                                    {data?.data?.map((item, idx) => (
-                                        <TableRow
-                                            key={idx}
-                                            columns={BRAND_COLUMN}
-                                            row={{
-                                                id: item?.id,
-                                                logo: (
-                                                    <ImageComponent
-                                                        src={item?.logo}
-                                                        className={"w-12 h-12"}
-                                                    />
-                                                ),
-                                                name: item?.name,
-                                                slug: item?.slug,
-                                                supplier: (
-                                                    <TwoLevelArrayViewer
-                                                        data={item?.suppliers}
-                                                        labelKey="name.full_name"
-                                                    />
-                                                ),
-                                                is_active: item?.isActive ? "Active" : "Inactive",
-                                                action: (
-                                                    <div className="flex space-x-3">
-                                                        <CustomeButton onClick={() => handleEdit(item.id)}>
-                                                            <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                                        </CustomeButton>
+            <div className={`panel mt-5 min-h-64 relative`}>
+                {
+                    isLoading ? (
+                        <div className="absolute inset-0 z-20 bg-white/70 flex items-center justify-center">
+                            <Loader />
+                        </div>
+                    ) : (
+                        <>
+                            <TableBody
+                                columns={BRAND_COLUMN}
+                                isEmpty={isEmpty}
+                                currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                limit={limit}
+                                setLimit={setLimit}
+                                totalPage={data?.meta?.totalPages}
+                            >
+                                {data?.data?.map((item, idx) => (
+                                    <TableRow
+                                        key={idx}
+                                        columns={BRAND_COLUMN}
+                                        row={{
+                                            id: item?.id,
+                                            logo: (
+                                                <ImageComponent
+                                                    src={item?.logo}
+                                                    className={"w-12 h-12"}
+                                                />
+                                            ),
+                                            name: item?.name,
+                                            slug: item?.slug,
+                                            supplier: (
+                                                <TwoLevelArrayViewer
+                                                    data={item?.suppliers}
+                                                    labelKey="name.full_name"
+                                                />
+                                            ),
+                                            is_active: item?.isActive ? "Active" : "Inactive",
+                                            action: (
+                                                <div className="flex space-x-3">
+                                                    <CustomeButton onClick={() => handleEdit(item.id)}>
+                                                        <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                    </CustomeButton>
 
-                                                        <CustomeButton onClick={() => handleDelete(item.id)}>
-                                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                                        </CustomeButton>
-                                                    </div>
-                                                ),
-                                            }}
-                                        />
-                                    ))}
-                                </TableBody>
-                            </>
-                        )
-                    }
-                </div>
+                                                    <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                        <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                                    </CustomeButton>
+                                                </div>
+                                            ),
+                                        }}
+                                    />
+                                ))}
+                            </TableBody>
+                        </>
+                    )
+                }
             </div>
 
 
