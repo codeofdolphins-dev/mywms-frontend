@@ -24,7 +24,7 @@ const headerLink = [
 const ReceiveQuotation = () => {
     const [searchParams] = useSearchParams();
     const reqNo = searchParams.get("s") ?? "";
-    const [debounceSearch, setDebounceSearch] = useState(reqNo);
+    const [debounceSearch, setDebounceSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [selectedQuotationId, setSelectedQuotationId] = useState(null);
@@ -112,6 +112,11 @@ const ReceiveQuotation = () => {
                                                     </div>
                                                 </th>
                                                 <th> {requisition.grandTotal} || {item?.quotation?.grandTotal ?? "XXXXX"}</th>
+                                                <th>
+                                                    <Link to={`/purchase-order?s=${item?.quotation?.purchaseOrder_no}`} className='hover:underline text-primary' >
+                                                        {item?.quotation?.purchaseOrder_no}
+                                                    </Link>
+                                                </th>
                                                 <th>
                                                     <div
                                                         className="flex items-center justify-center w-1/4"

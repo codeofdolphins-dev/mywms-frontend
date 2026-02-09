@@ -258,16 +258,17 @@ export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
 
 
 export const PURCHASE_ORDER = [
-    { key: "id", label: "#" },
-    { key: "pr_id", label: "PR id" },
-    { key: "status", label: "Status" },
-    { key: "priority", label: "Priority" },
-    { key: "expected_delivery_date", label: "Expected Delivary Date" },
-    { key: "note", label: "Note" },
-    { key: "created_by", label: "Created By" },
-    { key: "total_amount", label: "Total Amount" },
-    { key: "action", label: "Action" },
+    { key: "barcode", label: "Barcode" },
+    { key: "product", label: "Product" },
+    { key: "brand", label: "Brand" },
+    { key: "category", label: "Category" },
+    { key: "subCategory", label: "Sub Category" },
+    { key: "qty", label: "Qty" },
+    { key: "tax", label: "Tax %" }, 
+    { key: "unitPrice", label: "Unit Price" }, 
+    { key: "total", label: "Total" },
 ];
+
 
 export const SUPPLIER_COLUMN = [
     // { key: "id", label: "#" },

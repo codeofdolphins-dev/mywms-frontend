@@ -116,7 +116,7 @@ const Header = () => {
                 <div className="relative bg-white flex w-full items-center px-5 py-2.5">
                     <div className="horizontal-logo flex lg:hidden justify-between items-center mr-2">
                         <Link to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-8 -ml-1 inline" src="/assets/images/logo.svg" alt="logo" />
+                            <img className="w-8 -ml-1 inline" src="/logo192.png" alt="logo" />
                             <span className="text-2xl ml-1.5 font-semibold  align-middle hidden md:inline transition-all duration-300">MYWMS</span>
                         </Link>
                     </div>

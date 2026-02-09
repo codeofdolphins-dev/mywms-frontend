@@ -45,68 +45,66 @@ const Quotation = () => {
 
     return (
         <div>
-
+            {/*header section */}
             <ComponentHeader
                 headerLink={headerLink}
                 addButton={false}
                 searchPlaceholder=''
-                setDebounceSearch={debounceSearch}
+                setDebounceSearch={setDebounceSearch}
             />
 
             {/* table */}
             <div className={`panel mt-5 z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
-                <div className="overflow-x-auto">
-                    <TableHeader columns={QUOTATION_COLUMN} />
-                    <TableBody
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        limit={limit}
-                        setLimit={setLimit}
-                        totalPage={quotationList?.meta?.totalPages || 1}
-                        isEmpty={isEmpty}
-                    >
-                        {
-                            quotationList?.data?.map((item, idx) => (
-                                <TableRow
-                                    key={item.id}
-                                    columns={QUOTATION_COLUMN}
-                                    row={{
-                                        qno: item?.quotation_no,
-                                        name: item?.toBusinessNode?.nodeDetails?.name,
-                                        status: item?.status,
-                                        notes: item?.notes,
-                                        grandTotal: item?.grandTotal,
-                                        validity: utcToLocal(item?.valid_till),
-                                        action: (
-                                            <div className='flex items-center justify-center space-x-3'>
-                                                <CustomeButton
-                                                    onClick={() => handelEdit(item.id)}
-                                                >
-                                                    <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                                </CustomeButton>
+                <TableBody
+                    columns={QUOTATION_COLUMN}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    limit={limit}
+                    setLimit={setLimit}
+                    totalPage={quotationList?.meta?.totalPages || 1}
+                    isEmpty={isEmpty}
+                >
+                    {
+                        quotationList?.data?.map((item, idx) => (
+                            <TableRow
+                                key={item.id}
+                                columns={QUOTATION_COLUMN}
+                                row={{
+                                    qno: item?.quotation_no,
+                                    name: item?.toBusinessNode?.nodeDetails?.name,
+                                    status: item?.status,
+                                    notes: item?.notes,
+                                    grandTotal: item?.grandTotal,
+                                    validity: utcToLocal(item?.valid_till),
+                                    action: (
+                                        <div className='flex items-center justify-center space-x-3'>
+                                            <CustomeButton
+                                                onClick={() => handelEdit(item.id)}
+                                            >
+                                                <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
 
-                                                {/* <CustomeButton
+                                            {/* <CustomeButton
                                                     onClick={() => handleDelete(item.id)}
                                                 >
                                                     <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                                                 </CustomeButton> */}
 
-                                                <CustomeButton
-                                                    onClick={() => handelShow(item.quotationItem)}
-                                                >
-                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                                </CustomeButton>
-                                            </div>
-                                        )
-                                    }}
-                                />
-                            ))
-                        }
-                    </TableBody>
-                </div>
-            </div>
-
+                                            <CustomeButton
+                                                onClick={() => handelShow(item.quotationItem)}
+                                            >
+                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
+                                        </div>
+                                    )
+                                }}
+                            />
+                        ))
+                    }
+                </TableBody>
         </div>
+
+        </div >
     )
 }
 

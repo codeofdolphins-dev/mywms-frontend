@@ -250,6 +250,20 @@ class FetchData {
         });
     };
 
+    /** PURCHASE ORDER */
+    TQPurchaseOrderList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["purchaseOrderList", params],
+            queryFn: async () => {
+                const res = await API.get("/purchase-order/list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
 }
 
 const fetchData = new FetchData;
