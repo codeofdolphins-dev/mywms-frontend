@@ -20,9 +20,9 @@ const RegisterWarehouseNode = ({
     const stateData = useSelector(state => state.location);
     const navigate = useNavigate();
     const password = watch("password");
-    const state_id = watch("state_id");
+    const state = watch("state");
 
-    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state_id);
+    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state?.id);
 
     return (
         <div className="panel space-y-5">
@@ -57,19 +57,6 @@ const RegisterWarehouseNode = ({
                         required={true}
                     />
                 </div>
-                {/* Phone Number */}
-                {/* <div>
-                    <Input
-                        label={"Phone Number"}
-                        type="number"
-                        placeholder={"Enter Phone Number..."}
-                        {...register("ph_number", {
-                            required: "This field is required!!!"
-                        })}
-                        error={errors.ph_number?.message}
-                        required={true}
-                    />
-                </div> */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                     <Input
                         type={"number"}
@@ -89,7 +76,7 @@ const RegisterWarehouseNode = ({
 
             {/* 3rd row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
+
                 {/* Address */}
                 <div>
                     <Input
@@ -146,7 +133,7 @@ const RegisterWarehouseNode = ({
                     <div>
                         {/* State */}
                         <Controller
-                            name="state_id"
+                            name="state"
                             control={control}
                             rules={{
                                 required: "This field is required!!!"
@@ -165,6 +152,7 @@ const RegisterWarehouseNode = ({
                                     options={stateData}
                                     required={true}
                                     error={error?.message}
+                                    objectReturn={true}
                                 />
                             )}
                         />
@@ -175,7 +163,7 @@ const RegisterWarehouseNode = ({
                     <div>
                         {/* district */}
                         <Controller
-                            name="district_id"
+                            name="district"
                             control={control}
                             rules={{
                                 required: "This field is required!!!"
@@ -194,7 +182,8 @@ const RegisterWarehouseNode = ({
                                     options={districtData}
                                     required={true}
                                     error={error?.message}
-                                    disabled={state_id ? false : true}
+                                    disabled={state ? false : true}
+                                    objectReturn={true}
                                 />
                             )}
                         />

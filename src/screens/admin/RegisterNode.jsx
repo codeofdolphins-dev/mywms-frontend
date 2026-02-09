@@ -36,13 +36,6 @@ const RegisterNode = () => {
             const res = await registerWarehouse({ path: "/super-admin/register-node", formData })
             console.log(res)
             if (res.success) reset({ node: null });
-
-            // if (["manufacturing", "warehouse"].includes(node?.category)) {
-
-            // } else {
-            //     const res = await registerPartner({ path: "/super-admin/register-node-partner", formData });
-            //     if (res.success) reset();
-            // }
         } catch (error) {
             console.log(error)
         }
