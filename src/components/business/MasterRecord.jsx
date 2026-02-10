@@ -6,8 +6,6 @@ import { NODE_COLUMN } from '../../utils/helper';
 import TableRow from '../table/TableRow';
 import Switch from '../inputs/Switch';
 import CheckBox from '../inputs/CheckBox';
-// import { useDispatch } from 'react-redux';
-// import { setPageTitle } from '../../store/themeConfigSlice';
 
 
 const MasterRecord = ({
@@ -15,10 +13,6 @@ const MasterRecord = ({
     selectedRecords,
     setSelectedRecords
 }) => {
-    // const dispatch = useDispatch();
-    // useEffect(() => {
-    //     dispatch(setPageTitle('Checkbox Table'));
-    // });
 
     const checkAll = rowData.length > 0 && selectedRecords.length === rowData.length;
 

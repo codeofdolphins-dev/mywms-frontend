@@ -19,9 +19,9 @@ const RegisterPartnerNode = ({
     const stateData = useSelector(state => state.location);
     const navigate = useNavigate();
     const password = watch("password");
-    const state_id = watch("state_id");
+    const state = watch("state");
 
-    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state_id);
+    const { data: districtData, isLoading: districtIsLoading } = fetchData.TQDistrictList(state?.id);
 
     return (
         <div className="panel space-y-5">
@@ -106,7 +106,7 @@ const RegisterPartnerNode = ({
                 <div className="">
                     {/* State */}
                     <Controller
-                        name="state_id"
+                        name="state"
                         control={control}
                         rules={{
                             required: "This field is required!!!"
@@ -125,6 +125,7 @@ const RegisterPartnerNode = ({
                                 options={stateData}
                                 required={true}
                                 error={error?.message}
+                                objectReturn={true}
                             />
                         )}
                     />
@@ -136,7 +137,7 @@ const RegisterPartnerNode = ({
                 <div>
                     {/* district */}
                     <Controller
-                        name="district_id"
+                        name="district"
                         control={control}
                         rules={{
                             required: "This field is required!!!"
@@ -155,7 +156,8 @@ const RegisterPartnerNode = ({
                                 options={districtData}
                                 required={true}
                                 error={error?.message}
-                                disabled={state_id ? false : true}
+                                disabled={state ? false : true}
+                                objectReturn={true}
                             />
                         )}
                     />

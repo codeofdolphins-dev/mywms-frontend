@@ -1,6 +1,5 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Login from './screens/auth/Login';
-import Register from './screens/auth/Register';
 import Dashboard from './screens/Dashboard';
 import Master from './screens/master/Master';
 import Error404 from './screens/Error404';
@@ -34,6 +33,7 @@ import AddProduct from './screens/master/product/AddProduct';
 import PackageType from './screens/master/packageType/PackageType';
 import SupplierForm from './components/supplier/SupplierForm';
 import UnitType from './screens/master/unitType/UnitType';
+import Register from './screens/auth/Register';
 
 function App() {
 

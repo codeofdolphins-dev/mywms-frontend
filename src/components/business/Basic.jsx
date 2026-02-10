@@ -43,6 +43,7 @@ const Basic = ({
                                                         <Tippy content="Delete">
                                                             <button
                                                                 type="button"
+                                                                className='hover:text-danger hover:scale-105'
                                                                 onClick={() => removeItem(item.id)}
                                                             >
                                                                 <IconXCircle />

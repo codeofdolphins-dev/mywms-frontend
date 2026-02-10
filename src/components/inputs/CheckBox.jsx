@@ -10,7 +10,7 @@ const CheckBox = ({
 }, ref) => {
     const _id = useId()
     return (
-        <div className={`w-full flex items-center gap-3 ${labelPosition === "start" ? "flex-row-reverse" : ""} `}>
+        <div className={`w-full flex items-center justify-center gap-3 ${labelPosition === "start" ? "flex-row-reverse" : ""} `}>
             <input 
                 type="checkbox"
                 className={`form-checkbox ${className}`}

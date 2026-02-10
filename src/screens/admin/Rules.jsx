@@ -24,7 +24,7 @@ const Rules = () => {
         <div>
                 <div className="panel mb-4 flex justify-center items-center">
                     <div className="w-full flex items-center gap-5">
-                        <label htmlFor="" className='whitespace-nowrap'>Choose Company</label>
+                        <label htmlFor="" className='whitespace-nowrap'>Enter Company Email</label>
                         <Controller
                             name="email"
                             control={control}

@@ -12,6 +12,7 @@ import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import Input from '../../components/inputs/Input';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
+import { useSelector } from 'react-redux';
 
 
 const headerLink = [
@@ -19,11 +20,14 @@ const headerLink = [
 ];
 
 const PurchaseOrder = () => {
+    const activeNode = useSelector((state) => state.auth.userData?.activeNode);
     const [searchParams] = useSearchParams();
     const PO_No = searchParams.get("s") ?? "";
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
+    const [businessNode, setBusinessNode] = useState({});
+    const [isBuyer, setIsBuyer] = useState(null);
 
     /** set reset search value */
     useEffect(() => {
@@ -40,10 +44,20 @@ const PurchaseOrder = () => {
     const isEmpty = !!data?.data?.[0]?.purchasOrderItems?.length > 0 ? false : true;
     const purchasOrderItems = data?.data?.[0]?.purchasOrderItems ?? [];
 
-    // console.log(data?.data?.[0]);
+    /** set business node location */
+    useEffect(() => {
+        if (activeNode == data?.data?.[0]?.form_business_node_id) {
+            setBusinessNode(data?.data?.[0]?.poFormBusinessNode);
+            setIsBuyer(true);
+        }
+        if (activeNode == data?.data?.[0]?.to_business_node_id) {
+            setBusinessNode(data?.data?.[0]?.poToBusinessNode)
+            setIsBuyer(false);
+        }
+    }, [data, isLoading]);
 
 
-    if (isLoading) return <FullScreenLoader />
+    // if (isLoading) return <FullScreenLoader />
 
     return (
         <div>
@@ -64,7 +78,7 @@ const PurchaseOrder = () => {
                     <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">PO Number :</div>
-                            <div>#{data?.data?.[0]?.po_no || "N/A"}</div>
+                            <div># {data?.data?.[0]?.po_no || "N/A"}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">Issue Date :</div>
@@ -74,7 +88,7 @@ const PurchaseOrder = () => {
                             <div className="text-white-dark">Grand Total:</div>
                             <div className='flex items-center'>
                                 <MdCurrencyRupee />
-                                {data?.data?.[0]?.grand_total || "0000.00"}
+                                {data?.data?.[0]?.grand_total}
                             </div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
@@ -86,47 +100,47 @@ const PurchaseOrder = () => {
                     {/* Node details */}
                     <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
                         <div className="flex items-center w-full justify-between mb-2">
-                            <div className="text-white-dark">Supplier Name:</div>
-                            <div className="whitespace-nowrap">{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.name || "N/A"}</div>
+                            <div className="text-white-dark">{ isBuyer ? "Supplier Name:" : "Buyer Name:"}</div>
+                            <div className="whitespace-nowrap">{businessNode?.nodeDetails?.name || "N/A"}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">GST No:</div>
-                            <div>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.gst_no || "N/A"}</div>
+                            <div>{businessNode?.nodeDetails?.gst_no || "N/A"}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">Location:</div>
-                            <div>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.location || "N/A"}</div>
+                            <div>{businessNode?.nodeDetails?.location || "N/A"}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2 gap-5">
                             <div className="flex items-center w-full justify-between mb-2">
                                 <div className="text-white-dark">Lat:</div>
-                                <div>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.address?.lat || "N/A"}</div>
+                                <div>{businessNode?.nodeDetails?.address?.lat || "N/A"}</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
                                 <div className="text-white-dark">Long:</div>
-                                <div>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.address?.long || "N/A"}</div>
+                                <div>{businessNode?.nodeDetails?.address?.long || "N/A"}</div>
                             </div>
                         </div>
 
                         <div className="flex items-center w-full justify-between mb-2 gap-5">
                             <div className="flex items-center w-full justify-between mb-2">
                                 <p className="text-white-dark">Address:</p>
-                                <p>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.address?.address || "N/A"}</p>
+                                <p>{businessNode?.nodeDetails?.address?.address || "N/A"}</p>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
                                 <p className="text-white-dark">Pincode:</p>
-                                <p>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.address?.pincode || "N/A"}</p>
+                                <p>{businessNode?.nodeDetails?.address?.pincode || "N/A"}</p>
                             </div>
                         </div>
 
                         <div className="flex items-center w-full justify-between mb-2 gap-5">
                             <div className="flex items-center w-full justify-between mb-2">
                                 <p className="text-white-dark">State:</p>
-                                <p>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.address?.state_id || "N/A"}</p>
+                                <p>{businessNode?.nodeDetails?.address?.state || "N/A"}</p>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
                                 <p className="text-white-dark">District:</p>
-                                <p>{data?.data?.[0]?.poFormBusinessNode?.nodeDetails?.address?.district_id || "N/A"}</p>
+                                <p>{businessNode?.nodeDetails?.address?.district || "N/A"}</p>
                             </div>
                         </div>
                     </div>

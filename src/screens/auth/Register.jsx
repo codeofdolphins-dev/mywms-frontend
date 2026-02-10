@@ -1,13 +1,17 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-// import { IRootState } from '../../store';
-// import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
+import { useForm } from 'react-hook-form';
 
 const Register = () => {
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+    function formSubmit(data){
+        console.log(data);        
+    }
 
     return (
         <div>
@@ -27,33 +31,54 @@ const Register = () => {
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Company Register</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to register</p>
                             </div>
-                            <form className="space-y-5 dark:text-white" >
+                            <form onSubmit={handleSubmit(formSubmit)} className="space-y-5 dark:text-white" >
                                 <div>
                                     <label htmlFor="Name">Name</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Name" type="text" placeholder="Enter Name" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input
+                                            id="Name"
+                                            type="text"
+                                            placeholder="Enter Company Name"
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                            {...register("name", { required: "Company name is required" })}
+                                        />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconUser fill={true} />
                                         </span>
                                     </div>
+                                    {errors.name && <p className="text-danger">{errors.name?.message}</p>}
                                 </div>
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input
+                                            id="Email"
+                                            type="email"
+                                            placeholder="Enter Company Email"
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                            {...register("email", { required: "email is required" })}
+                                        />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
                                     </div>
+                                    {errors.email && <p className="text-danger">{errors.email?.message}</p>}
                                 </div>
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input
+                                            id="Password"
+                                            type="password"
+                                            placeholder="Enter Password"
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                            {...register("password", { required: "password is required" })}
+                                        />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
                                     </div>
+                                    {errors.password && <p className="text-danger">{errors.password?.message}</p>}
                                 </div>
                                 <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     Register

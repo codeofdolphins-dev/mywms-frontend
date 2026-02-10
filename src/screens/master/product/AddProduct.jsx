@@ -128,10 +128,6 @@ const AddProduct = () => {
                 {/* Grid */}
                 <div className="panel mt-5" id="forms_grid">
                     <div className="">
-                        <div className="text-3xl mb-5">
-                            <h1>Add Product</h1>
-                        </div>
-
                         <form onSubmit={handleSubmit(submit)} className="space-y-5">
 
                             {/* 1st row */}
@@ -171,7 +167,7 @@ const AddProduct = () => {
                                                 label="Brand"
                                                 options={brandData?.data}
                                                 error={error?.message}
-                                                isMulti={true}
+                                                // isMulti={true}
                                                 required={true}
 
                                                 addButton={true}
@@ -262,7 +258,7 @@ const AddProduct = () => {
                                                         data={categoryData}
                                                         value={value || []}
                                                         onChange={onChange}
-                                                        showSelectAllbtn={true}
+                                                        showSelectAllbtn={false}
                                                         addButtton={true}
                                                         buttonOnClick={() => setShowCategory(true)}
                                                     />

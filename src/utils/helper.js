@@ -291,15 +291,15 @@ export const BRAND_COLUMN = [
 ];
 
 export const NODE_COLUMN = [
-    { key: "action", label: "Action", width: ".1fr" },
-    { key: "name", label: "Model", width: "2.5fr", align: "start" },
-    { key: "code", label: "Level Code", align: "start" },
+    { key: "action", label: "Action", width: "50px" },
+    { key: "name", label: "Model"},
+    { key: "code", label: "Level Code", width: "120px", align: "center" },
 ];
 export const BASIC_NODE_COLUMN = [
-    { key: "id", label: "#", width: ".1fr" },
-    { key: "name", label: "Model", width: "2.5fr", },
+    { key: "id", label: "#", width: "50px" },
+    { key: "name", label: "Model", },
     { key: "code", label: "Level Code" },
-    { key: "action", label: "Action", width: ".5fr", align: "center" },
+    { key: "action", label: "Action", width: "50px", align: "center" },
 ];
 
 export const USER_LIST_COLUMN = [

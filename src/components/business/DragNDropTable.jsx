@@ -47,7 +47,7 @@ const DragNDropTable = ({
                                                         name: item.name,
                                                         code: item.code,
                                                         action: (
-                                                            <div className="text-white-dark">
+                                                            <div className="text-white-dark" content='move'>
                                                                 <span className="handle px-2 ltr:mr-1 rtl:ml-1 bg-[#ebedf2] dark:bg-black rounded cursor-move">
                                                                     +
                                                                 </span>
