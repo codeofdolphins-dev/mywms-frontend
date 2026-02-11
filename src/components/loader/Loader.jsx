@@ -2,9 +2,9 @@ import React from 'react'
 
 const Loader = () => {
     return (
-        <div className="relative w-full h-full">
+        <div className="relative">
             {/* container loader */}
-            <div className="absolute inset-0 bg-[#fafafa] z-10 grid place-content-center">
+            <div className="fixed inset-0 z-10 grid place-content-center animate__animated">
                 <svg
                     width="64"
                     height="64"

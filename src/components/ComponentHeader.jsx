@@ -16,11 +16,12 @@ const ComponentHeader = ({
     className = "justify-between",
 }) => {
     return (
-        <div className={`flex items-center ${className}`}>
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-5 ${className}`}>
             {
                 headerLink.length > 0 &&
                 <Breadcrumb
                     options={headerLink}
+                    className='self-start sm:self-center'
                 />
             }
             <SearchInput

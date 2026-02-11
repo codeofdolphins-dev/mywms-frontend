@@ -1,16 +1,39 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
 import { useForm } from 'react-hook-form';
+import masterData from '../../Backend/master.backend';
+import Input from '../../components/inputs/Input';
+import { Button } from '@mantine/core';
 
 const Register = () => {
+    const navigate = useNavigate();
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster()
 
-    function formSubmit(data){
-        console.log(data);        
+    const { register, handleSubmit, reset, formState: { errors }, watch } = useForm({
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            c_password: "",
+        }
+    });
+
+    const password = watch("password");
+
+    async function formSubmit(data) {
+        try {
+            const res = await createData({ path: "/auth/register-new-company", formData: data });
+            if (res.success) {
+                reset();
+                navigate("/auth/login");
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -31,59 +54,64 @@ const Register = () => {
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Company Register</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to register</p>
                             </div>
+
                             <form onSubmit={handleSubmit(formSubmit)} className="space-y-5 dark:text-white" >
-                                <div>
-                                    <label htmlFor="Name">Name</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            id="Name"
-                                            type="text"
-                                            placeholder="Enter Company Name"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                            {...register("name", { required: "Company name is required" })}
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconUser fill={true} />
-                                        </span>
-                                    </div>
-                                    {errors.name && <p className="text-danger">{errors.name?.message}</p>}
-                                </div>
-                                <div>
-                                    <label htmlFor="Email">Email</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            id="Email"
-                                            type="email"
-                                            placeholder="Enter Company Email"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                            {...register("email", { required: "email is required" })}
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconMail fill={true} />
-                                        </span>
-                                    </div>
-                                    {errors.email && <p className="text-danger">{errors.email?.message}</p>}
-                                </div>
-                                <div>
-                                    <label htmlFor="Password">Password</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            id="Password"
-                                            type="password"
-                                            placeholder="Enter Password"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                            {...register("password", { required: "password is required" })}
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconLockDots fill={true} />
-                                        </span>
-                                    </div>
-                                    {errors.password && <p className="text-danger">{errors.password?.message}</p>}
-                                </div>
-                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                <Input
+                                    label="Name"
+                                    labelcolor={"black"}
+                                    placeholder="Enter Company Name"
+                                    Icon={IconUser}
+                                    fieldColor={"text-white-dark"}
+                                    className={"form-input placeholder:text-white-dark"}
+                                    {...register("name", { required: "Company name is required!!!" })}
+                                    error={errors.name?.message}
+                                />
+                                <Input
+                                    type="email"
+                                    label="Email"
+                                    labelcolor={"black"}
+                                    placeholder="Enter Company Email"
+                                    Icon={IconMail}
+                                    fieldColor={"text-white-dark"}
+                                    className={"form-input placeholder:text-white-dark"}
+                                    {...register("email", { required: "email is required!!!" })}
+                                    error={errors.email?.message}
+                                />
+                                <Input
+                                    type="password"
+                                    label="Password"
+                                    labelcolor={"black"}
+                                    placeholder="Enter Password"
+                                    Icon={IconLockDots}
+                                    fieldColor={"text-white-dark"}
+                                    className={"form-input placeholder:text-white-dark"}
+                                    {...register("password", { required: "confirm password is required!!!" })}
+                                    error={errors.password?.message}
+                                />
+                                <Input
+                                    type="password"
+                                    label="Confirm Password"
+                                    labelcolor={"black"}
+                                    placeholder="Enter Confirm Password"
+                                    Icon={IconLockDots}
+                                    fieldColor={"text-white-dark"}
+                                    className={"form-input placeholder:text-white-dark"}
+                                    {...register("c_password", {
+                                        required: "confirm password is required!!!",
+                                        validate: (value) =>
+                                            value === password || "Passwords do not match!!!",
+                                    })}
+                                    error={errors.c_password?.message}
+                                />
+                                <Button
+                                    type="submit"
+                                    className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                                    loading={createPending}
+                                >
                                     Register
-                                </button>
+                                </Button>
                             </form>
+
                             <div className="text-center dark:text-white mt-3">
                                 Already have an account ?&nbsp;
                                 <Link to="/auth/login" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">

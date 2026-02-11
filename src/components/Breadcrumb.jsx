@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 
 const Breadcrumb = ({
     options = [],
+    className = "",
 }) => {
     return (
-        < ul className="flex space-x-2" >
+        < ul className={`flex space-x-2 ${className}`} >
             {
                 options?.map((item, idx) => {
                     return item?.link ? (

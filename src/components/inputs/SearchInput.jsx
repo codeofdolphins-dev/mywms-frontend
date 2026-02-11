@@ -35,36 +35,36 @@ const SearchInput = ({
     }, [])
 
     return (
-        <div className='md:w-8/12 lg:w-10/12'>
-            <div className="w-full flex">
-                {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
-                <div className={`w-full flex items-center border border-[#b3b3b398] bg-white py-1.5 px-2 ${addButton ? "rounded-l-md" : "rounded-md" }`}>
-                    <input
-                        id={_id}
-                        type={type}
-                        className={`w-full focus:outline-none pe-3 text-sm ${className}`}
-                        value={search}
-                        onChange={(e) => handelSearch(e.target.value)}
-                        {...rest}
+        // <div className='md:w-8/12 lg:w-10/12'>
+        <div className="w-full flex">
+            {label && <label htmlFor={_id} className="block mb-2 font-medium">{label}</label>}
+            <div className={`w-full flex items-center border border-[#b3b3b398] bg-white py-1.5 px-2 ${addButton ? "rounded-l-md" : "rounded-md"}`}>
+                <input
+                    id={_id}
+                    type={type}
+                    className={`w-full focus:outline-none pe-3 text-sm ${className}`}
+                    value={search}
+                    onChange={(e) => handelSearch(e.target.value)}
+                    {...rest}
+                />
+                {
+                    (search !== '') &&
+                    <FaRegTimesCircle
+                        className='cursor-pointer hover:text-danger hover:scale-105'
+                        onClick={() => handelSearch('')}
                     />
-                    {
-                        (search !== '') &&
-                        <FaRegTimesCircle
-                            className='cursor-pointer hover:text-danger hover:scale-105'
-                            onClick={() => handelSearch('')}
-                        />
-                    }
-                </div>
-                {addButton &&
-                    <button
-                        className='px-3 btn-primary text-white rounded-r-md flex items-center whitespace-nowrap'
-                        onClick={btnOnClick}
-                    >
-                        <FiPlus size={20} className='mr-2' />{btnTitle}
-                    </button>
                 }
             </div>
+            {addButton &&
+                <button
+                    className='px-3 btn-primary text-white rounded-r-md flex items-center whitespace-nowrap'
+                    onClick={btnOnClick}
+                >
+                    <FiPlus size={20} className='mr-2' />{btnTitle}
+                </button>
+            }
         </div>
+        // </div>
     )
 }
 

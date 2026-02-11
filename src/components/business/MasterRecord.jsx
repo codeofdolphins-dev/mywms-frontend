@@ -14,7 +14,7 @@ const MasterRecord = ({
     setSelectedRecords
 }) => {
 
-    const checkAll = rowData.length > 0 && selectedRecords.length === rowData.length;
+    const checkAll = rowData?.length > 0 && selectedRecords.length === rowData.length;
 
     function handelSelect(item) {
         setSelectedRecords(prev => {
@@ -39,7 +39,7 @@ const MasterRecord = ({
     return (
         <div>
             <div className="panel w-full">
-                <div className="flex items-center justify-between md:flex-row flex-col mb-5 gap-5">
+                <div className="flex items-center justify-between flex-row mb-5 gap-5">
                     <h5 className="font-semibold text-lg">Business Models</h5>
                     <div className="">
                         <CheckBox

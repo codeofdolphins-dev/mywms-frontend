@@ -7,11 +7,14 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const Input = React.forwardRef(({
     label,
     labelPosition = "",
+    labelcolor = "text-gray-600",
     type = 'text',
+    fieldColor = '',
     className = '',
     error,
     required = false,
     isLoading = false,
+    Icon = false,
     ...props
 }, ref) => {
 
@@ -24,19 +27,31 @@ const Input = React.forwardRef(({
             {
                 label && <label
                     htmlFor={_id}
-                    className={`inline-block mb-1 pl-1 text-sm text-gray-600 ${labelPosition === "inline" ? "w-1/3" : ""}`}
+                    className={`inline-block mb-1 pl-1 text-sm ${labelcolor} ${labelPosition === "inline" ? "w-1/3" : ""}`}
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
             }
-            <div className={`relative ${labelPosition === "inline" ? "w-2/3" : ""} `}>
+            <div className={`relative ${labelPosition === "inline" ? "w-2/3" : ""} ${fieldColor} `}>
                 <input
                     id={_id}
                     type={isPasswordSeen ? "text" : type}
-                    className={`px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full ${error ? "border-red-500" : ""} ${props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black"} ${className}`}
+                    className={`
+                            px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full 
+                            ${error ? "border-red-500" : ""} 
+                            ${props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black"}
+                            ${Icon ? "ps-10" : ""}
+                            ${className}
+                        `}
                     ref={ref}
                     {...props}
                 />
+                {
+                    Icon &&
+                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                        <Icon fill={true} />
+                    </span>
+                }
                 {
                     type === "password" &&
                     <span
@@ -60,8 +75,8 @@ const Input = React.forwardRef(({
                         />
                     </span>
                 }
-                {error && <span className='text-danger text-sm'>{error}</span>}
             </div>
+            {error && <span className='text-danger text-sm'>{error}</span>}
 
         </div>
     )

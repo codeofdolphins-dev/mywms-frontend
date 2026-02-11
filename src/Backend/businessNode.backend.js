@@ -12,6 +12,19 @@ class BusinessNode {
             enabled: isEnabled,
         })
     }
+
+    TQTenantBusinessFlow(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["tenantBusinessFlow", params],
+            queryFn: async () => {
+                const res = await API.get("/super-admin/tenant-business-flow", {
+                    params
+                })
+                return res.data;
+            },
+            enabled: isEnabled,
+        })
+    }
 }
 
 const businessNode = new BusinessNode();
