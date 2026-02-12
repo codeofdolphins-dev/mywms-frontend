@@ -84,8 +84,9 @@ const UserBrowse = () => {
 
             <div className={`panel mt-5 relative z-0 ${isEmpty ? "min-h-64" : ""}`}>
                 <div className="overflow-x-auto">
-                    <TableHeader columns={USER_LIST_COLUMN} />
+                    {/* <TableHeader  /> */}
                     <TableBody
+                        columns={USER_LIST_COLUMN}
                         isEmpty={isEmpty}
                         currentPage={currentPage}
                         setCurrentPage={setCurrentPage}
