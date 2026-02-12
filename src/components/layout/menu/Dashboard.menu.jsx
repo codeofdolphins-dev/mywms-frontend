@@ -1,7 +1,7 @@
 import React from 'react'
-import IconCaretDown from '../Icon/IconCaretDown'
+import IconCaretDown from '../../Icon/IconCaretDown'
 import { NavLink, useNavigate } from 'react-router-dom'
-import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
+import IconMenuDashboard from '../../Icon/Menu/IconMenuDashboard';
 
 const Dashboard = ({ location }) => {
     const navigate = useNavigate();

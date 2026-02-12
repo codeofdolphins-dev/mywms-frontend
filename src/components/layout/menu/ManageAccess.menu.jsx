@@ -1,28 +1,29 @@
 import React from 'react'
+import { MdAdminPanelSettings } from 'react-icons/md'
 import { NavLink } from 'react-router-dom'
-import IconCaretDown from '../Icon/IconCaretDown'
-import { MdOutlineReceiptLong } from 'react-icons/md'
+import IconCaretDown from '../../Icon/IconCaretDown'
 
 
-const pOrderSubMenu = [
-    { name: 'Browse', path: '/purchase-order' },
-    { name: 'Create', path: '/purchase-order/create' },
+const requisitionSubMenu = [
+    { name: 'Role', path: '/access/role' },
+    { name: 'Permission', path: '/access/permission' },
 ];
 
-const PurchaseOrder = ({ location }) => {
+
+const ManageAccess = () => {
     return (
         <li className="menu nav-item relative !ml-0" >
-            <button type="button" className={`nav-link ${location.pathname.includes('/purchase-order') ? 'active' : ''} !cursor-default`}>
+            <button type="button" className={`nav-link ${location.pathname.includes("/access") ? 'active' : ''} !cursor-default`}>
                 <div className="flex items-center">
-                    <MdOutlineReceiptLong />
-                    <span className="px-1 whitespace-nowrap">Purchase Order</span>
+                    <MdAdminPanelSettings />
+                    <span className="px-1 whitespace-nowrap">Manage Access</span>
                 </div>
                 <div className="right_arrow">
                     <IconCaretDown />
                 </div>
             </button>
             <ul className="sub-menu">
-                {pOrderSubMenu.map((item) => (
+                {requisitionSubMenu.map((item) => (
                     <li key={item.path}>
                         <NavLink
                             to={item.path}
@@ -38,4 +39,4 @@ const PurchaseOrder = ({ location }) => {
     )
 }
 
-export default PurchaseOrder
+export default ManageAccess

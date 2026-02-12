@@ -7,7 +7,7 @@ import Outward from "./Outward.menu";
 import PurchaseOrder from "./PurchaseOrder.menu";
 import Quotation from "./Quotation.menu";
 import Requisition from "./Requisition.menu";
-
+import SuperAdmin from "./SuperAdmin.menu";
 
 export {
     Dashboard,
@@ -18,5 +18,6 @@ export {
     Quotation,
     PurchaseOrder,
     Inward,
-    Outward
+    Outward,
+    SuperAdmin
 }

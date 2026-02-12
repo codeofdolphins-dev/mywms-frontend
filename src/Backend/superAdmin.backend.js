@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import API from ".";
 
-class BusinessNode {
+
+class SuperAdmin {
     TQBusinessNode(isEnabled = true) {
         return useQuery({
             queryKey: ["businessNodes"],
@@ -25,7 +26,20 @@ class BusinessNode {
             enabled: isEnabled,
         })
     }
+
+    TQCompanyList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["companyList", params],
+            queryFn: async () => {
+                const res = await API.get("/super-admin/company-list", {
+                    params
+                })
+                return res.data;
+            },
+            enabled: isEnabled,
+        })
+    }
 }
 
-const businessNode = new BusinessNode();
-export default businessNode;
+const superAdmin = new SuperAdmin();
+export default superAdmin;

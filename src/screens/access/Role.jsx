@@ -11,6 +11,9 @@ import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
 import RoleForm from '../../components/access/RoleForm';
 import { useNavigate } from 'react-router-dom';
+import ComponentHeader from '../../components/ComponentHeader';
+import TableBody from '../../components/table/TableBody';
+import manageAccess from '../../Backend/manageAccess.backend';
 
 
 const rawProducts = [
@@ -42,15 +45,24 @@ const rawProducts = [
 ];
 
 
+const headerLink = [
+    { title: "role" },
+];
+
 
 const Role = () => {
     const navigate = useNavigate()
+    const { data: allRole, isLoading: roleLoading } = manageAccess.TQAllRole();
+
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
     const [isShow, setIsShow] = useState(false);
 
+    const isEmpty = allRole?.data?.length > 0 ? false : true;
+
+    // console.log(allRole?.data)
 
     // const params = {
     //     ...(debounceSearch && { text: debounceSearch }),
@@ -61,78 +73,45 @@ const Role = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <p className="">
-                        Access
-                    </p>
-                </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>Role</span>
-                </li>
-            </ul>
-
             {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
-                <div>
-                    <h1 className="text-5xl font-bold my-3">Role</h1>
-                    <p className='text-gray-600 text-base'>Manage and view all Permissions</p>
-                </div>
-                <ButtonBoolean
-                    setState={setIsShow}
+            <ComponentHeader
+                headerLink={headerLink}
+                btnTitle='Add Role'
+                btnOnClick={() => setIsShow(prev => !prev)}
+                setDebounceSearch={setDebounceSearch}
+                searchPlaceholder='Search by role...'
+            />
+
+            <div className="mt-5 z-0 panel border rounded overflow-hidden">
+                <TableBody
+                    columns={ROLE_COL}
+                    isEmpty={isEmpty}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    limit={limit}
+                    setLimit={setLimit}
+                    totalPage={1}
                 >
-                    Add Role
-                </ButtonBoolean>
-            </div>
-
-
-            {/* Search and Add Button */}
-            <div className="flex flex-col sm:flex-row gap-4 my-6">
-                <SearchInput
-                    type="text"
-                    placeholder="Search by name or description..."
-                    className="bg- border-pink-500"
-                    setValue={setDebounceSearch}
-                />
-            </div>
-
-            <div className="panel border rounded overflow-hidden">
-                <TableHeader columns={ROLE_COL} />
-
-                {rawProducts.length === 0 ? (
-                    <div className="p-6 text-center text-gray-400">
-                        No records found
-                    </div>
-                ) : (
-                    rawProducts.map((item, index) => (
+                    {allRole?.data?.map((item, index) => (
                         <TableRow
                             key={item.id}
                             columns={ROLE_COL}
                             row={{
-                                id: index + 1,
-                                name: item.name,
-                                category: item.category_name,
-                                price: `₹${item.price}`,
+                                id: item.id,
+                                role: item.role?.toUpperCase(),
                                 action: (
                                     <button
                                         className="text-sm btn btn-primary"
-                                        onClick={ () => navigate(`assign/${item?.id}`) }
+                                        onClick={() => navigate(`assign/${item?.id}`)}
                                     >
                                         Assign Permission
                                     </button>
                                 ),
-                                status: item.status
+                                status: item.status ? "Active" : "Inactive"
                             }}
                         />
-                    ))
-                )}
-                <BasicPagination
-                    totalPage={5}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    setLimit={setLimit}
-                />
+                    ))}
+                </TableBody>
             </div>
 
             <AddModal

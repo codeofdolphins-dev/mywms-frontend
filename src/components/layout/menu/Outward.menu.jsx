@@ -1,27 +1,27 @@
 import React from 'react'
-import { BsBoxArrowInDown } from 'react-icons/bs'
-import IconCaretDown from '../Icon/IconCaretDown'
+import { BsBoxArrowUp } from 'react-icons/bs'
+import IconCaretDown from '../../Icon/IconCaretDown'
 import { NavLink } from 'react-router-dom'
 
-const inwardSubMenu = [
-    { name: 'Browse', path: '/inward' },
-    { name: 'Create', path: '/inward/create' },
+const outwardSubMenu = [
+    { name: 'Browse', path: '/outward' },
+    { name: 'Create', path: '/outward/create' },
 ];
 
-const Inward = ({ location }) => {
+const Outward = () => {
     return (
         <li className="menu nav-item relative !ml-0" >
-            <button type="button" className={`nav-link ${location.pathname.includes('/inward') ? 'active' : ''} `}>
+            <button type="button" className={`nav-link ${location.pathname.includes('/outward') ? 'active' : ''} `}>
                 <div className="flex items-center">
-                    <BsBoxArrowInDown />
-                    <span className="px-1">Inward</span>
+                    <BsBoxArrowUp />
+                    <span className="px-1">Outward</span>
                 </div>
                 <div className="right_arrow">
                     <IconCaretDown />
                 </div>
             </button>
             <ul className="sub-menu">
-                {inwardSubMenu.map((item) => (
+                {outwardSubMenu.map((item) => (
                     <li key={item.path}>
                         <NavLink
                             to={item.path}
@@ -37,4 +37,4 @@ const Inward = ({ location }) => {
     )
 }
 
-export default Inward
+export default Outward

@@ -8,7 +8,7 @@ export const WAREHOUSE_COLUMN = [
 ];
 
 export const PERMISSION_COL = [
-    { key: "id", label: "SL" },
+    { key: "id", label: "#" },
     { key: "permission", label: "Name" },
 ];
 
@@ -16,13 +16,10 @@ export const ROLE_COL = [
     {
         key: "id",
         label: "#",
-        width: "0.5fr",
-        align: "start"
     },
     {
-        key: "name",
-        label: "Product Name",
-        // width: "2fr"
+        key: "role",
+        label: "Role",
     },
     {
         key: "action",
@@ -264,8 +261,8 @@ export const PURCHASE_ORDER = [
     { key: "category", label: "Category" },
     { key: "subCategory", label: "Sub Category" },
     { key: "qty", label: "Qty" },
-    { key: "tax", label: "Tax %" }, 
-    { key: "unitPrice", label: "Unit Price" }, 
+    { key: "tax", label: "Tax %" },
+    { key: "unitPrice", label: "Unit Price" },
     { key: "total", label: "Total" },
 ];
 
@@ -292,7 +289,7 @@ export const BRAND_COLUMN = [
 
 export const NODE_COLUMN = [
     { key: "action", label: "Action", width: "50px" },
-    { key: "name", label: "Model"},
+    { key: "name", label: "Model" },
     { key: "code", label: "Level Code", width: "120px", align: "center" },
 ];
 export const BASIC_NODE_COLUMN = [
@@ -309,4 +306,14 @@ export const USER_LIST_COLUMN = [
     { key: "phone", label: "Phone No." },
     { key: "active", label: "Active" },
     { key: "action", label: "Action" },
+];
+
+export const SUPER_ADMIN_BROWSE_COLUMN = [
+    { key: "name", label: "Company Name" },
+    { key: "email", label: "Email" },
+    { key: "password", label: "Password" },
+    { key: "phone", label: "Phone No." },
+    { key: "joiningDate", label: "Joining Date" },
+    { key: "status", label: "Status", width: "150px", align: "center" },
+    { key: "action", label: "Action", align: "center" },
 ];

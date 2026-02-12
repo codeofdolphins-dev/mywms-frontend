@@ -1,28 +1,28 @@
 import React from 'react'
-import IconCaretDown from '../Icon/IconCaretDown'
+import { FaClipboardList } from 'react-icons/fa6'
+import IconCaretDown from '../../Icon/IconCaretDown'
 import { NavLink } from 'react-router-dom'
-import { FaQuoteLeft } from 'react-icons/fa6'
 
-const quotationSubMenu = [
-    { name: 'All List', path: '/quotation' },
-    // { name: 'Create', path: '/quotation/create' },
-    { name: 'Receive Quotation', path: '/quotation/received-quotation' },
+const requisitionSubMenu = [
+    { name: 'All List', path: '/requisition' },
+    { name: 'Create', path: '/requisition/create' },
+    { name: 'Receive Requisition', path: '/requisition/received-requisition' },
 ];
 
-const Quotation = ({ location }) => {
+const Requisition = ({ location }) => {
     return (
         <li className="menu nav-item relative !ml-0" >
-            <button type="button" className={`nav-link ${location.pathname.includes('/quotation') ? 'active' : ''} !cursor-default`}>
+            <button type="button" className={`nav-link ${location.pathname.includes("/requisition") ? 'active' : ''} !cursor-default`}>
                 <div className="flex items-center">
-                    <FaQuoteLeft />
-                    <span className="px-1">Quotation</span>
+                    <FaClipboardList />
+                    <span className="px-1">Requisition</span>
                 </div>
                 <div className="right_arrow">
                     <IconCaretDown />
                 </div>
             </button>
             <ul className="sub-menu">
-                {quotationSubMenu.map((item) => (
+                {requisitionSubMenu.map((item) => (
                     <li key={item.path}>
                         <NavLink
                             to={item.path}
@@ -38,4 +38,4 @@ const Quotation = ({ location }) => {
     )
 }
 
-export default Quotation
+export default Requisition

@@ -1,28 +1,28 @@
 import React from 'react'
-import { FaClipboardList } from 'react-icons/fa6'
-import IconCaretDown from '../Icon/IconCaretDown'
 import { NavLink } from 'react-router-dom'
+import IconCaretDown from '../../Icon/IconCaretDown'
+import { MdOutlineReceiptLong } from 'react-icons/md'
 
-const requisitionSubMenu = [
-    { name: 'All List', path: '/requisition' },
-    { name: 'Create', path: '/requisition/create' },
-    { name: 'Receive Requisition', path: '/requisition/received-requisition' },
+
+const pOrderSubMenu = [
+    { name: 'Browse', path: '/purchase-order' },
+    { name: 'Create', path: '/purchase-order/create' },
 ];
 
-const Requisition = ({ location }) => {
+const PurchaseOrder = ({ location }) => {
     return (
         <li className="menu nav-item relative !ml-0" >
-            <button type="button" className={`nav-link ${location.pathname.includes("/requisition") ? 'active' : ''} !cursor-default`}>
+            <button type="button" className={`nav-link ${location.pathname.includes('/purchase-order') ? 'active' : ''} !cursor-default`}>
                 <div className="flex items-center">
-                    <FaClipboardList />
-                    <span className="px-1">Requisition</span>
+                    <MdOutlineReceiptLong />
+                    <span className="px-1 whitespace-nowrap">Purchase Order</span>
                 </div>
                 <div className="right_arrow">
                     <IconCaretDown />
                 </div>
             </button>
             <ul className="sub-menu">
-                {requisitionSubMenu.map((item) => (
+                {pOrderSubMenu.map((item) => (
                     <li key={item.path}>
                         <NavLink
                             to={item.path}
@@ -38,4 +38,4 @@ const Requisition = ({ location }) => {
     )
 }
 
-export default Requisition
+export default PurchaseOrder

@@ -1,10 +1,9 @@
 import { RiAdminFill } from "react-icons/ri";
-import IconCaretDown from "../Icon/IconCaretDown";
+import IconCaretDown from "../../Icon/IconCaretDown";
 import { NavLink } from "react-router-dom";
 
 const ADMIN_MENU = [
     { name: 'Browse', path: '/admin/browse' },
-    { name: 'Business Flow', path: '/admin/business-flow' },
     { name: 'Register', path: '/admin/business/node-register' },
     {
         name: 'user', path: '/user',

@@ -3,26 +3,30 @@ import MasterRecord from '../../components/business/MasterRecord';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@mantine/core';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
-import businessNode from '../../Backend/businessNode.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import Basic from '../../components/business/Basic';
 import DragNDropTable from '../../components/business/DragNDropTable';
 import ComponentHeader from '../../components/ComponentHeader';
 import Loader from '../../components/loader/Loader';
+import masterData from '../../Backend/master.backend';
+import superAdmin from '../../Backend/superAdmin.backend';
 
 
-const headerLink = [
-    { title: "received-requisition" },
-];
 
 const Rules = () => {
     const [value, setValue] = useState("");
     const [selectedRecords, setSelectedRecords] = useState([]);
     const [handler, setHandler] = useState(selectedRecords ?? []);
 
-    const { data, isLoading } = businessNode.TQBusinessNode();
+    /** mutate API */
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["tenantBusinessNodeList", "tenantBusinessFlow"]);
 
-    const { data: businessFlow, isLoading: businessFlowLoading } = businessNode.TQTenantBusinessFlow({ email: value }, Boolean(value));
+
+    // fetch all offerd business node
+    const { data, isLoading } = superAdmin.TQBusinessNode();
+
+    // fetch all business nodes based on email
+    const { data: businessFlow, isLoading: businessFlowLoading } = superAdmin.TQTenantBusinessFlow({ email: value }, Boolean(value));
 
     useEffect(() => {
         if (value === "") {
@@ -42,22 +46,38 @@ const Rules = () => {
         const businessFlows = businessFlow.data.businessFlows;
         const allNodes = data.data;
 
-        const flowCodes = new Set(
-            businessFlows.map(item => item.node_type_code)
+        // Create lookup map for fast access
+        const nodeMap = new Map(
+            allNodes.map(node => [node.code, node])
         );
 
-        setSelectedRecords(
-            allNodes.filter(i => flowCodes.has(i.code))
-        );
+        // Preserve sequence order
+        const orderedNodes = businessFlows
+            .map(flow => nodeMap.get(flow.node_type_code))
+            .filter(Boolean); // remove undefined if any mismatch
+
+        setSelectedRecords(orderedNodes);
+
 
     }, [value, businessFlow, data]);
 
 
-    const { handleSubmit, register, control } = useForm();
+    // const { handleSubmit, register, control } = useForm();
 
-    console.log(handler);
 
-    function submit() {
+    async function submit() {
+        const payload = {};
+        payload.email = value;
+        payload.nodeSequence = handler;
+
+        try {
+            const res = await updateData({ path: "/super-admin/update-tenant-business-flow", formData: payload });
+            console.log(res);
+            // if(res.success)
+
+        } catch (error) {
+            console.log(error)
+        }
 
     };
 
@@ -70,7 +90,6 @@ const Rules = () => {
                     searchPlaceholder='Enter Company Email'
                     className='w-full'
                     addButton={false}
-                    // headerLink={headerLink}
                     setDebounceSearch={setValue}
                 />
             </div>
@@ -108,6 +127,7 @@ const Rules = () => {
                         <div className="mt-5 flex items-center justify-end">
                             <Button
                                 onClick={submit}
+                                loading={updatePending}
                             >
                                 Submit
                             </Button>

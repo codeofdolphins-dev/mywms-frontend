@@ -23,8 +23,9 @@ import {
     Quotation,
     PurchaseOrder,
     Inward,
-    Outward
-} from '../menu';
+    Outward,
+    SuperAdmin
+} from './menu';
 
 const DEV_BYPASS = true;
 
@@ -75,43 +76,13 @@ const NavBar = () => {
                 (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Master location={location} />
             }
 
+            {/* super admin */}
+            {
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
+                && <SuperAdmin location={location} />
+            }
             {/* admin */}
-            {/* <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname.includes('/admin') ? 'active' : ''} !cursor-default`}>
-                    <div className="flex items-center">
-                        <RiAdminFill />
-                        <span className="px-1 whitespace-nowrap">Admin</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    <li className="relative">
-                        <NavLink to="/admin/business-flow">Business Flow</NavLink>
-                    </li>
-                    <li className="relative">
-                        <button type="button" className={`nav-link ${location.pathname.includes('/access/permission') ? 'active' : ''} !cursor-default`}>
-                            <span className="px-1 text-black">Permission</span>
-                            <div className="ml-auto -rotate-90">
-                                <IconCaretDown className='text-black' />
-                            </div>
-                        </button>
-                        <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                            <li>
-                                <NavLink to="/access/permission">All Permission</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/access/permission/create">Create Permission</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/access/permission/assign">Assign Permission</NavLink>
-                            </li>
-
-                        </ul>
-                    </li>
-                </ul>
-            </li> */}
             {
                 (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
@@ -119,7 +90,8 @@ const NavBar = () => {
             }
 
             {/* manage access */}
-            {DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles) && <ManageAccess location={location} />}
+            {
+                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />}
 
 
             {/* production */}

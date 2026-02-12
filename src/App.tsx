@@ -34,6 +34,9 @@ import PackageType from './screens/master/packageType/PackageType';
 import SupplierForm from './components/supplier/SupplierForm';
 import UnitType from './screens/master/unitType/UnitType';
 import Register from './screens/auth/Register';
+import Admin from './screens/admin/Admin';
+import SuperAdmin from './screens/superAdmin/SuperAdmin';
+
 
 function App() {
 
@@ -50,13 +53,16 @@ function App() {
                 <Route path="/" element={<AppLayout />}>
                     <Route index element={<Dashboard />} />
 
+                    {/* super admin */}
+                    <Route path="super-admin" >
+                        <Route path="browse" element={<SuperAdmin />} />
+                        <Route path="business-flow" element={<Rules />} />
+                    </Route>
+
                     {/* admin */}
                     <Route path="admin" >
-                        <Route path="business-flow" element={<Rules />} />
+                        <Route path="browse" element={<Admin />} />
                         <Route path="business/node-register" element={<RegisterNode />} />
-
-                        <Route path="warehouse" element={<Warehouse />} />
-                        <Route path="warehouse/create" element={<Warehouse />} />
                     </Route>
 
                     {/* user */}

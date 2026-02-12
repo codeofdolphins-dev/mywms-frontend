@@ -3,8 +3,12 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import TextArea from '../inputs/TextArea';
 import Input from '../inputs/Input';
+import BooleanSwitch from '../inputs/BooleanSwitch';
+import masterData from '../../Backend/master.backend';
 
-const RoleForm = ({ editId = null }) => {
+const RoleForm = ({ setIsShow, editId = null }) => {
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["allRole"]);
 
     const {
         register,
@@ -15,35 +19,50 @@ const RoleForm = ({ editId = null }) => {
 
     } = useForm({
         defaultValues: {
-            name: "",
-            description: "",
-            parent_id: null
+            newRole: "",
+            status: true,
 
         }
     });
 
-    function submitForm(data) {};
+    async function submitForm(data) {
+        try {
+            const res = await createData({ path: "/role/add-role", formData: data });
+
+            if(res.success){
+                reset();
+                setIsShow(false);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <div className="panel" id="forms_grid">
             <div className="mb-5">
                 <form className="p-5" onSubmit={handleSubmit(submitForm)}>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-row gap-5">
 
                         <Input
-                            type={"number"}
-                            label={"Category"}
-                            placeholder={"Enter category"}
-                            {...register("name", { required: "This field is required!!!" })}
-                            error={errors.name?.message}
+                            label={"Role"}
+                            placeholder={"Enter Role"}
+                            {...register("newRole", { required: "This field is required!!!" })}
+                            error={errors.newRole?.message}
                             required={true}
                         />
 
-                        <TextArea
+                        <BooleanSwitch
+                            {...register("status", {
+                                value: true
+                            })}
+                        />
+
+                        {/* <TextArea
                             label={"Description"}
                             placeholder="Enter desc (optional)"
                             {...register("description")}
-                        />
+                        /> */}
                     </div>
                     <div className="mt-8 flex items-center justify-end gap-4">
                         <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={false}>
