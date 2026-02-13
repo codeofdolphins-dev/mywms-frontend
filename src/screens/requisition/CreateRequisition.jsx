@@ -62,7 +62,7 @@ const CreateRequisition = () => {
 
     const onSubmit = async (data) => {
         data.items = selectedItems
-        console.log(data);
+        // console.log(data); return
 
         try {
             const res = await createData({ path: "/requisition/create", formData: data });

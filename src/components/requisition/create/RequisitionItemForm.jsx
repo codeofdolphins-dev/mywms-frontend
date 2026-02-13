@@ -31,7 +31,6 @@ const RequisitionItemForm = ({
     });
 
     const barcode = watch("barcode");
-    const category = watch("category");
 
     const [searchText, setSearchText] = useState("");
     const [errorText, setErrorText] = useState("");
@@ -52,14 +51,6 @@ const RequisitionItemForm = ({
 
     const product = data?.data[0];
 
-    // set sub-category option
-    useEffect(() => {
-        setAvailCategory(
-            product?.productCategories.flatMap(item => item.id === category.id ? item.subcategories : [])
-        )
-    }, [category]);
-
-
     // set value
     useEffect(() => {
         if (!barcode?.length) return;
@@ -70,14 +61,19 @@ const RequisitionItemForm = ({
             setValue("productName", product?.name);
             setValue("packSize", `${product?.measure} ${product?.unit_type}`);
             setValue("packageType", product?.package_type);
-            // setValue("categories", product?.[0]?.selectedCategoryIds);
+            setValue("brand", product?.productBrands?.[0]?.name);
+            setValue("category", product?.productCategories?.[0]?.name);
+            setValue("subCategory", product?.productCategories?.[0]?.subcategories?.[0]?.name);
         } else {
             setErrorText("Product not found!!!");
 
             resetField("productName");
             resetField("packSize");
             resetField("packageType");
+            resetField("brand");
             resetField("ReqQty");
+            resetField("category");
+            resetField("subCategory");
         }
     }, [barcode, data]);
 
@@ -95,6 +91,8 @@ const RequisitionItemForm = ({
             <form onSubmit={handleSubmit(submitForm)}>
                 {/* form */}
                 <div className='space-y-5'>
+
+                    {/* 1st */}
                     <div className="grid grid-cols-2 gap-5">
                         {/* barcode */}
                         <div>
@@ -129,87 +127,41 @@ const RequisitionItemForm = ({
                         </div>
                     </div>
 
+                    {/* 2nd */}
                     <div className="grid grid-cols-2 gap-5">
-                        {/* product category */}
+                        {/* category */}
                         <div>
-                            <Controller
-                                name="category"
-                                control={control}
-                                rules={{
-                                    required: "category is required"
-                                }}
-                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                    <>
-                                        <RHSelect
-                                            ref={(el) => {
-                                                ref({
-                                                    focus: () => el?.focus()
-                                                });
-                                            }}
-                                            value={value}
-                                            onChange={onChange}
-                                            error={error?.message}
-
-                                            label={"Category"}
-                                            options={product?.productCategories}
-                                            required={true}
-                                            objectReturn={true}
-                                        />
-                                    </>
-                                )}
+                            <Input
+                                label="Category"
+                                placeholder="Enter Category"
+                                {...register("category")}
+                                required={true}
+                                disabled={true}
                             />
                         </div>
 
-                        {/* product sub-category */}
+                        {/* sub-category */}
                         <div>
-                            <Controller
-                                name="subCategory"
-                                control={control}
-                                render={({ field: { value, onChange }, fieldState: { error } }) => (
-                                    <>
-                                        <RHSelect
-                                            value={value}
-                                            onChange={onChange}
-
-                                            label={"Sub Category"}
-                                            options={availCategory}
-                                            disabled={!category}
-                                            objectReturn={true}
-                                        />
-                                    </>
-                                )}
+                            <Input
+                                label="Sub Category"
+                                placeholder="Enter Sub-Category"
+                                {...register("subCategory")}
+                                required={true}
+                                disabled={true}
                             />
                         </div>
                     </div>
 
+                    {/* 3rd */}
                     <div className="grid grid-cols-2 gap-5">
-                        {/* product brand */}
+                        {/* brand */}
                         <div>
-                            <Controller
-                                name="brand"
-                                control={control}
-                                rules={{
-                                    required: "Brand is required",
-                                }}
-                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                    <>
-                                        <RHSelect
-                                            ref={(el) => {
-                                                ref({
-                                                    focus: () => el?.focus()
-                                                });
-                                            }}
-                                            value={value}
-                                            onChange={onChange}
-                                            error={error?.message}
-
-                                            label={"Brand"}
-                                            options={product?.productBrands}
-                                            required={true}
-                                            objectReturn={true}
-                                        />
-                                    </>
-                                )}
+                            <Input
+                                label="Brand"
+                                placeholder="Enter Brand Name"
+                                {...register("brand")}
+                                required={true}
+                                disabled={true}
                             />
                         </div>
 
@@ -236,6 +188,7 @@ const RequisitionItemForm = ({
                         </div>
                     </div>
 
+                    {/* 4th */}
                     <div className="grid grid-cols-2 gap-5">
 
                         {/* Price Limit */}

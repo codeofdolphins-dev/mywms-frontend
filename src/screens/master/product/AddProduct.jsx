@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import RHSelect from '@/components/inputs/RHF/Select.RHF';
-import TextArea from '@/components/inputs/TextArea';
 import FileUpload from '@/components/inputs/File';
 import { Button } from '@mantine/core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import RHRadioGroup from '@/components/inputs/RHF/RHRadioGroup';
 import fetchData from '@/Backend/fetchData.backend';
 import masterData from '@/Backend/master.backend';
 import { RHFToFormData } from '@/utils/RHFtoFD';
@@ -19,6 +16,10 @@ import CategoryForm from '@/components/category/CategoryForm';
 import UnitTypeForm from '@/components/unit/UnitType.Form';
 import PackageTypeForm from '@/components/packageType/PackageType.Form';
 import Input from '../../../components/inputs/Input';
+import BooleanSwitch from '../../../components/inputs/BooleanSwitch';
+import RHRadioGroup from '../../../components/inputs/RHF/RHRadioGroup';
+import RHSelect from '../../../components/inputs/RHF/Select.RHF';
+import TextArea from '../../../components/inputs/TextArea';
 
 
 const AddProduct = () => {
@@ -49,7 +50,8 @@ const AddProduct = () => {
         handleSubmit,
         formState: { errors },
         reset,
-        watch
+        watch,
+        setValue
     } = useForm();
 
     useEffect(() => {
@@ -57,12 +59,12 @@ const AddProduct = () => {
 
         if (product?.data?.[0]) {
             const data = product?.data?.[0];
-            console.log(data);
+            // console.log(data);
             reset({
                 ...data,
                 brands: data?.productBrands?.map(item => item.id),
                 categories: data?.selectedCategoryIds,
-                hsn_code: data?.hsn?.id,
+                hsn_id: data?.hsn?.id,
                 unit_type_id: data?.unitRef?.id,
                 package_type_id: data?.packageType?.id,
             })
@@ -70,7 +72,16 @@ const AddProduct = () => {
             reset();
         }
 
-    }, [id, product, isLoading])
+    }, [id, product, isLoading]);
+
+    const hsn_id = watch("hsn_id");
+
+    /** update get rate based on hsn code */
+    useEffect(() => {
+        hsnData?.data?.map(item => {
+            if (item.id === hsn_id) setValue("gst_rate", item?.default_gst_rate)
+        });
+    }, [hsn_id, hsnLoading]);
 
 
     const submit = async (data) => {
@@ -180,40 +191,20 @@ const AddProduct = () => {
                             </div>
 
                             {/* 2nd row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 [@media(min-width:860px)]:grid-cols-2 gap-5">
 
                                 {/* left */}
-                                <div className="grid grid-cols-1 gap-2">
+                                <div className="grid grid-cols-1 [@media(min-width:860px)]:grid-cols-1 gap-5">
 
-                                    {/* hsn_id */}
+                                    {/* Barcode */}
                                     <div>
-                                        <Controller
-                                            name="hsn_id"
-                                            control={control}
-                                            rules={{
-                                                required: "This field is required!!!"
-                                            }}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
-
-                                                    label="HSN Code"
-                                                    selectKey='hsn_code'
-                                                    options={hsnData?.data}
-                                                    error={error?.message}
-                                                    required={true}
-
-                                                    addButton={true}
-                                                    buttonTitle='HSN'
-                                                    buttonOnClick={() => setShowHSN(true)}
-                                                />
-                                            )}
+                                        <Input
+                                            label={"Barcode"}
+                                            placeholder={"Enter Barcode"}
+                                            {...register("barcode", { required: "This field is required!!!" })}
+                                            error={errors.barcode?.message}
+                                            required={true}
+                                            disabled={id ? true : false}
                                         />
                                     </div>
 
@@ -228,87 +219,153 @@ const AddProduct = () => {
                                         />
                                     </div>
 
-                                    {/* Barcode */}
-                                    <div>
-                                        <Input
-                                            label={"Barcode"}
-                                            placeholder={"Enter Barcode"}
-                                            {...register("barcode", { required: "This field is required!!!" })}
-                                            error={errors.barcode?.message}
-                                            required={true}
-                                            disabled={id ? true : false}
-                                        />
+
+                                    <div className="">
+                                        {/* hsn_id */}
+                                        <div className=''>
+                                            <Controller
+                                                name="hsn_id"
+                                                control={control}
+                                                rules={{
+                                                    required: "This field is required!!!"
+                                                }}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                    <RHSelect
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
+
+                                                        label="HSN Code"
+                                                        selectKey='hsn_code'
+                                                        options={hsnData?.data}
+                                                        error={error?.message}
+                                                        required={true}
+
+                                                        addButton={true}
+                                                        buttonTitle='HSN'
+                                                        buttonOnClick={() => setShowHSN(true)}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+
+                                        {/* GST Rate % */}
+                                        {/* <div className='w-full flex-1'>
+                                            <Input
+                                                label={"GST Rate %"}
+                                                placeholder={"Enter GST Rate %"}
+                                                {...register("gst_rate", {
+                                                    required: "This field is required!!!",
+                                                    pattern: {
+                                                        value: /^\d+(\.\d+)?$/,
+                                                        message: "decimals allowed only",
+                                                    },
+                                                })}
+                                                error={errors.gst_rate?.message}
+                                                required={true}
+                                            />
+                                        </div> */}
+
+                                        {/* Is Taxable % */}
+                                        {/* <div className='flex-shrink-0'>
+                                            <Controller
+                                                name="is_taxable"
+                                                control={control}
+                                                defaultValue={true}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                    <RHRadioGroup
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
+                                                        label="Taxable"
+                                                        options={[
+                                                            { label: "Yes", value: true },
+                                                            { label: "No", value: false },
+                                                        ]}
+                                                    />
+                                                )}
+                                            />
+                                        </div> */}
                                     </div>
+
                                 </div>
 
                                 {/* right */}
                                 <div className="grid grid-cols-1 gap-2">
                                     {/* category */}
-                                    <div className="">
-                                        <Controller
-                                            name="categories"
-                                            control={control}
-                                            rules={{
-                                                validate: (v) =>
-                                                    v?.length > 0 || "Please select at least one category",
-                                            }}
-                                            render={({ field: { value, onChange }, fieldState }) => (
-                                                <>
-                                                    <CategoryTree
-                                                        data={categoryData}
-                                                        value={value || []}
-                                                        onChange={onChange}
-                                                        showSelectAllbtn={false}
-                                                        addButtton={true}
-                                                        buttonOnClick={() => setShowCategory(true)}
-                                                    />
+                                    <Controller
+                                        name="categories"
+                                        control={control}
+                                        rules={{
+                                            validate: (v) =>
+                                                v?.length > 0 || "Please select at least one category",
+                                        }}
+                                        render={({ field: { value, onChange }, fieldState }) => (
+                                            <>
+                                                <CategoryTree
+                                                    data={categoryData}
+                                                    value={value || []}
+                                                    onChange={onChange}
+                                                    showSelectAllbtn={false}
+                                                    addButtton={true}
+                                                    buttonOnClick={() => setShowCategory(true)}
+                                                />
 
-                                                    {fieldState.error && (
-                                                        <p className="text-red-500 text-xs mt-1">
-                                                            {fieldState.error.message}
-                                                        </p>
-                                                    )}
-                                                </>
-                                            )}
-                                        />
-                                    </div>
+                                                {fieldState.error && (
+                                                    <p className="text-red-500 text-xs mt-1">
+                                                        {fieldState.error.message}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    />
                                 </div>
+
                             </div>
 
                             {/* 3rd row */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* Package Type */}
                                 <div>
-                                    <div>
-                                        <Controller
-                                            name="package_type_id"
-                                            control={control}
-                                            rules={{
-                                                required: "This field is required!!!"
-                                            }}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
+                                    <Controller
+                                        name="package_type_id"
+                                        control={control}
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
 
-                                                    label="Package Type"
-                                                    options={packageTypeData?.data}
-                                                    error={error?.message}
-                                                    required={true}
+                                                label="Package Type"
+                                                options={packageTypeData?.data}
+                                                error={error?.message}
+                                                required={true}
 
-                                                    addButton={true}
-                                                    buttonTitle='type'
-                                                    buttonOnClick={() => setShowPackageType(true)}
-                                                />
-                                            )}
-                                        />
-                                    </div>
+                                                addButton={true}
+                                                buttonTitle='type'
+                                                buttonOnClick={() => setShowPackageType(true)}
+                                            />
+                                        )}
+                                    />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                    {/* Measure */}
                                     <div>
                                         <Input
                                             type={"number"}
@@ -317,6 +374,8 @@ const AddProduct = () => {
                                             {...register("measure")}
                                         />
                                     </div>
+
+                                    {/* Unit Type */}
                                     <div>
                                         <Controller
                                             name="unit_type_id"
@@ -350,15 +409,7 @@ const AddProduct = () => {
                             </div>
 
                             {/* 4th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {/* <div>
-                                    <Input
-                                        type={"number"}
-                                        label={"Unit"}
-                                        placeholder={"Enter unit"}
-                                        {...register("unit")}
-                                    />
-                                </div> */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <Input
                                         type={"number"}
@@ -380,39 +431,14 @@ const AddProduct = () => {
                                         )}
                                     />
                                 </div>
-                            </div>
 
-                            {/* 4th row */}
-                            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Input
-                                        type={"number"}
-                                        label={"MRP"}
-                                        placeholder={"₹ Enter MRP"}
-                                        {...register("MRP", { required: "This field is required!!!" })}
-                                        error={errors.MRP?.message}
-                                        required={true}
-                                    />
-                                </div>
-                                <div>
-                                    <Input
-                                        type={"number"}
-                                        label={"Purchase Price"}
-                                        placeholder={"Enter Selling Price"}
-                                        {...register("purchase_price", { required: "This field is required!!!" })}
-                                        error={errors.purchase_price?.message}
-                                        required={true}
-                                    />
-                                </div>
-                            </div> */}
-
-                            {/* 5th row */}
-                            <div className="grid grid-cols-1 gap-4">
+                                {/* Description */}
                                 <div>
                                     <TextArea
                                         label="Description"
                                         placeholder="Enter Description"
                                         className="text-sm"
+                                        rows={1}
                                         {...register("description")}
                                     />
                                 </div>
@@ -432,6 +458,7 @@ const AddProduct = () => {
                                     {id ? "Update Product" : "Add Product"}
                                 </Button>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -449,7 +476,7 @@ const AddProduct = () => {
                 isShow={showHSN}
                 setIsShow={setShowHSN}
                 title="Add New HSN"
-                maxWidth={'50'}
+                maxWidth={'65'}
             >
                 <HSNForm setIsShow={setShowHSN} />
             </AddModal>

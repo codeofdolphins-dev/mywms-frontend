@@ -17,14 +17,12 @@ import ComponentHeader from '@/components/ComponentHeader';
 import ItemTable from '../../../components/ItemTable';
 
 const colName = [
-    { key: "id", label: "ID" },
+    // { key: "id", label: "ID" },
+    { key: "barcode", label: "Barcode" },
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },
-    { key: "barcode", label: "Barcode" },
     { key: "sku", label: "SKU" },
     { key: "package_type", label: "Package Type" },
-    // { key: "purchase_price", label: "Purchase Price" },
-    // { key: "MRP", label: "MRP" },
     { key: "productBrands", label: "Brands", type: "array", arrayRender: (item) => item.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }

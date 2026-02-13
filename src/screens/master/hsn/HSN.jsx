@@ -10,20 +10,26 @@ import IconCaretDown from '@/components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '@/components/inputs/Input';
-import ItemTable from '@/components/ItemTable';
+// import ItemTable from '@/components/ItemTable';
 import AddModal from '@/components/Add.modal';
-import CreateHSNForm from '@/components/HSN/HSN.Form';
 import fetchData from '@/Backend/fetchData.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
 import masterData from '@/Backend/master.backend';
 import ComponentHeader from '@/components/ComponentHeader';
+import CreateHSNForm from '../../../components/HSN/HSN.Form';
+import ItemTable from '../../../components/ItemTable';
 
 
 const colName = [
-    { key: "id", label: "ID" },
+    { key: "id", label: "#" },
     { key: "hsn_code", label: "HSN Code", },
-    { key: "rate", label: "Rate %" },
-    { key: "status", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "default_gst_rate", label: "Rate %" },
+    { key: "cess_rate", label: "CESS Rate %" },
+    { key: "is_exempt", label: "Exempt", render: v => v ? "Yes" : "No" },
+    { key: "effective_from", label: "Effective From" },
+    { key: "effective_to", label: "Effective To" },
+    { key: "description", label: "description"},
+    { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
 
 const headerLink = [
@@ -112,7 +118,7 @@ const HSN = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Add New HSN"
-                maxWidth={'50'}
+                maxWidth={'65'}
             >
                 <CreateHSNForm
                     setIsShow={setIsShow}

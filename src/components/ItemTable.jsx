@@ -36,7 +36,7 @@ const ItemTable = ({
                                         key={i}
                                         className={`px-3 py-2 ${i === 0 ? "rounded-l-lg" : ""} ${i === columns.length - 1 ? "rounded-r-lg" : ""} ${name.toLowerCase() === "actions" ? "!text-center" : ""} `}
                                     >
-                                        <p className='font-bold text-gray-600'>{col.label}</p>
+                                        <p className='font-bold text-gray-600 whitespace-nowrap'>{col.label}</p>
                                     </th>
                                 )}
                                 {

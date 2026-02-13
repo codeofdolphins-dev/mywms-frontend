@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import ProfileCard from '@/components/user/userProfile/ProfileCard'
 import ActivityCard from '@/components/user/userProfile/ActivityCard';
 import BasicCardContent from '@/components/user/userProfile/components/BasicCardContent';
-import fetchData from '@/Backend/fetchData.backend';
+import fetchData from '../../Backend/fetchData.backend';
 
 const UserProfile = () => {
     const { id } = useParams();
@@ -13,15 +13,11 @@ const UserProfile = () => {
 
     const { data: userDetails, isLoading } = fetchData.TQAllUserList({ id }, !!id);
 
-    // console.log(userDetails?.data?.[0]);
-    // console.log(roles);
-    // console.log(locations);
-
     useEffect(() => {
         setDetails(userDetails?.data ?? {});
         setLocations(userDetails?.data?.userBusinessNode ?? []);
         setRoles(userDetails?.data?.roles ?? []);
-    }, [isLoading])
+    }, [isLoading, userDetails])
 
     return (
         <div>
