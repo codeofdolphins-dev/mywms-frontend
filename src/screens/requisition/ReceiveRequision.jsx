@@ -125,8 +125,11 @@ const ReceiveRequision = () => {
 
     async function submit(data) {
         data.items = quoteItem;
+        data.reqNo = details?.requisition_no;
         data.grandTotal = quoteItem.reduce((grandTotal, item) => grandTotal + Number(item.total), 0);
-        console.log(data);
+
+        console.log(data)
+        // return
 
         try {
             const res = await create({ path: "/quotation/create", formData: data });

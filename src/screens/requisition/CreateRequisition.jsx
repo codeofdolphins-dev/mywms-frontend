@@ -62,7 +62,8 @@ const CreateRequisition = () => {
 
     const onSubmit = async (data) => {
         data.items = selectedItems
-        // console.log(data); return
+        // console.log(data); 
+        // return
 
         try {
             const res = await createData({ path: "/requisition/create", formData: data });
@@ -228,7 +229,7 @@ const CreateRequisition = () => {
                         </div>
 
                         {/* right side */}
-                        <div className={`panel ${isEmpty ? "min-h-64" : ""} relative`}>
+                        <div className={`panel ${isEmpty ? "min-h-64" : ""} relative z-0`}>
                             <div className="overflow-x-auto">
                                 <TableBody
                                     isEmpty={isEmpty}
@@ -242,9 +243,9 @@ const CreateRequisition = () => {
                                             row={{
                                                 barcode: item?.barcode,
                                                 product: item?.productName,
-                                                brand: item?.brand?.name,
-                                                category: item?.category?.name,
-                                                subCategory: item?.subCategory?.name,
+                                                brand: item?.brand,
+                                                category: item?.category,
+                                                subCategory: item?.subCategory,
                                                 packSize: item?.packSize,
                                                 priceLimit: item?.priceLimit,
                                                 reqQty: item?.reqQty,
