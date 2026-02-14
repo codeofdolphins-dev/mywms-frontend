@@ -9,11 +9,12 @@ import IconPencil from '../../components/Icon/IconPencil';
 import TableRow from '../../components/table/TableRow';
 import TableHeader from '../../components/table/TableHeader';
 import CustomeButton from '../../components/inputs/Button'
-import { QUOTATION_COLUMN } from '../../utils/helper';
+import { QUOTATION_COLUMN, QUOTATION_RECEIVE_COLUMN } from '../../utils/helper';
 import ComponentHeader from '../../components/ComponentHeader';
 import fetchData from '../../Backend/fetchData.backend';
 import TableBody from '../../components/table/TableBody';
 import { utcToLocal } from '../../utils/UTCtoLocal';
+import AddModal from '../../components/Add.modal';
 
 
 const headerLink = [
@@ -27,7 +28,8 @@ const Quotation = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    const [isShow, setIsShow] = useState(false);
+    const [itemDetails, setItemDetails] = useState([]);
+    const [isShowPreview, setIsShowPreview] = useState(false);
 
     const { data: quotationList, loading } = fetchData.TQQuotationList();
     const isEmpty = quotationList?.data?.length < 1;
@@ -40,7 +42,8 @@ const Quotation = () => {
         console.log(id)
     }
     function handelShow(items) {
-        console.log(items)
+        setIsShowPreview(true)
+        setItemDetails(items)
     }
 
     return (
@@ -78,11 +81,11 @@ const Quotation = () => {
                                     validity: utcToLocal(item?.valid_till),
                                     action: (
                                         <div className='flex items-center justify-center space-x-3'>
-                                            <CustomeButton
+                                            {/* <CustomeButton
                                                 onClick={() => handelEdit(item.id)}
                                             >
                                                 <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
+                                            </CustomeButton> */}
 
                                             {/* <CustomeButton
                                                     onClick={() => handleDelete(item.id)}
@@ -102,7 +105,57 @@ const Quotation = () => {
                         ))
                     }
                 </TableBody>
-        </div>
+            </div>
+
+            {/* preview panel */}
+            <AddModal
+                isShow={isShowPreview}
+                setIsShow={setIsShowPreview}
+                title={"Quotation Preview"}
+                maxWidth='95'
+            >
+                <div className="panel">
+                    <TableBody
+                        isEmpty={isEmpty}
+                        columns={QUOTATION_RECEIVE_COLUMN}
+                        showPagination={false}
+                    >
+                        {itemDetails?.map((item, j) => {
+                            const barcode = item?.sourceRequisitionItem?.product?.barcode;
+                            const product = item?.sourceRequisitionItem?.product?.name;
+                            const brand = item?.sourceRequisitionItem?.brand;
+                            const category = item?.sourceRequisitionItem?.category;
+                            const sub_category = item?.sourceRequisitionItem?.sub_category;
+                            const qty = item?.sourceRequisitionItem?.qty;
+                            const priceLimit = item?.sourceRequisitionItem?.priceLimit;
+
+                            const offerPrice = item?.offer_price;
+                            const tax = item?.tax_percent;
+                            const total = item?.total_price;
+
+                            return (
+                                <TableRow
+                                    key={j}
+                                    columns={QUOTATION_RECEIVE_COLUMN}
+                                    row={{
+                                        barcode: barcode,
+                                        product: product,
+                                        brand: brand,
+                                        category: category,
+                                        subCategory: sub_category,
+                                        qty: qty,
+                                        priceLimit: priceLimit,
+
+                                        offerPrice: offerPrice,
+                                        tax: tax,
+                                        total: total
+                                    }}
+                                />
+                            )
+                        })}
+                    </TableBody>
+                </div>
+            </AddModal>
 
         </div >
     )

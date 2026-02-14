@@ -57,7 +57,7 @@ const PurchaseOrder = () => {
     }, [data, isLoading]);
 
 
-    // if (isLoading) return <FullScreenLoader />
+    if (isLoading) return <FullScreenLoader />
 
     return (
         <div>
@@ -100,7 +100,7 @@ const PurchaseOrder = () => {
                     {/* Node details */}
                     <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
                         <div className="flex items-center w-full justify-between mb-2">
-                            <div className="text-white-dark">{ isBuyer ? "Supplier Name:" : "Buyer Name:"}</div>
+                            <div className="text-white-dark">{isBuyer ? "Supplier Name:" : "Buyer Name:"}</div>
                             <div className="whitespace-nowrap">{businessNode?.nodeDetails?.name || "N/A"}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
@@ -146,7 +146,6 @@ const PurchaseOrder = () => {
                     </div>
 
                 </div>
-
             </div>
 
             <div className="panel mt-5 min-h-64">
@@ -167,9 +166,9 @@ const PurchaseOrder = () => {
                                 row={{
                                     barcode: item?.poi_sourceRequisitionItem?.product?.barcode,
                                     product: item?.poi_sourceRequisitionItem?.product?.name,
-                                    brand: item?.poi_sourceRequisitionItem?.brand?.name,
-                                    category: item?.poi_sourceRequisitionItem?.category?.name,
-                                    subCategory: item?.poi_sourceRequisitionItem?.subCategory?.name,
+                                    brand: item?.poi_sourceRequisitionItem?.brand,
+                                    category: item?.poi_sourceRequisitionItem?.category,
+                                    subCategory: item?.poi_sourceRequisitionItem?.sub_category,
                                     qty: item?.qty,
                                     tax: item?.tax_percent,
                                     unitPrice: item?.unit_price,

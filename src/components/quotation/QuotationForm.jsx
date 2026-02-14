@@ -100,11 +100,9 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                                 label={"Tax Percent %"}
                                 labelPosition="inline"
                                 placeholder={"Enter tax percent..."}
-                                {...register("tax", {
-                                    required: "This field is required!!!"
-                                })}
+                                {...register("tax")}
                                 error={errors.tax?.message}
-                                required={true}
+                                // required={true}
                                 disabled={editId ? true : false}
                             />
 

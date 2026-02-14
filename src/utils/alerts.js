@@ -21,6 +21,24 @@ const successAlert = (message = "Signed in successfully") => {
     });
 }
 
+const warningAlert = (message = "Not Possible!!!") => {
+    const Toast = MySwal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    Toast.fire({
+        icon: "warning",
+        title: message
+    });
+}
+
 const errorAlert = (message = "something wrong!") => {
 
     MySwal.fire({
@@ -45,4 +63,4 @@ const confirmation = async () => {
     return result.isConfirmed;
 }
 
-export { successAlert, errorAlert, confirmation };
+export { successAlert, errorAlert, confirmation, warningAlert };

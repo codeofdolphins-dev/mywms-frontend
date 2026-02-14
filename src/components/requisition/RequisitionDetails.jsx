@@ -19,9 +19,9 @@ const RequisitionDetails = ({
               row={{
                 barcode: item?.product?.barcode,
                 product: item?.product?.name,
-                brand: item?.brand?.name,
-                category: item?.category?.name,
-                subCategory: item?.subCategory?.name,
+                brand: item?.brand,
+                category: item?.category,
+                subCategory: item?.sub_category,
                 packSize: `${item?.product?.measure} ${item?.product?.unit_type} ${item?.product?.package_type}`,
                 reqQty: item?.qty,
                 priceLimit: item?.priceLimit,
