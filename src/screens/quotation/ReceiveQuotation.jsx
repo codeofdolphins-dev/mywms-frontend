@@ -208,13 +208,13 @@ const ReceiveQuotation = () => {
                                                 </th>
 
                                                 {/* 4️⃣ Amounts */}
-                                                <th className="w-[25%] text-start break-words">
-                                                    {currencyFormatter(requisition.grandTotal)} ||{" "}
+                                                <th className="w-[20%] text-start break-words">
+                                                    {currencyFormatter(requisition.grandTotal)}{" || "}
                                                     {currencyFormatter(item?.quotation?.grandTotal) ?? "XXXXX"}
                                                 </th>
 
                                                 {/* 5️⃣ PO No */}
-                                                <th className="w-[15%] text-center !px-0">
+                                                <th className="w-[10%] text-start break-words !px-0">
                                                     <Link
                                                         to={`/purchase-order?s=${item?.quotation?.purchaseOrder_no}`}
                                                         className="hover:underline text-primary"
@@ -265,7 +265,7 @@ const ReceiveQuotation = () => {
                                                     {/* <th className="w-[5%] flex justify-center"> */}
                                                     {!isEmpty && (
                                                         <div className={`${active === `${item.id}` ? 'rotate-180' : ''}`}>
-                                                            <IconCaretDown />
+                                                            <IconCaretDown className='w-6 h-6' />
                                                         </div>
                                                     )}
                                                 </th>

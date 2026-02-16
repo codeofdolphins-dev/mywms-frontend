@@ -4,7 +4,7 @@ const Loader = () => {
     return (
         <div className="relative">
             {/* container loader */}
-            <div className="fixed inset-0 z-10 grid place-content-center animate__animated">
+            <div className="inset-0 z-10 grid place-content-center animate__animated">
                 <svg
                     width="64"
                     height="64"

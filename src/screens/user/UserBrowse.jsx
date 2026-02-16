@@ -82,7 +82,7 @@ const UserBrowse = () => {
                 btnOnClick={() => navigate("register")}
             />
 
-            <div className={`panel mt-5 relative z-0 ${isEmpty ? "min-h-64" : ""}`}>
+            <div className={`panel mt-5 relative z-0 min-h-64`}>
                 <div className="overflow-x-auto">
                     {/* <TableHeader  /> */}
                     <TableBody
@@ -93,6 +93,7 @@ const UserBrowse = () => {
                         limit={limit}
                         setLimit={setLimit}
                         totalPage={userList?.meta?.totalPages}
+                        isLoading={isLoading || deletePending}
                     >
                         {userList?.data?.map((item) =>
                             <TableRow

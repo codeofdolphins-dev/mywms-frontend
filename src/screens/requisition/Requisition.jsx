@@ -5,7 +5,6 @@ import { FiPlus } from 'react-icons/fi';
 import TableHeader from '../../components/table/TableHeader';
 import { REQUISITION_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
-import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
@@ -18,6 +17,8 @@ import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
+import { MdOutlineDownload } from 'react-icons/md';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
 
 const headerLink = [
     { title: "requisition" },
@@ -30,9 +31,11 @@ const Requisition = () => {
     const [limit, setLimit] = useState(10);
     const [isShow, setIsShow] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [downloadReqNo, setDownloadReqNo] = useState(null);
 
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["requisitionList"]);
 
+    const { mutateAsync: requisitionPdf_download, isPending: requisitionPdf_pending } = pdf.TQRequisitionPDFDownload();
     const { data: requisitionList, isLoading: requisitionListLoading } = fetchData.TQRequisitionList();
     const isEmpty = requisitionList?.data?.length < 1;
 
@@ -43,8 +46,17 @@ const Requisition = () => {
         setSelectedItems(items)
     }
 
-    function handelEdit(id) {
-        console.log(id)
+    async function handelDownload(requisition_no) {
+        setDownloadReqNo(requisition_no);
+        try {
+            const res = await requisitionPdf_download({ requisition_no });
+            if (res.status === 200) {
+                setDownloadReqNo(null);
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async function handleDelete(id) {
@@ -56,7 +68,22 @@ const Requisition = () => {
         }
     };
 
-
+    /** set status color */
+    function statusColor(status) {
+        // follow jointable status order
+        switch (status) {
+            case "pending":
+                return "bg-primary";
+            case "quoted":
+                return "bg-warning";
+            case "po_created":
+                return "bg-success";
+            case "cancelled":
+                return "bg-danger";
+            default:
+                return "bg-secondary";
+        }
+    }
 
     return (
         <div>
@@ -79,6 +106,7 @@ const Requisition = () => {
                     setLimit={setLimit}
                     totalPage={requisitionList?.meta?.totalPages || 1}
                     isEmpty={isEmpty}
+                    isLoading={requisitionListLoading}
                 >
                     {
                         requisitionList?.data?.map((item, idx) => (
@@ -92,28 +120,44 @@ const Requisition = () => {
                                         </Link>
                                     ),
                                     title: item?.title,
-                                    status: item?.status,
-                                    priority: item?.priority,
+                                    status: (
+                                        <>
+                                            <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
+                                                {item?.status === "po_created" ? "po. created" : item?.status}
+                                            </span>
+                                        </>
+                                    ),
+                                    priority: (
+                                        <>
+                                            <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
+                                                {item?.priority}
+                                            </span>
+                                        </>
+                                    ),
                                     notes: item?.notes,
                                     grandTotal: item?.grandTotal,
                                     action: (
-                                        <div className='flex items-center justify-center space-x-3'>
-                                            {/* <CustomeButton
-                                                    onClick={() => handelEdit(item.id)}
-                                                >
-                                                    <IconPencil className="text-success hover:scale-110 cursor-pointer" />
-                                                </CustomeButton> */}
-
+                                        <div className='flex items-center justify-center space-x-2'>
                                             <CustomeButton
                                                 onClick={() => handleDelete(item.id)}
                                             >
                                                 <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                                             </CustomeButton>
 
-                                            <CustomeButton
-                                                onClick={() => handelShow(item.items)}
-                                            >
+                                            <CustomeButton onClick={() => handelShow(item.items)} >
                                                 <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
+
+                                            <CustomeButton onClick={() => handelDownload(item?.requisition_no)} >
+                                                {requisitionPdf_pending && (downloadReqNo === item?.requisition_no)
+                                                    ?
+                                                    <span class="animate-spin border-[3px] border-black border-l-transparent rounded-full w-4 h-4 inline-block align-middle" />
+                                                    :
+                                                    <MdOutlineDownload
+                                                        className="hover:scale-110 cursor-pointer w-5 h-5"
+                                                        title='download'
+                                                    />
+                                                }
                                             </CustomeButton>
                                         </div>
                                     )
