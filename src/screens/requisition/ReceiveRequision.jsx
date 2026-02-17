@@ -282,7 +282,7 @@ const ReceiveRequision = () => {
                                 {/* Node details */}
                                 <div className="xl:1/3 lg:w-2/5 sm:w-1/2 text-sm">
                                     <div className="flex items-center w-full justify-between mb-2">
-                                        <div className="text-white-dark">"Buyer Name:"</div>
+                                        <div className="text-white-dark">Buyer Name:</div>
                                         <div className="whitespace-nowrap">{details?.buyer?.name || "N/A"}</div>
                                     </div>
                                     <div className="flex items-center w-full justify-between mb-2">

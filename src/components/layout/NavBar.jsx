@@ -170,68 +170,6 @@ const NavBar = () => {
                 </ul>
             </li> */}
 
-
-
-            {/* store */}
-            {/* <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/store' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <FaStore />
-                        <span className="px-1">Store</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {storeSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li> */}
-
-            {/* dealer */}
-            {/* <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/dealer' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <FaUserGroup />
-                        <span className="px-1">Dealer</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {dealerSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li> */}
-
-            {/* distributor */}
-            {/* <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/distributor' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <FaUserGroup />
-                        <span className="px-1">Distributor</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {distributorSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li> */}
-
             {/* retailer */}
             {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/retailer' ? 'active' : ''} `}>
@@ -251,27 +189,6 @@ const NavBar = () => {
                     ))}
                 </ul>
             </li> */}
-
-            {/* warehouse */}
-            {/* <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/warehouse' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <LuWarehouse />
-                        <span className="px-1">Warehouse</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {inwardSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li> */}
-
         </ul>
     )
 }

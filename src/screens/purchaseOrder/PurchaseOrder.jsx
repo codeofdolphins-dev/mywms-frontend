@@ -7,12 +7,13 @@ import { PURCHASE_ORDER } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
-import fetchData from '../../Backend/fetchData.backend';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import Input from '../../components/inputs/Input';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
 import { useSelector } from 'react-redux';
+import { Button } from '@mantine/core';
+import purchaseOrder from '../../Backend/purchaseOrder';
 
 
 const headerLink = [
@@ -40,24 +41,24 @@ const PurchaseOrder = () => {
         page: currentPage,
         limit: limit,
     };
-    const { data, isLoading } = fetchData.TQPurchaseOrderList(params);
-    const isEmpty = !!data?.data?.[0]?.purchasOrderItems?.length > 0 ? false : true;
-    const purchasOrderItems = data?.data?.[0]?.purchasOrderItems ?? [];
+    const { data, isLoading } = purchaseOrder.TQPurchaseOrderList(params);
+    const isEmpty = !!data?.data?.purchasOrderItems?.length > 0 ? false : true;
+    const purchasOrderItems = data?.data?.purchasOrderItems ?? [];
 
     /** set business node location */
     useEffect(() => {
-        if (activeNode == data?.data?.[0]?.form_business_node_id) {
-            setBusinessNode(data?.data?.[0]?.poFormBusinessNode);
+        if (activeNode == data?.data?.form_business_node_id) {
+            setBusinessNode(data?.data?.poFormBusinessNode);
             setIsBuyer(true);
         }
-        if (activeNode == data?.data?.[0]?.to_business_node_id) {
-            setBusinessNode(data?.data?.[0]?.poToBusinessNode)
+        if (activeNode == data?.data?.to_business_node_id) {
+            setBusinessNode(data?.data?.poToBusinessNode)
             setIsBuyer(false);
         }
     }, [data, isLoading]);
 
 
-    if (isLoading) return <FullScreenLoader />
+    // if (isLoading) return <FullScreenLoader />
 
     return (
         <div>
@@ -70,30 +71,52 @@ const PurchaseOrder = () => {
             />
 
             <div className="panel mt-5">
-                <h1>Purchase Order Details</h1>
+                <div className="flex items-center gap-5">
+                    <h1>Purchase Order Details</h1>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            // loading={true}
+                            color='green'
+                            size="compact-md"
+                            className='rounded-full'
+                        >
+                            Approve
+                        </Button>
 
+                        <Button
+                            // loading={true}
+                            color='red'
+                            size="compact-md"
+                            className='rounded-full'
+                        >
+                            Reject
+                        </Button>
+                    </div>
+                </div>
+
+                {/* details section */}
                 <div className="mt-5 flex justify-between sm:flex-row flex-col gap-6">
 
                     {/* PO details */}
                     <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">PO Number :</div>
-                            <div># {data?.data?.[0]?.po_no || "N/A"}</div>
+                            <div># {data?.data?.po_no || "N/A"}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">Issue Date :</div>
-                            <div>{utcToLocal(data?.data?.[0]?.createdAt)}</div>
+                            <div>{utcToLocal(data?.data?.createdAt)}</div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">Grand Total:</div>
                             <div className='flex items-center'>
                                 <MdCurrencyRupee />
-                                {data?.data?.[0]?.grand_total}
+                                {data?.data?.grand_total}
                             </div>
                         </div>
                         <div className="flex items-center w-full justify-between mb-2">
                             <div className="text-white-dark">Note:</div>
-                            <div> {data?.data?.[0]?.note || "N/A"} </div>
+                            <div> {data?.data?.note || "N/A"} </div>
                         </div>
                     </div>
 

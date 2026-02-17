@@ -14,6 +14,7 @@ import ItemTable from '../../components/ItemTable';
 import AddModal from '../../components/Add.modal';
 import Form from '../../components/brand/Form';
 import { FiPlus } from 'react-icons/fi';
+import ComponentHeader from '../../components/ComponentHeader';
 
 
 const tableData = [
@@ -47,66 +48,36 @@ const tableData = [
   },
 ];
 
+const headerLink = [
+  {
+    title: "inward"
+  }
+];
 
 const Inward = () => {
 
   const [search, setSearch] = useState('');
-  const [isShow, setIsShow] = useState(false);
-  const [items, setItems] = useState(tableData);
-  const colName = ["Id", "Logo", "Brand Name", "Status", "CreatedAt", "Actions"];
+  const colName = ["id", "name", "email", "date", "sale", "Actions"];
 
   return (
     <div>
-      {/* breadcrumb */}
-      <ul className="flex space-x-2 rtl:space-x-reverse">
-        <li className="">
-          <span>Inward</span>
-        </li>
-      </ul>
 
-      {/* Header Section */}
-      <div className="flex justify-between items-center mt-5">
-        <div>
-          <h1 className="text-5xl font-bold my-3">Inward</h1>
-          <p className='text-gray-600 text-base'>Manage and view all inwards</p>
-        </div>
-        <ButtonBoolean
-          setState={setIsShow}
-        >
-          <FiPlus size={20} className='mr-2'/>
-          Add New Inward
-        </ButtonBoolean>
-      </div>
+      <ComponentHeader
+        headerLink={headerLink}
+        searchPlaceholder='search by PO number'
+        setDebounceSearch={setSearch}
+        btnTitle='add GRN record'
+      />
 
-
-      {/* Search and Add Button */}
-      <div className="flex flex-col sm:flex-row gap-4 my-6">
-        <SearchInput
-          type="text"
-          placeholder="Search by purchase order id"
-          className="bg- border-pink-500"
-          value={search}
-          setValue={setSearch}
-        />
-      </div>
+      <div className="mt-5" />
 
       {/* Item table */}
       <ItemTable
-        colName={colName}
-        items={items}
-        setItems={setItems}
-        upperCase={true}
+        columns={colName}
+        items={tableData}
         edit={true}
+        // isLoading={false}
       />
-
-
-      <AddModal
-        isShow={isShow}
-        setIsShow={setIsShow}
-        title="Add New Brand"
-      >
-        <Form />
-      </AddModal>
 
     </div >
   )
