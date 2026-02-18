@@ -56,7 +56,7 @@ function RHSelect({
     };
 
     return (
-        <div className={`space-y-1 w-full ${labelPosition === "inline" ? "flex items-center justify-between" : ""}`}>
+        <div className={`space-y-1 w-full ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""}`}>
             {label && (
                 <label
                     className={`
@@ -69,8 +69,8 @@ function RHSelect({
                 </label>
             )}
 
-            <div className={labelPosition === "inline" ? "w-2/3" : ""}>
-                <div className="flex">
+            <div className="w-full">
+                <div className="w-full flex">
                     <Select
                         value={getValue()}
                         ref={selectRef}

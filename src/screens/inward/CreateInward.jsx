@@ -19,8 +19,10 @@ import { utcToLocal } from '../../utils/UTCtoLocal'
 import { MdCurrencyRupee } from 'react-icons/md'
 import purchaseOrder from '../../Backend/purchaseOrder'
 import Input from '../../components/inputs/Input'
-import { useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@mantine/core'
+import Loader from '../../components/loader/Loader'
+// import Loader from '../../components/loader/Loader'
 
 
 const headerLink = [
@@ -33,8 +35,6 @@ const CreateInward = () => {
     const reqNo = searchParams.get("s") ?? "";
 
     const [debounceSearch, setDebounceSearch] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState(10);
 
     /** set reset search value */
     useEffect(() => {
@@ -42,6 +42,7 @@ const CreateInward = () => {
         setDebounceSearch(reqNo);
     }, [reqNo, debounceSearch])
 
+    /** for accordian */
     const [active, setActive] = useState('0');
     const togglePara = (value) => {
         setActive((oldValue) => {
@@ -49,40 +50,52 @@ const CreateInward = () => {
         });
     };
 
-    const { handleSubmit, register, formState: { errors }, watch } = useForm();
-
     const { data, isLoading } = purchaseOrder.TQPurchaseOrderList({ poNo: debounceSearch });
-
-
     const details = data?.data;
-    const purchasOrderItems = data?.data?.purchasOrderItems;
+    const purchasOrderItems = details?.purchasOrderItems;
+    // console.log(details)
 
-    console.log(purchasOrderItems);
 
-    async function approveQ(id) {
-        if (!id) {
-            warningAlert();
-            return;
-        };
-
-        try {
-        } catch (error) {
-            console.log(error)
+    const { handleSubmit, register, formState: { errors }, watch, control, reset, getValues } = useForm({
+        defaultValues: {
+            items: []
         }
+    });
+    const { fields } = useFieldArray({
+        control,
+        name: "items"
+    });
+
+
+    /** prepare form for multiple items DYNAMIC */
+    useEffect(() => {
+        if (!purchasOrderItems?.length) return;
+
+        const items = purchasOrderItems.map(item => ({
+            id: item.id,
+            product_id: item?.poi_sourceRequisitionItem?.product_id,
+            barcode: item?.poi_sourceRequisitionItem?.product?.barcode,
+            qty: item.qty,
+            d_qty: "",
+            s_qty: "",
+            r_qty: "",
+            m_date: "",
+            e_date: ""
+        }));
+
+        reset({ items });
+    }, [purchasOrderItems, reset]);
+
+
+    function submitForm(data) {
+        if (!details?.po_no) return;
+
+        data.po_no = details?.po_no;
+        console.log(data);
     };
 
-    async function rejectQ(id) {
-        if (!id) {
-            warningAlert();
-            return;
-        };
 
-        try {
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
+    // if(isLoading || !data) return <Loader />
 
     return (
         <div>
@@ -94,8 +107,10 @@ const CreateInward = () => {
                 className='mb-2 justify-between'
             />
 
-            <form >
+            <form onSubmit={handleSubmit(submitForm)} >
                 <div className="panel space-y-6">
+
+                    {/* detail section */}
                     <div className="">
                         <div className='flex items-center'>
                             <span>Purchase Order Details</span>
@@ -181,12 +196,14 @@ const CreateInward = () => {
                         </div>
                     </div>
 
-                    <div className="max-h-64 overflow-auto">
+                    {/* accordian section */}
+                    <div className="max-h-96 overflow-auto">
                         <div className="space-y-2">
-                            {purchasOrderItems?.map((item, idx) => {
-                                // const isEmpty = item?.quotation === null ? true : false;
-                                const isEmpty = item?.quotation === null ? true : false;
+                            {fields?.map((field, idx) => {
+                                const item = purchasOrderItems[idx]; // 🔗 FULL DATA
                                 const product = item?.poi_sourceRequisitionItem;
+
+                                // console.log(item)
 
                                 return (
                                     <div
@@ -229,50 +246,11 @@ const CreateInward = () => {
                                                             {product?.sub_category || "-"}
                                                         </th>
 
-                                                        {/* 6️⃣ Actions */}
+                                                        {/* 6️⃣ Expand icon */}
                                                         <th className="w-[10%] flex justify-center !px-0">
-                                                            {
-                                                                !true &&
-                                                                <div
-                                                                    className="dropdown"
-                                                                    onClick={(e) => e.stopPropagation()}
-                                                                >
-                                                                    <Dropdown
-                                                                        placement="bottom-end"
-                                                                        btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
-                                                                        button={<IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />}
-                                                                    >
-                                                                        <ul className="!min-w-[170px]">
-                                                                            <li>
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => approveQ(item?.quotation?.id)}
-                                                                                    className="text-success hover:!bg-success hover:!text-white"
-                                                                                >
-                                                                                    Approve & Send PO
-                                                                                </button>
-                                                                            </li>
-                                                                            <li>
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => rejectQ(item?.quotation?.id)}
-                                                                                    className="text-danger hover:!bg-danger hover:!text-white"
-                                                                                >
-                                                                                    Reject Quotation
-                                                                                </button>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </Dropdown>
-                                                                </div>
-                                                            }
-                                                            {/* </th> */}
-
-                                                            {/* 7️⃣ Expand icon */}
-                                                            {/* <th className="w-[5%] flex justify-center"> */}
                                                             <div className={`${active === `${item.id}` ? 'rotate-180' : ''}`}>
                                                                 <IconCaretDown className='w-6 h-6' />
                                                             </div>
-
                                                         </th>
                                                     </tr>
                                                 </thead>
@@ -283,40 +261,118 @@ const CreateInward = () => {
                                         {/* table view */}
                                         <AnimateHeight duration={300} height={active === `${item.id}` ? 'auto' : 0}>
                                             <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
-                                                <input type="hidden" {...register("barcode")} />
-                                                
-                                                <div className="grid grid-cols-4 space-x-5">
+
+                                                <div className="grid grid-cols-6 space-x-5">
+                                                    {/* Order Qty */}
                                                     <div className="">
                                                         <Input
-                                                            label="Qty"
-                                                            labelPosition="inline"
-                                                            {...register("qty")}
+                                                            label="Order Qty:"
+                                                            // labelPosition="inline"
+                                                            {...register(`items.${idx}.qty`)}
                                                             disabled={true}
+                                                            required={true}
                                                         />
                                                     </div>
+
+                                                    {/* Damage Qty */}
                                                     <div className="">
                                                         <Input
-                                                            label="Damage Qty"
-                                                            labelPosition="inline"
-                                                            {...register("d_qty")}
+                                                            label="Damage Qty:"
+                                                            // labelPosition="inline"
+                                                            placeholder="Enter damage qty"
+                                                            {...register(`items.${idx}.d_qty`, {
+                                                                min: {
+                                                                    value: 0,
+                                                                    message: "Damage qty cannot be negative"
+                                                                },
+                                                                validate: (value) => value <= item.qty || "Damage qty cannot exceed available qty",
+                                                                pattern: {
+                                                                    value: /^(0|[1-9]\d*)$/,
+                                                                    message: "Only numbers allowed"
+                                                                },
+                                                            })}
+                                                            error={errors?.items?.[idx]?.d_qty?.message}
                                                         />
                                                     </div>
+
+                                                    {/* Shortage Qty */}
                                                     <div className="">
                                                         <Input
-                                                            label="Shortage Qty"
-                                                            labelPosition="inline"
-                                                            {...register("s_qty")}
+                                                            label="Shortage Qty:"
+                                                            // labelPosition="inline"
+                                                            placeholder="Enter shortage qty"
+                                                            {...register(`items.${idx}.s_qty`, {
+                                                                min: {
+                                                                    value: 0,
+                                                                    message: "Damage qty cannot be negative"
+                                                                },
+                                                                validate: (value) => value <= item.qty || "Shortage qty cannot exceed available qty",
+                                                                pattern: {
+                                                                    value: /^(0|[1-9]\d*)$/,
+                                                                    message: "Only numbers allowed"
+                                                                }
+                                                            })}
+                                                            error={errors?.items?.[idx]?.s_qty?.message}
                                                         />
                                                     </div>
+
+                                                    {/* Receive Qty */}
+                                                    <div className="">
+                                                        <Input
+                                                            label="Receive Qty:"
+                                                            // labelPosition="inline"
+                                                            placeholder="Enter receive qty"
+                                                            {...register(`items.${idx}.r_qty`, {
+                                                                min: {
+                                                                    value: 0,
+                                                                    message: "Receive qty cannot be negative"
+                                                                },
+                                                                validate: {
+                                                                    notEmpty: (value) => value !== "" || "This field required!!!",
+                                                                    notExceedBase: (value) => value <= item.qty || "Receive qty cannot exceed available qty",
+                                                                    invalideEntry: (value) => {
+                                                                        const d_qty = Number(getValues(`items.${idx}.d_qty`));
+                                                                        const s_qty = Number(getValues(`items.${idx}.s_qty`));
+                                                                        const total = d_qty + s_qty + Number(value || 0);
+
+                                                                        return total <= item.qty || "";
+                                                                    },
+                                                                },
+                                                                pattern: {
+                                                                    value: /^(0|[1-9]\d*)$/,
+                                                                    message: "Only numbers allowed"
+                                                                }
+                                                            })}
+                                                            required={true}
+                                                            error={errors?.items?.[idx]?.r_qty?.message}
+                                                        />
+                                                    </div>
+
+                                                    {/* Manufacturing Date */}
                                                     <div className="">
                                                         <Input
                                                             type="date"
-                                                            label="Expiry Date"
-                                                            labelPosition="inline"
-                                                            {...register("e_date")}
+                                                            label="Mfg. Date:"
+                                                            {...register(`items.${idx}.m_date`)}
+                                                        />
+                                                    </div>
+
+                                                    {/* Expiry Date */}
+                                                    <div className="">
+                                                        <Input
+                                                            type="date"
+                                                            label="Expiry Date:"
+                                                            {...register(`items.${idx}.e_date`)}
                                                         />
                                                     </div>
                                                 </div>
+
+                                                {
+                                                    (errors?.items?.[idx]?.r_qty?.type === "invalideEntry") &&
+                                                    <div className="flex items-center justify-center">
+                                                        <p className="text-lg text-danger">Invalide Qty!!!</p>
+                                                    </div>
+                                                }
 
                                             </div>
                                         </AnimateHeight>
@@ -326,8 +382,9 @@ const CreateInward = () => {
                         </div>
                     </div>
 
-                    <div className="w-full flex items-center justify-around gap-5">
-                        <div className=''>
+                    {/* button section */}
+                    <div className="w-full flex items-center justify-between gap-5">
+                        <div className='w-2/3'>
                             <Input
                                 label="Batch Number:"
                                 labelPosition="inline"
@@ -337,8 +394,10 @@ const CreateInward = () => {
                             />
                         </div>
                         <div className="">
-                            <Button >
-                                Submit
+                            <Button
+                                type='submit'
+                            >
+                                Receive & Post
                             </Button>
                         </div>
                     </div>

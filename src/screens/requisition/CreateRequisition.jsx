@@ -70,7 +70,7 @@ const CreateRequisition = () => {
             if (res.success) {
                 reset();
                 setSelectedItems([]);
-                navigate(-1);
+                navigate("/requisition");
             }
 
         } catch (error) {

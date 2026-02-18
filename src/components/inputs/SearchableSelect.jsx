@@ -17,7 +17,7 @@ const SearchableSelect = (
     const _id = useId();
 
     return (
-        <div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between" : ""}`}>
+        <div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""}`}>
             {label && (
                 <label
                     htmlFor={_id}
@@ -28,7 +28,7 @@ const SearchableSelect = (
                 </label>
             )}
 
-            <div className={labelPosition === "inline" ? "w-2/3" : ""}>
+            <div className="w-full">
                 <Select
                     ref={ref}
                     inputId={_id}

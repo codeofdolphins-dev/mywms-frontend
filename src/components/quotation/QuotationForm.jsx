@@ -72,24 +72,29 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                                 {...register("qty")}
                                 disabled={true}
                             />
-                            <div className="grid grid-cols-3 gap-2">
-                                <label className='inline-block pl-1 text-sm text-gray-600'>Price</label>
-                                <Input
-                                    {...register("price")}
-                                    disabled={true}
-                                />
-                                <Input
-                                    placeholder={"Enter your price..."}
-                                    {...register("offerPrice", {
-                                        required: "This field is required!!!",
-                                        max: {
-                                            value: editItem?.priceLimit,
-                                            message: "price more than limit price not allow!!!"
-                                        },
-                                    })}
-                                    error={errors.offerPrice?.message}
-                                    disabled={editId ? true : false}
-                                />
+                            <div className='flex items-center gap-2'>
+                                <div className="w-1/3">
+                                    <label className='inline-block pl-1 text-sm text-gray-600'>Price</label>
+                                </div>
+
+                                <div className="w-full grid grid-cols-2 gap-2">
+                                    <Input
+                                        {...register("price")}
+                                        disabled={true}
+                                    />
+                                    <Input
+                                        placeholder={"Enter your price..."}
+                                        {...register("offerPrice", {
+                                            required: "This field is required!!!",
+                                            max: {
+                                                value: editItem?.priceLimit,
+                                                message: "price more than limit price not allow!!!"
+                                            },
+                                        })}
+                                        error={errors.offerPrice?.message}
+                                        disabled={editId ? true : false}
+                                    />
+                                </div>
                             </div>
                         </div>
 

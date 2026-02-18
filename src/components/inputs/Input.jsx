@@ -32,52 +32,53 @@ const Input = React.forwardRef(({
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
             }
-            <div className={`relative ${labelPosition === "inline" ? "w-2/3" : ""} ${fieldColor} `}>
-                <input
-                    id={_id}
-                    type={isPasswordSeen ? "text" : type}
-                    className={`
+            <div className="w-full flex flex-col items-start justify-center">
+                <div className={`relative w-full ${fieldColor} `}>
+                    <input
+                        id={_id}
+                        type={isPasswordSeen ? "text" : type}
+                        className={`
                             px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full 
                             ${error ? "border-red-500" : ""} 
                             ${props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black"}
                             ${Icon ? "ps-10" : ""}
                             ${className}
                         `}
-                    ref={ref}
-                    {...props}
-                />
-                {
-                    Icon &&
-                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                        <Icon fill={true} />
-                    </span>
-                }
-                {
-                    type === "password" &&
-                    <span
-                        className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
-                        onClick={() => setIsPasswordSeen(prev => !prev)}
-                    >
-                        {
-                            isPasswordSeen
-                                ? <PiEyeBold size={22} />
-                                : <PiEyeClosed size={22} />
-                        }
-                    </span>
-                }
-                {
-                    isLoading &&
-                    <span
-                        className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
-                    >
-                        <AiOutlineLoading3Quarters
-                            className='animate-spin'
-                        />
-                    </span>
-                }
+                        ref={ref}
+                        {...props}
+                    />
+                    {
+                        Icon &&
+                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                            <Icon fill={true} />
+                        </span>
+                    }
+                    {
+                        type === "password" &&
+                        <span
+                            className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
+                            onClick={() => setIsPasswordSeen(prev => !prev)}
+                        >
+                            {
+                                isPasswordSeen
+                                    ? <PiEyeBold size={22} />
+                                    : <PiEyeClosed size={22} />
+                            }
+                        </span>
+                    }
+                    {
+                        isLoading &&
+                        <span
+                            className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer"
+                        >
+                            <AiOutlineLoading3Quarters
+                                className='animate-spin'
+                            />
+                        </span>
+                    }
+                </div>
+                {error && <span className='text-danger text-sm'>{error}</span>}
             </div>
-            {error && <span className='text-danger text-sm'>{error}</span>}
-
         </div>
     )
 })

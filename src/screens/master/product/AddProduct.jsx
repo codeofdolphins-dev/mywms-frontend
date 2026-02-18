@@ -36,7 +36,7 @@ const AddProduct = () => {
     const { data: brandData, isLoading: brandLoading } = fetchData.TQAllBrandList({ noLimit: true });
     const { data: hsnData, isLoading: hsnLoading } = fetchData.TQAllHsnList({ noLimit: true });
     const { data: unitTypeData, isLoading: unitTypeLoading } = fetchData.TQUnitTypeList({ noLimit: true });
-    const { data: packageTypeData, isLoading: packageTypeLoading } = fetchData.TQPackageTypeList({ oLimit: true });
+    const { data: packageTypeData, isLoading: packageTypeLoading } = fetchData.TQPackageTypeList({ noLimit: true });
 
     const param = id ? { id } : {};
     const { data: product, isLoading } = fetchData.TQProductList(param, Boolean(id));
@@ -73,15 +73,6 @@ const AddProduct = () => {
         }
 
     }, [id, product, isLoading]);
-
-    const hsn_id = watch("hsn_id");
-
-    /** update get rate based on hsn code */
-    useEffect(() => {
-        hsnData?.data?.map(item => {
-            if (item.id === hsn_id) setValue("gst_rate", item?.default_gst_rate)
-        });
-    }, [hsn_id, hsnLoading]);
 
 
     const submit = async (data) => {
