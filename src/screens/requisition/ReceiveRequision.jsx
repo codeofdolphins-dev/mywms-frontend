@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
+import { quotation } from '../../Backend/quotation.fetch';
 
 
 const headerLink = [
@@ -63,7 +64,7 @@ const ReceiveRequision = () => {
 
 
     /**************** data fetching GET *******************/
-    const { data: quotationList, isLoading: quotationListLoading } = fetchData.TQQuotationList({ requisitionId }, Boolean(requisitionId));
+    const { data: quotationList, isLoading: quotationListLoading } = quotation.TQQuotationList({ requisitionId }, Boolean(requisitionId));
     const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
 
     const isEmpty = receiveRequisitionList

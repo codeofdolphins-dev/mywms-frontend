@@ -11,7 +11,7 @@ const Breadcrumb = ({
                 options?.map((item, idx) => {
                     return item?.link ? (
                         <li key={idx}>
-                            <Link to={item?.link} className="before:content-['/'] before:mr-2 text-primary hover:underline">
+                            <Link to={item?.link} className="before:content-['/'] before:mr-2 text-primary hover:underline whitespace-nowrap">
                                 {item?.title}
                             </Link>
                         </li>

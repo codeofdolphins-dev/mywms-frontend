@@ -36,6 +36,7 @@ import UnitType from './screens/master/unitType/UnitType';
 import Register from './screens/auth/Register';
 import Admin from './screens/admin/Admin';
 import SuperAdmin from './screens/superAdmin/SuperAdmin';
+import PurchaseOrderBrowse from './screens/purchaseOrder/PurchaseOrderBrowse';
 
 
 function App() {
@@ -100,8 +101,6 @@ function App() {
                     </Route>
 
 
-
-
                     {/* requisition */}
                     <Route path="requisition" >
                         <Route index element={<Requisition />} />
@@ -117,20 +116,19 @@ function App() {
                     </Route>
 
 
-
-
-
-
-
-
-
-
-
                     {/* purchase order */}
                     <Route path="purchase-order" >
-                        <Route index element={<PurchaseOrder />} />
-                        <Route path="receive" element={<ReceiveRequision />} />
+                        <Route index element={<PurchaseOrderBrowse />} />
+                        <Route path=':id' element={<PurchaseOrder />} />
                     </Route>
+
+
+
+
+
+
+
+
 
 
                     {/* supplier */}

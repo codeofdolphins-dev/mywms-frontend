@@ -5,8 +5,9 @@ import Breadcrumb from './Breadcrumb';
 const ComponentHeader = ({
     headerLink = [],
 
-    primaryText = '',
-    secondaryText = '',
+    // primaryText = '',
+    // secondaryText = '',
+    showSearch = true,
     searchPlaceholder = '',
     searchClassName = "",
     btnTitle = "",
@@ -17,23 +18,24 @@ const ComponentHeader = ({
 }) => {
     return (
         <div className={`flex flex-col sm:flex-row items-center justify-between gap-5 ${className}`}>
-            {
-                headerLink.length > 0 &&
+            {headerLink.length > 0 &&
                 <Breadcrumb
                     options={headerLink}
                     className='self-start sm:self-center'
                 />
             }
-            <SearchInput
-                type="text"
-                placeholder={searchPlaceholder}
-                className={searchClassName}
-                setValue={setDebounceSearch}
+            {showSearch &&
+                <SearchInput
+                    type="text"
+                    placeholder={searchPlaceholder}
+                    className={searchClassName}
+                    setValue={setDebounceSearch}
 
-                addButton={addButton}
-                btnTitle={btnTitle}
-                btnOnClick={btnOnClick}
-            />
+                    addButton={addButton}
+                    btnTitle={btnTitle}
+                    btnOnClick={btnOnClick}
+                />
+            }
 
             {/* <div className="flex justify-between items-center">
                 <div>

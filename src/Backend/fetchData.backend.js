@@ -222,34 +222,6 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-
-    TQReceiveQuotationList(params = {}, isEnabled = true) {
-        return useQuery({
-            queryKey: ["receiveQuotationList", params],
-            queryFn: async () => {
-                const res = await API.get("/quotation/receive-list", {
-                    params
-                });
-                return res.data;
-            },
-            enabled: isEnabled,
-        });
-    };
-
-    /** QUOTATION */
-    TQQuotationList(params = {}, isEnabled = true) {
-        return useQuery({
-            queryKey: ["quotationList", params],
-            queryFn: async () => {
-                const res = await API.get("/quotation/list", {
-                    params
-                });
-                return res.data;
-            },
-            enabled: isEnabled,
-        });
-    };
-
 }
 
 const fetchData = new FetchData;

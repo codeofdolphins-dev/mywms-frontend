@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FiPlus } from 'react-icons/fi';
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput';
 import TableHeader from '../../components/table/TableHeader';
 import { PURCHASE_ORDER } from '../../utils/helper';
@@ -13,37 +13,34 @@ import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 import { Button } from '@mantine/core';
-import purchaseOrder from '../../Backend/purchaseOrder';
+import { purchaseOrder } from '../../Backend/purchaseOrder.fetch';
 
 
 const headerLink = [
-    { title: "purchase-order" },
+    { title: "purchase-order", link: "/purchase-order" },
+    { title: "details" },
 ];
 
 const PurchaseOrder = () => {
+    const navigate = useNavigate();
     const activeNode = useSelector((state) => state.auth.userData?.activeNode);
-    const [searchParams] = useSearchParams();
-    const PO_No = searchParams.get("s") ?? "";
-    const [debounceSearch, setDebounceSearch] = useState('');
+    const { id: poNo } = useParams();
+
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [businessNode, setBusinessNode] = useState({});
     const [isBuyer, setIsBuyer] = useState(null);
 
-    /** set reset search value */
-    useEffect(() => {
-        if (debounceSearch.length > 0) return;
-        setDebounceSearch(PO_No);
-    }, [PO_No, debounceSearch]);
-
     const params = {
-        poNo: debounceSearch,
+        poNo,
         page: currentPage,
         limit: limit,
     };
-    const { data, isLoading } = purchaseOrder.TQPurchaseOrderList(params);
-    const isEmpty = !!data?.data?.purchasOrderItems?.length > 0 ? false : true;
-    const purchasOrderItems = data?.data?.purchasOrderItems ?? [];
+    const { data, isLoading } = purchaseOrder.TQPurchaseOrderItemDetails(params, Boolean(poNo));
+    const isEmpty = data?.data?.items?.length > 0 ? false : true;
+    const purchasOrderItems = data?.data?.items ?? [];
+
+    console.log(data)
 
     /** set business node location */
     useEffect(() => {
@@ -58,7 +55,7 @@ const PurchaseOrder = () => {
     }, [data, isLoading]);
 
 
-    // if (isLoading) return <FullScreenLoader />
+    if (isLoading) return <FullScreenLoader />
 
     return (
         <div>
@@ -66,32 +63,39 @@ const PurchaseOrder = () => {
             <ComponentHeader
                 headerLink={headerLink}
                 addButton={false}
-                searchPlaceholder='Search by PO No...'
-                setDebounceSearch={setDebounceSearch}
+                showSearch={false}
             />
 
-            <div className="panel mt-5">
-                <div className="flex items-center gap-5">
-                    <h1>Purchase Order Details</h1>
-                    <div className="flex items-center gap-2">
-                        <Button
-                            // loading={true}
-                            color='green'
-                            size="compact-md"
-                            className='rounded-full'
-                        >
-                            Approve
-                        </Button>
+            <div className="panel mt-1">
+                <div className="flex items-center justify-between gap-5">
+                    <div className="flex items-center gap-5">
+                        <h1>Purchase Order Details</h1>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                // loading={true}
+                                color='green'
+                                size="compact-md"
+                                className='rounded-full'
+                            >
+                                Approve
+                            </Button>
 
-                        <Button
-                            // loading={true}
-                            color='red'
-                            size="compact-md"
-                            className='rounded-full'
-                        >
-                            Reject
-                        </Button>
+                            <Button
+                                // loading={true}
+                                color='red'
+                                size="compact-md"
+                                className='rounded-full'
+                            >
+                                Cancelled
+                            </Button>
+                        </div>
                     </div>
+                    <Button
+                        size="compact-md"
+                        onClick={() => navigate(`/inward/create?s=${poNo}`)}
+                    >
+                        Inward
+                    </Button>
                 </div>
 
                 {/* details section */}
@@ -171,7 +175,7 @@ const PurchaseOrder = () => {
                 </div>
             </div>
 
-            <div className="panel mt-5 min-h-64">
+            <div className="panel mt-5 min-h-64 relative">
                 <TableBody
                     columns={PURCHASE_ORDER}
                     isEmpty={isEmpty}

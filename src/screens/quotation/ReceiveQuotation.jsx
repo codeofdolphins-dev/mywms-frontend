@@ -7,7 +7,6 @@ import TableHeader from '../../components/table/TableHeader'
 import { QUOTATION_RECEIVE_COLUMN } from '../../utils/helper'
 import TableRow from '../../components/table/TableRow'
 import ComponentHeader from '../../components/ComponentHeader'
-import fetchData from '../../Backend/fetchData.backend'
 import AnimateHeight from 'react-animate-height'
 import IconCaretDown from '../../components/Icon/IconCaretDown'
 import TableBody from '../../components/table/TableBody'
@@ -16,10 +15,11 @@ import IconHorizontalDots from '../../components/Icon/IconHorizontalDots'
 import masterData from '../../Backend/master.backend'
 import { currencyFormatter } from '../../utils/currencyFormatter'
 import { warningAlert } from '../../utils/alerts'
+import { quotation } from '../../Backend/quotation.fetch'
 
 
 const headerLink = [
-    { title: "requisition", link: "/requisition" },
+    { title: "quotation", link: "/quotation" },
     { title: "receive-quotation" },
 ]
 
@@ -51,7 +51,7 @@ const ReceiveQuotation = () => {
         page: currentPage,
         limit: limit,
     };
-    const { data, isLoading } = fetchData.TQReceiveQuotationList(params);
+    const { data, isLoading } = quotation.TQReceiveQuotationList(params);
 
     const suppliers = data?.data?.suppliers;
     const requisition = data?.data?.requisition;

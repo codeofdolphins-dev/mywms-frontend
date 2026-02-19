@@ -15,6 +15,7 @@ import fetchData from '../../Backend/fetchData.backend';
 import TableBody from '../../components/table/TableBody';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import AddModal from '../../components/Add.modal';
+import { quotation } from '../../Backend/quotation.fetch';
 
 
 const headerLink = [
@@ -31,7 +32,7 @@ const Quotation = () => {
     const [itemDetails, setItemDetails] = useState([]);
     const [isShowPreview, setIsShowPreview] = useState(false);
 
-    const { data: quotationList, loading } = fetchData.TQQuotationList();
+    const { data: quotationList, loading } = quotation.TQQuotationList();
     const isEmpty = quotationList?.data?.length < 1;
 
 

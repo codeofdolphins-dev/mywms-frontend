@@ -14,7 +14,19 @@ class PurchaseOrder {
             enabled: isEnabled,
         });
     };
+    
+    TQPurchaseOrderItemDetails(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["purchaseOrderItemDetails", params],
+            queryFn: async () => {
+                const res = await API.get("/purchase-order/item-details", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
-const purchaseOrder = new PurchaseOrder();
-export default purchaseOrder;
+export const purchaseOrder = new PurchaseOrder();

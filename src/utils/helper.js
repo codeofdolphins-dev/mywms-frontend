@@ -254,6 +254,28 @@ export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
 
 
 
+export const PURCHASE_ORDER_BROWSE = [
+    {
+        key: "no", label: "#",
+        align: "center"
+    },
+    {
+        key: "to", label: "To",
+        align: "center"
+    },
+    {
+        key: "date", label: "Date",
+        width: "150px",
+        align: "center"
+    },
+    {
+        key: "items", label: "Total Items", align: "center"
+        // width: "200px"
+    },
+    { key: "price", label: "Total Price" },
+    { key: "status", label: "Status" },
+    { key: "createdBy", label: "Created By" },
+];
 export const PURCHASE_ORDER = [
     { key: "barcode", label: "Barcode" },
     { key: "product", label: "Product" },

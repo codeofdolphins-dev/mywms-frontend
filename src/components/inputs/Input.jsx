@@ -77,7 +77,7 @@ const Input = React.forwardRef(({
                         </span>
                     }
                 </div>
-                {error && <span className='text-danger text-sm'>{error}</span>}
+                {error && <span className='text-danger text-sm whitespace-nowrap'>{error}</span>}
             </div>
         </div>
     )
