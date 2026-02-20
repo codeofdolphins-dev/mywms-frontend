@@ -66,40 +66,45 @@ const PurchaseOrder = () => {
                 showSearch={false}
             />
 
-            <div className="panel mt-1">
+            <div className="panel mt-1 !py-3">
                 <div className="flex items-center justify-between gap-5">
                     <div className="flex items-center gap-5">
                         <h1>Purchase Order Details</h1>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                // loading={true}
-                                color='green'
-                                size="compact-md"
-                                className='rounded-full'
-                            >
-                                Approve
-                            </Button>
+                        {!isBuyer &&
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    // loading={true}
+                                    color='green'
+                                    size="compact-md"
+                                    className='rounded-full'
+                                >
+                                    Approve
+                                </Button>
 
-                            <Button
-                                // loading={true}
-                                color='red'
-                                size="compact-md"
-                                className='rounded-full'
-                            >
-                                Cancelled
-                            </Button>
-                        </div>
+                                <Button
+                                    // loading={true}
+                                    color='red'
+                                    size="compact-md"
+                                    className='rounded-full'
+                                >
+                                    Cancelled
+                                </Button>
+                            </div>
+                        }
                     </div>
-                    <Button
-                        size="compact-md"
-                        onClick={() => navigate(`/inward/create?s=${poNo}`)}
-                    >
-                        Inward
-                    </Button>
+                    {
+                        isBuyer &&
+                        <Button
+                            size="compact-md"
+                            onClick={() => navigate(`/inward/create?s=${poNo}`)}
+                        >
+                            Inward
+                        </Button>
+                    }
                 </div>
 
                 {/* details section */}
-                <div className="mt-5 flex justify-between sm:flex-row flex-col gap-6">
+                <div className="mt-2 flex justify-between sm:flex-row flex-col gap-6">
 
                     {/* PO details */}
                     <div className="xl:1/3 lg:w-2/5 sm:w-1/2">

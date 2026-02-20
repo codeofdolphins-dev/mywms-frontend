@@ -26,12 +26,13 @@ const PurchaseOrderBrowse = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    const [activeTab, setActiveTab] = useState(0);
+    const [activeTab, setActiveTab] = useState(1);
 
     const params = {
         ...(debounceSearch && { poNo: debounceSearch }),
         page: currentPage,
         limit: limit,
+        isOwn: activeTab === 1 ? true : false
     };
     const { data, isLoading } = purchaseOrder.TQPurchaseOrderList(params);
     const isEmpty = data?.data?.length > 0 ? false : true;
@@ -63,25 +64,25 @@ const PurchaseOrderBrowse = () => {
             {/* <div className="panel mt-5 min-h-64 relative"> */}
 
             <div className="w-full mt-5">
-                <ul className="flex items-center text-center gap-5">
+                <ul className="flex items-center text-center gap-2">
                     <li>
                         <div
                             className={`${activeTab === 1 ? '!bg-primary text-white' : ''}
-                                            block rounded-t-full bg-[#f3f2ee] p-2.5 w-52 cursor-pointer
+                                            block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-32 cursor-pointer
                                         `}
                             onClick={() => setActiveTab(1)}
                         >
-                            Created PO
+                            <p className='-mb-1'>Created PO</p>
                         </div>
                     </li>
 
                     <li>
                         <div className={`${activeTab === 2 ? '!bg-primary text-white' : ''} 
-                                            block rounded-t-full bg-[#f3f2ee] p-2.5 w-52 cursor-pointer
+                                            block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-32 cursor-pointer
                                         `}
                             onClick={() => setActiveTab(2)}
                         >
-                            Receive PO
+                            <p className='-mb-1'>Receive PO</p>
                         </div>
                     </li>
                 </ul>
