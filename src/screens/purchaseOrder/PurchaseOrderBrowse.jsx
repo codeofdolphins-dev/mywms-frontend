@@ -26,7 +26,7 @@ const PurchaseOrderBrowse = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
-    const [activeTab, setActiveTab] = useState(0);
+    const [activeTab, setActiveTab] = useState(1);
 
     const params = {
         ...(debounceSearch && { poNo: debounceSearch }),

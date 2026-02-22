@@ -123,68 +123,6 @@ const ReceiveQuotation = () => {
                                     onClick={() => !isEmpty ? togglePara(item) : null}
                                 >
                                     <table>
-                                        {/* <thead>
-                                            <tr className={`py-1 w-full flex items-center justify-between ${(active === `${item.id}`) ? '!text-primary' : ''}`}>
-                                                <th>{item?.nodeDetails?.name}</th>
-                                                <th>{item?.nodeDetails?.location}</th>
-                                                <th>
-                                                    <div className={`badge ${statusColor(item?.status)}`}>
-                                                        {item?.status?.toUpperCase()}
-                                                    </div>
-                                                </th>
-                                                <th> {currencyFormatter(requisition.grandTotal)} || {currencyFormatter(item?.quotation?.grandTotal) ?? "XXXXX"}</th>
-                                                <th>
-                                                    <Link to={`/purchase-order?s=${item?.quotation?.purchaseOrder_no}`} className='hover:underline text-primary' >
-                                                        {item?.quotation?.purchaseOrder_no}
-                                                    </Link>
-                                                </th>
-                                                <th>
-                                                    <div
-                                                        className="flex items-center justify-center w-1/4"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <div className="dropdown">
-                                                            <Dropdown
-                                                                placement="bottom-end"
-                                                                btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
-                                                                button={
-                                                                    <IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />
-                                                                }
-                                                            >
-                                                                <ul className="!min-w-[170px]">
-                                                                    <li>
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => approveQ(item?.quotation?.id)}
-                                                                            className='text-success hover:!bg-success hover:!text-white'
-                                                                        >
-                                                                            Approve & Send PO
-                                                                        </button>
-                                                                    </li>
-                                                                    <li>
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => rejectQ(item?.quotation?.id)}
-                                                                            className='text-danger hover:!bg-danger hover:!text-white'
-                                                                        >
-                                                                            Reject Quotation
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </Dropdown>
-                                                        </div>
-                                                    </div>
-                                                </th>
-                                                <th>
-                                                    {isEmpty ? <></> :
-                                                        <div className={`${active === `${item.id}` ? 'rotate-180' : ''}`}>
-                                                            <IconCaretDown />
-                                                        </div>
-                                                    }
-                                                </th>
-                                            </tr>
-                                        </thead> */}
-
                                         <thead>
                                             <tr
                                                 className={`py-1 w-full flex items-center justify-between ${active === `${item.id}` ? '!text-primary' : ''
@@ -214,7 +152,7 @@ const ReceiveQuotation = () => {
                                                 </th>
 
                                                 {/* 5️⃣ PO No */}
-                                                <th className="w-[10%] text-start break-words !px-0">
+                                                <th className="w-[15%] text-start break-words !px-0">
                                                     <Link
                                                         to={`/purchase-order?s=${item?.quotation?.purchaseOrder_no}`}
                                                         className="hover:underline text-primary"
