@@ -209,10 +209,7 @@ export const QUOTATION_RECEIVE_COLUMN = [
         key: "offerPrice",
         label: "Offer Price",
     },
-    {
-        key: "tax",
-        label: "TAX %",
-    },
+    // { key: "tax", label: "TAX %" },
     {
         key: "total",
         label: "Total",
@@ -277,13 +274,13 @@ export const PURCHASE_ORDER_BROWSE = [
     { key: "createdBy", label: "Created By" },
 ];
 export const PURCHASE_ORDER = [
-    { key: "barcode", label: "Barcode" },
+    { key: "barcode", label: "Barcode", width: "150px" },
     { key: "product", label: "Product" },
     { key: "brand", label: "Brand" },
     { key: "category", label: "Category" },
     { key: "subCategory", label: "Sub Category" },
     { key: "qty", label: "Qty" },
-    { key: "tax", label: "Tax %" },
+    // { key: "tax", label: "Tax %" },
     { key: "unitPrice", label: "Unit Price" },
     { key: "total", label: "Total" },
 ];

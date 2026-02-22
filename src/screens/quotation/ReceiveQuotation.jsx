@@ -154,7 +154,7 @@ const ReceiveQuotation = () => {
                                                 {/* 5️⃣ PO No */}
                                                 <th className="w-[15%] text-start break-words !px-0">
                                                     <Link
-                                                        to={`/purchase-order?s=${item?.quotation?.purchaseOrder_no}`}
+                                                        to={`/purchase-order/${item?.quotation?.purchaseOrder_no}`}
                                                         className="hover:underline text-primary"
                                                     >
                                                         {item?.quotation?.purchaseOrder_no}

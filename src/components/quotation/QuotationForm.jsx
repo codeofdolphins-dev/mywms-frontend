@@ -29,7 +29,7 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                 setValue("offerPrice", item?.offerPrice);
                 setValue("qty", item?.qty);
                 setValue("total", item?.total);
-                setValue("tax", item?.tax);
+                // setValue("tax", item?.tax);
             })
         } else {
             setValue("id", editItem?.id);
@@ -101,7 +101,7 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
 
                         {/* 3rd row */}
                         <div className="grid grid-cols-1 gap-5">
-                            <Input
+                            {/* <Input
                                 label={"Tax Percent %"}
                                 labelPosition="inline"
                                 placeholder={"Enter tax percent..."}
@@ -109,7 +109,7 @@ const QuotationForm = ({ editId, editItem, setIsShowEditDetails, quoteItem, setQ
                                 error={errors.tax?.message}
                                 // required={true}
                                 disabled={editId ? true : false}
-                            />
+                            /> */}
 
                             <Input
                                 label={"Total"}
