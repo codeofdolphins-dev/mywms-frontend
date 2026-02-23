@@ -7,7 +7,6 @@ import { HiDatabase } from "react-icons/hi";
 import { FaClipboardList, FaQuoteLeft, FaStore } from "react-icons/fa";
 import { TiShoppingCart } from "react-icons/ti";
 import { FaTruckRampBox, FaUserGroup } from "react-icons/fa6";
-import { BiSolidFactory } from "react-icons/bi";
 import { LuWarehouse } from "react-icons/lu";
 import { RiAdminFill } from "react-icons/ri";
 import { MdAdminPanelSettings, MdOutlineReceiptLong } from 'react-icons/md';
@@ -24,8 +23,9 @@ import {
     PurchaseOrder,
     Inward,
     Outward,
-    SuperAdmin
+    SuperAdmin,
 } from './menu';
+import Production from './menu/production.menu';
 
 const DEV_BYPASS = true;
 
@@ -78,41 +78,26 @@ const NavBar = () => {
 
             {/* super admin */}
             {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <SuperAdmin location={location} />
+                // (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                //     || ((hasNodeAccess(["distributor"], nodeName))))
+                // && <SuperAdmin location={location} />
             }
             {/* admin */}
             {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Admin location={location} />
+                // (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                //     || ((hasNodeAccess(["distributor"], nodeName))))
+                // && <Admin location={location} />
             }
 
             {/* manage access */}
             {
-                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />}
-
+                // (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />
+            }
 
             {/* production */}
-            {/* <li className="menu nav-item relative !ml-0" >
-                <button type="button" className={`nav-link ${location.pathname === '/production' ? 'active' : ''} `}>
-                    <div className="flex items-center">
-                        <BiSolidFactory />
-                        <span className="px-1">Production</span>
-                    </div>
-                    <div className="right_arrow">
-                        <IconCaretDown />
-                    </div>
-                </button>
-                <ul className="sub-menu">
-                    {productionSubMenu.map((item) => (
-                        <li key={item.path}>
-                            <NavLink to={item.path}>{item.name}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </li> */}
+            {
+                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Production location={location} />
+            }
 
             {/* requisition */}
             {
@@ -150,7 +135,7 @@ const NavBar = () => {
             }
 
 
-            {/* supplier */}
+            {/* vendor */}
             {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/supplier' ? 'active' : ''} `}>
                     <div className="flex items-center">

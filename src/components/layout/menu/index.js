@@ -1,3 +1,4 @@
+import Product from "../../../screens/master/product/Product";
 import Admin from "./Admin.menu";
 import Dashboard from "./Dashboard.menu";
 import Inward from "./Inward.menu";
@@ -19,5 +20,6 @@ export {
     PurchaseOrder,
     Inward,
     Outward,
-    SuperAdmin
+    SuperAdmin,
+    Product
 }
