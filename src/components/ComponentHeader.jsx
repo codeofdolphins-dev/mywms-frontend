@@ -10,10 +10,16 @@ const ComponentHeader = ({
     showSearch = true,
     searchPlaceholder = '',
     searchClassName = "",
-    btnTitle = "",
     setDebounceSearch,
-    btnOnClick,
+
     addButton = true,
+    btnTitle = "",
+    btnOnClick,
+    
+    addButton2 = false,
+    btn2Title = "",
+    btn2OnClick,
+
     className = "justify-between",
 }) => {
     return (
@@ -34,6 +40,10 @@ const ComponentHeader = ({
                     addButton={addButton}
                     btnTitle={btnTitle}
                     btnOnClick={btnOnClick}
+                    
+                    addButton2={addButton2}
+                    btn2Title={btn2Title}
+                    btn2OnClick={btn2OnClick}
                 />
             }
 

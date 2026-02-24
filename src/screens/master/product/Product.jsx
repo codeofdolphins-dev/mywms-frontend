@@ -13,8 +13,10 @@ import { FiPlus } from 'react-icons/fi';
 import fetchData from '@/Backend/fetchData.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
 import masterData from '@/Backend/master.backend';
-import ComponentHeader from '@/components/ComponentHeader';
 import ItemTable from '../../../components/ItemTable';
+import ComponentHeader from '../../../components/ComponentHeader';
+import AddModal from '../../../components/Add.modal';
+import RawForm from '../../../components/product/Raw.Form';
 
 const colName = [
     // { key: "id", label: "ID" },
@@ -41,7 +43,6 @@ const Product = () => {
     const [isShow, setIsShow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const [editId, setEditId] = useState(null);
 
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster();
 
@@ -56,10 +57,6 @@ const Product = () => {
         setCurrentPage(1);
     }, [debounceSearch]);
 
-    useEffect(() => {
-        if (!isShow) setEditId(null);
-    }, [isShow]);
-
 
     function handleEdit(id) {
         navigate(`edit-product/${id}`)
@@ -73,7 +70,6 @@ const Product = () => {
                 const res = await deleteData({ path: `/product/delete/${id}` });
                 if (res?.success) successAlert();
             }
-
         } catch (error) {
             console.log(error)
         }
@@ -88,9 +84,15 @@ const Product = () => {
                 secondaryText='Manage and view all products in your inventory'
                 searchPlaceholder='Search by name, SKU, barcode, category, or HSN...'
                 setDebounceSearch={setDebounceSearch}
-                btnTitle='Add Product'
-                btnOnClick={() => navigate("add-product")}
                 className={"mb-5 justify-between"}
+
+                addButton={true}
+                btnTitle='Finished'
+                btnOnClick={() => navigate("add-product")}
+
+                addButton2={true}
+                btn2Title='Raw'
+                btn2OnClick={() => setIsShow(true)}
             />
 
             {/* Item table */}
@@ -106,6 +108,14 @@ const Product = () => {
                 handleDelete={handleDelete}
                 isLoading={isLoading}
             />
+
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title="Add Raw Product"
+            >
+                <RawForm />
+            </AddModal>
 
         </div >
     )
