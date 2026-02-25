@@ -62,7 +62,7 @@ const AddProduct = () => {
             // console.log(data);
             reset({
                 ...data,
-                brands: data?.productBrands?.map(item => item.id),
+                brands: data?.productBrands?.[0]?.id,
                 categories: data?.selectedCategoryIds,
                 hsn_id: data?.hsn?.id,
                 unit_type_id: data?.unitRef?.id,
@@ -89,7 +89,7 @@ const AddProduct = () => {
 
             } else {
                 const fd = RHFToFormData(data);
-                const res = await createData({ path: "/product/create-raw", formData: fd });
+                const res = await createData({ path: "/product/create-finish", formData: fd });
                 if (res.success) successAlert(res.message);
                 reset();
                 navigate(-1);

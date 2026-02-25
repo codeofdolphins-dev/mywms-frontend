@@ -6,6 +6,7 @@ import IconTrashLines from './Icon/IconTrashLines';
 import { BsBoxSeam } from "react-icons/bs";
 import BasicPagination from './BasicPagination';
 import Loader from './loader/Loader';
+import ImageComponent from './ImageComponent';
 
 
 const ItemTable = ({
@@ -66,13 +67,11 @@ const ItemTable = ({
                                                                 col.render(value, row)
 
                                                             ) : col.type === "image" ? (
-                                                                value ? (
-                                                                    <img
-                                                                        src={`${imageUrl}/${value}`}
-                                                                        alt="img"
-                                                                        className="h-16 w-16 object-contain"
-                                                                    />
-                                                                ) : "-"
+                                                                <ImageComponent
+                                                                    src={value}
+                                                                    className={"w-10 h-10"}
+                                                                    dummyImage={3}
+                                                                />
 
                                                             ) : col.type === "array" && Array.isArray(value) ? (
                                                                 value.length > 0 ? (
@@ -94,6 +93,8 @@ const ItemTable = ({
                                                                     </Tippy>
                                                                 ) : "-"
 
+                                                            ) : col.type === "nested" ? (
+                                                                col.nested?.(value) ?? "-"
                                                             ) : (
                                                                 value ?? "-"
                                                             )}

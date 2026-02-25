@@ -84,9 +84,9 @@ const NavBar = () => {
             }
             {/* admin */}
             {
-                // (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                //     || ((hasNodeAccess(["distributor"], nodeName))))
-                // && <Admin location={location} />
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
+                && <Admin location={location} />
             }
 
             {/* manage access */}

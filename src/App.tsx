@@ -37,6 +37,7 @@ import Register from './screens/auth/Register';
 import Admin from './screens/admin/Admin';
 import SuperAdmin from './screens/superAdmin/SuperAdmin';
 import PurchaseOrderBrowse from './screens/purchaseOrder/PurchaseOrderBrowse';
+import Vendor from './screens/vendor/Vendor';
 
 
 function App() {
@@ -123,6 +124,10 @@ function App() {
                     </Route>
 
 
+                    {/* production */}
+                    <Route path="production" >
+                        <Route path='vendor' element={<Vendor />} />
+                    </Route>
 
 
 
@@ -138,12 +143,6 @@ function App() {
                         />} />
                     </Route>
 
-                    {/* production */}
-                    <Route path="production" >
-                        <Route path="" element={<Browse
-                            pageName="Production"
-                        />} />
-                    </Route>
 
                     {/* inward */}
                     <Route path="inward" >

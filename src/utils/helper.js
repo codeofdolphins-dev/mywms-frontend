@@ -1,6 +1,7 @@
 export const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 export const SAMPLE_IMAGE1 = "/assets/images/user-profile.jpeg";
 export const SAMPLE_IMAGE2 = "/assets/images/profile-34.jpeg";
+export const SAMPLE_IMAGE3 = "/assets/images/product-camera.jpg";
 
 export const WAREHOUSE_COLUMN = [
     { key: "id", label: "#" },
@@ -336,3 +337,13 @@ export const SUPER_ADMIN_BROWSE_COLUMN = [
     { key: "status", label: "Status", width: "150px", align: "center" },
     { key: "action", label: "Action", align: "center" },
 ];
+
+export const VENDOR_LIST_COLUMN = [
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "cName", label: "Company Name" },
+    { key: "phone", label: "Phone No." },
+    { key: "gst", label: "GST No." },
+    { key: "status", label: "Status" },
+    { key: "action", label: "Action" },
+]

@@ -77,9 +77,6 @@ const Supplier = () => {
             {/* Header Section */}
             <ComponentHeader
                 headerLink={headerLink}
-                primaryText='Suppliers'
-                secondaryText='Manage and view all Suppliers'
-                // btnOnClick={() => navigate('add-supplier')}
                 btnOnClick={() => setIsShow(true)}
                 searchPlaceholder='Search by name or description...'
                 btnTitle='Add Supplier'

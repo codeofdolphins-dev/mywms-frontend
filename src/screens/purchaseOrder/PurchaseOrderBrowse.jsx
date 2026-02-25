@@ -61,15 +61,14 @@ const PurchaseOrderBrowse = () => {
                 setDebounceSearch={setDebounceSearch}
             />
 
-            {/* <div className="panel mt-5 min-h-64 relative"> */}
-
             <div className="w-full mt-5">
                 <ul className="flex items-center text-center gap-2">
                     <li>
                         <div
-                            className={`${activeTab === 1 ? '!bg-primary text-white' : ''}
-                                            block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-32 cursor-pointer
-                                        `}
+                            className={`
+                                ${activeTab === 1 ? '!bg-primary text-white' : ''}
+                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-32 cursor-pointer
+                            `}
                             onClick={() => setActiveTab(1)}
                         >
                             <p className='-mb-1'>Created PO</p>
