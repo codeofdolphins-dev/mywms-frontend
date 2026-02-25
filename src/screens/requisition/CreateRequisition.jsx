@@ -20,6 +20,7 @@ import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import masterData from '../../Backend/master.backend';
 import { calculateTotals } from '../../helper/calculateTotals';
+import vendor from '../../Backend/vendor.backend';
 
 
 const PRIORITY = [
@@ -38,6 +39,7 @@ const CreateRequisition = () => {
             title: "",
             required_by_date: "",
             priority: "",
+            vendor_category: ""
         }
     });
 
@@ -50,6 +52,7 @@ const CreateRequisition = () => {
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster();
 
     const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
+    const { data: vendorCatList, isLoading: vendorCatListLoading } = vendor.TQVendorCategoryList()
 
 
     setValue("buyer", currentLocation);
@@ -113,7 +116,6 @@ const CreateRequisition = () => {
 
                         {/* left side */}
                         <div className="panel">
-
                             <div className="grid grid-cols-1 gap-5">
                                 {/* buyer */}
                                 <div>
@@ -153,6 +155,34 @@ const CreateRequisition = () => {
                                                 required={true}
                                                 isMulti={true}
                                                 isClearable={true}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* vendor */}
+                                <div>
+                                    <Controller
+                                        name="vendor_category"
+                                        control={control}
+                                        rules={{
+                                            required: "This field is required!!!"
+                                        }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHSelect
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+
+                                                label="Vendor Category"
+                                                labelPosition='inline'
+                                                options={vendorCatList?.data}
+                                                error={error?.message}
+                                                required={true}
                                             />
                                         )}
                                     />
