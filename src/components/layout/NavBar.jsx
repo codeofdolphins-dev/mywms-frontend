@@ -78,9 +78,9 @@ const NavBar = () => {
 
             {/* super admin */}
             {
-                // (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                //     || ((hasNodeAccess(["distributor"], nodeName))))
-                // && <SuperAdmin location={location} />
+                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                    || ((hasNodeAccess(["distributor"], nodeName))))
+                && <SuperAdmin location={location} />
             }
             {/* admin */}
             {

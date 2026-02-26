@@ -22,7 +22,7 @@ function FileUpload({
 	};
 
 	return (
-		<div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between" : ""} `}>
+		<div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""} `}>
 			{
 				label && <label
 					htmlFor={_id}
@@ -32,7 +32,7 @@ function FileUpload({
 				</label>
 			}
 
-			<div className={labelPosition === "inline" ? "w-2/3" : ""}>
+			<div className="w-full">
 				<div
 					className="flex items-center w-full border border-gray-300 rounded-md bg-white px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 cursor-pointer"
 					onClick={() => inputRef.current?.click()}

@@ -3,10 +3,10 @@ import IconCaretDown from "../../Icon/IconCaretDown";
 import { NavLink } from "react-router-dom";
 
 const PRODUCTION_MENU = [
-    // { name: 'Browse', path: '/admin/browse' },
-    { name: 'vendor', path: '/production/vendor' },
+    { name: 'Vendor', path: '/production/vendor' },
+    { name: 'Vendor Category', path: '/production/vendor/category' },
     {
-        name: 'store',
+        name: 'Store',
         children: [
             { name: "RM Store", path: "" },
             { name: "FG Store", path: "" },
@@ -38,7 +38,7 @@ const Production = ({ location }) => {
                     >
                         {item?.children
                             ? <>
-                                <button type="button" className={`nav-link ${location.pathname.includes('/user') ? 'active' : ''} !cursor-default`}>
+                                <button type="button" className={`nav-link ${location.pathname.includes('store') ? 'active' : ''} !cursor-default`}>
                                     <span className="px-1 ">{item?.name}</span>
                                     <div className="ml-auto -rotate-90">
                                         <IconCaretDown className='text-black' />

@@ -44,11 +44,11 @@ const PurchaseOrder = () => {
 
     /** set business node location */
     useEffect(() => {
-        if (activeNode == data?.data?.form_business_node_id) {
+        if (activeNode.id == data?.data?.form_business_node_id) {
             setBusinessNode(data?.data?.poFormBusinessNode);
             setIsBuyer(true);
         }
-        if (activeNode == data?.data?.to_business_node_id) {
+        if (activeNode.id == data?.data?.to_business_node_id) {
             setBusinessNode(data?.data?.poToBusinessNode)
             setIsBuyer(false);
         }

@@ -5,7 +5,7 @@ import ItemTable from '../../components/ItemTable';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import { Button } from '@mantine/core';
 import Input from '../../components/inputs/Input';
-import { REQUISITION_CREATE_COLUMN_ACTION } from '../../utils/helper';
+import { REQUISITION_CREATE_COLUMN_ACTION, REQUISITION_CREATE_RAW_COLUMN_ACTION } from '../../utils/helper';
 import { Link, useNavigate } from 'react-router-dom';
 import AddModal from '../../components/Add.modal';
 import RequisitionItemForm from "../../components/requisition/create/RequisitionItemForm";
@@ -21,6 +21,7 @@ import IconTrashLines from '../../components/Icon/IconTrashLines';
 import masterData from '../../Backend/master.backend';
 import { calculateTotals } from '../../helper/calculateTotals';
 import vendor from '../../Backend/vendor.backend';
+import RequisitionItemFormRaw from '../../components/requisition/create/RequisitionItemFormRaw';
 
 
 const PRIORITY = [
@@ -32,7 +33,23 @@ const PRIORITY = [
 const CreateRequisition = () => {
     const navigate = useNavigate()
     const user = useSelector(state => state.auth.userData);
-    const currentLocation = user?.userBusinessNode?.[0]?.nodeDetails?.name
+
+
+    /**************** global variable *******************/
+    const locationName = user?.activeNode?.nodeDetails?.name;
+    const isManufacture = user?.activeNode?.type?.category === "manufacturing" ? true : false;
+
+
+    /**************** APT mutation *******************/
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["requisitionList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["requisitionList"]);
+
+    /**************** data fetching GET *******************/
+    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
+    const { data: vendorCatList, isLoading: vendorCatListLoading } = vendor.TQVendorCategoryList()
+    
+    
+    /**************** react form hook *******************/
     const { handleSubmit, control, register, formState: { errors }, setValue, reset } = useForm({
         defaultValues: {
             supplier_node: "",
@@ -42,38 +59,41 @@ const CreateRequisition = () => {
             vendor_category: ""
         }
     });
+    setValue("buyer", locationName);
+
 
     const [isShow, setIsShow] = useState(false);
     const [isEmpty, setIsEmpty] = useState(true);
-    const [item, setItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster();
-
-    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
-    const { data: vendorCatList, isLoading: vendorCatListLoading } = vendor.TQVendorCategoryList()
-
-
-    setValue("buyer", currentLocation);
 
     useEffect(() => {
         setIsEmpty(Boolean(!selectedItems?.length));
         setValue("total", calculateTotals(selectedItems))
 
-    }, [selectedItems, setItem]);
+    }, [selectedItems]);
+
 
     const onSubmit = async (data) => {
         data.items = selectedItems
-        // console.log(data); 
-        // return
+        // console.log(data); return
 
         try {
-            const res = await createData({ path: "/requisition/create", formData: data });
-            if (res.success) {
-                reset();
-                setSelectedItems([]);
-                navigate("/requisition");
+            if (isManufacture) {
+                const res = await createData({ path: "/requisition/create-external", formData: data });
+                if (res.success) {
+                    reset();
+                    setSelectedItems([]);
+                    navigate("/requisition");
+                }
+
+            } else {
+                const res = await createData({ path: "/requisition/create", formData: data });
+                if (res.success) {
+                    reset();
+                    setSelectedItems([]);
+                    navigate("/requisition");
+                }
             }
 
         } catch (error) {
@@ -81,12 +101,15 @@ const CreateRequisition = () => {
         }
     };
 
+
     function handleDelete(id) {
-        setSelectedItems(prev => prev.filter(item => item.barcode !== id));
-    }
+        setSelectedItems(prev => prev.filter(item => item.id !== id));
+    };
+
 
     return (
-        <div className='abc'>
+        <div>
+
             {/* breadcrumb */}
             <div className="flex items-center gap-5 ">
                 <ul className=" flex space-x-2 ">
@@ -120,7 +143,7 @@ const CreateRequisition = () => {
                                 {/* buyer */}
                                 <div>
                                     <Input
-                                        label="Buyer"
+                                        label="Buyer (Current Location)"
                                         labelPosition="inline"
                                         {...register("buyer")}
                                         required={true}
@@ -128,65 +151,74 @@ const CreateRequisition = () => {
                                     />
                                 </div>
 
-                                {/* supplier */}
-                                <div>
-                                    <Controller
-                                        name="supplier_node"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
+
+                                {/* conditional rendering supplier or vendor */}
+                                {isManufacture ? (
+                                    <>
+                                        {/* vendor */}
+                                        <div>
+                                            <Controller
+                                                name="vendor_category_id"
+                                                control={control}
+                                                rules={{
+                                                    required: "This field is required!!!"
                                                 }}
-                                                value={value}
-                                                onChange={onChange}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                    <RHSelect
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
 
-                                                label="Supplier"
-                                                labelPosition='inline'
-                                                selectKey='nodeDetails'
-                                                selectSubKey='name'
-                                                options={allownodeList?.data}
-                                                error={error?.message}
-                                                required={true}
-                                                isMulti={true}
-                                                isClearable={true}
+                                                        label="Vendor Category"
+                                                        labelPosition='inline'
+                                                        options={vendorCatList?.data}
+                                                        error={error?.message}
+                                                        required={true}
+                                                    />
+                                                )}
                                             />
-                                        )}
-                                    />
-                                </div>
-
-                                {/* vendor */}
-                                <div>
-                                    <Controller
-                                        name="vendor_category"
-                                        control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* supplier */}
+                                        <div>
+                                            <Controller
+                                                name="supplier_node"
+                                                control={control}
+                                                rules={{
+                                                    required: "This field is required!!!"
                                                 }}
-                                                value={value}
-                                                onChange={onChange}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                    <RHSelect
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
 
-                                                label="Vendor Category"
-                                                labelPosition='inline'
-                                                options={vendorCatList?.data}
-                                                error={error?.message}
-                                                required={true}
+                                                        label="Supplier"
+                                                        labelPosition='inline'
+                                                        selectKey='nodeDetails'
+                                                        selectSubKey='name'
+                                                        options={allownodeList?.data}
+                                                        error={error?.message}
+                                                        required={true}
+                                                        isMulti={true}
+                                                        isClearable={true}
+                                                    />
+                                                )}
                                             />
-                                        )}
-                                    />
-                                </div>
+                                        </div>
+                                    </>
+                                )}
+
 
                                 {/* title */}
                                 <div>
@@ -259,43 +291,75 @@ const CreateRequisition = () => {
                         </div>
 
                         {/* right side */}
-                        <div className={`panel ${isEmpty ? "min-h-64" : ""} relative z-0`}>
+                        <div className="panel min-h-64 relative z-0">
                             <div className="overflow-x-auto">
                                 <TableBody
                                     isEmpty={isEmpty}
                                     showPagination={false}
-                                    columns={REQUISITION_CREATE_COLUMN_ACTION}
+                                    columns={isManufacture ? REQUISITION_CREATE_RAW_COLUMN_ACTION : REQUISITION_CREATE_COLUMN_ACTION}
                                 >
                                     {selectedItems?.map((item, idx) => (
-                                        <TableRow
-                                            key={idx}
-                                            columns={REQUISITION_CREATE_COLUMN_ACTION}
-                                            row={{
-                                                barcode: item?.barcode,
-                                                product: item?.productName,
-                                                brand: item?.brand,
-                                                category: item?.category,
-                                                subCategory: item?.subCategory,
-                                                packSize: item?.packSize,
-                                                priceLimit: item?.priceLimit,
-                                                reqQty: item?.reqQty,
-                                                action: (
-                                                    <div className='flex items-center justify-center'>
-                                                        {/* <CustomeButton
+                                        isManufacture ? (
+                                            /** finished product preview */
+                                            <TableRow
+                                                key={idx}
+                                                columns={REQUISITION_CREATE_RAW_COLUMN_ACTION}
+                                                row={{
+                                                    name: item?.name,
+                                                    sku: item?.sku,
+                                                    uom: item?.uom,
+                                                    priceLimit: item?.priceLimit,
+                                                    reqQty: item?.reqQty,
+                                                    action: (
+                                                        <div className='flex items-center justify-center'>
+                                                            {/* <CustomeButton
                                                                 onClick={() => handleEdit(item.id)}
                                                             >
                                                                 <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                                                             </CustomeButton> */}
 
-                                                        <CustomeButton
-                                                            onClick={() => handleDelete(item.barcode)}
-                                                        >
-                                                            <IconTrashLines className="text-danger hover:scale-110 cursor-pointer text-center" />
-                                                        </CustomeButton>
-                                                    </div>
-                                                )
-                                            }}
-                                        />
+                                                            <CustomeButton
+                                                                onClick={() => handleDelete(item.id)}
+                                                            >
+                                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer text-center" />
+                                                            </CustomeButton>
+                                                        </div>
+                                                    )
+                                                }}
+                                            />
+
+                                        ) : (
+                                            /** finished product preview */
+                                            <TableRow
+                                                key={idx}
+                                                columns={REQUISITION_CREATE_COLUMN_ACTION}
+                                                row={{
+                                                    barcode: item?.barcode,
+                                                    product: item?.productName,
+                                                    brand: item?.brand,
+                                                    category: item?.category,
+                                                    subCategory: item?.subCategory,
+                                                    packSize: item?.packSize,
+                                                    priceLimit: item?.priceLimit,
+                                                    reqQty: item?.reqQty,
+                                                    action: (
+                                                        <div className='flex items-center justify-center'>
+                                                            {/* <CustomeButton
+                                                                onClick={() => handleEdit(item.id)}
+                                                            >
+                                                                <IconPencil className="text-success hover:scale-110 cursor-pointer" />
+                                                            </CustomeButton> */}
+
+                                                            <CustomeButton
+                                                                onClick={() => handleDelete(item.id)}
+                                                            >
+                                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer text-center" />
+                                                            </CustomeButton>
+                                                        </div>
+                                                    )
+                                                }}
+                                            />
+                                        )
                                     ))}
                                 </TableBody>
                             </div>
@@ -303,7 +367,7 @@ const CreateRequisition = () => {
 
                     </div>
                 </form>
-            </div>
+            </div >
 
             <AddModal
                 isShow={isShow}
@@ -311,15 +375,22 @@ const CreateRequisition = () => {
                 title={"Add Item"}
                 maxWidth='55'
             >
-                <RequisitionItemForm
-                    setSelectedItems={setSelectedItems}
-                    setIsShow={setIsShow}
-                    setItem={setItem}
-                />
+                {isManufacture
+                    ? <RequisitionItemFormRaw
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                        setIsShow={setIsShow}
+                    />
+                    : <RequisitionItemForm
+                        selectedItems={selectedItems}
+                        setSelectedItems={setSelectedItems}
+                        setIsShow={setIsShow}
+                    />
+                }
             </AddModal>
 
 
-        </div>
+        </div >
     )
 }
 

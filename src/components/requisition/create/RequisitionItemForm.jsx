@@ -1,23 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Input from '../../inputs/Input';
-import Button from '../../inputs/Button';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../inputs/RHF/Select.RHF";
 import { debounce } from 'lodash';
 import fetchData from '../../../Backend/fetchData.backend';
+import { Button } from '@mantine/core';
 
 const RequisitionItemForm = ({
     setIsShow,
-    setItem,
+    selectedItems,
     setSelectedItems = () => { },
 }) => {
+    const hiddenIds = selectedItems?.map(i => i.id) ?? [];
 
-    const {
-        handleSubmit, control,
-        register, watch, setValue,
-        resetField, reset,
-        formState: { errors },
-    } = useForm({
+    const { handleSubmit, control, register, watch, setValue, resetField, reset, formState: { errors }, setError, clearErrors } = useForm({
         defaultValues: {
             barcode: "",
             category: "",
@@ -33,10 +29,9 @@ const RequisitionItemForm = ({
     const barcode = watch("barcode");
 
     const [searchText, setSearchText] = useState("");
-    const [errorText, setErrorText] = useState("");
     const [availCategory, setAvailCategory] = useState(null);
 
-    const { data, isLoading, error, isError } = fetchData.TQProductList({ barcode: searchText }, !!searchText);
+    const { data, isLoading, error, isError } = fetchData.TQProductList({ barcode: searchText, type: "finished", noLimit: true }, !!searchText);
 
     // debounce function
     const deBounceFn = useMemo(() =>
@@ -49,24 +44,50 @@ const RequisitionItemForm = ({
         return () => deBounceFn.cancel();
     }, []);
 
-    const product = data?.data[0];
+    const product = data?.data[0] ?? null;
+    console.log(product)
 
-    // set value
+
+    /** check product is available or not  */
+    useEffect(() => {
+        if (!barcode?.length) return;
+
+        if (!product) {
+            setError("barcode", { message: "Product not found!!!" })
+        } else {
+            clearErrors("barcode");
+        }
+
+    }, [product, barcode]);
+
+
+    /** check entered product already selected or not */
+    const isAlreadySelected = hiddenIds?.includes(product?.id);
+    useEffect(() => {
+        if (isAlreadySelected) {
+            setError("barcode", {
+                message: "product already selected!!!"
+            })
+        } else {
+            clearErrors("barcode");
+        }
+
+    }, [isAlreadySelected]);
+
+
+    // auto fill values on fields
     useEffect(() => {
         if (!barcode?.length) return;
 
         if (product) {
-            setErrorText("");
-
             setValue("productName", product?.name);
             setValue("packSize", `${product?.measure} ${product?.unit_type}`);
             setValue("packageType", product?.package_type);
             setValue("brand", product?.productBrands?.[0]?.name);
             setValue("category", product?.productCategories?.[0]?.name);
             setValue("subCategory", product?.productCategories?.[0]?.subcategories?.[0]?.name);
-        } else {
-            setErrorText("Product not found!!!");
 
+        } else {
             resetField("productName");
             resetField("packSize");
             resetField("packageType");
@@ -79,7 +100,13 @@ const RequisitionItemForm = ({
 
 
     function submitForm(data) {
-        setSelectedItems(prev => [...prev, data]);
+        setSelectedItems(prev => [
+            ...prev,
+            {
+                ...data,
+                id: product?.id,
+            }
+        ]);
 
         reset();
         setIsShow(false);
@@ -110,7 +137,7 @@ const RequisitionItemForm = ({
                                     register("barcode").onChange(e);
                                     deBounceFn(e.target.value);
                                 }}
-                                error={errors.barcode?.message || errorText}
+                                error={errors.barcode?.message}
                                 required={true}
                                 isLoading={isLoading}
                             />
@@ -190,7 +217,6 @@ const RequisitionItemForm = ({
 
                     {/* 4th */}
                     <div className="grid grid-cols-2 gap-5">
-
                         {/* Price Limit */}
                         <div>
                             <Input
@@ -202,7 +228,7 @@ const RequisitionItemForm = ({
                                         value: true
                                     }
                                 })}
-                                error={errors.ReqQty?.message}
+                                error={errors.priceLimit?.message}
                                 required={true}
                             />
                         </div>
@@ -233,6 +259,8 @@ const RequisitionItemForm = ({
                         <Button
                             type="submit"
                             className="btn btn-primary"
+                            disabled={isAlreadySelected || !product}
+                            loading={isLoading}
                         >
                             Add Item
                         </Button>

@@ -18,6 +18,9 @@ function RHSelect({
     className = '',
     objectReturn = false,
     isClearable = false,
+    isLoading = false,
+    autoFocus = false,
+    hiddenIds = null,
 
     addButton = false,
     buttonTitle = "Add",
@@ -91,11 +94,18 @@ function RHSelect({
                                 }
                             }
                         }}
+
                         options={options}
                         getOptionLabel={option => {
                             return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
                         }}
                         getOptionValue={option => option.id}
+                        isOptionDisabled={
+                            hiddenIds?.length
+                                ? (option) => hiddenIds?.includes(option.id)
+                                : undefined
+                        }
+
                         isClearable={isClearable}
                         isMulti={isMulti}
                         isDisabled={disabled}
@@ -116,6 +126,9 @@ function RHSelect({
                                 borderBottomRightRadius: addButton ? 0 : base.borderBottomRightRadius,
                             }),
                         }}
+                        required={required}
+                        isLoading={isLoading}
+                        autoFocus={autoFocus}
                     />
                     {
                         addButton &&

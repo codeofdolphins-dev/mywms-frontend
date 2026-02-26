@@ -14,9 +14,14 @@ const ItemTable = ({
     columns = [],
     edit = false,
     deleteBtn = true,
-    handleEdit, handleDelete,
-    currentPage, setCurrentPage,
-    totalPage, setLimit,
+    handleEdit,
+    handleDelete,
+
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    setLimit,
+    
     isLoading = true
 }) => {
     const imageUrl = import.meta.env.VITE_IMAGE_URL;

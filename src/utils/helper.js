@@ -61,6 +61,15 @@ export const REQUISITION_CREATE_COLUMN_ACTION = [
     { key: "action", label: "Action", align: "center" }
 ];
 
+export const REQUISITION_CREATE_RAW_COLUMN_ACTION = [
+    { key: "name", label: "Name" },
+    { key: "sku", label: "Code / SKU" },
+    { key: "uom", label: "Masure Unit" },
+    { key: "reqQty", label: "Req Qty." },
+    { key: "priceLimit", label: "Price Limit" },
+    { key: "action", label: "Action", align: "center" }
+];
+
 export const REQUISITION_COLUMN = [
     {
         key: "id",
@@ -250,8 +259,6 @@ export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
 ];
 
 
-
-
 export const PURCHASE_ORDER_BROWSE = [
     {
         key: "no", label: "#",
@@ -344,6 +351,15 @@ export const VENDOR_LIST_COLUMN = [
     { key: "cName", label: "Company Name" },
     { key: "phone", label: "Phone No." },
     { key: "gst", label: "GST No." },
+    { key: "category", label: "Category" },
+    { key: "status", label: "Status" },
+    { key: "action", label: "Action" },
+]
+
+export const VENDOR_CATEGORY_LIST_COLUMN = [
+    { key: "name", label: "Name" },
+    { key: "code", label: "Code" },
+    { key: "desc", label: "Desc" },
     { key: "status", label: "Status" },
     { key: "action", label: "Action" },
 ]

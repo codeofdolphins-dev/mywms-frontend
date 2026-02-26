@@ -19,7 +19,7 @@ import AddModal from '../../../components/Add.modal';
 import RawForm from '../../../components/product/Raw.Form';
 
 const colName_raw = [
-    { key: "id", label: "#" },
+    // { key: "id", label: "#" },
     // { key: "barcode", label: "Barcode" },
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },

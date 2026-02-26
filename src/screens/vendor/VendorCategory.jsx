@@ -1,28 +1,30 @@
 import React, { useState } from 'react'
+import IconTrashLines from '../../components/Icon/IconTrashLines'
+import AddModal from '../../components/Add.modal'
+import TableRow from '../../components/table/TableRow'
+import TableBody from '../../components/table/TableBody'
 import ComponentHeader from '../../components/ComponentHeader'
-import TableBody from '../../components/table/TableBody';
-import { VENDOR_LIST_COLUMN } from '../../utils/helper';
-import TableRow from '../../components/table/TableRow';
 import CustomeButton from "../../components/inputs/Button"
-import IconPencil from '../../components/Icon/IconPencil';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import AddModal from '../../components/Add.modal';
-import VendorForm from '../../components/vendor/Vendor.form';
-import { confirmation } from '../../utils/alerts';
-import masterData from '../../Backend/master.backend';
-import vendor from '../../Backend/vendor.backend';
+import { VENDOR_CATEGORY_LIST_COLUMN } from '../../utils/helper'
+import vendor from '../../Backend/vendor.backend'
+import masterData from '../../Backend/master.backend'
+import VendorCategoryForm from '../../components/vendor/VendorCategory.form'
+import IconPencil from '../../components/Icon/IconPencil'
+import { confirmation } from '../../utils/alerts'
+
 
 
 const headerLink = [
-    // { title: "production", },
-    { title: "vendor" },
+    { title: "vendor", link: "/production/vendor" },
+    { title: "category" },
 ]
 
-const Vendor = () => {
-    const { mutateAsync: deleteData } = masterData.TQDeleteMaster(["vendorList"])
+
+const VendorCategory = () => {
+    const { mutateAsync: deleteData, isPending } = masterData.TQDeleteMaster(["vendorCategoryList"]);
 
     const [isShow, setIsShow] = useState(false);
-
+    const [editData, setEditData] = useState(null);
 
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,58 +35,52 @@ const Vendor = () => {
         limit,
         page: currentPage,
     };
-
-    const { data: vendorList, isLoading: listLoading } = vendor.TQVendorList(params);
-    const isEmpty = vendorList?.data?.length < 1 ? true : false;
-
+    const { data: vendorCatList } = vendor.TQVendorCategoryList(params);
+    const isEmpty = vendorCatList?.data?.length < 1 ? true : false;
 
     async function handleDelete(id) {
         try {
-            alert("working");
-            // const isConfirm = await confirmation();
-            // if (isConfirm) await deleteData({ path: `/requisition/delete/${id}` });
+            const isConfirm = await confirmation();
+            if (isConfirm) await deleteData({ path: `/vendor/category/delete/${id}` });
         } catch (error) {
             console.log(error);
         }
     }
 
     function handleEdit(id) {
-        alert("working");
+        const obj = vendorCatList?.data?.find(i => i.id === id);
+        setEditData(obj);
+        setIsShow(true);
     };
-
-
 
     return (
         <div>
             <ComponentHeader
                 headerLink={headerLink}
                 btnOnClick={() => setIsShow(true)}
-                searchPlaceholder='Search by name or description...'
-                btnTitle='Vendor'
+                searchPlaceholder='Search by name...'
+                btnTitle='Vendor-Category'
                 setDebounceSearch={setSearch}
             />
 
             <div className="panel mt-5 min-h-64 relative z-0">
                 <TableBody
-                    columns={VENDOR_LIST_COLUMN}
+                    columns={VENDOR_CATEGORY_LIST_COLUMN}
                     isEmpty={isEmpty}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     limit={limit}
                     setLimit={setLimit}
-                    totalPage={vendorList?.meta?.totalPages}
+                    totalPage={vendorCatList?.meta?.totalPages}
                 >
-                    {vendorList?.data?.map((item, idx) =>
+                    {vendorCatList?.data?.map((item, idx) =>
                         <TableRow
                             key={idx}
-                            columns={VENDOR_LIST_COLUMN}
+                            columns={VENDOR_CATEGORY_LIST_COLUMN}
                             row={{
-                                name: item?.name?.full_name,
-                                email: item?.email,
-                                cName: item?.company_name,
-                                phone: item?.phone_no,
-                                gst: item?.meta?.gst_no,
-                                category: item?.vendorCategory?.name,
+                                name: item?.name,
+                                code: item?.code,
+                                desc: item?.desc,
                                 status: item?.is_active ? "Active" : "Inactive",
                                 action: (
                                     <div className='flex space-x-3'>
@@ -112,14 +108,15 @@ const Vendor = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Add New Vendor"
+                maxWidth='50'
             >
-                <VendorForm
+                <VendorCategoryForm
                     setIsShow={setIsShow}
+                    editData={editData}
                 />
             </AddModal>
-
         </div>
     )
 }
 
-export default Vendor
+export default VendorCategory

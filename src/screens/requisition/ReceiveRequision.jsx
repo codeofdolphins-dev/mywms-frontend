@@ -47,7 +47,7 @@ const ReceiveRequision = () => {
     const [details, setDetails] = useState(null);
 
 
-    /**************** modal state *******************/
+    /**************** modal state array *******************/
     const [itemDetails, setItemDetails] = useState([]);
     const [editItem, setEditItem] = useState([]);
     const [quoteItem, setQuoteItem] = useState([]);

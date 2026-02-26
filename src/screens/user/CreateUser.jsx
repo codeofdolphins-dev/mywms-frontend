@@ -4,7 +4,6 @@ import { Link, useAsyncError, useNavigate, useParams } from 'react-router-dom';
 import RHSelect from "@/components/inputs/RHF/Select.RHF";
 import Input from '@/components/inputs/Input';
 import TextArea from '@/components/inputs/TextArea';
-import FileUpload from '@/components/inputs/File';
 import SearchableSelect from '@/components/inputs/SearchableSelect';
 import fetchData from '@/Backend/fetchData.backend';
 import { useSelector } from 'react-redux';
@@ -12,6 +11,7 @@ import masterData from '@/Backend/master.backend';
 import { RHFToFormData } from '@/utils/RHFtoFD';
 import { Button } from '@mantine/core';
 import ProfileCard from '@/components/user/userProfile/ProfileCard';
+import FileUpload from '../../components/inputs/File';
 
 const USER_TYPE = [
     { label: "Location Admin", value: "NODE_ADMIN" },
@@ -22,18 +22,16 @@ const CreateUser = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["allUserList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["allUserList"]);
+
 
     const [preview, setPreview] = useState(null);
     const [oldPreview, setOldPreview] = useState(null);
     const [fileKey, setFileKey] = useState(0);
 
 
-    const {
-        handleSubmit, register,
-        control, setValue,
-        reset, watch,
-        formState: { errors }
-    } = useForm({
+    const { handleSubmit, register, control, setValue, reset, watch, formState: { errors } } = useForm({
         defaultValues: {
             node: null,
             node_type: null,
@@ -53,10 +51,6 @@ const CreateUser = () => {
 
     const { data: registeredNodeList, isLoading: registeredNodeListLoading } = fetchData.TQTenantRegisteredNodeList();
     const { data: editUserDetails, isLoading: editUserDetailsLoading } = fetchData.TQAllUserList({ id }, !!id);
-
-
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["allUserList"]);
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["allUserList"]);
 
 
     /** generate object url for image preview */
@@ -124,6 +118,7 @@ const CreateUser = () => {
 
     return (
         <div>
+
             {/* breadcrumb */}
             <ul className="flex space-x-2">
                 <li>

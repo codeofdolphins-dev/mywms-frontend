@@ -38,6 +38,7 @@ import Admin from './screens/admin/Admin';
 import SuperAdmin from './screens/superAdmin/SuperAdmin';
 import PurchaseOrderBrowse from './screens/purchaseOrder/PurchaseOrderBrowse';
 import Vendor from './screens/vendor/Vendor';
+import VendorCategory from './screens/vendor/VendorCategory';
 
 
 function App() {
@@ -127,6 +128,7 @@ function App() {
                     {/* production */}
                     <Route path="production" >
                         <Route path='vendor' element={<Vendor />} />
+                        <Route path='vendor/category' element={<VendorCategory />} />
                     </Route>
 
 

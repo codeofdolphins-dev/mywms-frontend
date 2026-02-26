@@ -1,17 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../inputs/Input';
 import { Button } from '@mantine/core';
 import masterData from '../../Backend/master.backend';
 import RHSelect from "../../components/inputs/RHF/Select.RHF"
 import vendor from '../../Backend/vendor.backend';
+import AddModal from '../Add.modal';
+import VendorCategoryForm from './VendorCategory.form';
 
 const VendorForm = ({ editId = null, setIsShow }) => {
-
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["vendorList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["vendorList"]);
 
     const { data: vendorCategory, isLoading: vendorCategoryLoading } = vendor.TQVendorCategoryList({ noLimit: true });
+
+    const [isModalShow, setModalShow] = useState(false);
 
 
     const { register, handleSubmit, formState: { errors }, reset, control } = useForm({
@@ -33,7 +36,6 @@ const VendorForm = ({ editId = null, setIsShow }) => {
         try {
             if (editId == null) {
                 const res = await createData({ path: "/auth/register-vendor", formData: data });
-                console.log(res);
                 if (res.success) {
                     setIsShow(false);
                     reset();
@@ -121,6 +123,9 @@ const VendorForm = ({ editId = null, setIsShow }) => {
                                         options={vendorCategory?.data}
                                         required={true}
                                         error={error?.message}
+
+                                        addButton={true}
+                                        buttonOnClick={() => setModalShow(true)}
                                     />
                                 )}
                             />
@@ -152,6 +157,17 @@ const VendorForm = ({ editId = null, setIsShow }) => {
                     </div>
                 </form>
             </div>
+
+            <AddModal
+                isShow={isModalShow}
+                setIsShow={setModalShow}
+                title="Add New Vendor"
+                maxWidth='50'
+            >
+                <VendorCategoryForm
+                    setIsShow={setModalShow}
+                />
+            </AddModal>
         </div>
     )
 }
