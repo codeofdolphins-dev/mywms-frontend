@@ -45,7 +45,6 @@ const RequisitionItemForm = ({
     }, []);
 
     const product = data?.data[0] ?? null;
-    console.log(product)
 
 
     /** check product is available or not  */

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import API from ".";
+import { errorAlert } from "../utils/alerts";
 
 
 class SuperAdmin {
@@ -18,12 +19,17 @@ class SuperAdmin {
         return useQuery({
             queryKey: ["tenantBusinessFlow", params],
             queryFn: async () => {
-                const res = await API.get("/super-admin/tenant-business-flow", {
-                    params
-                })
-                return res.data;
+                try {
+                    const res = await API.get("/super-admin/tenant-business-flow", {
+                        params
+                    })
+                    return res.data;
+                } catch (error) {
+                    const msg = error.response?.data?.message || "Internal server error!!!";
+                    errorAlert(msg);
+                }
             },
-            enabled: isEnabled,
+            enabled: isEnabled
         })
     }
 

@@ -1,6 +1,5 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import Login from './screens/auth/Login';
-import Dashboard from './screens/Dashboard';
 import Master from './screens/master/Master';
 import Error404 from './screens/Error404';
 import Browse from './screens/Browse';
@@ -39,6 +38,7 @@ import SuperAdmin from './screens/superAdmin/SuperAdmin';
 import PurchaseOrderBrowse from './screens/purchaseOrder/PurchaseOrderBrowse';
 import Vendor from './screens/vendor/Vendor';
 import VendorCategory from './screens/vendor/VendorCategory';
+import Dashboard from './screens/Dashboard';
 
 
 function App() {

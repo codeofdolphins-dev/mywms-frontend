@@ -22,6 +22,8 @@ import masterData from '../../Backend/master.backend';
 import { calculateTotals } from '../../helper/calculateTotals';
 import vendor from '../../Backend/vendor.backend';
 import RequisitionItemFormRaw from '../../components/requisition/create/RequisitionItemFormRaw';
+import RequisitionCategoryForm from '../../components/requisition/create/RequisitionCategoryForm';
+import requisition from '../../Backend/requisition.backend';
 
 
 const PRIORITY = [
@@ -46,9 +48,9 @@ const CreateRequisition = () => {
 
     /**************** data fetching GET *******************/
     const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
-    const { data: vendorCatList, isLoading: vendorCatListLoading } = vendor.TQVendorCategoryList()
-    
-    
+    const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList()
+
+
     /**************** react form hook *******************/
     const { handleSubmit, control, register, formState: { errors }, setValue, reset } = useForm({
         defaultValues: {
@@ -64,6 +66,7 @@ const CreateRequisition = () => {
 
     const [isShow, setIsShow] = useState(false);
     const [isEmpty, setIsEmpty] = useState(true);
+    const [isReqForm, setIsReqForm] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
 
 
@@ -158,26 +161,20 @@ const CreateRequisition = () => {
                                         {/* vendor */}
                                         <div>
                                             <Controller
-                                                name="vendor_category_id"
+                                                name="requisition_category_id"
                                                 control={control}
-                                                rules={{
-                                                    required: "This field is required!!!"
-                                                }}
                                                 render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                                     <RHSelect
-                                                        ref={(el) => {
-                                                            ref({
-                                                                focus: () => el?.focus(),
-                                                            });
-                                                        }}
                                                         value={value}
                                                         onChange={onChange}
 
-                                                        label="Vendor Category"
+                                                        label="Requisition Category"
                                                         labelPosition='inline'
-                                                        options={vendorCatList?.data}
-                                                        error={error?.message}
-                                                        required={true}
+                                                        options={requisitionCatList?.data}
+
+                                                        addButton={true}
+                                                        buttonTitle='Req Category'
+                                                        buttonOnClick={() => setIsReqForm(true)}
                                                     />
                                                 )}
                                             />
@@ -387,6 +384,17 @@ const CreateRequisition = () => {
                         setIsShow={setIsShow}
                     />
                 }
+            </AddModal>
+
+            <AddModal
+                isShow={isReqForm}
+                setIsShow={setIsReqForm}
+                title={"Add New Requisition Category"}
+                maxWidth='40'
+            >
+                <RequisitionCategoryForm
+                    setIsShow={setIsReqForm}
+                />
             </AddModal>
 
 

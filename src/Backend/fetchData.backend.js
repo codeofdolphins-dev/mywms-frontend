@@ -222,6 +222,18 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+
+
+    TQRfqList(isEnabled = true) {
+        return useQuery({
+            queryKey: ["rfqList"],
+            queryFn: async () => {
+                const res = await API.get("/rfq/list");
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const fetchData = new FetchData;
