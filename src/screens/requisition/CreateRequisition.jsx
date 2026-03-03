@@ -24,6 +24,7 @@ import vendor from '../../Backend/vendor.backend';
 import RequisitionItemFormRaw from '../../components/requisition/create/RequisitionItemFormRaw';
 import RequisitionCategoryForm from '../../components/requisition/create/RequisitionCategoryForm';
 import requisition from '../../Backend/requisition.backend';
+import TextArea from '../../components/inputs/TextArea';
 
 
 const PRIORITY = [
@@ -265,13 +266,22 @@ const CreateRequisition = () => {
                                     />
                                 </div>
 
-                                {/* priority */}
+                                {/* total */}
                                 <div className="">
                                     <Input
                                         label="Total"
                                         labelPosition="inline"
                                         disabled={true}
                                         {...register("total")}
+                                    />
+                                </div>
+
+                                {/* note */}
+                                <div className="">
+                                    <TextArea
+                                        label="Note"
+                                        labelPosition="inline"
+                                        {...register("notes")}
                                     />
                                 </div>
                             </div>

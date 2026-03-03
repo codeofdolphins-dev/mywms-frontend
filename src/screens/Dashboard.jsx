@@ -27,8 +27,6 @@ const Dashboard = () => {
 
     const { data: rfqList, isLoading: rfqListLoading } = fetchData.TQRfqList();
 
-    console.log(rfqList);
-
 
     // const dispatch = useDispatch();
     // useEffect(() => {
@@ -40,8 +38,15 @@ const Dashboard = () => {
 
     return (
         <div>
-            <div className="max-w-[40rem] mx-auto">
-                <RequisitionCard />
+            <div className="max-w-[40rem] w-full mx-auto space-y-5">
+                {
+                    rfqList?.data?.map(item =>
+                        <RequisitionCard
+                            key={item?.id}
+                            details={item}
+                        />
+                    )
+                }
             </div>
         </div>
     );
