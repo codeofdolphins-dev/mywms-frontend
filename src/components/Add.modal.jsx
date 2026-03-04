@@ -11,6 +11,7 @@ const AddModal = ({
     title,
     maxWidth = "75",
     blur = true,
+    placement = "center",
     children
 }) => {
     return (
@@ -18,7 +19,7 @@ const AddModal = ({
             <Transition appear show={isShow} as={Fragment}>
                 <Dialog as="div" open={isShow} onClose={() => setIsShow(false)}>
                     <div className={`fixed inset-0 z-[999] overflow-y-auto ${blur ? "bg-[black]/60" : "" } `}>
-                        <div className="flex min-h-screen items-center justify-center px-4">
+                        <div className={`flex min-h-screen items-${placement} justify-center px-4`}>
                             <TransitionChild
                                 as={Fragment}
                                 enter="ease-out duration-300"

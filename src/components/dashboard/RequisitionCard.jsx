@@ -1,14 +1,53 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ImageComponent from '../ImageComponent'
 import { formatCreatedAt } from '../../utils/UTCtoLocal';
 import { currencyFormatter } from '../../utils/currencyFormatter';
+import { Button } from '@mantine/core';
+import AddModal from '../Add.modal';
+import CustomeButton from "../inputs/Button"
+import IconPencil from '../Icon/IconPencil';
+import EditItemForm from './form/EditItem.form';
+import RFQPreview from './RFQPreview';
 
 const RequisitionCard = ({ details = null }) => {
 
-    console.log(details);
+    // console.log(details);
+    const [data, setData] = useState(null);
+    const [rfqItemData, setRfqItemData] = useState(details?.items);
+
+    const [isEditItem, setIsEditItem] = useState(false);
+    const [isPreview, setIsPreview] = useState(false);
+
+    const [editItemData, setEditItemData] = useState(null);
+
+    // console.log(rfqItemData);
+
+    // extract selected item data for edit
+    function selectEditItem(id) {
+        const item = rfqItemData?.find(i => id === i.id);
+        setEditItemData(item);
+        setIsEditItem(true);
+    };
+
+
+    // handel preview cum submit
+    function previewCumSubmit() {
+        setData({
+            name: details?.meta?.name,
+            location: details?.meta?.location,
+            priority: details?.priority,
+            rfq_no: details?.rfq_no,
+            note: details?.note,
+            items: rfqItemData,
+        })
+
+        setIsPreview(true);
+    }
+
+    // console.log(data)
 
     return (
-        <div className="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+        <div className="bg-white shadow-lg rounded-2xl px-6 py-3 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
 
             {/* Header */}
             <div className="flex items-center justify-between border-b pb-4 mb-4">
@@ -85,9 +124,18 @@ const RequisitionCard = ({ details = null }) => {
                                 className="flex justify-between bg-gray-50 rounded-lg px-3 py-2"
                             >
                                 <span>{item.product_name}</span>
-                                <span className="text-gray-600">
-                                    {item.qty} {item.uom} • {currencyFormatter(item.price_limit)} / {item.uom}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-600">
+                                        {item.qty} {item.uom} • {currencyFormatter(item.price_limit)} / {item.uom}
+                                    </span>
+                                    <div className='flex items-center justify-center space-x-3'>
+                                        <CustomeButton
+                                            onClick={() => selectEditItem(item.id)}
+                                        >
+                                            <IconPencil className="text-danger hover:scale-110 cursor-pointer w-4 h-4" />
+                                        </CustomeButton>
+                                    </div>
+                                </div>
                             </li>
                         ))}
                     </ul>
@@ -95,14 +143,49 @@ const RequisitionCard = ({ details = null }) => {
             </div>
 
             {/* Footer */}
-            <div className="mt-6 text-xs text-gray-500 border-t pt-3 flex justify-between">
+            <div className="mt-6 text-xs text-gray-500 border-t pt-3 flex justify-between items-center">
                 <span>Created {formatCreatedAt(details?.createdAt)}</span>
-                {details?.submission_deadline && (
-                    <span className="font-bold text-danger">Deadline: {new Date(details?.submission_deadline).toLocaleDateString()}</span>
-                )}
+                <div className="flex items-center gap-3">
+                    {details?.submission_deadline && (
+                        <span className="font-bold text-danger">Deadline: {new Date(details?.submission_deadline).toLocaleDateString()}</span>
+                    )}
+                    <Button
+                        onClick={previewCumSubmit}
+                        // disabled={data?.items?.some(i => i?.offer_price === undefined) ?? true}
+                    >
+                        Preview
+                    </Button>
+                </div>
             </div>
-        </div>
 
+
+            {/* Edit item modal */}
+            <AddModal
+                title="Edit Item"
+                isShow={isEditItem}
+                setIsShow={setIsEditItem}
+            // placement='start'
+            >
+                <EditItemForm
+                    setIsEditItem={setIsEditItem}
+                    data={editItemData}
+                />
+            </AddModal>
+
+
+            {/* preview cum submit modal */}
+            <AddModal
+                title="RFQ Preview"
+                isShow={isPreview}
+                setIsShow={setIsPreview}
+                placement='start'
+            >
+                <RFQPreview
+                    details={data}
+                />
+            </AddModal>
+
+        </div>
     )
 }
 

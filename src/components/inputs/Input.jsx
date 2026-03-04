@@ -1,4 +1,3 @@
-
 import React, { useId, useState } from 'react'
 import { PiEyeBold, PiEyeClosed } from "react-icons/pi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -23,7 +22,7 @@ const Input = React.forwardRef(({
 
 
     return (
-        <div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""} `}>
+        <div className={`w-full whitespace-nowrap ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""} `}>
             {
                 label && <label
                     htmlFor={_id}
@@ -35,6 +34,7 @@ const Input = React.forwardRef(({
             <div className="w-full flex flex-col items-start justify-center">
                 <div className={`relative w-full ${fieldColor} `}>
                     <input
+                        ref={ref}
                         id={_id}
                         type={isPasswordSeen ? "text" : type}
                         className={`
@@ -44,7 +44,6 @@ const Input = React.forwardRef(({
                             ${Icon ? "ps-10" : ""}
                             ${className}
                         `}
-                        ref={ref}
                         {...props}
                     />
                     {
