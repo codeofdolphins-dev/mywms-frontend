@@ -21,6 +21,7 @@ const EditItemForm = ({
     function submitForm(item) {
         data.offer_price = item.offer_price
         data.line_total = Number(data.qty) * Number(item.offer_price)
+        reset();
         setIsEditItem(false);
     }
 

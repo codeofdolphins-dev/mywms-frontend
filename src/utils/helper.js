@@ -142,41 +142,21 @@ export const REQUISITION_ITEMS_COLUMN = [
 
 
 export const QUOTATION_COLUMN = [
-    {
-        key: "qno",
-        label: "#",
-        align: "center"
-    },
-    {
-        key: "name",
-        label: "Supplier Name",
-        align: "center"
-    },
-    {
-        key: "status",
-        label: "Status",
-        align: "center"
-    },
-    {
-        key: "notes",
-        label: "Notes",
-        align: "center"
-    },
-    {
-        key: "grandTotal",
-        label: "Total",
-        align: "center"
-    },
-    {
-        key: "validity",
-        label: "Validity",
-        align: "center"
-    },
-    {
-        key: "action",
-        label: "Action",
-        align: "center"
-    },
+    { key: "qno", label: "#", align: "center" },
+    { key: "name", label: "Buyer Name", align: "center" },
+    { key: "status", label: "Status", align: "center" },
+    { key: "notes", label: "Notes", align: "center" },
+    { key: "grandTotal", label: "Total", align: "center" },
+    { key: "validity", label: "Validity", align: "center" },
+    { key: "action", label: "Action", align: "center" },
+];
+export const EXTERNAL_QUOTATION_COLUMN = [
+    { key: "qno", label: "#", align: "center" },
+    { key: "name", label: "Buyer Name", align: "center" },
+    { key: "status", label: "Status", align: "center" },
+    { key: "grandTotal", label: "Total", align: "center" },
+    { key: "validity", label: "Validity", align: "center" },
+    { key: "action", label: "Action", align: "center" },
 ];
 
 export const QUOTATION_RECEIVE_COLUMN = [

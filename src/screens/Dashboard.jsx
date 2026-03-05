@@ -80,6 +80,7 @@ const Dashboard = () => {
             >
                 <RequisitionCard
                     details={selectedItem}
+                    setIsRequisitionCardShow={setIsShow}
                 />
             </AddModal>
 

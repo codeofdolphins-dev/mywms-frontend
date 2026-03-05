@@ -9,26 +9,24 @@ import IconPencil from '../Icon/IconPencil';
 import EditItemForm from './form/EditItem.form';
 import RFQPreview from './RFQPreview';
 
-const RequisitionCard = ({ details = null }) => {
-
+const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
     // console.log(details);
     const [data, setData] = useState(null);
-    const [rfqItemData, setRfqItemData] = useState(details?.items);
+    // const [rfqItemData, setRfqItemData] = useState(details?.items);
 
     const [isEditItem, setIsEditItem] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
 
-    const [editItemData, setEditItemData] = useState(null);
+    // const [editItemData, setEditItemData] = useState(null);
 
     // console.log(rfqItemData);
 
     // extract selected item data for edit
     function selectEditItem(id) {
-        const item = rfqItemData?.find(i => id === i.id);
-        setEditItemData(item);
-        setIsEditItem(true);
+        // const item = rfqItemData?.find(i => id === i.id);
+        // setEditItemData(item);
+        // setIsEditItem(true);
     };
-
 
     // handel preview cum submit
     function previewCumSubmit() {
@@ -38,7 +36,8 @@ const RequisitionCard = ({ details = null }) => {
             priority: details?.priority,
             rfq_no: details?.rfq_no,
             note: details?.note,
-            items: rfqItemData,
+            // items: rfqItemData,
+            items: details?.items,
         })
 
         setIsPreview(true);
@@ -128,13 +127,13 @@ const RequisitionCard = ({ details = null }) => {
                                     <span className="text-gray-600">
                                         {item.qty} {item.uom} • {currencyFormatter(item.price_limit)} / {item.uom}
                                     </span>
-                                    <div className='flex items-center justify-center space-x-3'>
+                                    {/* <div className='flex items-center justify-center space-x-3'>
                                         <CustomeButton
                                             onClick={() => selectEditItem(item.id)}
                                         >
                                             <IconPencil className="text-danger hover:scale-110 cursor-pointer w-4 h-4" />
                                         </CustomeButton>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </li>
                         ))}
@@ -151,7 +150,6 @@ const RequisitionCard = ({ details = null }) => {
                     )}
                     <Button
                         onClick={previewCumSubmit}
-                        // disabled={data?.items?.some(i => i?.offer_price === undefined) ?? true}
                     >
                         Preview
                     </Button>
@@ -160,7 +158,7 @@ const RequisitionCard = ({ details = null }) => {
 
 
             {/* Edit item modal */}
-            <AddModal
+            {/* <AddModal
                 title="Edit Item"
                 isShow={isEditItem}
                 setIsShow={setIsEditItem}
@@ -170,7 +168,7 @@ const RequisitionCard = ({ details = null }) => {
                     setIsEditItem={setIsEditItem}
                     data={editItemData}
                 />
-            </AddModal>
+            </AddModal> */}
 
 
             {/* preview cum submit modal */}
@@ -182,6 +180,8 @@ const RequisitionCard = ({ details = null }) => {
             >
                 <RFQPreview
                     details={data}
+                    setIsRequisitionCardShow={setIsRequisitionCardShow}
+                    setIsPreviewCardShow={setIsPreview}
                 />
             </AddModal>
 

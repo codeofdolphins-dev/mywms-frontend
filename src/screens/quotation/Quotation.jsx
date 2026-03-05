@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,13 +9,16 @@ import IconPencil from '../../components/Icon/IconPencil';
 import TableRow from '../../components/table/TableRow';
 import TableHeader from '../../components/table/TableHeader';
 import CustomeButton from '../../components/inputs/Button'
-import { QUOTATION_COLUMN, QUOTATION_RECEIVE_COLUMN } from '../../utils/helper';
+import { EXTERNAL_QUOTATION_COLUMN, QUOTATION_COLUMN, QUOTATION_RECEIVE_COLUMN } from '../../utils/helper';
 import ComponentHeader from '../../components/ComponentHeader';
 import fetchData from '../../Backend/fetchData.backend';
 import TableBody from '../../components/table/TableBody';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import AddModal from '../../components/Add.modal';
 import { quotation } from '../../Backend/quotation.fetch';
+import { rfqQuotation } from '../../Backend/rfqQuotation.fetch';
+import RFQPreview from '../../components/dashboard/RFQPreview';
+import { currencyFormatter } from '../../utils/currencyFormatter';
 
 
 const headerLink = [
@@ -25,15 +28,39 @@ const headerLink = [
 
 const Quotation = () => {
     const navigate = useNavigate();
+
+    const [dataWrapper, setDataWrapper] = useState({});
+
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
+    const [activeTab, setActiveTab] = useState(1);
+
     const [itemDetails, setItemDetails] = useState([]);
     const [isShowPreview, setIsShowPreview] = useState(false);
 
-    const { data: quotationList, loading } = quotation.TQQuotationList();
-    const isEmpty = quotationList?.data?.length < 1;
+    const [EXitemDetails, setEXItemDetails] = useState([]);
+    const [isShowPreviewEX, setIsShowPreviewEX] = useState(false);
+
+    const params = {
+        page: currentPage,
+        limit,
+        ...(debounceSearch && { quotation_no: debounceSearch })
+    }
+    const { data: quotationList, loading: quotationLoading } = quotation.TQQuotationList(params, activeTab === 1 ? true : false);
+
+    const { data: rfqQuotationList, loading: rfqQuotationLoading } = rfqQuotation.TQRfqQuotationList(params, activeTab === 2 ? true : false);
+
+    const isEmpty = quotationList?.success
+        ? quotationList?.data?.length < 1
+        : rfqQuotationList?.success
+            ? rfqQuotationList?.data?.length < 1
+            : true;
+
+
+    // console.log(rfqQuotationList);
+
 
 
     function handelEdit(id) {
@@ -43,8 +70,13 @@ const Quotation = () => {
         console.log(id)
     }
     function handelShow(items) {
-        setIsShowPreview(true)
-        setItemDetails(items)
+        if (activeTab === 1) {
+            setIsShowPreview(true);
+            setItemDetails(items);
+        } else {
+            setIsShowPreviewEX(true);
+            setEXItemDetails(items);
+        }
     }
 
     return (
@@ -53,22 +85,54 @@ const Quotation = () => {
             <ComponentHeader
                 headerLink={headerLink}
                 addButton={false}
-                searchPlaceholder=''
+                searchPlaceholder={activeTab === 1 ? 'search by quotation no' : "search by RFQ no"}
                 setDebounceSearch={setDebounceSearch}
             />
 
+            {/* wizards */}
+            <div className="w-full mt-5">
+                <ul className="flex items-center text-center gap-2">
+                    <li>
+                        <div
+                            className={`
+                                ${activeTab === 1 ? '!bg-primary text-white' : ''}
+                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-36 cursor-pointer
+                            `}
+                            onClick={() => setActiveTab(1)}
+                        >
+                            <p className='-mb-1'>Internal</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div className={`
+                                ${activeTab === 2 ? '!bg-primary text-white' : ''} 
+                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-36 cursor-pointer
+                            `}
+                            onClick={() => setActiveTab(2)}
+                        >
+                            <p className='-mb-1'>External</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
             {/* table */}
-            <div className={`panel mt-5 z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
+            <div className={`panel z-0 ${isEmpty ? "min-h-64" : ""} relative`}>
                 <TableBody
-                    columns={QUOTATION_COLUMN}
+                    columns={activeTab === 1 ? QUOTATION_COLUMN : EXTERNAL_QUOTATION_COLUMN}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     limit={limit}
                     setLimit={setLimit}
-                    totalPage={quotationList?.meta?.totalPages || 1}
+                    totalPage={
+                        activeTab === 1
+                            ? quotationList?.meta?.totalPages || 1
+                            : rfqQuotationList?.meta?.totalPages || 1
+                    }
                     isEmpty={isEmpty}
                 >
-                    {
+                    {activeTab === 1 ? (
                         quotationList?.data?.map((item, idx) => (
                             <TableRow
                                 key={item.id}
@@ -104,11 +168,39 @@ const Quotation = () => {
                                 }}
                             />
                         ))
-                    }
+                    ) : (
+                        rfqQuotationList?.data?.map((item, idx) => (
+                            <TableRow
+                                key={item.id}
+                                columns={EXTERNAL_QUOTATION_COLUMN}
+                                row={{
+                                    qno: item?.linkedRfq?.rfq_no,
+                                    name: item?.buyer_name,
+                                    status: item?.status,
+                                    grandTotal: currencyFormatter(item?.grand_total),
+                                    validity: utcToLocal(item?.valid_till),
+                                    action: (
+                                        <div className='flex items-center justify-center space-x-3'>
+                                            <CustomeButton
+                                                onClick={() => handelShow(item)}
+                                            >
+                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
+                                            <CustomeButton
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
+                                        </div>
+                                    )
+                                }}
+                            />
+                        ))
+                    )}
                 </TableBody>
             </div>
 
-            {/* preview panel */}
+            {/* internal quotation preview panel */}
             <AddModal
                 isShow={isShowPreview}
                 setIsShow={setIsShowPreview}
@@ -158,6 +250,18 @@ const Quotation = () => {
                 </div>
             </AddModal>
 
+            {/* external quotation preview panel */}
+            <AddModal
+                title="RFQ Note Preview"
+                placement='start'
+                isShow={isShowPreviewEX}
+                setIsShow={setIsShowPreviewEX}
+            >
+                <RFQPreview
+                    details={EXitemDetails}
+                    setIsShowPreviewEX={setIsShowPreviewEX}
+                />
+            </AddModal>
         </div >
     )
 }

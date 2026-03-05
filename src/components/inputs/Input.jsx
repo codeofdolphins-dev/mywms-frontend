@@ -22,7 +22,7 @@ const Input = React.forwardRef(({
 
 
     return (
-        <div className={`w-full whitespace-nowrap ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""} `}>
+        <div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""} `}>
             {
                 label && <label
                     htmlFor={_id}
