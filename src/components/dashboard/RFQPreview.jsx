@@ -97,6 +97,7 @@ const RFQPreview = ({
                 data.id = details?.id;
 
                 console.log(data);
+                alert("🛑 Under process!!!");
 
                 // const res = await updateData({ path: "", formData: data });
 
@@ -127,7 +128,7 @@ const RFQPreview = ({
 
     return (
         <form onSubmit={handleSubmit(submit)}>
-            <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+            <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg">
                 {/* Header */}
                 <div className="flex justify-between items-center border-b pb-1 mb-4">
                     <div className='space-y-1'>
@@ -211,13 +212,17 @@ const RFQPreview = ({
                                         <td className="border border-gray-200 px-4 py-2">{field?.uom}</td>
                                         <td className="border border-gray-200 px-4 py-2">{currencyFormatter(field?.price_limit)}</td>
                                         <td className="border border-gray-200 ">
-                                            {allowEdit
-                                                ? <Input
+                                            {isEditable
+                                                ? allowEdit
+                                                    ? <Input
+                                                        placeholder="Enter your price"
+                                                        {...register(`items.${idx}.offer_price`)}
+                                                    />
+                                                    : currencyFormatter(field?.offer_price)
+                                                : <Input
                                                     placeholder="Enter your price"
                                                     {...register(`items.${idx}.offer_price`)}
-                                                // className="border-0"
                                                 />
-                                                : currencyFormatter(field?.offer_price)
                                             }
                                         </td>
                                     </tr>
@@ -227,13 +232,23 @@ const RFQPreview = ({
                     </div>
                 </div>
 
-                {allowEdit &&
-                    <div className="mt-5 flex items-center justify-center">
+                {isEditable
+                    ? allowEdit
+                        ? <div className="mt-5 flex items-center justify-center">
+                            <Button
+                                type='submit'
+                            // disabled={details?.items?.some(i => i?.offer_price === undefined)}
+                            >
+                                Update
+                            </Button>
+                        </div>
+                        : null
+                    : <div className="mt-5 flex items-center justify-center">
                         <Button
                             type='submit'
                         // disabled={details?.items?.some(i => i?.offer_price === undefined)}
                         >
-                            {isEditable ? "Update" : "Submit"}
+                            Submit
                         </Button>
                     </div>
                 }

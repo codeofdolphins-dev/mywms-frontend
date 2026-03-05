@@ -76,6 +76,9 @@ const Dashboard = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
+                maxWidth='55'
+                placement="start"
+                
                 // blur={false}
             >
                 <RequisitionCard

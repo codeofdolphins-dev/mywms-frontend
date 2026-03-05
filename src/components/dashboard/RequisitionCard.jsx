@@ -177,6 +177,7 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                 isShow={isPreview}
                 setIsShow={setIsPreview}
                 placement='start'
+                maxWidth='55'
             >
                 <RFQPreview
                     details={data}
