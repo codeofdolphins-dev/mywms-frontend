@@ -15,6 +15,18 @@ class RFQ_Quotation {
             enabled: isEnabled,
         });
     };
+    TQRfqQuotationReceiveList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["rfqQuotationReceiveList", params],
+            queryFn: async () => {
+                const res = await API.get("/rfq/quotation-receive/list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 export const rfqQuotation = new RFQ_Quotation();

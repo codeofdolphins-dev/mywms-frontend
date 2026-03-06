@@ -139,8 +139,6 @@ export const REQUISITION_ITEMS_COLUMN = [
 ];
 
 
-
-
 export const QUOTATION_COLUMN = [
     { key: "qno", label: "#", align: "center" },
     { key: "name", label: "Buyer Name", align: "center" },
@@ -204,6 +202,15 @@ export const QUOTATION_RECEIVE_COLUMN = [
         key: "total",
         label: "Total",
     },
+];
+
+export const QUOTATION_RECEIVE_RAW_COLUMN = [
+    { key: "name", label: "Product Name", textBlur: true },
+    { key: "uom", label: "UOM", textBlur: true },
+    { key: "qty", label: "QTY", textBlur: true },
+    { key: "priceLimit", label: "Price Limit", textBlur: true },
+    { key: "offerPrice", label: "Offer Price", },
+    { key: "total", label: "Total", },
 ];
 
 
