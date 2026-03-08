@@ -154,6 +154,7 @@ export const EXTERNAL_QUOTATION_COLUMN = [
     { key: "status", label: "Status", align: "center" },
     { key: "grandTotal", label: "Total", align: "center" },
     { key: "validity", label: "Validity", align: "center" },
+    { key: "revision", label: "Revision", align: "center" },
     { key: "action", label: "Action", align: "center" },
 ];
 

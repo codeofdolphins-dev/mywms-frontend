@@ -35,6 +35,7 @@ const Quotation = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
+
     const [activeTab, setActiveTab] = useState(1);
 
     const [itemDetails, setItemDetails] = useState([]);
@@ -69,15 +70,19 @@ const Quotation = () => {
     async function handleDelete(id) {
         console.log(id)
     }
-    function handelShow(items) {
+    function handelShow(items, idx = 0) {
         if (activeTab === 1) {
             setIsShowPreview(true);
             setItemDetails(items);
         } else {
             setIsShowPreviewEX(true);
-            setEXItemDetails(items);
+            setEXItemDetails({
+                ...items,
+                quotationRevision: items?.quotationRevision?.[idx]
+            });
         }
     }
+
 
     return (
         <div>
@@ -169,20 +174,46 @@ const Quotation = () => {
                             />
                         ))
                     ) : (
-                        rfqQuotationList?.data?.map((item, idx) => (
-                            <TableRow
+                        rfqQuotationList?.data?.map((item, idx) => {
+
+                            const current_revision_no = isNaN(Number(item?.current_revision_no)) ? 0 : item?.current_revision_no;
+
+                            let selectedRevisionNo = 0;
+
+                            return <TableRow
                                 key={item.id}
                                 columns={EXTERNAL_QUOTATION_COLUMN}
                                 row={{
                                     qno: item?.linkedRfq?.rfq_no,
                                     name: item?.buyer_name,
-                                    status: item?.status,
-                                    grandTotal: currencyFormatter(item?.grand_total),
+                                    status: item?.quotationRevision?.[selectedRevisionNo]?.status,
+                                    grandTotal: currencyFormatter(item?.quotationRevision?.[selectedRevisionNo]?.grand_total),
                                     validity: utcToLocal(item?.valid_till),
+                                    revision: (
+                                        <>
+                                            <select
+                                                name=""
+                                                id=""
+                                                className='bg-white border px-3 py-1 cursor-pointer'
+                                                onChange={(e) => { selectedRevisionNo = e.target.value }}
+                                            >
+                                                {
+                                                    [...Array(current_revision_no).keys()].map(idx =>
+                                                        <option
+                                                            key={idx}
+                                                            value={idx}
+                                                        >
+                                                            {idx + 1}
+                                                        </option>
+                                                    )
+                                                }
+                                            </select>
+                                        </>
+                                    ),
                                     action: (
                                         <div className='flex items-center justify-center space-x-3'>
                                             <CustomeButton
-                                                onClick={() => handelShow(item)}
+                                                onClick={() => activeTab == 1 ? handelShow(item) : handelShow(item, selectedRevisionNo)}
                                             >
                                                 <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                             </CustomeButton>
@@ -195,7 +226,7 @@ const Quotation = () => {
                                     )
                                 }}
                             />
-                        ))
+                        })
                     )}
                 </TableBody>
             </div>

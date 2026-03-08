@@ -42,6 +42,9 @@ const ReceiveQuotation = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
+    const [vendor, setVendor] = useState(null);
+    const [revNo, setRevNo] = useState(null);
+
 
     const [selectedQuotationId, setSelectedQuotationId] = useState(null);
 
@@ -63,6 +66,8 @@ const ReceiveQuotation = () => {
     const params = {
         reqNo: debounceSearch,
         ...(selectedQuotationId && { quotationId: selectedQuotationId }),
+        ...(vendor && { targetVendor: vendor }),
+        ...(revNo && { targetRevision: revNo }),
         page: currentPage,
         limit: limit,
     };
@@ -70,8 +75,6 @@ const ReceiveQuotation = () => {
     const { data: rfqQuotationData, isLoading: rfqQuotationLoading } = rfqQuotation.TQRfqQuotationReceiveList(params, isManufacture);
 
 
-
-    console.log(rfqQuotationData?.data);
 
     /** status color change helper */
     const statusColor = (status) => {
@@ -109,6 +112,14 @@ const ReceiveQuotation = () => {
             console.log(error);
         }
     };
+    async function negotiate(id) {
+        console.log(id)
+    }
+
+    function changeRevision(vendor, revNo) {
+        setVendor(vendor);
+        setRevNo(revNo);
+    }
 
     return (
         <div>
@@ -154,19 +165,39 @@ const ReceiveQuotation = () => {
                                                 {/* 3️⃣ Status */}
                                                 <th className="w-[10%] !px-0 truncate">
                                                     <div>
-                                                        <span className={`badge ${statusColor(item?.status)}`}>{item?.status?.toUpperCase()}</span>
+                                                        <span className={`badge ${statusColor(item?.activeRevision?.status)}`}>{item?.activeRevision?.status?.toUpperCase()}</span>
                                                     </div>
                                                 </th>
 
-                                                {/* 2️⃣ Location */}
-                                                <th className="w-[10%] text-start break-words !px-0">
-                                                    Revision: {item?.revision_no}
+                                                {/* 2️⃣ Revision */}
+                                                <th className="w-[10%] text-start break-words !px-0 flex items-center">
+                                                    <label htmlFor="" className='mb-0'>Revision:</label>
+                                                    <select
+                                                        name=""
+                                                        id=""
+                                                        className='bg-white border rounded-md px-3 py-1 cursor-pointer ml-1'
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        onChange={(e) => changeRevision(item?.vendor_tenant, e.target.value)}
+
+                                                    >
+                                                        {
+                                                            [...Array(item?.current_revision_no).keys()].map(idx =>
+                                                                <option
+                                                                    key={idx}
+                                                                    value={idx + 1}
+                                                                    selected={((idx + 1 == revNo) && (item?.vendor_tenant == vendor)) ? true : false}
+                                                                >
+                                                                    {idx + 1}
+                                                                </option>
+                                                            )
+                                                        }
+                                                    </select>
                                                 </th>
 
                                                 {/* 4️⃣ Amounts */}
                                                 <th className="w-[20%] text-start break-words">
-                                                    {currencyFormatter(item?.linkedRfq?.grand_total)}{" || "}
-                                                    {currencyFormatter(item?.grand_total) ?? "XXXXX"}
+                                                    {currencyFormatter(item?.requisition?.grand_total)}{" || "}
+                                                    {currencyFormatter(item?.activeRevision?.grand_total) ?? "XXXXX"}
                                                 </th>
 
                                                 {/* 5️⃣ PO No */}
@@ -203,7 +234,7 @@ const ReceiveQuotation = () => {
                                                                 <li>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => approveQ(item?.quotation?.id)}
+                                                                        onClick={() => negotiate(item?.quotation?.id)}
                                                                     >
                                                                         Negotiate
                                                                     </button>
@@ -244,10 +275,11 @@ const ReceiveQuotation = () => {
                                             setCurrentPage={setCurrentPage}
                                             limit={limit}
                                             setLimit={setLimit}
-                                            totalPage={item?.quotation?.meta?.totalPages}
+                                            totalPage={item?.pagination?.totalPages}
                                         >
                                             {item?.quotationItems?.map((product, j) => {
                                                 // console.log(product);
+                                                const line_total = Number(product?.sourceRfqItem?.qty) * Number(product?.offer_price)
                                                 return (
                                                     <TableRow
                                                         key={j}
@@ -256,9 +288,9 @@ const ReceiveQuotation = () => {
                                                             name: product?.sourceRfqItem?.product_name,
                                                             uom: product?.sourceRfqItem?.uom,
                                                             qty: product?.sourceRfqItem?.qty,
-                                                            priceLimit: product?.sourceRfqItem?.price_limit,
-                                                            offerPrice: product?.offer_price,
-                                                            total: product?.line_total,
+                                                            priceLimit: currencyFormatter(product?.sourceRfqItem?.price_limit),
+                                                            offerPrice: currencyFormatter(product?.offer_price),
+                                                            total: currencyFormatter(line_total),
                                                         }}
                                                     />
                                                 )

@@ -27,7 +27,7 @@ const RFQPreview = ({
         }
     });
 
-    const isEditable = details?.quotationItems === undefined ? false : true;
+    const isEditable = details?.quotationRevision?.revisionItems === undefined ? false : true;
 
     const { fields } = useFieldArray({
         control,
@@ -43,21 +43,20 @@ const RFQPreview = ({
                 product_name: item?.product_name,
                 uom: item?.uom,
                 price_limit: item?.price_limit,
-                offer_price: item?.offer_price ?? "",
-                line_total: ""
+                offer_price: item?.offer_price ?? ""
             }));
             reset({ items });
         }
 
-        if (details.quotationItems?.length) {
-            const items = details.quotationItems.map(item => ({
+        // for preview and edit purpose
+        if (details?.quotationRevision?.revisionItems?.length) {
+            const items = details?.quotationRevision?.revisionItems.map(item => ({
                 rfq_item_id: item?.rfq_item_id,
                 qty: item?.sourceRfqItem?.qty,
                 product_name: item?.sourceRfqItem?.product_name,
                 uom: item?.sourceRfqItem?.uom,
                 price_limit: item?.sourceRfqItem?.price_limit,
-                offer_price: item?.offer_price ?? "",
-                line_total: ""
+                offer_price: item?.offer_price ?? ""
             }));
             reset({ items });
         }
@@ -122,9 +121,8 @@ const RFQPreview = ({
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
-    console.log(details)
 
     return (
         <form onSubmit={handleSubmit(submit)}>
@@ -132,7 +130,7 @@ const RFQPreview = ({
                 {/* Header */}
                 <div className="flex justify-between items-center border-b pb-1 mb-4">
                     <div className='space-y-1'>
-                        <p className="text-xl">{details?.name ?? details?.buyer_name} - {details?.location} </p>
+                        <p className="text-xl">{details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name} </p>
                         <p className="text-sm text-gray-500"># {details?.rfq_no ?? details?.linkedRfq?.rfq_no}</p>
                     </div>
                     <span
