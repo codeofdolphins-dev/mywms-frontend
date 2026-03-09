@@ -14,10 +14,11 @@ import Dropdown from '../../components/Dropdown'
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots'
 import masterData from '../../Backend/master.backend'
 import { currencyFormatter } from '../../utils/currencyFormatter'
-import { warningAlert } from '../../utils/alerts'
 import { quotation } from '../../Backend/quotation.fetch'
 import { useSelector } from 'react-redux'
 import { rfqQuotation } from '../../Backend/rfqQuotation.fetch'
+import AddModal from '../../components/Add.modal'
+import BlanketPOPreview from '../../components/blanketPO/BlanketPO.preview'
 
 
 const headerLink = [
@@ -33,6 +34,9 @@ const ReceiveQuotation = () => {
     const isManufacture = user?.activeNode?.type?.category === "manufacturing" ? true : false;
     const reqNo = searchParams.get("s") ?? "";
 
+    const [previewData, setPreviewData] = useState(null);
+    const [isShowPreview, setIsShowPreviewsShow] = useState(false);
+
     /**************** APT mutation *******************/
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["receiveQuotationList"]);
@@ -41,7 +45,9 @@ const ReceiveQuotation = () => {
     const [debounceSearch, setDebounceSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
+    
 
+    /**************** revision & vendor *******************/
     const [vendor, setVendor] = useState(null);
     const [revNo, setRevNo] = useState(null);
 
@@ -78,26 +84,28 @@ const ReceiveQuotation = () => {
 
     /** status color change helper */
     const statusColor = (status) => {
-        switch (status) {
-            case "pending": return "bg-secondary";
-            case "quoted": return "bg-success";
-            case "rejected": return "bg-danger";
-            default: return "bg-warning";
+        if (isManufacture) {
+            switch (status) {
+                case "sent": return "bg-secondary";
+                case "negotiate": return "bg-primary";
+                case "confirmed": return "bg-success";
+                case "closed": return "bg-success";
+                default: return "bg-warning";
+            }
+        } else {
+            switch (status) {
+                case "pending": return "bg-secondary";
+                case "quoted": return "bg-success";
+                case "rejected": return "bg-danger";
+                default: return "bg-warning";
+            }
         }
     }
 
 
-    async function approveQ(id) {
-        if (!id) {
-            warningAlert();
-            return;
-        };
-
-        try {
-            await createData({ path: "/purchase-order/create", formData: { quotationId: id } });
-        } catch (error) {
-            console.log(error)
-        }
+    async function approveQ(data) {
+        setPreviewData(data);
+        setIsShowPreviewsShow(true);
     };
 
     async function rejectQ(id) {
@@ -112,9 +120,17 @@ const ReceiveQuotation = () => {
             console.log(error);
         }
     };
+
     async function negotiate(id) {
-        console.log(id)
-    }
+        console.log(id);
+        try {
+            const res = await updateData({ path: "/rfq/quotation/negotiate", formData: { id } });
+            console.log(res);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     function changeRevision(vendor, revNo) {
         setVendor(vendor);
@@ -134,7 +150,7 @@ const ReceiveQuotation = () => {
             <div className="panel space-y-4">
                 {
                     rfqQuotationData?.data?.map((item, idx) => {
-
+                        // console.log(item)
                         return (
                             <div
                                 className={`border border-[#d3d3d3] rounded `}
@@ -152,7 +168,7 @@ const ReceiveQuotation = () => {
                                                     }`}
                                             >
                                                 {/* 1️⃣ Name */}
-                                                <th className="w-[15%] text-start">
+                                                <th className="min-w-[15%] w-full text-start">
                                                     {/* {item?.nodeDetails?.name} */}
                                                     {item?.vendorTenant?.tenantDetails?.companyName}
                                                 </th>
@@ -163,45 +179,43 @@ const ReceiveQuotation = () => {
                                                 </th> */}
 
                                                 {/* 3️⃣ Status */}
-                                                <th className="w-[10%] !px-0 truncate">
+                                                <th className="min-w-[10%] w-full !px-0 truncate">
                                                     <div>
-                                                        <span className={`badge ${statusColor(item?.activeRevision?.status)}`}>{item?.activeRevision?.status?.toUpperCase()}</span>
+                                                        <span className={`badge ${statusColor(item?.activeRevision?.status)}`}>{item?.activeRevision?.status === "sent" ? "QUOTED" : item?.activeRevision?.status?.toUpperCase()}</span>
                                                     </div>
                                                 </th>
 
                                                 {/* 2️⃣ Revision */}
-                                                <th className="w-[10%] text-start break-words !px-0 flex items-center">
+                                                <th className="min-w-[15%] w-full text-start break-words !px-0 flex items-center">
                                                     <label htmlFor="" className='mb-0'>Revision:</label>
                                                     <select
-                                                        name=""
-                                                        id=""
-                                                        className='bg-white border rounded-md px-3 py-1 cursor-pointer ml-1'
+                                                        className="bg-white border rounded-md px-1 py-1 cursor-pointer ml-1"
                                                         onClick={(e) => e.stopPropagation()}
-                                                        onChange={(e) => changeRevision(item?.vendor_tenant, e.target.value)}
-
-                                                    >
-                                                        {
-                                                            [...Array(item?.current_revision_no).keys()].map(idx =>
-                                                                <option
-                                                                    key={idx}
-                                                                    value={idx + 1}
-                                                                    selected={((idx + 1 == revNo) && (item?.vendor_tenant == vendor)) ? true : false}
-                                                                >
-                                                                    {idx + 1}
-                                                                </option>
-                                                            )
+                                                        value={
+                                                            item?.vendor_tenant === vendor
+                                                                ? revNo
+                                                                : item?.current_revision_no
                                                         }
+                                                        onChange={(e) =>
+                                                            changeRevision(item?.vendor_tenant, Number(e.target.value))
+                                                        }
+                                                    >
+                                                        {[...Array(item?.current_revision_no).keys()].map((idx) => (
+                                                            <option key={idx} value={idx + 1}>
+                                                                {idx + 1}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </th>
 
                                                 {/* 4️⃣ Amounts */}
-                                                <th className="w-[20%] text-start break-words">
+                                                <th className="min-w-[30%] w-full text-start break-words text-sm !px-0 !pl-1">
                                                     {currencyFormatter(item?.requisition?.grand_total)}{" || "}
                                                     {currencyFormatter(item?.activeRevision?.grand_total) ?? "XXXXX"}
                                                 </th>
 
                                                 {/* 5️⃣ PO No */}
-                                                <th className="w-[15%] text-start break-words !px-0">
+                                                <th className="min-w-[10%] text-start break-words !px-0">
                                                     <Link
                                                         to={`/purchase-order/${item?.quotation?.purchaseOrder_no}`}
                                                         className="hover:underline text-primary"
@@ -211,7 +225,7 @@ const ReceiveQuotation = () => {
                                                 </th>
 
                                                 {/* 6️⃣ Actions */}
-                                                <th className="w-[10%] flex justify-center !px-0">
+                                                <th className="w-[5%] flex justify-center !px-0 mr-2">
                                                     <div
                                                         className="dropdown"
                                                         onClick={(e) => e.stopPropagation()}
@@ -221,29 +235,31 @@ const ReceiveQuotation = () => {
                                                             btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
                                                             button={<IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />}
                                                         >
-                                                            <ul className="!min-w-[190px]">
+                                                            <ul className="!min-w-[180px]">
                                                                 <li>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => approveQ(item?.quotation?.id)}
-                                                                        className="text-left hover:!bg-success hover:!text-white"
+                                                                        onClick={() => approveQ(item)}
+                                                                        className="text-left hover:!bg-green-100 hover:!text-green-500"
                                                                     >
-                                                                        Send confirm Quotation
+                                                                        Lock & Confirm
                                                                     </button>
                                                                 </li>
-                                                                <li>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => negotiate(item?.quotation?.id)}
-                                                                    >
-                                                                        Negotiate
-                                                                    </button>
-                                                                </li>
+                                                                {item?.current_revision_no <= 3 && <>
+                                                                    <li>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => negotiate(item?.id)}
+                                                                        >
+                                                                            Negotiate
+                                                                        </button>
+                                                                    </li>
+                                                                </>}
                                                                 <li>
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => rejectQ(item?.quotation?.id)}
-                                                                        className="hover:!bg-danger hover:!text-white"
+                                                                        className="hover:!bg-red-100 hover:!text-red-500"
                                                                     >
                                                                         Reject
                                                                     </button>
@@ -303,6 +319,20 @@ const ReceiveQuotation = () => {
                     })
                 }
             </div >
+
+            <AddModal
+                isShow={isShowPreview}
+                setIsShow={setIsShowPreviewsShow}
+                title="Preview & Send BlanketPO"
+                placement='start'
+            >
+                <BlanketPOPreview
+                    data={previewData}
+                    setIsShowPreviewsShow={setIsShowPreviewsShow}
+                />
+            </AddModal>
+
+
         </div >
     )
 }

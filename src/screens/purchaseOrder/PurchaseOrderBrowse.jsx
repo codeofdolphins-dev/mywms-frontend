@@ -67,21 +67,21 @@ const PurchaseOrderBrowse = () => {
                         <div
                             className={`
                                 ${activeTab === 1 ? '!bg-primary text-white' : ''}
-                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-32 cursor-pointer
+                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-36 cursor-pointer
                             `}
                             onClick={() => setActiveTab(1)}
                         >
-                            <p className='-mb-1'>Created PO</p>
+                            <p className='-mb-1'>Purchase Order(PO)</p>
                         </div>
                     </li>
 
                     <li>
                         <div className={`${activeTab === 2 ? '!bg-primary text-white' : ''} 
-                                            block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-32 cursor-pointer
+                                            block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-36 cursor-pointer
                                         `}
                             onClick={() => setActiveTab(2)}
                         >
-                            <p className='-mb-1'>Receive PO</p>
+                            <p className='-mb-1'>Sales Order(SO)</p>
                         </div>
                     </li>
                 </ul>

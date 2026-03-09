@@ -19,6 +19,8 @@ import { quotation } from '../../Backend/quotation.fetch';
 import { rfqQuotation } from '../../Backend/rfqQuotation.fetch';
 import RFQPreview from '../../components/dashboard/RFQPreview';
 import { currencyFormatter } from '../../utils/currencyFormatter';
+import masterData from '../../Backend/master.backend';
+import { confirmation } from '../../utils/alerts';
 
 
 const headerLink = [
@@ -29,6 +31,8 @@ const headerLink = [
 const Quotation = () => {
     const navigate = useNavigate();
 
+    const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["rfqQuotationList"]);
+
     const [dataWrapper, setDataWrapper] = useState({});
 
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -37,6 +41,8 @@ const Quotation = () => {
 
 
     const [activeTab, setActiveTab] = useState(1);
+
+    const [selectedRevision, setSelectedRevision] = useState({});
 
     const [itemDetails, setItemDetails] = useState([]);
     const [isShowPreview, setIsShowPreview] = useState(false);
@@ -68,7 +74,17 @@ const Quotation = () => {
         console.log(id)
     }
     async function handleDelete(id) {
-        console.log(id)
+        try {
+            if (activeTab === 1) { }
+            else {
+                const res = await confirmation();
+                if (!res) return;
+
+                await deleteData({ path: `rfq/quotation/delete/${id}` });
+            }
+        } catch (error) {
+            console.warn(error);
+        }
     }
     function handelShow(items, idx = 0) {
         if (activeTab === 1) {
@@ -82,6 +98,26 @@ const Quotation = () => {
             });
         }
     }
+
+
+    /** status color change helper */
+    const statusColor = (status) => {
+        switch (status) {
+            case "sent": return "bg-primary";
+            case "negotiate": return "bg-warning";
+            case "confirmed": return "bg-success";
+            case "closed": return "bg-success";
+            default: return "bg-danger";
+        }
+    }
+
+    const handleRevisionChange = (itemId, value) => {
+        setSelectedRevision(prev => ({
+            ...prev,
+            [itemId]: Number(value)
+        }));
+    };
+
 
 
     return (
@@ -174,58 +210,71 @@ const Quotation = () => {
                             />
                         ))
                     ) : (
-                        rfqQuotationList?.data?.map((item, idx) => {
+                        rfqQuotationList?.data?.map((item) => {
 
-                            const current_revision_no = isNaN(Number(item?.current_revision_no)) ? 0 : item?.current_revision_no;
+                            const revisions = item?.quotationRevision || [];
+                            const revisionCount = revisions.length;
 
-                            let selectedRevisionNo = 0;
+                            const selectedRevisionNo =
+                                selectedRevision[item.id] ??
+                                (item?.current_revision_no ? item.current_revision_no - 1 : 0);
 
-                            return <TableRow
-                                key={item.id}
-                                columns={EXTERNAL_QUOTATION_COLUMN}
-                                row={{
-                                    qno: item?.linkedRfq?.rfq_no,
-                                    name: item?.buyer_name,
-                                    status: item?.quotationRevision?.[selectedRevisionNo]?.status,
-                                    grandTotal: currencyFormatter(item?.quotationRevision?.[selectedRevisionNo]?.grand_total),
-                                    validity: utcToLocal(item?.valid_till),
-                                    revision: (
-                                        <>
+                            const selectedData = revisions[selectedRevisionNo] || {};
+
+                            return (
+                                <TableRow
+                                    key={item.id}
+                                    columns={EXTERNAL_QUOTATION_COLUMN}
+                                    row={{
+                                        qno: item?.linkedRfq?.rfq_no,
+                                        name: item?.buyer_name,
+
+                                        status: (
+                                            <span className={`badge ${statusColor(selectedData?.status)}`}>
+                                                {selectedData?.status?.toUpperCase()}
+                                            </span>
+                                        ),
+
+                                        grandTotal: currencyFormatter(selectedData?.grand_total),
+
+                                        validity: utcToLocal(item?.valid_till),
+
+                                        revision: (
                                             <select
-                                                name=""
-                                                id=""
-                                                className='bg-white border px-3 py-1 cursor-pointer'
-                                                onChange={(e) => { selectedRevisionNo = e.target.value }}
-                                            >
-                                                {
-                                                    [...Array(current_revision_no).keys()].map(idx =>
-                                                        <option
-                                                            key={idx}
-                                                            value={idx}
-                                                        >
-                                                            {idx + 1}
-                                                        </option>
-                                                    )
+                                                className="bg-white border px-3 py-1 cursor-pointer"
+                                                value={selectedRevisionNo}
+                                                onChange={(e) =>
+                                                    handleRevisionChange(item.id, e.target.value)
                                                 }
+                                            >
+                                                {[...Array(revisionCount).keys()].map((idx) => (
+                                                    <option key={idx} value={idx}>
+                                                        {idx + 1}
+                                                    </option>
+                                                ))}
                                             </select>
-                                        </>
-                                    ),
-                                    action: (
-                                        <div className='flex items-center justify-center space-x-3'>
-                                            <CustomeButton
-                                                onClick={() => activeTab == 1 ? handelShow(item) : handelShow(item, selectedRevisionNo)}
-                                            >
-                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
-                                            <CustomeButton
-                                                onClick={() => handleDelete(item.id)}
-                                            >
-                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
-                                        </div>
-                                    )
-                                }}
-                            />
+                                        ),
+
+                                        action: (
+                                            <div className="flex items-center justify-center space-x-3">
+                                                <CustomeButton
+                                                    onClick={() =>
+                                                        activeTab == 1
+                                                            ? handelShow(item)
+                                                            : handelShow(item, selectedRevisionNo)
+                                                    }
+                                                >
+                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
+
+                                                <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                    <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                                </CustomeButton>
+                                            </div>
+                                        )
+                                    }}
+                                />
+                            );
                         })
                     )}
                 </TableBody>
@@ -283,7 +332,7 @@ const Quotation = () => {
 
             {/* external quotation preview panel */}
             <AddModal
-                title="RFQ Note Preview"
+                title="RFQ Note Preview & Update"
                 placement='start'
                 isShow={isShowPreviewEX}
                 setIsShow={setIsShowPreviewEX}

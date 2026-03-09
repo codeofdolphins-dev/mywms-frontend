@@ -89,16 +89,16 @@ const RFQPreview = ({
     }, [items, setValue]);
 
     async function submit(data) {
-        // console.log(data);
+        console.log(details); return
 
         try {
             if (isEditable && allowEdit) {
-                data.id = details?.id;
+                data.quotation_id = details?.id;
+                // console.log(data); return
 
                 console.log(data);
-                alert("🛑 Under process!!!");
 
-                // const res = await updateData({ path: "", formData: data });
+                const res = await updateData({ path: "/rfq/quotation/update", formData: data });
 
                 if (res.success) {
                     reset();
@@ -107,11 +107,9 @@ const RFQPreview = ({
             } else {
                 data.rfq_no = details?.rfq_no;
                 data.buyer_name = `${details?.name} - ${details?.location}`
+                // console.log(data); return
 
                 const res = await createData({ path: "/rfq/quotation/create", formData: data });
-
-                // console.log(res)
-
                 if (res.success) {
                     reset();
                     setIsRequisitionCardShow(false);
@@ -129,8 +127,13 @@ const RFQPreview = ({
             <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg">
                 {/* Header */}
                 <div className="flex justify-between items-center border-b pb-1 mb-4">
-                    <div className='space-y-1'>
-                        <p className="text-xl">{details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name} </p>
+                    <div className='w-full space-y-1'>
+                        <div className="flex items-center justify-between">
+                            <p className="text-xl mb-0">{details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name}
+                                <span className="badge bg-secondary ml-2">{details?.quotationRevision?.status?.toUpperCase()}</span>
+                            </p>
+                            <p className="">Rev: {details?.quotationRevision?.revision_no} </p>
+                        </div>
                         <p className="text-sm text-gray-500"># {details?.rfq_no ?? details?.linkedRfq?.rfq_no}</p>
                     </div>
                     <span
@@ -173,6 +176,7 @@ const RFQPreview = ({
                                 label="Valide Till"
                                 labelPosition="inline"
                                 {...register("valid_till")}
+                                disabled={isEditable}
                             />
                         </div>
                     </div>

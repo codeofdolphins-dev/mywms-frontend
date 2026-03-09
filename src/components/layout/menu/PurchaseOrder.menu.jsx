@@ -13,7 +13,7 @@ const PurchaseOrder = ({ location }) => {
             <button type="button" className={`nav-link ${location.pathname.includes('/purchase-order') ? 'active' : ''}`}>
                 <div className="flex items-center">
                     <MdOutlineReceiptLong />
-                    <span className="px-1 whitespace-nowrap">Purchase Order</span>
+                    <span className="px-1 whitespace-nowrap">Orders</span>
                 </div>
             </button>
         </li>
