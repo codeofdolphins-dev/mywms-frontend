@@ -22,7 +22,7 @@ class FetchData {
         });
     };
 
-    TQStateList() {
+    TQStateList(isEnabled = true) {
         return useQuery({
             queryKey: ["stateList"],
             queryFn: async () => {
@@ -31,6 +31,7 @@ class FetchData {
             },
             gcTime: Infinity,
             staleTime: Infinity,
+            enabled: isEnabled,
             onSuccess: (data) => {
                 console.log(data);
             },

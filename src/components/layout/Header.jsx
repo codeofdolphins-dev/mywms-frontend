@@ -16,7 +16,9 @@ import IconLogout from '../Icon/IconLogout';
 import { storeLogout } from '../../store/AuthSlice';
 import authService from '../../Backend/Auth.backend';
 import FullScreenLoader from '../loader/FullScreenLoader';
-import { destoryLocation } from '../../store/LocationSlice';
+import { clearLocation } from '../../store/LocationSlice';
+import secureLocalStorage from 'react-secure-storage';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 const Header = () => {
@@ -90,18 +92,26 @@ const Header = () => {
     };
 
     const { mutateAsync: logout, isLoading } = authService.TQLogout();
+    const queryClient = useQueryClient()
 
 
     const handelLogout = async () => {
         try {
             const res = await logout();
             if (res.success) {
+                queryClient.clear();
+
+                secureLocalStorage.removeItem("token");
+                secureLocalStorage.clear();
                 dispatch(storeLogout());
-                dispatch(destoryLocation());
-                navigate("/auth/login");
+                dispatch(clearLocation());
+                navigate("/auth/login", { replace: true });
             }
         } catch (error) {
             console.log(error);
+            secureLocalStorage.clear();
+            dispatch(storeLogout());
+            navigate("/auth/login");
         }
     }
 

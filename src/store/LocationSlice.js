@@ -8,11 +8,11 @@ const locationSlice = createSlice({
         storeLocation: (state, action) => {
             return action.payload;
         },
-        destoryLocation: (state, action) => {
+        clearLocation: (state, action) => {
             return [];
         }
     }
 });
 
-export const { storeLocation, destoryLocation } = locationSlice.actions;
+export const { storeLocation, clearLocation } = locationSlice.actions;
 export default locationSlice.reducer;
