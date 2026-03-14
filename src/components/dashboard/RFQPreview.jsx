@@ -130,9 +130,9 @@ const RFQPreview = ({
                     <div className='w-full space-y-1'>
                         <div className="flex items-center justify-between">
                             <p className="text-xl mb-0">{details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name}
-                                <span className="badge bg-secondary ml-2">{details?.quotationRevision?.status?.toUpperCase()}</span>
+                                {isEditable && <span className="badge bg-secondary ml-2">{details?.quotationRevision?.status?.toUpperCase()}</span>}
                             </p>
-                            <p className="">Rev: {details?.quotationRevision?.revision_no} </p>
+                            {isEditable && <p className="">Rev: {details?.quotationRevision?.revision_no} </p>}
                         </div>
                         <p className="text-sm text-gray-500"># {details?.rfq_no ?? details?.linkedRfq?.rfq_no}</p>
                     </div>

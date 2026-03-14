@@ -15,8 +15,10 @@ const AuthBootstrap = ({ children }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { isError, isSuccess, data, isLoading } = authService.TQCurrentUser(!!token);
-    const { isSuccess: locationIsSuccess, data: locationData } = fetchData.TQStateList();
+    const shouldFetch = Boolean(token && !isLogin);
+
+    const { isError, isSuccess, data, isLoading } = authService.TQCurrentUser(shouldFetch);
+    const { isSuccess: locationIsSuccess, data: locationData } = fetchData.TQStateList(shouldFetch);
 
     useEffect(() => {
         if (isSuccess && locationIsSuccess) {
