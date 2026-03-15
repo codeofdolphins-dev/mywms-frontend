@@ -40,73 +40,66 @@ const Dashboard = () => {
                         }}
                     >
                         {/* RFQ Card */}
-                        <div className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 p-6 relative overflow-hidden">
-                            {/* Subtle background decoration */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
-                            
+                        <div className="panel space-y-4 hover:shadow-lg transition-all duration-300">
                             {/* Header */}
-                            <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div className="flex justify-between items-start">
                                 <div className="flex items-start gap-3 w-full pr-4">
-                                    <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shadow-sm shrink-0">
+                                    <div className="p-3 bg-primary/10 text-primary rounded-xl shrink-0">
                                         <FiFileText size={24} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="text-lg font-bold text-gray-800 leading-tight group-hover:text-blue-600 transition-colors duration-300 truncate">{item?.title || "Untitled Requisition"}</h2>
-                                        <p className="text-sm font-medium text-gray-400 mt-1 flex items-start gap-1 break-all">
+                                        <h2 className="text-lg font-bold hover:text-primary transition-colors duration-300 truncate">{item?.title || "Untitled Requisition"}</h2>
+                                        <p className="text-sm font-medium mt-1 flex items-start gap-1 break-all text-white-dark">
                                             <span className="shrink-0 mt-0.5">#</span> {item?.rfq_no}
                                         </p>
                                     </div>
                                 </div>
                                 <span
-                                    className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                                    className={`badge shrink-0 rounded-full capitalize ${
                                         item?.priority?.toLowerCase() === "high"
-                                            ? "bg-red-50 text-red-600 border border-red-100"
+                                            ? "badge-outline-danger"
                                             : item?.priority?.toLowerCase() === "normal"
-                                            ? "bg-blue-50 text-blue-600 border border-blue-100"
-                                            : "bg-gray-50 text-gray-600 border border-gray-100"
+                                            ? "badge-outline-primary"
+                                            : "badge-outline-secondary"
                                     }`}
                                 >
-                                    <div className={`w-1.5 h-1.5 rounded-full ${
-                                        item?.priority?.toLowerCase() === "high" ? "bg-red-500" :
-                                        item?.priority?.toLowerCase() === "normal" ? "bg-blue-500" : "bg-gray-500"
-                                    }`}></div>
                                     {item?.priority || "N/A"}
                                 </span>
                             </div>
 
                             {/* Content grid */}
-                            <div className="grid grid-cols-2 gap-4 mb-5 p-4 bg-gray-50/50 rounded-xl border border-gray-50 relative z-10">
-                                <div className="flex items-center gap-3 text-sm text-gray-600">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <FiClock className="text-blue-500" size={16} />
+                            <div className="grid grid-cols-2 gap-4 mt-2">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-info/10 text-info rounded-lg shrink-0">
+                                        <FiClock size={16} />
                                     </div>
                                     <div>
-                                        <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">Deadline</p>
-                                        <p className="font-semibold text-gray-700">{item?.submission_deadline}</p>
+                                        <p className="text-xs uppercase tracking-wider font-semibold text-white-dark mb-0.5">Deadline</p>
+                                        <p className="font-semibold text-sm">{item?.submission_deadline}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <MdOutlineAttachMoney className="text-green-500" size={18} />
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-success/10 text-success rounded-lg shrink-0">
+                                        <MdOutlineAttachMoney size={18} />
                                     </div>
                                     <div>
-                                        <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-400 mb-0.5">Total Amount</p>
-                                        <p className="font-bold text-gray-800">{currencyFormatter(item?.grand_total)}</p>
+                                        <p className="text-xs uppercase tracking-wider font-semibold text-white-dark mb-0.5">Total Amount</p>
+                                        <p className="font-bold text-sm">{currencyFormatter(item?.grand_total)}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Footer */}
-                            <div className="flex justify-between items-center text-sm text-gray-500 border-t border-gray-100 pt-4 relative z-10">
+                            <div className="flex justify-between items-center text-sm border-t border-[#e0e6ed] dark:border-[#1b2e4b] pt-4 mt-2">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
+                                    <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
                                         <FiUser size={14} />
                                     </div>
-                                    <span className="font-medium text-gray-700">{item?.meta?.name || "Unknown"}</span>
+                                    <span className="font-medium truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg text-gray-600">
-                                    <FiMapPin size={14} className="text-red-400" />
-                                    <span className="font-medium text-xs">{item?.meta?.location || "N/A"}</span>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-dark/5 dark:bg-dark/20 rounded-lg">
+                                    <FiMapPin size={14} className="text-danger shrink-0" />
+                                    <span className="font-medium text-xs truncate max-w-[150px]">{item?.meta?.location || "N/A"}</span>
                                 </div>
                             </div>
                         </div>
