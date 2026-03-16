@@ -1,9 +1,39 @@
 import React from 'react'
 import { currencyFormatter } from '../../utils/currencyFormatter'
+import masterData from '../../Backend/master.backend'
+import { Button } from '@mantine/core';
 
 const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
 
-    // console.log(data)
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
+
+    // console.log(data);
+
+    async function submit() {
+        if (!data) return;
+
+        try {
+            // format data
+            const formData = {
+                rfq_quotation_revision_id: data.activeRevision.id,
+                buyer_tenant: data.requisition.buyer_tenant,
+                vendor_tenant: data.vendor_tenant,
+                valid_until: data.valid_till,
+                items: data.quotationItems.map(item => ({
+                    buyer_product_id: item.sourceRfqItem.product_id,
+                    total_contracted_qty: item.qty,
+                    unit_price: item.offer_price,
+                }))
+            };
+
+            const res = await createData({ path: "/rfq/blanket-order/create", formData });
+            if (res?.success)
+                setIsShowPreviewsShow(false);
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div>
@@ -35,7 +65,7 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                             </div>
                         </div>
                         <div>
-                            <h4 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">Ship To / Buyer</h4>
+                            <h4 className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">Buyer</h4>
                             <p className="font-bold text-slate-900 leading-tight"> {data?.requisition?.meta?.name} </p>
                             <p className="text-xs text-slate-500 mt-1">PR Ref:  {data?.requisition?.pr_reference_code} </p>
                         </div>
@@ -59,14 +89,14 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                                 {
                                     data?.quotationItems?.map((item, idx) => {
 
-                                        const lineTotal = Number(item?.sourceRfqItem?.qty) * Number(item?.offer_price)
+                                        const lineTotal = Number(item?.qty) * Number(item?.offer_price)
 
                                         return <tr key={idx} className="text-sm">
                                             <td className="py-4">
                                                 <p className="font-medium text-slate-800">{item?.sourceRfqItem?.product_name}</p>
                                                 {/* <p className="text-[11px] text-slate-500">HSN: 7201 | Warehouse: Kolkata</p> */}
                                             </td>
-                                            <td className="py-4 text-right text-slate-600">{item?.sourceRfqItem?.qty}</td>
+                                            <td className="py-4 text-right text-slate-600">{item?.qty}</td>
                                             <td className="py-4 text-right text-slate-600">{currencyFormatter(item?.offer_price)}</td>
                                             {/* <td className="py-4 text-right text-slate-600">18%</td> */}
                                             <td className="py-4 text-right font-semibold text-slate-900">{currencyFormatter(lineTotal)}</td>
@@ -98,9 +128,9 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                                 <span>Total Tax</span>
                                 <span>₹ 4,72,881.36</span>
                             </div> */}
-                            <div className="flex justify-between items-center pt-4 border-slate-200">
-                                <span className="text-base font-bold text-slate-900">Grand Total</span>
-                                <span className="text-2xl font-black text-indigo-700">{currencyFormatter(data?.activeRevision?.grand_total)} </span>
+                            <div className="flex gap-3 justify-between items-center pt-4 border-slate-200">
+                                <span className="text-base font-bold text-slate-900 truncate">Grand Total</span>
+                                <span className="text-xl font-black text-indigo-700">{currencyFormatter(data?.activeRevision?.grand_total)} </span>
                             </div>
                         </div>
                     </div>
@@ -109,9 +139,13 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                 {/* Action Footer */}
                 <div className="bg-slate-50 px-8 py-4 flex justify-end gap-3 border-t border-slate-200">
                     {/* <button className="px-4 py-2 text-sm font-bold text-slate-600 hover:text-slate-800 transition">Download PDF</button> */}
-                    <button className="px-8 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-lg shadow-indigo-200 transition">
+                    <Button
+                        className="px-8 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-lg shadow-indigo-200 transition"
+                        onClick={submit}
+                        loading={createPending}
+                    >
                         Convert to BPO
-                    </button>
+                    </Button>
                 </div>
             </div>
 

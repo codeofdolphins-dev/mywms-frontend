@@ -5,10 +5,12 @@ import Inward from "./Inward.menu";
 import ManageAccess from "./ManageAccess.menu";
 import Master from "./Master.menu";
 import Outward from "./Outward.menu";
-import PurchaseOrder from "./PurchaseOrder.menu";
+import PurchaseOrder from "./Order.menu";
 import Quotation from "./Quotation.menu";
 import Requisition from "./Requisition.menu";
 import SuperAdmin from "./SuperAdmin.menu";
+import Order from "./Order.menu";
+
 
 export {
     Dashboard,
@@ -21,5 +23,6 @@ export {
     Inward,
     Outward,
     SuperAdmin,
-    Product
+    Product,
+    Order
 }

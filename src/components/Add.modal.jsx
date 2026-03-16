@@ -31,8 +31,7 @@ const AddModal = ({
                             >
                                 <DialogPanel
                                     as="div"
-                                    style={{ maxWidth: `${maxWidth}%` }}
-                                    className={`panel my-8 w-full h-full overflow-hidden rounded-lg border-0 p-0 text-black`}
+                                    className={`panel my-8 w-full overflow-hidden rounded-lg border-0 p-0 text-black max-w-[90%] md:max-w-[80%] lg:max-w-[60%] xl:max-w-[${maxWidth}%]`}
                                 >
                                     <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 relative z-10 shadow-lg">
                                         <h5 className="text-lg font-bold">{title}</h5>

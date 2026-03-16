@@ -25,10 +25,14 @@ const RFQPreview = ({
         }
     });
     const isEditable = details?.quotationRevision?.revisionItems === undefined ? false : true;
+
+
     const { fields } = useFieldArray({
         control,
         name: "items"
     });
+
+
     /** prepare form for multiple items DYNAMIC */
     useEffect(() => {
         // for create purpose
@@ -56,10 +60,14 @@ const RFQPreview = ({
             reset({ items });
         }
     }, [details, reset]);
+
+
     const items = useWatch({
         control,
         name: "items"
     });
+
+
     useEffect(() => {
         if (!items?.length) return;
         let grandTotal = 0;
@@ -74,6 +82,8 @@ const RFQPreview = ({
             shouldValidate: false
         });
     }, [items, setValue]);
+
+
     async function submit(data) {
         // console.log(details); return
         try {
@@ -101,9 +111,12 @@ const RFQPreview = ({
             console.log(error);
         }
     };
+
+
     return (
         <form onSubmit={handleSubmit(submit)}>
-            <div className="bg-white rounded-2xl p-0 overflow-hidden relative shadow-sm">
+            <div className="bg-white rounded-2xl p-0 pb-5 overflow-hidden relative shadow-sm">
+
                 {/* Header Area with modern gradient banner */}
                 <div className="relative bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 p-6 pb-8">
                     <div className="flex items-start justify-between relative z-10">
@@ -144,16 +157,18 @@ const RFQPreview = ({
                             </div>
                         </div>
                     </div>
+
                     {/* Decorative background pattern */}
                     <div className="absolute right-0 bottom-0 opacity-10 blur-sm transform translate-y-1/2 translate-x-1/4">
                         <FiCheckCircle size={120} />
                     </div>
                 </div>
 
-                <div className="px-6 py-5 bg-gray-50/50">
+                <div className="px-6 mt-2 bg-gray-50/50">
+
                     {/* Note */}
                     {details?.note && (
-                        <div className="mb-6 bg-amber-50 border border-amber-200 shadow-sm p-4 rounded-xl flex gap-3 items-start relative overflow-hidden">
+                        <div className="mb-3 bg-amber-50 border border-amber-200 shadow-sm py-2 px-4 rounded-xl flex gap-3 items-start relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
                             <div className="text-amber-500 mt-0.5">
                                 <FiFileText size={18} />
@@ -167,7 +182,8 @@ const RFQPreview = ({
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-5 mb-8">
+                    {/* price breakup */}
+                    <div className="grid grid-cols-2 gap-5">
                         <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                             <Input
                                 label="Grand Total"
@@ -191,8 +207,8 @@ const RFQPreview = ({
                     </div>
 
                     {/* Items Custom UI instead of table */}
-                    <div className="mt-8 bg-gray-50 rounded-xl border border-gray-100 p-5 shadow-inner">
-                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                    <div className="mt-5 py-4 px-2 bg-gray-50 rounded-xl border border-gray-100 shadow-inner">
+                        <div className="flex items-center justify-between pb-3 border-b border-gray-200">
                             <div className="flex items-center gap-2">
                                 <FiPackage className="text-blue-500 w-5 h-5" />
                                 <h3 className="text-sm font-bold text-gray-700 tracking-wide">Quotation Items</h3>
@@ -212,10 +228,10 @@ const RFQPreview = ({
                         </div>
 
                         <div className="max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
-                            <div className="space-y-3">
+                            <div className="space-y-3 mt-3">
                                 {fields?.map((field, idx) => {
                                     return (
-                                        <div key={idx} className="group bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200">
+                                        <div key={idx} className="group bg-white border border-gray-100 rounded-xl py-2 px-4 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200">
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
                                                 <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -239,7 +255,7 @@ const RFQPreview = ({
                                                     </div>
                                                 </div>
 
-                                                <div className="shrink-0 relative bg-gray-50/50 rounded-lg p-3 border border-gray-50 transition-colors group-hover:bg-white group-hover:border-blue-50 whitespace-nowrap flex items-center gap-2">
+                                                <div className="shrink-0 relative bg-gray-50/50 rounded-lg p-3 border border-gray-50 transition-colors group-hover:bg-white group-hover:border-blue-50 whitespace-nowrap">
                                                     <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom}</label>
                                                     {isEditable
                                                         ? allowEdit
@@ -287,7 +303,7 @@ const RFQPreview = ({
                             </Button>
                         </div>
                     )}
-                </div> {/* Close inner padding wrapper */}
+                </div>
             </div>
         </form>
     )

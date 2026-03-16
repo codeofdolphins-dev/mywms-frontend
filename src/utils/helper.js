@@ -282,6 +282,17 @@ export const PURCHASE_ORDER = [
 ];
 
 
+const BPO_COLUMN = [
+    { key: "no", label: "#", align: "center" },
+    { key: "supplier", label: "Business Partner" },
+    { key: "items", label: "Total Items", align: "center" },
+    { key: "status", label: "Status" },
+    { key: "valid_until", label: "Validity" },
+    { key: "createdAt", label: "Creation Date" },
+    { key: "action", label: "Action", align: "center" },
+],
+
+
 export const SUPPLIER_COLUMN = [
     // { key: "id", label: "#" },
     { key: "email", label: "Email" },

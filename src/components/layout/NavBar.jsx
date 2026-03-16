@@ -20,10 +20,10 @@ import {
     ManageAccess,
     Requisition,
     Quotation,
-    PurchaseOrder,
     Inward,
     Outward,
     SuperAdmin,
+    Order,
 } from './menu';
 import Production from './menu/production.menu';
 
@@ -113,11 +113,11 @@ const NavBar = () => {
                 && <Quotation location={location} />
             }
 
-            {/* Purchase Order */}
+            {/* Order */}
             {
                 (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
                     || ((hasNodeAccess(["distributor"], nodeName))))
-                && <PurchaseOrder location={location} />
+                && <Order location={location} />
             }
 
             {/* Inward */}

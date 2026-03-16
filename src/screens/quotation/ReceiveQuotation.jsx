@@ -30,6 +30,7 @@ const ReceiveQuotation = () => {
     const user = useSelector(state => state.auth.userData);
     const [searchParams] = useSearchParams();
 
+
     /**************** global variable *******************/
     const isManufacture = user?.activeNode?.type?.category === "manufacturing" ? true : false;
     const reqNo = searchParams.get("s") ?? "";
@@ -37,9 +38,11 @@ const ReceiveQuotation = () => {
     const [previewData, setPreviewData] = useState(null);
     const [isShowPreview, setIsShowPreviewsShow] = useState(false);
 
+
     /**************** APT mutation *******************/
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["receiveQuotationList"]);
+
 
     /**************** pagination and search utilities *******************/
     const [debounceSearch, setDebounceSearch] = useState("");
@@ -101,6 +104,7 @@ const ReceiveQuotation = () => {
             }
         }
     }
+
 
 
     async function approveQ(data) {
@@ -295,7 +299,7 @@ const ReceiveQuotation = () => {
                                         >
                                             {item?.quotationItems?.map((product, j) => {
                                                 // console.log(product);
-                                                const line_total = Number(product?.sourceRfqItem?.qty) * Number(product?.offer_price)
+                                                const line_total = Number(product?.qty) * Number(product?.offer_price)
                                                 return (
                                                     <TableRow
                                                         key={j}
@@ -303,7 +307,7 @@ const ReceiveQuotation = () => {
                                                         row={{
                                                             name: product?.sourceRfqItem?.product_name,
                                                             uom: product?.sourceRfqItem?.uom,
-                                                            qty: product?.sourceRfqItem?.qty,
+                                                            qty: product?.qty,
                                                             priceLimit: currencyFormatter(product?.sourceRfqItem?.price_limit),
                                                             offerPrice: currencyFormatter(product?.offer_price),
                                                             total: currencyFormatter(line_total),

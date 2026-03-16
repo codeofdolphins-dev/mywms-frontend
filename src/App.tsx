@@ -18,7 +18,7 @@ import AssignRole from './screens/access/AssignRole';
 import Quotation from './screens/quotation/Quotation';
 import ReceiveQuotation from './screens/quotation/ReceiveQuotation';
 import ReceiveRequision from './screens/requisition/ReceiveRequision';
-import PurchaseOrder from './screens/purchaseOrder/PurchaseOrder';
+import PurchaseOrder from './screens/order/PurchaseOrder';
 import RegisterNode from './screens/admin/RegisterNode';
 import CreateUser from './screens/user/CreateUser';
 import UserBrowse from './screens/user/UserBrowse';
@@ -35,10 +35,11 @@ import UnitType from './screens/master/unitType/UnitType';
 import Register from './screens/auth/Register';
 import Admin from './screens/admin/Admin';
 import SuperAdmin from './screens/superAdmin/SuperAdmin';
-import PurchaseOrderBrowse from './screens/purchaseOrder/PurchaseOrderBrowse';
+import PurchaseOrderBrowse from './screens/order/PurchaseOrderBrowse';
 import Vendor from './screens/vendor/Vendor';
 import VendorCategory from './screens/vendor/VendorCategory';
 import Dashboard from './screens/Dashboard';
+import BlanketPO from './screens/order/BlanketPO';
 
 
 function App() {
@@ -118,10 +119,11 @@ function App() {
                     </Route>
 
 
-                    {/* purchase order */}
-                    <Route path="purchase-order" >
+                    {/* order */}
+                    <Route path="order" >
                         <Route index element={<PurchaseOrderBrowse />} />
-                        <Route path=':id' element={<PurchaseOrder />} />
+                        <Route path='bpo' element={<BlanketPO />} />
+                        {/* <Route path='/:id' element={<PurchaseOrder />} /> */}
                     </Route>
 
 
