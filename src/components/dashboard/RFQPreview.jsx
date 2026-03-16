@@ -7,7 +7,7 @@ import masterData from '../../Backend/master.backend';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import IconPencil from '../Icon/IconPencil';
 import CustomeButton from "../inputs/Button"
-
+import { FiFileText, FiPackage, FiCheckCircle, FiEdit3 } from 'react-icons/fi';
 const RFQPreview = ({
     details,
     setIsRequisitionCardShow,
@@ -16,9 +16,7 @@ const RFQPreview = ({
 }) => {
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["rfqQuotationList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["rfqQuotationList"]);
-
     const [allowEdit, setAllowEdit] = useState(false);
-
     const { handleSubmit, register, setValue, reset, control, watch } = useForm({
         defaultValues: {
             grandTotal: currencyFormatter(details?.grand_total) ?? "",
@@ -26,19 +24,17 @@ const RFQPreview = ({
             items: []
         }
     });
-
     const isEditable = details?.quotationRevision?.revisionItems === undefined ? false : true;
-
     const { fields } = useFieldArray({
         control,
         name: "items"
     });
-
     /** prepare form for multiple items DYNAMIC */
     useEffect(() => {
+        // for create purpose
         if (details.items?.length) {
             const items = details.items.map(item => ({
-                id: item?.id,
+                rfq_item_id: item?.id,
                 qty: item?.qty,
                 product_name: item?.product_name,
                 uom: item?.uom,
@@ -47,7 +43,6 @@ const RFQPreview = ({
             }));
             reset({ items });
         }
-
         // for preview and edit purpose
         if (details?.quotationRevision?.revisionItems?.length) {
             const items = details?.quotationRevision?.revisionItems.map(item => ({
@@ -61,45 +56,32 @@ const RFQPreview = ({
             reset({ items });
         }
     }, [details, reset]);
-
-
     const items = useWatch({
         control,
         name: "items"
     });
-
     useEffect(() => {
         if (!items?.length) return;
-
         let grandTotal = 0;
-
         items.forEach((item, index) => {
             const qty = Number(item.qty) || 0;
             const offerPrice = Number(item.offer_price) || 0;
             const lineTotal = qty * offerPrice;
-
             grandTotal += lineTotal;
         });
-
         setValue("grandTotal", grandTotal, {
             shouldDirty: false,
             shouldValidate: false
         });
-
     }, [items, setValue]);
-
     async function submit(data) {
-        console.log(details); return
-
+        // console.log(details); return
         try {
             if (isEditable && allowEdit) {
                 data.quotation_id = details?.id;
                 // console.log(data); return
-
                 console.log(data);
-
                 const res = await updateData({ path: "/rfq/quotation/update", formData: data });
-
                 if (res.success) {
                     reset();
                     setIsShowPreviewEX(false);
@@ -108,7 +90,6 @@ const RFQPreview = ({
                 data.rfq_no = details?.rfq_no;
                 data.buyer_name = `${details?.name} - ${details?.location}`
                 // console.log(data); return
-
                 const res = await createData({ path: "/rfq/quotation/create", formData: data });
                 if (res.success) {
                     reset();
@@ -120,143 +101,195 @@ const RFQPreview = ({
             console.log(error);
         }
     };
-
-
     return (
         <form onSubmit={handleSubmit(submit)}>
-            <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg">
-                {/* Header */}
-                <div className="flex justify-between items-center border-b pb-1 mb-4">
-                    <div className='w-full space-y-1'>
-                        <div className="flex items-center justify-between">
-                            <p className="text-xl mb-0">{details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name}
-                                {isEditable && <span className="badge bg-secondary ml-2">{details?.quotationRevision?.status?.toUpperCase()}</span>}
-                            </p>
-                            {isEditable && <p className="">Rev: {details?.quotationRevision?.revision_no} </p>}
+            <div className="bg-white rounded-2xl p-0 overflow-hidden relative shadow-sm">
+                {/* Header Area with modern gradient banner */}
+                <div className="relative bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 p-6 pb-8">
+                    <div className="flex items-start justify-between relative z-10">
+                        <div className="flex gap-4 items-start w-full">
+                            <div className="w-14 h-14 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center p-1 relative z-20 overflow-hidden shrink-0">
+                                <div className="text-blue-600 opacity-80">
+                                    <FiFileText size={28} />
+                                </div>
+                            </div>
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 flex-wrap mb-2">
+                                    <h2 className="text-xl font-bold leading-tight text-gray-800">
+                                        {details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name}
+                                    </h2>
+                                    {details?.priority && (
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${details?.priority?.toLowerCase() === "high"
+                                                ? "bg-red-50 text-red-600 border border-red-100 shadow-sm"
+                                                : details?.priority?.toLowerCase() === "normal"
+                                                    ? "bg-blue-50 text-blue-600 border border-blue-100 shadow-sm"
+                                                    : "bg-gray-100 text-gray-700 shadow-sm invisible"
+                                                }`}
+                                        >
+                                            <div className={`w-1.5 h-1.5 rounded-full ${details?.priority?.toLowerCase() === "high" ? "bg-red-500" :
+                                                details?.priority?.toLowerCase() === "normal" ? "bg-blue-500" : "bg-gray-500"
+                                                }`}></div>
+                                            {details?.priority}
+                                        </span>
+                                    )}
+                                    {isEditable && <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-600 border border-purple-100 shadow-sm">{details?.quotationRevision?.status?.toUpperCase()}</span>}
+                                </div>
+                                <div className="flex items-center gap-4 mt-1">
+                                    <p className="text-sm font-medium text-gray-500 flex items-center gap-1.5">
+                                        <span className="shrink-0 text-gray-400">#</span> {details?.rfq_no ?? details?.linkedRfq?.rfq_no}
+                                    </p>
+                                    {isEditable && <p className="text-xs font-bold text-blue-600 bg-blue-100/50 px-2 py-0.5 rounded flex items-center gap-1"><IconPencil className="w-3 h-3" /> Rev: {details?.quotationRevision?.revision_no}</p>}
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-sm text-gray-500"># {details?.rfq_no ?? details?.linkedRfq?.rfq_no}</p>
                     </div>
-                    <span
-                        className={`px-3 py-1 text-sm font-semibold rounded 
-                            ${details?.priority?.toLowerCase() === "high"
-                                ? "bg-red-100 text-red-700"
-                                : details?.priority?.toLowerCase() === "normal"
-                                    ? "bg-blue-100 text-blue-700"
-                                    : "bg-gray-100 text-gray-700 invisible"
-                            }
-                        `}
-                    >
-                        {details?.priority}
-                    </span>
+                    {/* Decorative background pattern */}
+                    <div className="absolute right-0 bottom-0 opacity-10 blur-sm transform translate-y-1/2 translate-x-1/4">
+                        <FiCheckCircle size={120} />
+                    </div>
                 </div>
 
-                {/* Note */}
-                {details?.note && (
-                    <div className="my-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold">Note:</span> {details?.note}
-                        </p>
-                    </div>
-                )}
+                <div className="px-6 py-5 bg-gray-50/50">
+                    {/* Note */}
+                    {details?.note && (
+                        <div className="mb-6 bg-amber-50 border border-amber-200 shadow-sm p-4 rounded-xl flex gap-3 items-start relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
+                            <div className="text-amber-500 mt-0.5">
+                                <FiFileText size={18} />
+                            </div>
+                            <div>
+                                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-700 block mb-1">Note</span>
+                                <p className="text-sm font-medium leading-relaxed text-amber-900/80">
+                                    {details?.note}
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
-                <div id='forms_grid' className="my-4">
-                    <div className="grid grid-cols-2 gap-5">
-                        <div className="">
+                    <div className="grid grid-cols-2 gap-5 mb-8">
+                        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                             <Input
                                 label="Grand Total"
                                 placeholder='grand total'
                                 labelPosition="inline"
                                 {...register("grandTotal")}
                                 disabled={true}
+                                className="!mb-0"
                             />
                         </div>
-                        <div className="">
+                        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                             <Input
                                 type='date'
                                 label="Valide Till"
                                 labelPosition="inline"
                                 {...register("valid_till")}
                                 disabled={isEditable}
+                                className="!mb-0"
                             />
                         </div>
                     </div>
-                </div>
 
-                {/* Items */}
-                <div>
-                    <div className="flex items-center gap-2 mb-3">
-                        <h3 className="text-lg font-semibold text-gray-700">Items</h3>
-                        {isEditable &&
-                            <CustomeButton
-                                onClick={() => setAllowEdit(prev => !prev)}
-                            >
-                                <IconPencil className="text-danger w-4 h-4 hover:scale-110 cursor-pointer" />
-                            </CustomeButton>
-                        }
-                    </div>
-                    <div className="max-h-56 overflow-y-auto">
-                        <table className="w-full border-collapse border border-gray-200">
-                            <thead>
-                                <tr className="bg-gray-100 text-gray-700">
-                                    <th className="border border-gray-200 px-4 py-2 text-left">Product</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left">Qty</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left">UOM</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left">Price Limit</th>
-                                    <th className="border border-gray-200 px-4 py-2 text-left">Your Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    {/* Items Custom UI instead of table */}
+                    <div className="mt-8 bg-gray-50 rounded-xl border border-gray-100 p-5 shadow-inner">
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                            <div className="flex items-center gap-2">
+                                <FiPackage className="text-blue-500 w-5 h-5" />
+                                <h3 className="text-sm font-bold text-gray-700 tracking-wide">Quotation Items</h3>
+                                <div className="bg-white text-gray-500 text-xs font-bold px-2 py-0.5 rounded-full border border-gray-200 ml-2 shadow-sm">{fields?.length}</div>
+                            </div>
+                            {isEditable && (
+                                <button
+                                    type="button"
+                                    onClick={() => setAllowEdit(prev => !prev)}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${allowEdit ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                        }`}
+                                >
+                                    <FiEdit3 size={14} />
+                                    {allowEdit ? "Editing" : "Edit Details"}
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+                            <div className="space-y-3">
                                 {fields?.map((field, idx) => {
+                                    return (
+                                        <div key={idx} className="group bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200">
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
-                                    return <tr key={idx}>
-                                        <td className="border border-gray-200 px-4 py-2">{field?.product_name}</td>
-                                        <td className="border border-gray-200 px-4 py-2">{field?.qty}</td>
-                                        <td className="border border-gray-200 px-4 py-2">{field?.uom}</td>
-                                        <td className="border border-gray-200 px-4 py-2">{currencyFormatter(field?.price_limit)}</td>
-                                        <td className="border border-gray-200 ">
-                                            {isEditable
-                                                ? allowEdit
-                                                    ? <Input
-                                                        placeholder="Enter your price"
-                                                        {...register(`items.${idx}.offer_price`)}
-                                                    />
-                                                    : currencyFormatter(field?.offer_price)
-                                                : <Input
-                                                    placeholder="Enter your price"
-                                                    {...register(`items.${idx}.offer_price`)}
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
+                                                <div className="flex items-start gap-3 flex-1 min-w-0">
+                                                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                                                        {idx + 1}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <span className="font-semibold text-gray-800 text-sm block mb-1 truncate">{field?.product_name}</span>
+                                                        <div className="flex items-center gap-3 text-xs">
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="text-gray-400 mr-1 font-medium uppercase tracking-wider text-[10px]">Qty:</span>
+                                                                <span className="font-bold">{field?.qty}</span>
+                                                                <span className="ml-1">{field?.uom}</span>
+                                                            </div>
+                                                            <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                                                            <div className="flex items-center text-gray-600">
+                                                                <span className="text-gray-400 mr-1 font-medium uppercase tracking-wider text-[10px]">Limit:</span>
+                                                                <span className="font-medium">{currencyFormatter(field?.price_limit)}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="shrink-0 relative bg-gray-50/50 rounded-lg p-3 border border-gray-50 transition-colors group-hover:bg-white group-hover:border-blue-50 whitespace-nowrap flex items-center gap-2">
+                                                    <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom}</label>
+                                                    {isEditable
+                                                        ? allowEdit
+                                                            ? <Input
+                                                                placeholder="Enter price"
+                                                                className="!mb-0"
+                                                                {...register(`items.${idx}.offer_price`)}
+                                                            />
+                                                            : <div className="font-bold text-lg text-gray-800 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                                {currencyFormatter(field?.offer_price)}
+                                                            </div>
+                                                        : <Input
+                                                            placeholder="Enter price"
+                                                            className="!mb-0"
+                                                            {...register(`items.${idx}.offer_price`)}
+                                                        />
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
                                 })}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                {isEditable
-                    ? allowEdit
-                        ? <div className="mt-5 flex items-center justify-center">
+                    {isEditable ? (
+                        allowEdit && (
+                            <div className="mt-6 pt-5 border-t border-gray-200 flex items-center justify-end">
+                                <Button
+                                    type='submit'
+                                    className="btn btn-primary shadow-md hover:shadow-lg transition-shadow"
+                                >
+                                    Update Requisition
+                                </Button>
+                            </div>
+                        )
+                    ) : (
+                        <div className="mt-6 pt-5 border-t border-gray-200 flex items-center justify-end">
                             <Button
                                 type='submit'
-                            // disabled={details?.items?.some(i => i?.offer_price === undefined)}
+                                className="btn btn-primary shadow-md hover:shadow-lg transition-shadow"
                             >
-                                Update
+                                Submit Proposal
                             </Button>
                         </div>
-                        : null
-                    : <div className="mt-5 flex items-center justify-center">
-                        <Button
-                            type='submit'
-                        // disabled={details?.items?.some(i => i?.offer_price === undefined)}
-                        >
-                            Submit
-                        </Button>
-                    </div>
-                }
+                    )}
+                </div> {/* Close inner padding wrapper */}
             </div>
         </form>
     )
 }
-
 export default RFQPreview
