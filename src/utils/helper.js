@@ -282,19 +282,19 @@ export const PURCHASE_ORDER = [
 ];
 
 
-const BPO_COLUMN = [
-    { key: "no", label: "#", align: "center" },
-    { key: "supplier", label: "Business Partner" },
+export const BPO_COLUMN = [
+    { key: "id", label: "#", align: "center", width: "200px"},
+    { key: "partner", label: "Business Partner", width: "200px" },
     { key: "items", label: "Total Items", align: "center" },
     { key: "status", label: "Status" },
     { key: "valid_until", label: "Validity" },
     { key: "createdAt", label: "Creation Date" },
     { key: "action", label: "Action", align: "center" },
-],
+];
 
 
 export const SUPPLIER_COLUMN = [
-    // { key: "id", label: "#" },
+    { key: "id", label: "#" },
     { key: "email", label: "Email" },
     { key: "full_name", label: "Name" },
     { key: "phone_no", label: "Phone" },

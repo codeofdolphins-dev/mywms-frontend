@@ -40,6 +40,7 @@ import Vendor from './screens/vendor/Vendor';
 import VendorCategory from './screens/vendor/VendorCategory';
 import Dashboard from './screens/Dashboard';
 import BlanketPO from './screens/order/BlanketPO';
+import BPODetailsPage from './screens/order/BPODetailsPage';
 
 
 function App() {
@@ -123,6 +124,7 @@ function App() {
                     <Route path="order" >
                         <Route index element={<PurchaseOrderBrowse />} />
                         <Route path='bpo' element={<BlanketPO />} />
+                        <Route path='bpo/details/:id' element={<BPODetailsPage />} />
                         {/* <Route path='/:id' element={<PurchaseOrder />} /> */}
                     </Route>
 
