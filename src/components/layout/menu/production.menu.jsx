@@ -3,13 +3,25 @@ import IconCaretDown from "../../Icon/IconCaretDown";
 import { NavLink } from "react-router-dom";
 
 const PRODUCTION_MENU = [
-    { name: 'Vendor', path: '/production/vendor' },
-    { name: 'Vendor Category', path: '/production/vendor/category' },
+    // { name: 'Vendor', path: '/production/vendor' },
+    // { name: 'Vendor Category', path: '/production/vendor/category' },
     {
-        name: 'Store',
+        name: "Facilities / Stores",
+        path: "/production/store",
         children: [
-            { name: "RM Store", path: "" },
-            { name: "FG Store", path: "" },
+            { name: "RM Store", path: "/production/store/rm-store" },
+            { name: "Production Unit", path: "/production/store/production-unit" },
+            { name: "FG Store", path: "/production/store/fg-store" }
+        ]
+    },
+    {
+        name: "MFG Operations",
+        path: "/production/store",
+        children: [
+            { name: "Bill of Materials (BOM)", path: "" },
+            { name: "Production Orders", path: "" },
+            { name: "Material Issue", path: "" },
+            { name: "Production Receipt", path: "" }
         ]
     },
 ];
@@ -38,7 +50,7 @@ const Production = ({ location }) => {
                     >
                         {item?.children
                             ? <>
-                                <button type="button" className={`nav-link ${location.pathname.includes('store') ? 'active' : ''} !cursor-default`}>
+                                <button type="button" className={`nav-link ${location.pathname.includes('store') ? 'active' : ''} ${item.path ? "" : " !cursor-default"}`}>
                                     <span className="px-1 ">{item?.name}</span>
                                     <div className="ml-auto -rotate-90">
                                         <IconCaretDown className='text-black' />

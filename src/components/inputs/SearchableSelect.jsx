@@ -1,8 +1,7 @@
 import Select from 'react-select';
 import React, { useId } from 'react';
 
-const SearchableSelect = (
-    {
+const SearchableSelect = ({
         label = '',
         labelPosition = '',
         options = [],

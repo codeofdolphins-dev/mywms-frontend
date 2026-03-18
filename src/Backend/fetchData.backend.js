@@ -155,26 +155,7 @@ class FetchData {
         });
     };
 
-    TQTenantBusinessNodeList() {
-        return useQuery({
-            queryKey: ["tenantBusinessNodeList"],
-            queryFn: async () => {
-                const res = await API.get("/business/node-list");
-                return res.data;
-            },
-            gcTime: Infinity,
-        });
-    };
-
-    TQTenantRegisteredNodeList() {
-        return useQuery({
-            queryKey: ["tenantRegisteredNodeList"],
-            queryFn: async () => {
-                const res = await API.get("/business/registered-node-list");
-                return res.data;
-            },
-        });
-    };
+    
 
     TQAllUserList(params = {}, isEnabled = true) {
         return useQuery({

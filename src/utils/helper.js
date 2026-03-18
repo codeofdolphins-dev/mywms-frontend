@@ -362,3 +362,11 @@ export const VENDOR_CATEGORY_LIST_COLUMN = [
     { key: "status", label: "Status" },
     { key: "action", label: "Action" },
 ]
+
+export const STORE_LIST_COLUMN = [
+    { key: "name", label: "Name" },
+    { key: "location", label: "Location" },
+    { key: "category", label: "Category" },
+    { key: "status", label: "Status" },
+    { key: "action", label: "Action" },
+]

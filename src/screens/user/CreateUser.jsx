@@ -12,6 +12,7 @@ import { RHFToFormData } from '@/utils/RHFtoFD';
 import { Button } from '@mantine/core';
 import ProfileCard from '@/components/user/userProfile/ProfileCard';
 import FileUpload from '../../components/inputs/File';
+import business from '../../Backend/business.fetch';
 
 const USER_TYPE = [
     { label: "Location Admin", value: "NODE_ADMIN" },
@@ -49,7 +50,7 @@ const CreateUser = () => {
     const email = watch("email") || null;
 
 
-    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = fetchData.TQTenantRegisteredNodeList();
+    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQTenantRegisteredNodeList();
     const { data: editUserDetails, isLoading: editUserDetailsLoading } = fetchData.TQAllUserList({ id }, !!id);
 
 

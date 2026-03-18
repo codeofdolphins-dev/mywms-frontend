@@ -197,7 +197,7 @@ const RegisterWarehouseNode = ({
                             render={({ field: { onChange } }) => (
                                 <FileUpload
                                     label="Warehouse Image"
-                                    onChange={onChange} // gets File object
+                                    onChange={onChange}
                                     name="image"
                                 />
                             )}

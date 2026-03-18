@@ -41,6 +41,7 @@ import VendorCategory from './screens/vendor/VendorCategory';
 import Dashboard from './screens/Dashboard';
 import BlanketPO from './screens/order/BlanketPO';
 import BPODetailsPage from './screens/order/BPODetailsPage';
+import Store from './screens/store/Store';
 
 
 function App() {
@@ -66,16 +67,26 @@ function App() {
 
                     {/* admin */}
                     <Route path="admin" >
-                        <Route path="browse" element={<Admin />} />
-                        <Route path="business/node-register" element={<RegisterNode />} />
-                    </Route>
 
-                    {/* user */}
-                    <Route path="user" >
-                        <Route index element={<UserBrowse />} />
-                        <Route path="register" element={<CreateUser />} />
-                        <Route path="update/:id" element={<CreateUser />} />
-                        <Route path="profile/:id" element={<UserProfile />} />
+                        {/* business */}
+                        <Route path="business" >
+                            <Route index element={<Admin />} />
+                            <Route path="register" element={<RegisterNode />} />
+                        </Route>
+                        
+                        {/* business */}
+                        <Route path="store" >
+                            <Route index element={<Store />} />
+                            <Route path="register" element={<RegisterNode />} />
+                        </Route>
+
+                        {/* user */}
+                        <Route path="user" >
+                            <Route index element={<UserBrowse />} />
+                            <Route path="register" element={<CreateUser />} />
+                            <Route path="update/:id" element={<CreateUser />} />
+                            <Route path="profile/:id" element={<UserProfile />} />
+                        </Route>
                     </Route>
 
 

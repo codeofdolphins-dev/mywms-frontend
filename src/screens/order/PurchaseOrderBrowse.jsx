@@ -67,7 +67,7 @@ const PurchaseOrderBrowse = () => {
                         <div
                             className={`
                                 ${activeTab === 1 ? '!bg-primary text-white' : ''}
-                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-36 cursor-pointer
+                                block rounded-t-full bg-[#f3f2ee] px-6 py-1.5 cursor-pointer
                             `}
                             onClick={() => setActiveTab(1)}
                         >
@@ -87,7 +87,7 @@ const PurchaseOrderBrowse = () => {
                 </ul>
             </div>
 
-            <div className="panel min-h-64 relative">
+            <div className="panel min-h-64 z-0 relative">
                 <TableBody
                     columns={PURCHASE_ORDER_BROWSE}
                     isEmpty={isEmpty}

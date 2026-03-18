@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
-import fetchData from '../../Backend/fetchData.backend';
 import RegisterWarehouseNode from '../../components/admin/register/RegisterWarehouseNode';
 import RegisterPartnerNode from '../../components/admin/register/RegisterPartnerNode';
 import masterData from '../../Backend/master.backend';
 import { RHFToFormData } from '../../utils/RHFtoFD';
 import path from 'path';
 import { Link } from 'react-router-dom';
+import business from '../../Backend/business.fetch';
 
 const RegisterNode = () => {
 
-    const { data: businessNodes, isLoading: businessNodeLoading } = fetchData.TQTenantBusinessNodeList();
+    const { data: businessNodes, isLoading: businessNodeLoading } = business.TQTenantBusinessNodeList();
     const { mutateAsync: registerWarehouse, isLoading: isPendingWarehouse } = masterData.TQCreateMaster(["tenantRegisteredNodeList"]);
 
     const {
