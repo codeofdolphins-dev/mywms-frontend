@@ -14,10 +14,10 @@ const ADMIN_MENU = [
     {
         name: "Internal Stores & Units",
         path: "/admin/store",
-        children: [
-            { name: "Browse All Stores", path: "/admin/store" },
-            { name: "Register Store/Unit", path: "/admin/store/register" }
-        ]
+        // children: [
+        //     { name: "Browse All Stores", path: "/admin/store" },
+        //     { name: "Register Store/Unit", path: "/admin/store/register" }
+        // ]
     },
     {
         name: "User Management",
@@ -37,7 +37,7 @@ const Admin = ({ location }) => {
         <li className="menu nav-item relative !ml-0">
             <button
                 type="button"
-                className={`nav-link ${["/admin", "user"].some(a => location.pathname.includes(a)) ? 'active' : ''} !cursor-default`}
+                className={`nav-link ${location.pathname.includes("admin") ? 'active' : ''} !cursor-default`}
             >
                 <div className="flex items-center">
                     <RiAdminFill />

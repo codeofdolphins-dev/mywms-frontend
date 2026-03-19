@@ -41,7 +41,7 @@ import VendorCategory from './screens/vendor/VendorCategory';
 import Dashboard from './screens/Dashboard';
 import BlanketPO from './screens/order/BlanketPO';
 import BPODetailsPage from './screens/order/BPODetailsPage';
-import Store from './screens/store/Store';
+import Store from './screens/admin/store/Store';
 
 
 function App() {

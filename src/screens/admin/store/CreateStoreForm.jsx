@@ -17,7 +17,7 @@ const STORE_TYPE = [
     { label: "RM Store (Raw Materials)", value: "rm_store" },
     { label: "FG Store (Finished Goods)", value: "fg_store" },
     { label: "Production", value: "production" },
-]
+]   
 
 const CreateStoreForm = ({ selectedStore, setSelectedStore, editData = null }) => {
     const stateData = useSelector(state => state.location);

@@ -19,7 +19,7 @@ const TableBody = ({
 
     if (isLoading) {
         return (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4 min-h-64">
                 <Loader />
             </div>
         );
@@ -27,13 +27,13 @@ const TableBody = ({
 
     if (isEmpty) {
         return (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4 min-h-64">
                 <BsBoxSeam fontSize={40} color='grey' />
                 <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
             </div>
         )
     }
-    
+
     return <>
         <div className="overflow-auto">
             <TableHeader columns={columns} />

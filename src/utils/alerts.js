@@ -48,10 +48,10 @@ const errorAlert = (message = "something wrong!") => {
     });
 }
 
-const confirmation = async () => {
+const confirmation = async (msg = "You won't be able to revert this!") => {
     const result = await MySwal.fire({
         title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        text: msg,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",

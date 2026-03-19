@@ -2,15 +2,16 @@ import Select from 'react-select';
 import React, { useId } from 'react';
 
 const SearchableSelect = ({
-        label = '',
-        labelPosition = '',
-        options = [],
-        isSearchable = true,
-        disabled = false,
-        error,
-        value,
-        onChange,
-    },
+    label = '',
+    labelPosition = '',
+    options = [],
+    isSearchable = true,
+    disabled = false,
+    required = false,
+    error,
+    value,
+    onChange,
+},
     ref
 ) => {
     const _id = useId();
@@ -23,7 +24,7 @@ const SearchableSelect = ({
                     className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'
                         } ${labelPosition === "inline" ? "w-1/3" : ""}`}
                 >
-                    {label}
+                    {label}{required && <span className="text-red-500">*</span>}
                 </label>
             )}
 

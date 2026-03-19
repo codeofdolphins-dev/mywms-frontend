@@ -9,9 +9,9 @@ const PRODUCTION_MENU = [
         name: "Facilities / Stores",
         path: "/production/store",
         children: [
-            { name: "RM Store", path: "/production/store/rm-store" },
-            { name: "Production Unit", path: "/production/store/production-unit" },
-            { name: "FG Store", path: "/production/store/fg-store" }
+            { name: "RM Store", path: "/production/store/rm" },
+            { name: "Production Unit", path: "/production/store/production" },
+            { name: "FG Store", path: "/production/store/fg" }
         ]
     },
     {
@@ -31,7 +31,7 @@ const Production = ({ location }) => {
         <li className="menu nav-item relative !ml-0">
             <button
                 type="button"
-                className={`nav-link ${["production"].some(a => location.pathname.includes(a)) ? 'active' : ''} !cursor-default`}
+                className={`nav-link ${location.pathname.includes("production") ? 'active' : ''} !cursor-default`}
             >
                 <div className="flex items-center">
                     <BiSolidFactory />
@@ -46,33 +46,29 @@ const Production = ({ location }) => {
                 {PRODUCTION_MENU?.map((item, idx) =>
                     <li
                         key={idx}
-                        className="relative"
+                        className="relative min-w-[210px]"
                     >
                         {item?.children
                             ? <>
-                                <button type="button" className={`nav-link ${location.pathname.includes('store') ? 'active' : ''} ${item.path ? "" : " !cursor-default"}`}>
-                                    <span className="px-1 ">{item?.name}</span>
+                                <button type="button" className={`nav-link ${location.pathname.includes(item.path) ? 'active' : ''} !cursor-default`}>
+                                    <span className="px-1 text-black">{item.name}</span>
                                     <div className="ml-auto -rotate-90">
                                         <IconCaretDown className='text-black' />
                                     </div>
                                 </button>
                                 <ul className="rounded absolute top-0 left-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                                    {
-                                        item?.children?.map((item, idx) => (
-                                            <li
-                                                key={idx}
+                                    {item?.children?.map((item, idx) => (
+                                        <li key={idx}>
+                                            <NavLink
+                                                to={item.path}
+                                                end={item.path}
+                                                className={({ isActive }) => isActive ? "active" : ""}
                                             >
-                                                <NavLink
-                                                    to={item.path}
-                                                    end={item.path}
-                                                    className={({ isActive }) => isActive ? "active" : ""}
-                                                >
-                                                    {item.name}
-                                                </NavLink>
-                                            </li>
+                                                {item.name}
+                                            </NavLink>
+                                        </li>
 
-                                        ))
-                                    }
+                                    ))}
                                 </ul>
                             </> : <>
                                 <NavLink

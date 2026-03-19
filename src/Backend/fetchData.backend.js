@@ -155,7 +155,7 @@ class FetchData {
         });
     };
 
-    
+
 
     TQAllUserList(params = {}, isEnabled = true) {
         return useQuery({
@@ -205,12 +205,36 @@ class FetchData {
         });
     };
 
-
     TQRfqList(isEnabled = true) {
         return useQuery({
             queryKey: ["rfqList"],
             queryFn: async () => {
                 const res = await API.get("/rfq/list");
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
+
+    TQStoreList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["storeList", params],
+            queryFn: async () => {
+                const res = await API.get("/store/list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+    
+    TQStoreCount(isEnabled = true) {
+        return useQuery({
+            queryKey: ["storeCount"],
+            queryFn: async () => {
+                const res = await API.get("/store/count-by-type");
                 return res.data;
             },
             enabled: isEnabled,

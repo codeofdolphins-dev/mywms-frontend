@@ -9,52 +9,99 @@ import {
     FaCheckCircle
 } from 'react-icons/fa';
 import { MdOutlineDescription } from 'react-icons/md';
+import ComponentHeader from '../../components/ComponentHeader';
+import Input from '../../components/inputs/Input';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { currencyFormatter } from '../../utils/currencyFormatter';
+import fetchData from '../../Backend/fetchData.backend';
+import RHSelect from '../../components/inputs/RHF/Select.RHF';
+import TextArea from '../../components/inputs/TextArea';
+import SearchableSelect from '../../components/inputs/SearchableSelect';
+import Loader from '../../components/loader/Loader';
+
+
+const headerLink = [
+    { title: "Order", link: "" },
+    { title: "Blanket PO", link: "/order/bpo" },
+    { title: "Details" },
+]
+
+const PRIORITY = [
+    { label: "High", value: "high" },
+    { label: "Low", value: "low" },
+    { label: "Normal", value: "normal" },
+]
+
 
 const BPODetailsPage = () => {
     const { id } = useParams();
 
-    const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem( id , Boolean(id));
+
+    const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem(id, Boolean(id));
     const isEmpty = bpoList?.data?.length > 0 ? false : true;
+
+    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "rm_store", isAdmin: true }, Boolean(id));
 
     const bpoData = bpoList?.data;
     // console.log(bpoData)
 
-    // Added useEffect to update state when bpoData loads
-    const [selectedItems, setSelectedItems] = useState([]);
+    const { handleSubmit, reset, register, formState: { errors }, setValue, control, watch } = useForm({
+        defaultValues: {
+            items: [],
+            target_store: "",
+            delivery_date: "",
+            instructions: ""
+        }
+    });
 
+    const { fields, replace } = useFieldArray({
+        control,
+        name: "items",
+    })
+
+    /** setup form values */
     useEffect(() => {
         if (bpoData?.blanketOrderItems) {
-            setSelectedItems(
-                bpoData.blanketOrderItems.map(item => ({
-                    ...item,
-                    indent_qty: 0,
-                    target_store: 'RM-STORE-01'
-                }))
-            );
+            const initialItems = bpoData.blanketOrderItems.map(item => ({
+                bpo_item_id: item.id, // reference to original ID
+                product_name: item.product?.name,
+                unit_price: item.unit_price,
+                total_qty: item.total_contracted_qty,
+                remaining_qty: item.remain_contracted_qty || item.total_contracted_qty,
+                release_qty: null
+            }));
+            replace(initialItems);
         }
-    }, [bpoData]);
+    }, [bpoData, replace]);
 
-    const handleQtyChange = (id, val) => {
-        setSelectedItems(prev => prev.map(item =>
-            item.id === id ? { ...item, indent_qty: val } : item
-        ));
-    };
+    const watchedItems = watch("items");
+    const totalAmount = watchedItems?.reduce((acc, item) => {
+        const qty = parseFloat(item.release_qty) || 0;
+        return acc + (qty * item.unit_price);
+    }, 0) || 0;
 
-    if (bpoListLoading) return <div className="p-8">Loading BPO Details...</div>;
-    // if (isEmpty) return <div className="p-8">No BPO Found.</div>;
+
+    const submitData = (data) => {
+        console.log("Form Data: ", data);
+    }
+
+
+    if (bpoListLoading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] p-4 lg:p-8 font-sans">
+        <form onSubmit={handleSubmit(submitData)} className="panel rounded-lg font-sans">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                 <div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                        <span>Orders</span> / <span>Blanket PO</span> / <span className="text-blue-600 font-medium">Details</span>
-                    </div>
+                    <ComponentHeader
+                        headerLink={headerLink}
+                        showSearch={false}
+                    />
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
                         {bpoData?.bpo_no} <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full uppercase tracking-wider font-bold">Active</span>
                     </h1>
                 </div>
+
                 <div className="flex gap-3">
                     <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all font-medium">
                         <FaFileDownload className="text-gray-400" />
@@ -67,13 +114,14 @@ const BPODetailsPage = () => {
                 </div>
             </div>
 
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Contract Info & Item Selection */}
                 <div className="lg:col-span-2 space-y-6">
 
                     {/* Item List / Selection Table */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+                        <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center">
                             <h2 className="font-bold text-gray-800 text-lg">Contracted Items</h2>
                             <span className="text-sm text-gray-500">{bpoData?.blanketOrderItems?.length} Products</span>
                         </div>
@@ -88,9 +136,7 @@ const BPODetailsPage = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
-                                    {selectedItems?.map((item) => {
-
-                                        console.log(item)
+                                    {fields?.map((item, index) => {
 
                                         return (<tr key={item.id} className="hover:bg-blue-50/20 transition-colors">
                                             <td className="px-6 py-6">
@@ -99,21 +145,24 @@ const BPODetailsPage = () => {
                                                         <FaBoxOpen size={20} />
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-gray-900">{item?.product?.name}</div>
+                                                        <div className="font-bold text-gray-900">{item?.product_name}</div>
                                                         <div className="text-xs text-gray-500">Fixed Price: ₹{item.unit_price}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-6 text-gray-600 font-medium">{item.total_contracted_qty}</td>
+                                            <td className="px-6 py-6 text-gray-600 font-medium">{item.total_qty}</td>
                                             <td className="px-6 py-6">
-                                                <span className="text-green-600 font-bold">{item.remain_contracted_qty || item.total_contracted_qty}</span>
+                                                <span className="text-green-600 font-bold">{item.remaining_qty}</span>
                                             </td>
                                             <td className="px-6 py-6">
                                                 <input
-                                                    type="number"
+                                                    // type="number"
+                                                    {...register(`items.${index}.release_qty`, {
+                                                        min: 0,
+                                                        max: item.remaining_qty
+                                                    })}
                                                     placeholder="0.00"
                                                     className="w-32 border-2 border-gray-100 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none font-bold text-blue-700"
-                                                    onChange={(e) => handleQtyChange(item.id, e.target.value)}
                                                 />
                                             </td>
                                         </tr>)
@@ -126,50 +175,86 @@ const BPODetailsPage = () => {
 
                 {/* Right Column: Release Context & Store Selection */}
                 <div className="space-y-6">
-                    <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 sticky top-8">
+                    <div className="bg-white px-8 py-4 rounded-2xl shadow-xl border border-gray-100 sticky top-8">
                         <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                             Indent Settings
                         </h3>
 
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             {/* Target Warehouse Selection */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wide">Target Store (Buyer Side)</label>
-                                <div className="relative">
-                                    <FaWarehouse className="absolute left-4 top-3.5 text-gray-400" size={16} />
-                                    <select className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 appearance-none focus:ring-2 focus:ring-blue-500 outline-none font-medium">
-                                        <option>RM Store - MFG Bond</option>
-                                        <option>FG Store - Main Warehouse</option>
-                                    </select>
-                                </div>
+                                <Controller
+                                    name="target_store"
+                                    rules={{
+                                        required: "This field is required!!!"
+                                    }}
+                                    control={control}
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                        <RHSelect
+                                            ref={(el) => {
+                                                ref({
+                                                    focus: () => el?.focus(),
+                                                });
+                                            }}
+                                            value={value}
+                                            onChange={onChange}
+                                            isSearchable={false}
+
+                                            label="Target Store (Buyer Side)"
+                                            options={storeList?.data}
+
+                                            required={true}
+                                            error={error?.message}
+                                        />
+                                    )}
+                                />
                             </div>
 
-                            {/* Required Date */}
+                            {/* required date */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wide">Delivery Required By</label>
-                                <div className="relative">
-                                    <FaRegCalendarAlt className="absolute left-4 top-3.5 text-gray-400" size={16} />
-                                    <input type="date" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-blue-500" />
-                                </div>
+                                <Input
+                                    type="date"
+                                    label="Delivery Required By"
+                                    // labelPosition="inline"
+                                    {...register("delivery_date")}
+                                />
+                            </div>
+
+                            {/* Target Warehouse Selection */}
+                            <div>
+                                <Controller
+                                    name="priority"
+                                    control={control}
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                        <SearchableSelect
+                                            ref={(el) => {
+                                                ref({
+                                                    focus: () => el?.focus(),
+                                                });
+                                            }}
+                                            value={value}
+                                            onChange={onChange}
+                                            isSearchable={false}
+
+                                            label="Priority"
+                                            options={PRIORITY}
+                                        />
+                                    )}
+                                />
                             </div>
 
                             {/* Priority / Shipping Note */}
-                            <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wide">Dispatch Instructions</label>
-                                <div className="relative">
-                                    <MdOutlineDescription className="absolute left-4 top-3.5 text-gray-400" size={18} />
-                                    <textarea
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                        placeholder="e.g. Fragile items, pack in wooden crates..."
-                                        rows="3"
-                                    ></textarea>
-                                </div>
+                            <div className="">
+                                <TextArea
+                                    label="Dispatch Instructions (Optional)"
+                                    placeholder="e.g. Fragile items, pack in wooden crates..."
+                                />
                             </div>
 
-                            <div className="pt-6 border-t border-gray-100">
+                            <div className="border-t border-gray-100">
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-gray-500 text-sm">Indent Total (Approx)</span>
-                                    <span className="text-xl font-bold text-gray-900">₹0.00</span>
+                                    <span className="text-xl font-bold text-gray-900">{currencyFormatter(totalAmount)}</span>
                                 </div>
                                 <p className="text-[10px] text-gray-400 leading-tight">
                                     By confirming, you are issuing a legally binding Release Order against BPO {bpoData?.bpo_no}.
@@ -179,7 +264,7 @@ const BPODetailsPage = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     );
 };
 

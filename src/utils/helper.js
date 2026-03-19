@@ -364,9 +364,10 @@ export const VENDOR_CATEGORY_LIST_COLUMN = [
 ]
 
 export const STORE_LIST_COLUMN = [
-    { key: "name", label: "Name" },
+    { key: "name", label: "Name", width: "200px" },
     { key: "location", label: "Location" },
     { key: "category", label: "Category" },
+    { key: "linked", label: "Linked(WH)", width: "200px" },
     { key: "status", label: "Status" },
     { key: "action", label: "Action" },
 ]
