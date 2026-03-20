@@ -48,8 +48,8 @@ const BPODetailsPage = () => {
     const { handleSubmit, reset, register, formState: { errors }, setValue, control, watch } = useForm({
         defaultValues: {
             items: [],
-            target_store: "",
-            delivery_date: "",
+            target_store_id: "",
+            required_by: "",
             instructions: ""
         }
     });
@@ -82,6 +82,9 @@ const BPODetailsPage = () => {
 
 
     const submitData = (data) => {
+        console.log(bpoList?.data);
+        
+        data.bpo_no = bpoData?.bpo_no;
         console.log("Form Data: ", data);
     }
 
@@ -104,12 +107,12 @@ const BPODetailsPage = () => {
 
                 <div className="flex gap-3">
                     <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all font-medium">
-                        <FaFileDownload className="text-gray-400" />
+                        <FaFileDownload className="text-gray-400" size={25} />
                         Download Contract
                     </button>
                     <button className="flex items-center gap-2 px-6 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all font-semibold">
-                        <FaCheckCircle />
-                        Confirm Release Order
+                        <FaCheckCircle size={25} />
+                        Confirm Release Order / Indent
                     </button>
                 </div>
             </div>
@@ -159,7 +162,8 @@ const BPODetailsPage = () => {
                                                     // type="number"
                                                     {...register(`items.${index}.release_qty`, {
                                                         min: 0,
-                                                        max: item.remaining_qty
+                                                        max: item.remaining_qty,
+                                                        required: "Release quantity is required",
                                                     })}
                                                     placeholder="0.00"
                                                     className="w-32 border-2 border-gray-100 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none font-bold text-blue-700"
@@ -184,7 +188,7 @@ const BPODetailsPage = () => {
                             {/* Target Warehouse Selection */}
                             <div>
                                 <Controller
-                                    name="target_store"
+                                    name="target_store_id"
                                     rules={{
                                         required: "This field is required!!!"
                                     }}
@@ -216,7 +220,7 @@ const BPODetailsPage = () => {
                                     type="date"
                                     label="Delivery Required By"
                                     // labelPosition="inline"
-                                    {...register("delivery_date")}
+                                    {...register("required_by")}
                                 />
                             </div>
 
@@ -248,6 +252,7 @@ const BPODetailsPage = () => {
                                 <TextArea
                                     label="Dispatch Instructions (Optional)"
                                     placeholder="e.g. Fragile items, pack in wooden crates..."
+                                    {...register("instructions")}
                                 />
                             </div>
 

@@ -4,17 +4,17 @@ import masterData from '../../Backend/master.backend'
 import { Button } from '@mantine/core';
 
 const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
-
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
 
-    // console.log(data);
-
+    
     async function submit() {
         if (!data) return;
-
+        // console.log(data); return;
+        
         try {
             // format data
             const formData = {
+                pr_reference_code: data.requisition.pr_reference_code,
                 rfq_quotation_revision_id: data.activeRevision.id,
                 buyer_tenant: data.requisition.buyer_tenant,
                 vendor_tenant: data.vendor_tenant,
