@@ -36,7 +36,6 @@ const PRIORITY = [
 const BPODetailsPage = () => {
     const { id } = useParams();
 
-
     const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem(id, Boolean(id));
     const isEmpty = bpoList?.data?.length > 0 ? false : true;
 
@@ -83,8 +82,9 @@ const BPODetailsPage = () => {
 
     const submitData = (data) => {
         console.log(bpoList?.data);
-        
+
         data.bpo_no = bpoData?.bpo_no;
+        data.grand_total = totalAmount;
         console.log("Form Data: ", data);
     }
 
@@ -136,40 +136,53 @@ const BPODetailsPage = () => {
                                         <th className="px-6 py-4">Total Contract</th>
                                         <th className="px-6 py-4">Remaining</th>
                                         <th className="px-6 py-4 text-[#0052CC]">Release Qty</th>
+                                        <th className="px-6 py-4">Line Total</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {fields?.map((item, index) => {
+                                        // 1. Get the current quantity from watchedItems
+                                        const currentQty = parseFloat(watchedItems?.[index]?.release_qty) || 0;
 
-                                        return (<tr key={item.id} className="hover:bg-blue-50/20 transition-colors">
-                                            <td className="px-6 py-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                                                        <FaBoxOpen size={20} />
+                                        // 2. Calculate the line total
+                                        const currentLineTotal = currentQty * item.unit_price;
+
+                                        return (
+                                            <tr key={item.id} className="hover:bg-blue-50/20 transition-colors">
+                                                <td className="px-6 py-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                                                            <FaBoxOpen size={20} />
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-bold text-gray-900">{item?.product_name}</div>
+                                                            <div className="text-xs text-gray-500">Fixed Price: {currencyFormatter(item.unit_price)}</div>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <div className="font-bold text-gray-900">{item?.product_name}</div>
-                                                        <div className="text-xs text-gray-500">Fixed Price: ₹{item.unit_price}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-6 text-gray-600 font-medium">{item.total_qty}</td>
-                                            <td className="px-6 py-6">
-                                                <span className="text-green-600 font-bold">{item.remaining_qty}</span>
-                                            </td>
-                                            <td className="px-6 py-6">
-                                                <input
-                                                    // type="number"
-                                                    {...register(`items.${index}.release_qty`, {
-                                                        min: 0,
-                                                        max: item.remaining_qty,
-                                                        required: "Release quantity is required",
-                                                    })}
-                                                    placeholder="0.00"
-                                                    className="w-32 border-2 border-gray-100 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none font-bold text-blue-700"
-                                                />
-                                            </td>
-                                        </tr>)
+                                                </td>
+                                                <td className="px-6 py-6 text-gray-600 font-medium">{item.total_qty}</td>
+                                                <td className="px-6 py-6">
+                                                    <span className="text-green-600 font-bold">{item.remaining_qty}</span>
+                                                </td>
+                                                <td className="px-6 py-6">
+                                                    <input
+                                                        type="number" // Added type number for better UX
+                                                        step="any"
+                                                        {...register(`items.${index}.release_qty`, {
+                                                            min: 0,
+                                                            max: item.remaining_qty,
+                                                            required: "Required",
+                                                        })}
+                                                        placeholder="0.00"
+                                                        className="w-32 border-2 border-gray-100 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none font-bold text-blue-700"
+                                                    />
+                                                </td>
+                                                {/* 3. Display the formatted Line Total */}
+                                                <td className="px-6 py-6 font-bold text-gray-900">
+                                                    {currencyFormatter(currentLineTotal)}
+                                                </td>
+                                            </tr>
+                                        );
                                     })}
                                 </tbody>
                             </table>
