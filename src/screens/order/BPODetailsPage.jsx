@@ -18,6 +18,7 @@ import RHSelect from '../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../components/inputs/TextArea';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import Loader from '../../components/loader/Loader';
+import masterData from '../../Backend/master.backend';
 
 
 const headerLink = [
@@ -35,6 +36,8 @@ const PRIORITY = [
 
 const BPODetailsPage = () => {
     const { id } = useParams();
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
 
     const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem(id, Boolean(id));
     const isEmpty = bpoList?.data?.length > 0 ? false : true;
@@ -63,7 +66,7 @@ const BPODetailsPage = () => {
         if (bpoData?.blanketOrderItems) {
             const initialItems = bpoData.blanketOrderItems.map(item => ({
                 bpo_item_id: item.id, // reference to original ID
-                product_name: item.product?.name,
+                product: item.product,
                 unit_price: item.unit_price,
                 total_qty: item.total_contracted_qty,
                 remaining_qty: item.remain_contracted_qty || item.total_contracted_qty,
@@ -80,12 +83,14 @@ const BPODetailsPage = () => {
     }, 0) || 0;
 
 
-    const submitData = (data) => {
+    async function submitData(data) {
         console.log(bpoList?.data);
 
         data.bpo_no = bpoData?.bpo_no;
         data.grand_total = totalAmount;
         console.log("Form Data: ", data);
+
+        await createData({ path: "/indent/create", formData: data });
     }
 
 
@@ -155,7 +160,7 @@ const BPODetailsPage = () => {
                                                             <FaBoxOpen size={20} />
                                                         </div>
                                                         <div>
-                                                            <div className="font-bold text-gray-900">{item?.product_name}</div>
+                                                            <div className="font-bold text-gray-900">{item?.product.name}</div>
                                                             <div className="text-xs text-gray-500">Fixed Price: {currencyFormatter(item.unit_price)}</div>
                                                         </div>
                                                     </div>
