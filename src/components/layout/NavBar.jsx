@@ -91,7 +91,7 @@ const NavBar = () => {
 
             {/* manage access */}
             {
-                // (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />
+                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />
             }
 
             {/* production */}

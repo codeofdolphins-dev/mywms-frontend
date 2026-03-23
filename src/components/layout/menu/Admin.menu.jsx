@@ -26,7 +26,11 @@ const ADMIN_MENU = [
             { name: "Browse Users", path: "/admin/user" },
             { name: "Register User", path: "/admin/user/register" }
         ]
-    }
+    },
+    {
+        name: "Departments",
+        path: "/admin/dept",
+    },
 ];
 
 

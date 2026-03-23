@@ -117,6 +117,8 @@ const CreateUser = () => {
         }
     }
 
+    const [assignmentMode, setAssignmentMode] = useState('role');
+
     return (
         <div>
 
@@ -136,71 +138,8 @@ const CreateUser = () => {
                 <div className="grid grid-cols-1 min-[820px]:grid-cols-2 gap-8">
                     <div className="panel space-y-6">
 
-                        {/* select location node */}
-                        {id
-                            ?
-                            <></>
-                            :
-                            <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
-                                {/* assign location */}
-                                <div className="">
-                                    <Controller
-                                        name="node"
-                                        control={control}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={(e) => {
-                                                    if (e === null) setValue("node_type", null);
-                                                    return onChange(e);
-                                                }}
-
-                                                label="Assign Place"
-                                                labelPosition={"inline"}
-                                                options={registeredNodeList?.data}
-                                                error={error?.message}
-                                                objectReturn={true}
-                                                isClearable={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
-
-                                {/* node type */}
-                                <div className="">
-                                    <Controller
-                                        name="node_type"
-                                        control={control}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <SearchableSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-                                                isSearchable={false}
-
-                                                label="User Type"
-                                                labelPosition={"inline"}
-                                                options={USER_TYPE}
-                                                disabled={node === null ? true : false}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                        }
-
-                        {/* 1st row */}
+                        {/* 1st row: Full Name */}
                         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-                            {/* Full Name */}
                             <div>
                                 <Input
                                     label={"Full Name"}
@@ -216,44 +155,44 @@ const CreateUser = () => {
                                     required={id ? false : true}
                                 />
                             </div>
-                            {/* Phone Number */}
-                            <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
-                                <div>
-                                    <Input
-                                        label={"Phone Number"}
-                                        labelPosition={"inline"}
-                                        type="number"
-                                        placeholder={"Enter Phone Number..."}
-                                        {...register("phone_no", {
-                                            required: {
-                                                value: id ? false : true,
-                                                message: "This field is required!!!",
-                                            }
-                                        })}
-                                        error={errors.phone_no?.message}
-                                        required={id ? false : true}
-                                    />
-                                </div>
-                                {/* file upload */}
-                                <div >
-                                    <Controller
-                                        key={fileKey}
-                                        name="image"
-                                        control={control}
-                                        defaultValue={null}
-                                        render={({ field: { onChange } }) => (
-                                            <FileUpload
-                                                label="Profile Image"
-                                                labelPosition={"inline"}
-                                                onChange={onChange}
-                                            />
-                                        )}
-                                    />
-                                </div>
+                        </div>
+
+                        {/* 2nd row: Phone & Profile Image */}
+                        <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
+                            <div>
+                                <Input
+                                    label={"Phone Number"}
+                                    labelPosition={"inline"}
+                                    type="number"
+                                    placeholder={"Enter Phone Number..."}
+                                    {...register("phone_no", {
+                                        required: {
+                                            value: id ? false : true,
+                                            message: "This field is required!!!",
+                                        }
+                                    })}
+                                    error={errors.phone_no?.message}
+                                    required={id ? false : true}
+                                />
+                            </div>
+                            <div>
+                                <Controller
+                                    key={fileKey}
+                                    name="image"
+                                    control={control}
+                                    defaultValue={null}
+                                    render={({ field: { onChange } }) => (
+                                        <FileUpload
+                                            label="Profile Image"
+                                            labelPosition={"inline"}
+                                            onChange={onChange}
+                                        />
+                                    )}
+                                />
                             </div>
                         </div>
 
-                        {/* 2rd row */}
+                        {/* 3rd row: Email & Password */}
                         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                             <div>
                                 <Input
@@ -290,8 +229,199 @@ const CreateUser = () => {
                             </div>
                         </div>
 
+                        {/* Bottom Section: Assignment & Grouped View */}
+                        {!id && (
+                            <div className="space-y-2 mt-4">
+                                {/* Mode Selector Toggle */}
+                                <div className="flex items-center gap-4">
+                                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Select Assignment Type</label>
+                                    <div className="flex items-center space-x-4">
+                                        {/* location */}
+                                        <label className="flex items-center space-x-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                value="location"
+                                                checked={assignmentMode === 'location'}
+                                                onChange={() => {
+                                                    setAssignmentMode('location');
+                                                    // Optional: Reset role field if switching away
+                                                    setValue('role', null);
+                                                }}
+                                                className="form-radio text-info border-gray-300 focus:ring-info"
+                                            />
+                                            <span className="text-gray-700 dark:text-gray-300 text-sm">Location</span>
+                                        </label>
+
+                                        {/* role */}
+                                        <label className="flex items-center space-x-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                value="role"
+                                                checked={assignmentMode === 'role'}
+                                                onChange={() => {
+                                                    setAssignmentMode('role');
+                                                    // Optional: Reset location fields if switching away
+                                                    setValue('node', null);
+                                                    setValue('node_type', null);
+                                                }}
+                                                className="form-radio text-info border-gray-300 focus:ring-info"
+                                            />
+                                            <span className="text-gray-700 dark:text-gray-300 text-sm">Deparment Role</span>
+                                        </label>
+
+                                        {/* store */}
+                                        <label className="flex items-center space-x-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                value="store"
+                                                checked={assignmentMode === 'store'}
+                                                onChange={() => {
+                                                    setAssignmentMode('store');
+                                                    // Optional: Reset role field if switching away
+                                                    setValue('role', null);
+                                                }}
+                                                className="form-radio text-info border-gray-300 focus:ring-info"
+                                            />
+                                            <span className="text-gray-700 dark:text-gray-300 text-sm">Store</span>
+                                        </label>
+
+                                        {/* none */}
+                                        <label className="flex items-center space-x-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                value="none"
+                                                checked={assignmentMode === 'none'}
+                                                onChange={() => {
+                                                    setAssignmentMode('none');
+                                                    // Optional: Reset role field if switching away
+                                                    setValue('role', null);
+                                                    setValue('node', null);
+                                                    setValue('node_type', null);
+                                                }}
+                                                className="form-radio text-info border-gray-300 focus:ring-info"
+                                            />
+                                            <span className="text-gray-700 dark:text-gray-300 text-sm">None</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* Conditionally Render: Assign Role */}
+                                {assignmentMode === 'store' && (
+                                    <div className="px-4 py-5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm transition-all">
+                                        {/* <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Global Role Assignment</h4> */}
+                                        <Controller
+                                            name="store"
+                                            control={control}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({ focus: () => el?.focus() });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    label="Assign Store"
+                                                    labelPosition={"top"} // Changed to top for cleaner box look
+                                                    options={[]} /* Add your role options here */
+                                                    error={error?.message}
+                                                    objectReturn={true}
+                                                    isClearable={true}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Conditionally Render: Assign Role */}
+                                {assignmentMode === 'role' && (
+                                    <div className="px-4 py-5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm transition-all">
+                                        {/* <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Global Role Assignment</h4> */}
+                                        <Controller
+                                            name="role"
+                                            control={control}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({ focus: () => el?.focus() });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    label="Assign Role"
+                                                    labelPosition={"top"} // Changed to top for cleaner box look
+                                                    options={[]} /* Add your role options here */
+                                                    error={error?.message}
+                                                    objectReturn={true}
+                                                    isClearable={true}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Conditionally Render: Grouped View (Location Node & Node Type) */}
+                                {assignmentMode === 'location' && (
+                                    <div className="px-4 py-5 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 shadow-sm transition-all">
+                                        {/* <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Location & Type Assignment</h4> */}
+
+                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                                            {/* assign location */}
+                                            <div>
+                                                <Controller
+                                                    name="node"
+                                                    control={control}
+                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                        <RHSelect
+                                                            ref={(el) => {
+                                                                ref({
+                                                                    focus: () => el?.focus(),
+                                                                });
+                                                            }}
+                                                            value={value}
+                                                            onChange={(e) => {
+                                                                if (e === null) setValue("node_type", null);
+                                                                return onChange(e);
+                                                            }}
+                                                            label="Assign Place"
+                                                            labelPosition="top" // Ensure labels sit cleanly above inputs
+                                                            options={registeredNodeList?.data}
+                                                            error={error?.message}
+                                                            objectReturn={true}
+                                                            isClearable={true}
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+
+                                            {/* node type */}
+                                            <div>
+                                                <Controller
+                                                    name="node_type"
+                                                    control={control}
+                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                        <SearchableSelect
+                                                            ref={(el) => {
+                                                                ref({
+                                                                    focus: () => el?.focus(),
+                                                                });
+                                                            }}
+                                                            value={value}
+                                                            onChange={onChange}
+                                                            isSearchable={false}
+                                                            label="User Type"
+                                                            labelPosition="top"
+                                                            options={USER_TYPE}
+                                                            disabled={node === null ? true : false}
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         {/* button */}
-                        <div className="flex items-center justify-end gap-11">
+                        <div className="flex items-center justify-end gap-11 pt-4">
                             <button
                                 type='button'
                                 className='btn btn-outline-dark'

@@ -165,22 +165,24 @@ const BPODetailsPage = () => {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-6 text-gray-600 font-medium">{item.total_qty}</td>
+                                                <td className="px-6 py-6 text-gray-600 font-medium">{item.total_qty} {item?.product?.unit_type}</td>
                                                 <td className="px-6 py-6">
-                                                    <span className="text-green-600 font-bold">{item.remaining_qty}</span>
+                                                    <span className="text-green-600 font-bold">{item.remaining_qty} {item?.product?.unit_type}</span>
                                                 </td>
                                                 <td className="px-6 py-6">
                                                     <input
-                                                        type="number" // Added type number for better UX
                                                         step="any"
                                                         {...register(`items.${index}.release_qty`, {
-                                                            min: 0,
-                                                            max: item.remaining_qty,
+                                                            min: { value: 0, message: "Minimum is 0" },
+                                                            max: { value: item.remaining_qty, message: `Maximum is ${item.remaining_qty}` },
                                                             required: "Required",
                                                         })}
                                                         placeholder="0.00"
                                                         className="w-32 border-2 border-gray-100 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none font-bold text-blue-700"
                                                     />
+                                                    {errors?.items?.[index]?.release_qty && (
+                                                        <span className='text-danger text-xs block mt-1'>{errors.items[index].release_qty.message}</span>
+                                                    )}
                                                 </td>
                                                 {/* 3. Display the formatted Line Total */}
                                                 <td className="px-6 py-6 font-bold text-gray-900">

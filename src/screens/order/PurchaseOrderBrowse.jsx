@@ -17,7 +17,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 
 const headerLink = [
-    { title: "purchase-order" },
+    { title: "order" },
 ];
 
 const PurchaseOrderBrowse = () => {

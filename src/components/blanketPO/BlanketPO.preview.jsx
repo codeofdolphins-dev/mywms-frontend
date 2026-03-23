@@ -6,11 +6,11 @@ import { Button } from '@mantine/core';
 const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
 
-    
+
     async function submit() {
         if (!data) return;
         // console.log(data); return;
-        
+
         try {
             // format data
             const formData = {
@@ -86,23 +86,20 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                                 {/* <!-- Loop through quotationItems --> */}
-                                {
-                                    data?.quotationItems?.map((item, idx) => {
+                                {data?.quotationItems?.map((item, idx) => {
+                                    const lineTotal = Number(item?.qty) * Number(item?.offer_price)
 
-                                        const lineTotal = Number(item?.qty) * Number(item?.offer_price)
-
-                                        return <tr key={idx} className="text-sm">
-                                            <td className="py-4">
-                                                <p className="font-medium text-slate-800">{item?.sourceRfqItem?.product_name}</p>
-                                                {/* <p className="text-[11px] text-slate-500">HSN: 7201 | Warehouse: Kolkata</p> */}
-                                            </td>
-                                            <td className="py-4 text-right text-slate-600">{item?.qty}</td>
-                                            <td className="py-4 text-right text-slate-600">{currencyFormatter(item?.offer_price)}</td>
-                                            {/* <td className="py-4 text-right text-slate-600">18%</td> */}
-                                            <td className="py-4 text-right font-semibold text-slate-900">{currencyFormatter(lineTotal)}</td>
-                                        </tr>
-                                    })
-                                }
+                                    return <tr key={idx} className="text-sm">
+                                        <td className="py-4">
+                                            <p className="font-medium text-slate-800">{item?.sourceRfqItem?.product_name}</p>
+                                            {/* <p className="text-[11px] text-slate-500">HSN: 7201 | Warehouse: Kolkata</p> */}
+                                        </td>
+                                        <td className="py-4 text-right text-slate-600">{item?.qty}</td>
+                                        <td className="py-4 text-right text-slate-600">{currencyFormatter(item?.offer_price)}</td>
+                                        {/* <td className="py-4 text-right text-slate-600">18%</td> */}
+                                        <td className="py-4 text-right font-semibold text-slate-900">{currencyFormatter(lineTotal)}</td>
+                                    </tr>
+                                })}
                             </tbody>
                         </table>
                     </div>
