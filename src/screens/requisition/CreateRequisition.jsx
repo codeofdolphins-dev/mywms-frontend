@@ -40,7 +40,7 @@ const CreateRequisition = () => {
 
     /**************** global variable *******************/
     const locationName = user?.activeNode?.nodeDetails?.name;
-    const isManufacture = user?.activeNode?.type?.category === "manufacturing" ? true : false;
+    const isManufacture = user?.activeNode?.NodeUser?.department !== null ? true : false;
 
 
     /**************** APT mutation *******************/
@@ -48,8 +48,8 @@ const CreateRequisition = () => {
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["requisitionList"]);
 
     /**************** data fetching GET *******************/
-    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList();
-    const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList()
+    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList(!isManufacture);
+    const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList(isManufacture);
 
 
     /**************** react form hook *******************/
@@ -59,10 +59,9 @@ const CreateRequisition = () => {
             title: "",
             required_by_date: "",
             priority: "",
-            vendor_category: ""
         }
     });
-    setValue("buyer", locationName);
+    if(!isManufacture) setValue("buyer", locationName);
 
 
     const [isShow, setIsShow] = useState(false);
@@ -73,8 +72,7 @@ const CreateRequisition = () => {
 
     useEffect(() => {
         setIsEmpty(Boolean(!selectedItems?.length));
-        setValue("total", calculateTotals(selectedItems))
-
+        setValue("total", calculateTotals(selectedItems));
     }, [selectedItems]);
 
 
@@ -145,15 +143,17 @@ const CreateRequisition = () => {
                         <div className="panel">
                             <div className="grid grid-cols-1 gap-5">
                                 {/* buyer */}
-                                <div>
-                                    <Input
-                                        label="Buyer (Current Location)"
-                                        labelPosition="inline"
-                                        {...register("buyer")}
-                                        required={true}
-                                        disabled={true}
-                                    />
-                                </div>
+                                {!isManufacture &&
+                                    <div>
+                                        <Input
+                                            label="Buyer (Current Location)"
+                                            labelPosition="inline"
+                                            {...register("buyer")}
+                                            required={true}
+                                            disabled={true}
+                                        />
+                                    </div>
+                                }
 
 
                                 {/* conditional rendering supplier or vendor */}

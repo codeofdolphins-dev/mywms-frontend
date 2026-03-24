@@ -2,21 +2,25 @@ import React from "react";
 
 const RHRadioGroup = React.forwardRef(({
     label,
+    labelPosition = '',
     options = [],
     value,
+    disabled = false,
     onChange,
     error,
     required
 }, ref) => {
     return (
-        <div className="w-full">
+        <div className={`w-full ${labelPosition === "inline" ? "flex items-center justify-between gap-2" : ""}`}>
             {label && (
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                    className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'} ${labelPosition === "inline" ? "w-1/3" : ""}`}
+                >
                     {label} {required && <span className="text-red-500">*</span>}
                 </label>
             )}
 
-            <div className="flex flex-row space-x-2 mt-2">
+            <div className="w-full flex space-x-4">
                 {options.map((opt) => (
                     <label
                         key={opt.value}

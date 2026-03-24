@@ -25,6 +25,7 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                     unit_price: item.offer_price,
                 }))
             };
+            // console.log(formData); return;
 
             const res = await createData({ path: "/rfq/blanket-order/create", formData });
             if (res?.success)

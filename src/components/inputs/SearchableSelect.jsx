@@ -21,8 +21,7 @@ const SearchableSelect = ({
             {label && (
                 <label
                     htmlFor={_id}
-                    className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'
-                        } ${labelPosition === "inline" ? "w-1/3" : ""}`}
+                    className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'} ${labelPosition === "inline" ? "w-1/3" : ""}`}
                 >
                     {label}{required && <span className="text-red-500">*</span>}
                 </label>

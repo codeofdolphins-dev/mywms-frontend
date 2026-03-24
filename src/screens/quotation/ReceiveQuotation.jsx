@@ -32,7 +32,7 @@ const ReceiveQuotation = () => {
 
 
     /**************** global variable *******************/
-    const isManufacture = user?.activeNode?.type?.category === "manufacturing" ? true : false;
+    const isManufacture = user?.activeNode?.NodeUser?.department !== null ? true : false;
     const reqNo = searchParams.get("s") ?? "";
 
     const [previewData, setPreviewData] = useState(null);

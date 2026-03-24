@@ -91,13 +91,22 @@ const ProfileCard = ({
                                     {data?.location}
                                 </span>
                             </li>
-
-                            <li className=" w-full flex items-center justify-start gap-2">
-                                <p className={onCreate ? "w-1/3" : ""}>Role: </p>
-                                <span className={`whitespace-nowrap ${onCreate ? "w-2/3" : ""}`} dir="ltr">
-                                    {data?.role ? data?.role === "NODE_ADMIN" ? "Location Admin" : "Location User" : ""}
-                                </span>
-                            </li>
+                            {data?.isNodeAdmin !== null &&
+                                <li className=" w-full flex items-center justify-start gap-2">
+                                    <p className={onCreate ? "w-1/3" : ""}>Role: </p>
+                                    <span className={`whitespace-nowrap ${onCreate ? "w-2/3" : ""}`}>
+                                        {data?.isNodeAdmin === "true" ? "Location Admin" : "Location User"}
+                                    </span>
+                                </li>
+                            }
+                            {data?.dept !== null &&
+                                <li className=" w-full flex items-center justify-start gap-2">
+                                    <p>Department: </p>
+                                    <span className={`whitespace-nowrap ${onCreate ? "w-2/3" : ""}`}>
+                                        {data?.dept}
+                                    </span>
+                                </li>
+                            }
                         </>
                     }
                 </ul>

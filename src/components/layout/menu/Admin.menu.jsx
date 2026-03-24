@@ -27,10 +27,6 @@ const ADMIN_MENU = [
             { name: "Register User", path: "/admin/user/register" }
         ]
     },
-    {
-        name: "Departments",
-        path: "/admin/dept",
-    },
 ];
 
 

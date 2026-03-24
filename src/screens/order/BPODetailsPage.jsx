@@ -22,7 +22,6 @@ import masterData from '../../Backend/master.backend';
 
 
 const headerLink = [
-    { title: "Order", link: "" },
     { title: "Blanket PO", link: "/order/bpo" },
     { title: "Details" },
 ]
@@ -97,7 +96,7 @@ const BPODetailsPage = () => {
     if (bpoListLoading) return <Loader />;
 
     return (
-        <form onSubmit={handleSubmit(submitData)} className="panel rounded-lg font-sans">
+        <form onSubmit={handleSubmit(submitData)} className=" font-sans">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                 <div>
@@ -117,7 +116,7 @@ const BPODetailsPage = () => {
                     </button>
                     <button className="flex items-center gap-2 px-6 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all font-semibold">
                         <FaCheckCircle size={25} />
-                        Confirm Release Order / Indent
+                        Confirm Release Order
                     </button>
                 </div>
             </div>
@@ -201,7 +200,7 @@ const BPODetailsPage = () => {
                 <div className="space-y-6">
                     <div className="bg-white px-8 py-4 rounded-2xl shadow-xl border border-gray-100 sticky top-8">
                         <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            Indent Settings
+                            Release Order Settings
                         </h3>
 
                         <div className="space-y-4">
@@ -278,7 +277,7 @@ const BPODetailsPage = () => {
 
                             <div className="border-t border-gray-100">
                                 <div className="flex justify-between items-center mb-2">
-                                    <span className="text-gray-500 text-sm">Indent Total (Approx)</span>
+                                    <span className="text-gray-500 text-sm">Release Order Total (Approx)</span>
                                     <span className="text-xl font-bold text-gray-900">{currencyFormatter(totalAmount)}</span>
                                 </div>
                                 <p className="text-[10px] text-gray-400 leading-tight">
