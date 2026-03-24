@@ -17,7 +17,7 @@ import { currencyFormatter } from '../../utils/currencyFormatter'
 import { warningAlert } from '../../utils/alerts'
 import { utcToLocal } from '../../utils/UTCtoLocal'
 import { MdCurrencyRupee } from 'react-icons/md'
-import { purchaseOrder } from '../../Backend/purchaseOrder.fetch'
+import { order } from '../../Backend/order.fetch'
 import Input from '../../components/inputs/Input'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@mantine/core'
@@ -53,7 +53,7 @@ const CreateInward = () => {
 
     const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster();
 
-    const { data, isLoading } = purchaseOrder.TQPurchaseOrderItemDetails({ poNo: debounceSearch, noLimit: true }, Boolean(debounceSearch));
+    const { data, isLoading } = order.TQPurchaseOrderItemDetails({ poNo: debounceSearch, noLimit: true }, Boolean(debounceSearch));
     const details = data?.data;
     const purchasOrderItems = details?.items;
     // console.log(details)

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import API from ".";
 
-class PurchaseOrder {
+class Order {
     TQPurchaseOrderList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["purchaseOrderList", params],
@@ -14,7 +14,7 @@ class PurchaseOrder {
             enabled: isEnabled,
         });
     };
-    
+
     TQPurchaseOrderItemDetails(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["purchaseOrderItemDetails", params],
@@ -27,6 +27,19 @@ class PurchaseOrder {
             enabled: isEnabled,
         });
     };
+
+    TQSalesOrderList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["salesOrderList", params],
+            queryFn: async () => {
+                const res = await API.get("/sales-order/list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
-export const purchaseOrder = new PurchaseOrder();
+export const order = new Order();

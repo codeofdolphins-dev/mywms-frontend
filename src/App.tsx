@@ -4,7 +4,6 @@ import Master from './screens/master/Master';
 import Error404 from './screens/Error404';
 import Browse from './screens/Browse';
 import CreateRequisition from './screens/requisition/CreateRequisition';
-import Warehouse from './screens/warehouse/Warehouse';
 import HSN from './screens/master/hsn/HSN';
 import Rules from './screens/admin/Rules';
 import Inward from './screens/inward/Inward';
@@ -18,7 +17,6 @@ import AssignRole from './screens/access/AssignRole';
 import Quotation from './screens/quotation/Quotation';
 import ReceiveQuotation from './screens/quotation/ReceiveQuotation';
 import ReceiveRequision from './screens/requisition/ReceiveRequision';
-import PurchaseOrder from './screens/order/PurchaseOrder';
 import RegisterNode from './screens/admin/RegisterNode';
 import CreateUser from './screens/user/CreateUser';
 import UserBrowse from './screens/user/UserBrowse';
@@ -26,22 +24,20 @@ import UserProfile from './screens/user/UserProfile';
 import Category from './screens/master/category/Category';
 import Brand from './screens/master/brand/Brand';
 import Supplier from './screens/master/supplier/Supplier';
-import AddSupplier from './screens/master/supplier/AddSupplier';
 import Product from './screens/master/product/Product';
 import AddProduct from './screens/master/product/AddProduct';
 import PackageType from './screens/master/packageType/PackageType';
-import SupplierForm from './components/supplier/SupplierForm';
 import UnitType from './screens/master/unitType/UnitType';
 import Register from './screens/auth/Register';
 import Admin from './screens/admin/Admin';
 import SuperAdmin from './screens/superAdmin/SuperAdmin';
-import PurchaseOrderBrowse from './screens/order/PurchaseOrderBrowse';
 import Vendor from './screens/vendor/Vendor';
 import VendorCategory from './screens/vendor/VendorCategory';
 import Dashboard from './screens/Dashboard';
 import BlanketPO from './screens/order/BlanketPO';
 import BPODetailsPage from './screens/order/BPODetailsPage';
 import Store from './screens/admin/store/Store';
+import OrderBrowse from './screens/order/OrderBrowse';
 
 
 function App() {
@@ -133,7 +129,7 @@ function App() {
 
                     {/* order */}
                     <Route path="order" >
-                        <Route index element={<PurchaseOrderBrowse />} />
+                        <Route index element={<OrderBrowse />} />
                         <Route path='bpo' element={<BlanketPO />} />
                         <Route path='bpo/details/:id' element={<BPODetailsPage />} />
                         {/* <Route path='/:id' element={<PurchaseOrder />} /> */}

@@ -13,7 +13,7 @@ import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 import { Button } from '@mantine/core';
-import { purchaseOrder } from '../../Backend/purchaseOrder.fetch';
+import { purchaseOrder } from '../../Backend/order.fetch';
 
 
 const headerLink = [
