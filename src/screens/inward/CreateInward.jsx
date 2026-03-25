@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FiPlus } from 'react-icons/fi'
+import { FiHome, FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
 import { Link, useSearchParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
@@ -23,6 +23,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@mantine/core'
 import Loader from '../../components/loader/Loader'
 import NoRecord from '../../components/NoRecord'
+import { FcDocument } from 'react-icons/fc'
 // import Loader from '../../components/loader/Loader'
 
 
@@ -35,6 +36,7 @@ const CreateInward = () => {
     const [searchParams] = useSearchParams();
     const poNo = searchParams.get("s") ?? "";
 
+    const [activeTab, setActiveTab] = useState(1);
     const [debounceSearch, setDebounceSearch] = useState("");
 
     /** set reset search value */
@@ -56,6 +58,13 @@ const CreateInward = () => {
     const { data, isLoading } = order.TQPurchaseOrderItemDetails({ poNo: debounceSearch, noLimit: true }, Boolean(debounceSearch));
     const details = data?.data;
     const purchasOrderItems = details?.items;
+
+    const isEmpty = data?.data?.items?.length > 0 ? false : true;
+    const isInternal = data?.data?.type === "internal" ? true : false;
+    // const purchasOrderItems = data?.data?.items ?? [];
+    const vendor = data?.data?.vendor;
+
+
     // console.log(details)
 
 
@@ -75,9 +84,9 @@ const CreateInward = () => {
         if (!purchasOrderItems?.length) return;
 
         const items = purchasOrderItems.map(item => ({
-            id: item?.id,
-            product_id: item?.poi_sourceRequisitionItem?.product_id,
-            barcode: item?.poi_sourceRequisitionItem?.product?.barcode,
+            po_item_id: item?.id,
+            product_id: item?.product_id,
+            ...(item?.poi_product?.barcode && { barcode: item?.poi_product?.barcode }),
             qty: item?.qty,
             d_qty: "",
             s_qty: "",
@@ -102,6 +111,16 @@ const CreateInward = () => {
 
     if (isLoading) return <Loader />
 
+    /** status color change helper */
+    const statusColor = (status) => {
+        switch (status) {
+            case "urgent": return "bg-danger";   // Red — most critical
+            case "high": return "bg-orange-400";  // Orange/Yellow — high priority
+            case "medium": return "bg-secondary"; // Grey — moderate
+            default: return "bg-light";    // Fallback
+        }
+    }
+
     return (
         <div>
             <ComponentHeader
@@ -115,91 +134,183 @@ const CreateInward = () => {
             {!data ?
                 <NoRecord />
 
-                : <form onSubmit={handleSubmit(submitForm)} >
+                : <form onSubmit={handleSubmit(submitForm)}>
                     <div className="panel space-y-6">
-
                         {/* detail section */}
-                        <div className="">
-                            <div className='flex items-center'>
-                                <span>Purchase Order Details</span>
+                        <div className="max-h-56 overflow-y-auto">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+
+                                {/* PO Card */}
+                                <div className="bg-white border border-gray-100 rounded-xl overflow-hidden border-t-[3px] border-t-blue-600">
+                                    <div className="flex items-center gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
+                                        <FcDocument size={20} />
+                                        <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Purchase Order</span>
+                                        <span className={`badge ${statusColor(data?.data?.priority)}`}>{data?.data?.priority?.toUpperCase() || "N/A"}</span>
+                                    </div>
+                                    <table className="w-full text-[13px] border-collapse">
+                                        <tbody>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400 w-[45%]">PO Number</td>
+                                                <td className="px-3.5 py-2 font-medium text-right">
+                                                    <span className="font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
+                                                        #{data?.data?.po_no || "N/A"}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400">Issue Date</td>
+                                                <td className="px-3.5 py-2 font-medium text-right">{utcToLocal(data?.data?.createdAt)}</td>
+                                            </tr>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400">Grand Total</td>
+                                                <td className="px-3.5 py-2 text-right">
+                                                    <span className="text-sm font-bold text-green-600 flex items-center justify-end gap-0.5">
+                                                        <MdCurrencyRupee />
+                                                        {data?.data?.grand_total}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400">Note</td>
+                                                <td className="px-3.5 py-2 text-right italic text-gray-400">
+                                                    {data?.data?.note || "N/A"}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-3.5 py-2 text-gray-400">Created By</td>
+                                                <td className="px-3.5 py-2 text-right">
+                                                    <div className="inline-flex items-center gap-1.5">
+                                                        <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[9px] font-bold text-white">
+                                                            {data?.data?.POcreatedBy?.name?.full_name?.slice(0, 2).toUpperCase() || "—"}
+                                                        </div>
+                                                        <span className="font-medium">
+                                                            {data?.data?.POcreatedBy?.name?.full_name || "N/A"}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Supplier Card */}
+                                <div className="bg-white border border-gray-100 rounded-xl overflow-hidden border-t-[3px] border-t-violet-600">
+                                    <div className="flex items-center justify-between px-3.5 py-2 bg-violet-50 border-b border-violet-100">
+                                        <div className="flex items-center gap-2 ">
+                                            <FiHome size={20} className='text-violet-600' />
+                                            <span className="text-[12px] font-semibold text-violet-600 uppercase tracking-wider">Supplier Details</span>
+                                        </div>
+                                    </div>
+                                    <table className="w-full text-[13px] border-collapse">
+                                        <tbody>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400 w-[45%]">Supplier Name</td>
+                                                <td className="px-3.5 py-2 font-medium text-right">
+                                                    {vendor?.nodeDetails?.name || vendor?.name || "N/A"}
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400">GST No</td>
+                                                <td className="px-3.5 py-2 text-right">
+                                                    <span className="font-mono text-xs bg-violet-50 text-violet-600 px-2 py-0.5 rounded">
+                                                        {vendor?.nodeDetails?.gst_no || vendor?.gst_no || "N/A"}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400">Location</td>
+                                                <td className="px-3.5 py-2 font-medium text-right">
+                                                    {vendor?.nodeDetails?.location || vendor?.location || "N/A"}
+                                                </td>
+                                            </tr>
+                                            {/* Lat / Long */}
+                                            <tr className="border-b border-gray-100">
+                                                <td colSpan={2} className="p-0">
+                                                    <div className="grid grid-cols-2">
+                                                        <div className="px-3.5 py-1 border-r border-gray-100 flex gap-5">
+                                                            <div className="text-gray-400 mb-0.5">Latitude</div>
+                                                            <div className="font-mono font-medium">
+                                                                {vendor?.nodeDetails?.address?.lat || vendor?.address?.lat || "N/A"}
+                                                            </div>
+                                                        </div>
+                                                        <div className="px-3.5 flex gap-5">
+                                                            <div className="text-gray-400 mb-0.5">Longitude</div>
+                                                            <div className="font-mono font-medium">
+                                                                {vendor?.nodeDetails?.address?.long || vendor?.address?.long || "N/A"}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {/* Address / Pincode */}
+                                            <tr className="border-b border-gray-100">
+                                                <td colSpan={2} className="p-0">
+                                                    <div className="grid grid-cols-2">
+                                                        <div className="px-3.5 py-1 border-r border-gray-100 flex gap-5">
+                                                            <div className="text-gray-400 mb-0.5">Address</div>
+                                                            <div className="font-medium">
+                                                                {vendor?.nodeDetails?.address?.address || vendor?.address?.address || "N/A"}
+                                                            </div>
+                                                        </div>
+                                                        <div className="px-3.5 flex gap-5">
+                                                            <div className="text-gray-400 mb-0.5">Pincode</div>
+                                                            <div className="font-mono font-medium">
+                                                                {vendor?.nodeDetails?.address?.pincode || vendor?.address?.pincode || "N/A"}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {/* State / District */}
+                                            <tr>
+                                                <td colSpan={2} className="p-0">
+                                                    <div className="grid grid-cols-2">
+                                                        <div className="px-3.5 py-1 border-r border-gray-100 flex gap-5">
+                                                            <div className=" text-gray-400 mb-0.5">State</div>
+                                                            <div className="font-medium">
+                                                                {vendor?.nodeDetails?.address?.state || vendor?.address?.state || "N/A"}
+                                                            </div>
+                                                        </div>
+                                                        <div className="px-3.5 flex gap-5">
+                                                            <div className=" text-gray-400 mb-0.5">District</div>
+                                                            <div className="font-medium ">
+                                                                {vendor?.nodeDetails?.address?.district || vendor?.address?.district || "N/A"}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                        </div>
 
-                            <div className="max-h-32 overflow-auto mt-2">
-                                <div className="flex justify-between sm:flex-row flex-col gap-6 border p-4 border-dotted rounded-lg bg-gray-100">
+                        {/* inward type select section */}
+                        <div className="mb-4 flex items-start gap-4">
+                            <h1 className='text-lg font-bold text-gray-800 mb-4'>Select Inward Type</h1>
 
-                                    {/* PO details */}
-                                    <div className="xl:1/3 lg:w-2/5 sm:w-1/2 text-sm">
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">PO Number:</div>
-                                            <span className='text-sm'># {details?.po_no || "N/A"}</span>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">Issued Date :</div>
-                                            <span>{utcToLocal(details?.createdAt)}</span>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">Total Items:</div>
-                                            <span className='text-sm'>{purchasOrderItems?.length || 0}</span>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">Grand Total:</div>
-                                            <span className='flex items-center'>
-                                                {currencyFormatter(details?.grand_total)}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">Note:</div>
-                                            <span> {details?.note || "N/A"} </span>
-                                        </div>
-                                    </div>
+                            <div className="flex flex-wrap gap-4 mt-3">
+                                <div
+                                    className={`px-4 py-2 rounded-xl cursor-pointer border-2 transition-all duration-200 ${activeTab === 1
+                                        ? 'bg-[#f5f3ff] border-[#6d28d9] shadow-sm shadow-blue-100'
+                                        : 'bg-white border-gray-200 hover:border-[#6d28d96b] hover:bg-gray-50'
+                                        }`}
+                                    onClick={() => setActiveTab(1)}
+                                >
+                                    <h3 className={`font-bold text-[15px] ${activeTab === 1 ? 'text-[#6d28d9]' : 'text-gray-800'}`}>Purchase Inward</h3>
+                                    <p className={`text-xs font-medium ${activeTab === 1 ? 'text-[#6d28d9]' : 'text-gray-500'}`}>PO / MFG RM Inward</p>
+                                </div>
 
-                                    {/* Node details */}
-                                    <div className="xl:1/3 lg:w-2/5 sm:w-1/2 text-sm">
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">Supplier Name:</div>
-                                            <div className="whitespace-nowrap">{details?.poToBusinessNode?.name || "N/A"}</div>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">GST No:</div>
-                                            <div>{details?.poToBusinessNode?.nodeDetails?.gst_no || "N/A"}</div>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2">
-                                            <div className="text-white-dark">Location:</div>
-                                            <div>{details?.poToBusinessNode?.nodeDetails?.location || "N/A"}</div>
-                                        </div>
-                                        <div className="flex items-center w-full justify-between mb-2 gap-5">
-                                            <div className="flex items-center w-full justify-between">
-                                                <div className="text-white-dark">Lat:</div>
-                                                <div>{details?.poToBusinessNode?.nodeDetails?.address?.lat || "N/A"}</div>
-                                            </div>
-                                            <div className="flex items-center w-full justify-between">
-                                                <div className="text-white-dark">Long:</div>
-                                                <div>{details?.poToBusinessNode?.nodeDetails?.address?.long || "N/A"}</div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center w-full justify-between mb-2 gap-5">
-                                            <div className="flex items-center w-full justify-between">
-                                                <p className="text-white-dark">Address:</p>
-                                                <p>{details?.poToBusinessNode?.nodeDetails?.address?.address || "N/A"}</p>
-                                            </div>
-                                            <div className="flex items-center w-full justify-between">
-                                                <p className="text-white-dark">Pincode:</p>
-                                                <p>{details?.poToBusinessNode?.nodeDetails?.address?.pincode || "N/A"}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center w-full justify-between mb-2 gap-5">
-                                            <div className="flex items-center w-full justify-between">
-                                                <p className="text-white-dark">State:</p>
-                                                <p>{details?.poToBusinessNode?.nodeDetails?.address?.state || "N/A"}</p>
-                                            </div>
-                                            <div className="flex items-center w-full justify-between">
-                                                <p className="text-white-dark">District:</p>
-                                                <p>{details?.poToBusinessNode?.nodeDetails?.address?.district || "N/A"}</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div
+                                    className={`px-4 py-2 rounded-xl cursor-pointer border-2 transition-all duration-200 ${activeTab === 2
+                                        ? 'bg-[#fff7ed] border-[#c2410c] shadow-sm shadow-blue-100'
+                                        : 'bg-white border-gray-200 hover:border-[#c2400c6b] hover:bg-gray-50'
+                                        }`}
+                                    onClick={() => setActiveTab(2)}
+                                >
+                                    <h3 className={`font-bold text-[15px] ${activeTab === 2 ? 'text-[#c2410c]' : 'text-gray-800'}`}>Production Receipt</h3>
+                                    <p className={`text-[12px] font-medium ${activeTab === 2 ? 'text-[#c2410c]' : 'text-gray-500'}`}>Internal FG Inward</p>
                                 </div>
                             </div>
                         </div>
@@ -209,7 +320,7 @@ const CreateInward = () => {
                             <div className="space-y-2">
                                 {fields?.map((field, idx) => {
                                     const item = purchasOrderItems?.[idx]; // 🔗 FULL DATA
-                                    const product = item?.poi_sourceRequisitionItem;
+                                    const product = item?.poi_product;
 
                                     // console.log(item)
 
@@ -230,13 +341,15 @@ const CreateInward = () => {
                                                                 }`}
                                                         >
                                                             {/* 1️⃣ barcode */}
-                                                            <th className="w-[20%] text-start break-words !pr-0">
-                                                                {product?.product?.barcode}
-                                                            </th>
+                                                            {product?.barcode &&
+                                                                <th className="w-[20%] text-start break-words !pr-0">
+                                                                    {product?.barcode}
+                                                                </th>
+                                                            }
 
                                                             {/* 2️⃣ name */}
-                                                            <th className="w-[10%] text-start truncate !px-0">
-                                                                {product?.product?.name}
+                                                            <th className="w-[10%] text-start truncate">
+                                                                {product?.name}
                                                             </th>
 
                                                             {/* 3️⃣ brand */}
@@ -251,7 +364,7 @@ const CreateInward = () => {
 
                                                             {/* 5️⃣ sub_category */}
                                                             <th className="w-[5%] text-start truncate !px-0">
-                                                                {product?.sub_category || "-"}
+                                                                {product?.sub_category}
                                                             </th>
 
                                                             {/* 6️⃣ Expand icon */}

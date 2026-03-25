@@ -280,6 +280,14 @@ export const PURCHASE_ORDER = [
     { key: "unitPrice", label: "Unit Price" },
     { key: "total", label: "Total" },
 ];
+export const PURCHASE_ORDER_RAW = [
+    { key: "product", label: "Product" },
+    { key: "sku", label: "Code / SKU" },
+    { key: "uom", label: "Masure Unit" },
+    { key: "qty", label: "Qty" },
+    { key: "unitPrice", label: "Unit Price" },
+    { key: "total", label: "Total" },
+];
 
 
 export const BPO_COLUMN = [

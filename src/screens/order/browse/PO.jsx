@@ -41,17 +41,17 @@ const PO = ({ debounceSearch }) => {
                 setCurrentPage={setCurrentPage}
                 limit={limit}
                 setLimit={setLimit}
-                totalPage={data?.meta?.totalPages}
+                totalPage={data?.pagination?.totalPages}
             >
                 {
                     data?.data?.map((item, idx) => {
                         return (<TableRow
                             key={idx}
                             columns={PURCHASE_ORDER_BROWSE}
-                            onClick={() => navigate(`/purchase-order/${item?.po_no}`)}
+                            onClick={() => navigate(`/order/${item?.po_no}`)}
                             row={{
                                 no: item?.po_no,
-                                to: item?.poToBusinessNode?.nodeDetails?.name,
+                                to: item?.poToBusinessNode?.nodeDetails?.name ?? item?.poVendor?.name,
                                 date: utcToLocal(item?.createdAt),
                                 items: item?.purchasOrderItems?.length,
                                 price: currencyFormatter(item?.grand_total),

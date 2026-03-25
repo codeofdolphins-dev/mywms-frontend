@@ -38,6 +38,8 @@ import BlanketPO from './screens/order/BlanketPO';
 import BPODetailsPage from './screens/order/BPODetailsPage';
 import Store from './screens/admin/store/Store';
 import OrderBrowse from './screens/order/OrderBrowse';
+import OrderDetails from './screens/order/OrderDetails';
+import Test from './screens/CreateInward';
 
 
 function App() {
@@ -132,7 +134,7 @@ function App() {
                         <Route index element={<OrderBrowse />} />
                         <Route path='bpo' element={<BlanketPO />} />
                         <Route path='bpo/details/:id' element={<BPODetailsPage />} />
-                        {/* <Route path='/:id' element={<PurchaseOrder />} /> */}
+                        <Route path=':id' element={<OrderDetails />} />
                     </Route>
 
 
@@ -171,6 +173,7 @@ function App() {
                         <Route path="create" element={<Master />} />
                     </Route>
                 </Route>
+                <Route path="/test" element={<Test />} />
 
                 <Route path="*" element={<Error404 />} />
                 {/* <Route path="*" element={<Select />} /> */}
