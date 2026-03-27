@@ -63,4 +63,19 @@ const confirmation = async (msg = "You won't be able to revert this!") => {
     return result.isConfirmed;
 }
 
-export { successAlert, errorAlert, confirmation, warningAlert };
+const inputAlert = async (title = "Enter details", placeholder = "Type here...") => {
+    return await MySwal.fire({
+    // const { value: enteredData } = await MySwal.fire({
+        title: title,
+        input: "text",
+        inputPlaceholder: placeholder,
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Submit"
+    });
+
+    // return enteredData || null;
+}
+
+export { successAlert, errorAlert, confirmation, warningAlert, inputAlert };

@@ -215,6 +215,17 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+    
+    TQAppliedRfqList(isEnabled = true) {
+        return useQuery({
+            queryKey: ["appliedRfqList"],
+            queryFn: async () => {
+                const res = await API.get("/rfq/applied-rfq-list");
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 
 
     TQStoreList(params = {}, isEnabled = true) {

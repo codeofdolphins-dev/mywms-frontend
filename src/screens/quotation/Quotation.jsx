@@ -267,9 +267,9 @@ const Quotation = () => {
                                                     <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                                 </CustomeButton>
 
-                                                <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                {/* <CustomeButton onClick={() => handleDelete(item.id)}>
                                                     <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                                </CustomeButton>
+                                                </CustomeButton> */}
                                             </div>
                                         )
                                     }}

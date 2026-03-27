@@ -6,10 +6,14 @@ import RegisterPartnerNode from '../../components/admin/register/RegisterPartner
 import masterData from '../../Backend/master.backend';
 import { RHFToFormData } from '../../utils/RHFtoFD';
 import path from 'path';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import business from '../../Backend/business.fetch';
 
 const RegisterNode = () => {
+    const navigate = useNavigate();
+
+    const location = useLocation();
+    const mfg = location?.state;
 
     const { data: businessNodes, isLoading: businessNodeLoading } = business.TQTenantBusinessNodeList();
     const { mutateAsync: registerWarehouse, isLoading: isPendingWarehouse } = masterData.TQCreateMaster(["tenantRegisteredNodeList"]);
@@ -20,7 +24,8 @@ const RegisterNode = () => {
         handleSubmit,
         formState: { errors },
         watch,
-        reset
+        reset,
+        setValue
     } = useForm({
         defaultValues: {
             node: null
@@ -29,17 +34,28 @@ const RegisterNode = () => {
 
     const node = watch("node");
 
+    useEffect(() => {
+        setValue("node", mfg);
+    }, [businessNodeLoading, mfg])
+
     const submitForm = async (data) => {
         const formData = RHFToFormData(data);
 
         try {
-            const res = await registerWarehouse({ path: "/super-admin/register-node", formData })
-            console.log(res)
-            if (res.success) reset({ node: null });
+            const res = await registerWarehouse({ path: "/super-admin/register-node", formData });
+
+            if (res.success) {
+                if (mfg) navigate(-1);
+                
+                reset({ node: null });
+            }
         } catch (error) {
             console.log(error)
         }
     }
+
+
+    console.log(node);
 
     return (
         <div>

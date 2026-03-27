@@ -19,6 +19,7 @@ import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import { MdOutlineDownload } from 'react-icons/md';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
+import { currencyFormatter } from '../../utils/currencyFormatter';
 
 const headerLink = [
     { title: "requisition" },
@@ -135,7 +136,7 @@ const Requisition = () => {
                                         </>
                                     ),
                                     notes: item?.notes,
-                                    grandTotal: item?.grandTotal,
+                                    grandTotal: currencyFormatter(item?.grandTotal),
                                     action: (
                                         <div className='flex items-center justify-center space-x-2'>
                                             <CustomeButton

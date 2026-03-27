@@ -14,6 +14,7 @@ const Dashboard = () => {
     const [selectedItem, setSelectedItem] = useState(null);
 
     const { data: rfqList, isLoading: rfqListLoading } = fetchData.TQRfqList();
+    const { data: appliedRfqList, isLoading: appliedRfqListLoading } = fetchData.TQAppliedRfqList();
 
 
     // const dispatch = useDispatch();
@@ -24,85 +25,69 @@ const Dashboard = () => {
     // const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     // console.log(rfqList?.data)
+    // console.log(appliedRfqList?.data);
 
     return (
         <div>
-            <div className="max-w-[40rem] w-full mx-auto space-y-5 cursor-pointer">
-                {rfqList?.data?.map(item => {
-                    // console.log(item)
+            <div className="w-full overflow-hidden border border-[#e0e6ed] dark:border-[#1b2e4b] rounded-xl">
+                {rfqList?.data?.map((item) => {
+                    if (appliedRfqList?.data?.find(rfq_id => rfq_id === item.id)) {
+                        return null; // Skip this item if it's in the appliedRfqList
+                    }
 
-                    return <div
-                        key={item.id}
-                        className="max-w-3xl mx-auto space-y-4"
-                        onClick={() => {
-                            setIsShow(true);
-                            setSelectedItem(item);
-                        }}
-                    >
-                        {/* RFQ Card */}
-                        <div className="panel space-y-4 hover:shadow-lg transition-all duration-300">
-                            {/* Header */}
-                            <div className="flex justify-between items-start">
-                                <div className="flex items-start gap-3 w-full pr-4">
-                                    <div className="p-3 bg-primary/10 text-primary rounded-xl shrink-0">
-                                        <FiFileText size={24} />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h2 className="text-lg font-bold hover:text-primary transition-colors duration-300 truncate">{item?.title || "Untitled Requisition"}</h2>
-                                        <p className="text-sm font-medium mt-1 flex items-start gap-1 break-all text-white-dark">
-                                            <span className="shrink-0 mt-0.5">#</span> {item?.rfq_no}
-                                        </p>
-                                    </div>
-                                </div>
-                                <span
-                                    className={`badge shrink-0 rounded-full capitalize ${
-                                        item?.priority?.toLowerCase() === "high"
+                    return <div key={item.id} className="panel">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
+                                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requisition</th>
+                                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Priority</th>
+                                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Deadline</th>
+                                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Total Amount</th>
+                                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requested By</th>
+                                    <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] last:border-0 hover:bg-[#f5f5f5] dark:hover:bg-[#1b2e4b]/40 cursor-pointer transition-colors"
+                                    onClick={() => {
+                                        setIsShow(true);
+                                        setSelectedItem(item);
+                                    }}
+                                >
+                                    <td className="px-3 py-3">
+                                        <p className="font-semibold truncate max-w-[200px]">{item?.title || "Untitled Requisition"}</p>
+                                        <p className="text-xs text-white-dark font-mono mt-0.5"># {item?.rfq_no}</p>
+                                    </td>
+                                    <td className="px-3 py-3">
+                                        <span className={`badge rounded-full capitalize text-xs ${item?.priority?.toLowerCase() === "high"
                                             ? "badge-outline-danger"
                                             : item?.priority?.toLowerCase() === "normal"
-                                            ? "badge-outline-primary"
-                                            : "badge-outline-secondary"
-                                    }`}
-                                >
-                                    {item?.priority || "N/A"}
-                                </span>
-                            </div>
-
-                            {/* Content grid */}
-                            <div className="grid grid-cols-2 gap-4 mt-2">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-info/10 text-info rounded-lg shrink-0">
-                                        <FiClock size={16} />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wider font-semibold text-white-dark mb-0.5">Deadline</p>
-                                        <p className="font-semibold text-sm">{item?.submission_deadline}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-success/10 text-success rounded-lg shrink-0">
-                                        <MdOutlineAttachMoney size={18} />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wider font-semibold text-white-dark mb-0.5">Total Amount</p>
-                                        <p className="font-bold text-sm">{currencyFormatter(item?.grand_total)}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Footer */}
-                            <div className="flex justify-between items-center text-sm border-t border-[#e0e6ed] dark:border-[#1b2e4b] pt-4 mt-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-7 h-7 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                                        <FiUser size={14} />
-                                    </div>
-                                    <span className="font-medium truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-dark/5 dark:bg-dark/20 rounded-lg">
-                                    <FiMapPin size={14} className="text-danger shrink-0" />
-                                    <span className="font-medium text-xs truncate max-w-[150px]">{item?.meta?.location || "N/A"}</span>
-                                </div>
-                            </div>
-                        </div>
+                                                ? "badge-outline-primary"
+                                                : "badge-outline-secondary"
+                                            }`}>
+                                            {item?.priority || "N/A"}
+                                        </span>
+                                    </td>
+                                    <td className="px-3 py-3 whitespace-nowrap">{item?.submission_deadline}</td>
+                                    <td className="px-3 py-3 font-semibold whitespace-nowrap">{currencyFormatter(item?.grand_total)}</td>
+                                    <td className="px-3 py-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                                                <FiUser size={12} />
+                                            </div>
+                                            <span className="truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-3 py-3">
+                                        <div className="flex items-center gap-1.5">
+                                            <FiMapPin size={13} className="text-danger shrink-0" />
+                                            <span className="text-xs truncate max-w-[130px]">{item?.meta?.location || "N/A"}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 })}
             </div>
@@ -112,8 +97,8 @@ const Dashboard = () => {
                 setIsShow={setIsShow}
                 maxWidth='55'
                 placement="start"
-                
-                // blur={false}
+
+            // blur={false}
             >
                 <RequisitionCard
                     details={selectedItem}

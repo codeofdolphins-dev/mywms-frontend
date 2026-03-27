@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux'
 import { rfqQuotation } from '../../Backend/rfqQuotation.fetch'
 import AddModal from '../../components/Add.modal'
 import BlanketPOPreview from '../../components/blanketPO/BlanketPO.preview'
+import { inputAlert } from '../../utils/alerts'
 
 
 const headerLink = [
@@ -48,7 +49,7 @@ const ReceiveQuotation = () => {
     const [debounceSearch, setDebounceSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    
+
 
     /**************** revision & vendor *******************/
     const [vendor, setVendor] = useState(null);
@@ -126,14 +127,19 @@ const ReceiveQuotation = () => {
     };
 
     async function negotiate(id) {
-        console.log(id);
-        try {
-            const res = await updateData({ path: "/rfq/quotation/negotiate", formData: { id } });
-            console.log(res);
+        // console.log(id);
 
-        } catch (error) {
-            console.log(error);
-        }
+        await inputAlert("Enter remarks(optional)").then(async (res) => {
+            if (res.isConfirmed) {
+                const remarks = res.value;
+                try {
+                    await updateData({ path: "/rfq/quotation/negotiate", formData: { id, remarks } });
+
+                } catch (error) {
+                    console.log(error);
+                };
+            }
+        });
     };
 
     function changeRevision(vendor, revNo) {
@@ -168,7 +174,7 @@ const ReceiveQuotation = () => {
                                     <table>
                                         <thead>
                                             <tr
-                                                className={`py-1 w-full flex items-center justify-between ${active === `${item.id}` ? '!text-primary' : ''
+                                                className={`py-1 w-full flex items-center justify-between cursor-pointer ${active === `${item.id}` ? '!text-primary' : ''
                                                     }`}
                                             >
                                                 {/* 1️⃣ Name */}
@@ -230,49 +236,51 @@ const ReceiveQuotation = () => {
 
                                                 {/* 6️⃣ Actions */}
                                                 <th className="w-[5%] flex justify-center !px-0 mr-2">
-                                                    <div
-                                                        className="dropdown"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <Dropdown
-                                                            placement="bottom-end"
-                                                            btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
-                                                            button={<IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />}
+                                                    {item?.status === null &&
+                                                        <div
+                                                            className="dropdown"
+                                                            onClick={(e) => e.stopPropagation()}
                                                         >
-                                                            <ul className="!min-w-[180px]">
-                                                                <li>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => approveQ(item)}
-                                                                        className="text-left hover:!bg-green-100 hover:!text-green-500"
-                                                                    >
-                                                                        Lock & Confirm
-                                                                    </button>
-                                                                </li>
-                                                                {item?.current_revision_no <= 3 && <>
+                                                            <Dropdown
+                                                                placement="bottom-end"
+                                                                btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
+                                                                button={<IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />}
+                                                            >
+                                                                <ul className="!min-w-[180px]">
                                                                     <li>
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => negotiate(item?.id)}
+                                                                            onClick={() => approveQ(item)}
+                                                                            className="text-left hover:!bg-green-100 hover:!text-green-500"
                                                                         >
-                                                                            Negotiate
+                                                                            Lock & Confirm
                                                                         </button>
                                                                     </li>
-                                                                </>}
-                                                                <li>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => rejectQ(item?.quotation?.id)}
-                                                                        className="hover:!bg-red-100 hover:!text-red-500"
-                                                                    >
-                                                                        Reject
-                                                                    </button>
-                                                                </li>
-                                                            </ul>
-                                                        </Dropdown>
-                                                    </div>
-                                                    {/* </th> */}
+                                                                    {item?.current_revision_no <= 3 && <>
+                                                                        <li>
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => negotiate(item?.id)}
+                                                                            >
+                                                                                Negotiate
+                                                                            </button>
+                                                                        </li>
+                                                                    </>}
+                                                                    <li>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => rejectQ(item?.quotation?.id)}
+                                                                            className="hover:!bg-red-100 hover:!text-red-500"
+                                                                        >
+                                                                            Reject
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </Dropdown>
+                                                        </div>
+                                                    }
 
+                                                    {/* </th> */}
                                                     {/* 7️⃣ Expand icon */}
                                                     {/* <th className="w-[5%] flex justify-center"> */}
                                                     <div className={`${active === `${item.id}` ? 'rotate-180' : ''}`}>

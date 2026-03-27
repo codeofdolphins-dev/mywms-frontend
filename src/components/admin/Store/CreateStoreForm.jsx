@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { FaWarehouse, FaMapMarkerAlt, FaGlobe, FaSave, FaTimes } from 'react-icons/fa';
 import { MdOutlineCategory, MdOutlineLocationCity } from 'react-icons/md';
-import Input from '../../../components/inputs/Input';
-import SearchableSelect from '../../../components/inputs/SearchableSelect';
+import Input from '../../inputs/Input';
+import SearchableSelect from '../../inputs/SearchableSelect';
 import { Controller, useForm } from 'react-hook-form';
-import RHSelect from '../../../components/inputs/RHF/Select.RHF';
+import RHSelect from '../../inputs/RHF/Select.RHF';
 import { useSelector } from 'react-redux';
 import fetchData from '../../../Backend/fetchData.backend';
 import { Button } from '@mantine/core';
 import business from '../../../Backend/business.fetch';
 import masterData from '../../../Backend/master.backend';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -17,9 +18,15 @@ const STORE_TYPE = [
     { label: "RM Store (Raw Materials)", value: "rm_store" },
     { label: "FG Store (Finished Goods)", value: "fg_store" },
     { label: "Production", value: "production" },
-]   
+]
 
-const CreateStoreForm = ({ selectedStore, setSelectedStore, editData = null }) => {
+const CreateStoreForm = ({
+    selectedStore,
+    setSelectedStore,
+    isTypeDisabled = false,
+    editData = null
+}) => {
+    const navigate = useNavigate();
     const stateData = useSelector(state => state.location);
 
     /**************** APT mutation *******************/
@@ -64,6 +71,20 @@ const CreateStoreForm = ({ selectedStore, setSelectedStore, editData = null }) =
         reset();
     }
 
+    function addMfgLocation() {
+        const mfg = {
+            id: 1,
+            name: "Mfg Bond Warehouse",
+            code: "L-101",
+            category: "manufacturing"
+        };
+        navigate("/admin/business/register", {
+            state: { ...mfg }
+        });
+
+
+    }
+
     async function submit(data) {
         // console.log(data); return
         try {
@@ -102,22 +123,6 @@ const CreateStoreForm = ({ selectedStore, setSelectedStore, editData = null }) =
 
                 {/* 1. Basic Identification */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                        <Input
-                            // Icon={FaWarehouse}
-                            placeholder="e.g. Central Raw Material Hub"
-                            label="Store Name"
-                            {...register("name", {
-                                required: {
-                                    value: true,
-                                    message: "This field is required!!!"
-                                }
-                            })}
-                            required={true}
-                            error={errors.name?.message}
-                        />
-                    </div>
-
                     <div>
                         <Controller
                             name="store_type"
@@ -141,6 +146,8 @@ const CreateStoreForm = ({ selectedStore, setSelectedStore, editData = null }) =
 
                                     required={true}
                                     error={error?.message}
+
+                                    disabled={isTypeDisabled}
                                 />
                             )}
                         />
@@ -170,8 +177,29 @@ const CreateStoreForm = ({ selectedStore, setSelectedStore, editData = null }) =
 
                                     required={true}
                                     error={error?.message}
+
+                                    addButton={true}
+                                    buttonTitle="Add"
+                                    buttonOnClick={addMfgLocation}
                                 />
                             )}
+                        />
+                    </div>
+
+                    {/* 1. Store name */}
+                    <div className="md:col-span-2">
+                        <Input
+                            // Icon={FaWarehouse}
+                            placeholder="e.g. Central Raw Material Hub"
+                            label="Store Name"
+                            {...register("name", {
+                                required: {
+                                    value: true,
+                                    message: "This field is required!!!"
+                                }
+                            })}
+                            required={true}
+                            error={errors.name?.message}
                         />
                     </div>
                 </div>

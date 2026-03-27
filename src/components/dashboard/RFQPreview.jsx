@@ -8,6 +8,8 @@ import { utcToLocal } from '../../utils/UTCtoLocal';
 import IconPencil from '../Icon/IconPencil';
 import CustomeButton from "../inputs/Button"
 import { FiFileText, FiPackage, FiCheckCircle, FiEdit3 } from 'react-icons/fi';
+
+
 const RFQPreview = ({
     details,
     setIsRequisitionCardShow,
@@ -17,7 +19,7 @@ const RFQPreview = ({
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["rfqQuotationList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["rfqQuotationList"]);
     const [allowEdit, setAllowEdit] = useState(false);
-    const { handleSubmit, register, setValue, reset, control, watch } = useForm({
+    const { handleSubmit, register, setValue, reset, control, watch, formState: { errors } } = useForm({
         defaultValues: {
             grandTotal: currencyFormatter(details?.grand_total) ?? "",
             valid_till: details?.valid_till ?? "",
@@ -90,7 +92,6 @@ const RFQPreview = ({
             if (isEditable && allowEdit) {
                 data.quotation_id = details?.id;
                 // console.log(data); return
-                console.log(data);
                 const res = await updateData({ path: "/rfq/quotation/update", formData: data });
                 if (res.success) {
                     reset();
@@ -112,13 +113,15 @@ const RFQPreview = ({
         }
     };
 
+    // console.log(details);
+
 
     return (
         <form onSubmit={handleSubmit(submit)}>
             <div className="bg-white rounded-2xl p-0 pb-5 overflow-hidden relative shadow-sm">
 
                 {/* Header Area with modern gradient banner */}
-                <div className="relative bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 p-6 pb-8">
+                <div className="relative bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 px-6 py-4">
                     <div className="flex items-start justify-between relative z-10">
                         <div className="flex gap-4 items-start w-full">
                             <div className="w-14 h-14 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center p-1 relative z-20 overflow-hidden shrink-0">
@@ -159,24 +162,24 @@ const RFQPreview = ({
                     </div>
 
                     {/* Decorative background pattern */}
-                    <div className="absolute right-0 bottom-0 opacity-10 blur-sm transform translate-y-1/2 translate-x-1/4">
+                    <div className="absolute right-2 bottom-0 opacity-50 blur-sm transform translate-y-1/2 translate-x-1/4 text-green-600">
                         <FiCheckCircle size={120} />
                     </div>
                 </div>
 
                 <div className="px-6 mt-2 bg-gray-50/50">
 
-                    {/* Note */}
-                    {details?.note && (
+                    {/* remarks */}
+                    {details?.quotationRevision?.remarks && (
                         <div className="mb-3 bg-amber-50 border border-amber-200 shadow-sm py-2 px-4 rounded-xl flex gap-3 items-start relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
                             <div className="text-amber-500 mt-0.5">
                                 <FiFileText size={18} />
                             </div>
                             <div>
-                                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-700 block mb-1">Note</span>
+                                <span className="text-[10px] uppercase font-bold tracking-widest text-amber-700 block mb-1">Negotiation Remark:</span>
                                 <p className="text-sm font-medium leading-relaxed text-amber-900/80">
-                                    {details?.note}
+                                    {details?.quotationRevision?.remarks}
                                 </p>
                             </div>
                         </div>
@@ -199,9 +202,11 @@ const RFQPreview = ({
                                 type='date'
                                 label="Valide Till"
                                 labelPosition="inline"
-                                {...register("valid_till")}
+                                {...register("valid_till", { required: "date required!!!" })}
                                 disabled={isEditable}
                                 className="!mb-0"
+                                required={true}
+                                error={errors?.valid_till?.message}
                             />
                         </div>
                     </div>
@@ -214,7 +219,7 @@ const RFQPreview = ({
                                 <h3 className="text-sm font-bold text-gray-700 tracking-wide">Quotation Items</h3>
                                 <div className="bg-white text-gray-500 text-xs font-bold px-2 py-0.5 rounded-full border border-gray-200 ml-2 shadow-sm">{fields?.length}</div>
                             </div>
-                            {isEditable && (
+                            {(isEditable && details?.quotationRevision?.status === "negotiate") && (
                                 <button
                                     type="button"
                                     onClick={() => setAllowEdit(prev => !prev)}

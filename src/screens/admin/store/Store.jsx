@@ -8,7 +8,7 @@ import TableRow from '../../../components/table/TableRow';
 import { STORE_LIST_COLUMN } from '../../../utils/helper';
 import { Link } from 'react-router-dom';
 import AddModal from '../../../components/Add.modal';
-import CreateStoreForm from './CreateStoreForm';
+import CreateStoreForm from '../../../components/admin/Store/CreateStoreForm';
 import fetchData from '../../../Backend/fetchData.backend';
 import IconTrashLines from '../../../components/Icon/IconTrashLines';
 import IconMenuNotes from '../../../components/Icon/Menu/IconMenuNotes';

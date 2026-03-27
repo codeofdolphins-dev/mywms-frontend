@@ -10,9 +10,11 @@ import EditItemForm from './form/EditItem.form';
 import RFQPreview from './RFQPreview';
 import { FiMapPin, FiClock, FiFileText, FiTag, FiHash, FiPackage } from 'react-icons/fi';
 import { MdOutlineAttachMoney } from 'react-icons/md';
+import secureLocalStorage from 'react-secure-storage';
 
 const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
-    // console.log(details);
+    const buyerTenant = secureLocalStorage.getItem("tenant");
+
     const [data, setData] = useState(null);
     // const [rfqItemData, setRfqItemData] = useState(details?.items);
 
@@ -45,7 +47,8 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
         setIsPreview(true);
     }
 
-    // console.log(data)
+    // console.log(details)
+    // console.log(buyerTenant)
 
     return (
         <div className="panel p-0 overflow-hidden relative">
@@ -210,13 +213,15 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                             <span>Deadline: {new Date(details?.submission_deadline).toLocaleDateString()}</span>
                         </div>
                     )}
-                    <button
-                        type="button"
-                        onClick={previewCumSubmit}
-                        className="btn btn-primary btn-sm"
-                    >
-                        Preview
-                    </button>
+                    {buyerTenant !== details?.buyer_tenant && (
+                        <button
+                            type="button"
+                            onClick={previewCumSubmit}
+                            className="btn btn-primary btn-sm"
+                        >
+                            Preview
+                        </button>
+                    )}
                 </div>
             </div>
 

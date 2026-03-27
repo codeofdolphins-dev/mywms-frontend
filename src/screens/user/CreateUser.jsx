@@ -226,7 +226,7 @@ const CreateUser = () => {
                                                         }}
                                                         value={value}
                                                         onChange={onChange}
-                                                        label="Node Admin   "
+                                                        label="Location Admin"
                                                         labelPosition={"inline"}
                                                         options={[
                                                             { label: "Yes", value: "true" },
