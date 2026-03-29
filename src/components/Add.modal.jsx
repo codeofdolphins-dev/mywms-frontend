@@ -1,9 +1,9 @@
-import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
-import { useState, Fragment } from 'react';
-import IconX from './Icon/IconX';
-import { Button } from '@mantine/core';
-import { useForm } from "react-hook-form"
-import TextArea from './inputs/TextArea';
+import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
+import { useState, Fragment } from "react";
+import IconX from "./Icon/IconX";
+import { Button } from "@mantine/core";
+import { useForm } from "react-hook-form";
+import TextArea from "./inputs/TextArea";
 
 const AddModal = ({
     isShow,
@@ -11,6 +11,7 @@ const AddModal = ({
     title,
     maxWidth = "75",
     blur = true,
+    dark = false,
     placement = "center",
     children
 }) => {
@@ -18,7 +19,7 @@ const AddModal = ({
         <div>
             <Transition appear show={isShow} as={Fragment}>
                 <Dialog as="div" open={isShow} onClose={() => setIsShow(false)}>
-                    <div className={`fixed inset-0 z-[999] overflow-y-auto ${blur ? "bg-[black]/60" : "" } `}>
+                    <div className={`fixed inset-0 z-[999] overflow-y-auto ${blur ? "bg-[black]/60" : ""} ${dark ? "bg-[black]" : ""} `}>
                         <div className={`flex min-h-screen items-${placement} justify-center px-4`}>
                             <TransitionChild
                                 as={Fragment}
@@ -35,9 +36,13 @@ const AddModal = ({
                                 >
                                     <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 relative z-10 shadow-lg">
                                         <h5 className="text-lg font-bold">{title}</h5>
-                                        <button type="button" className="text-white-dark hover:text-dark" onClick={() => {
-                                            setIsShow(false);
-                                        }}>
+                                        <button
+                                            type="button"
+                                            className="text-white-dark hover:text-dark"
+                                            onClick={() => {
+                                                setIsShow(false);
+                                            }}
+                                        >
                                             <IconX />
                                         </button>
                                     </div>
@@ -49,7 +54,7 @@ const AddModal = ({
                 </Dialog>
             </Transition>
         </div>
-    )
-}
+    );
+};
 
 export default AddModal;
