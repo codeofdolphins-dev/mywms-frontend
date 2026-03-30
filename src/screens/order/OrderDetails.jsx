@@ -15,6 +15,9 @@ import { useSelector } from 'react-redux';
 import { Button } from '@mantine/core';
 import { order } from '../../Backend/order.fetch';
 import { FcDocument } from "react-icons/fc";
+import Dropdown from '../../components/Dropdown';
+import IconCaretDown from '../../components/Icon/IconCaretDown';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
 
 
 const headerLink = [
@@ -41,7 +44,7 @@ const OrderDetails = () => {
     const isInternal = data?.data?.type === "internal" ? true : false;
     const purchasOrderItems = data?.data?.items ?? [];
 
-    console.log(data)
+    const { mutateAsync: pInvoicePdf_download, isPending: pInvoicePdf_pending } = pdf.TQProformaInvoicePDFDownload();
 
     /** set business node location */
     useEffect(() => {
@@ -49,7 +52,9 @@ const OrderDetails = () => {
     }, [data, isLoading]);
 
 
-    if (isLoading) return <FullScreenLoader />
+    async function downloadPinvoice(id) {
+        const res = await pInvoicePdf_download({ po_id: id });
+    }
 
 
     /** status color change helper */
@@ -61,6 +66,8 @@ const OrderDetails = () => {
             default: return "bg-light";    // Fallback
         }
     }
+
+    if (isLoading) return <FullScreenLoader />
 
     return (
         <div>
@@ -156,12 +163,51 @@ const OrderDetails = () => {
                                     <FiHome size={20} className='text-violet-600' />
                                     <span className="text-[12px] font-semibold text-violet-600 uppercase tracking-wider">Supplier Details</span>
                                 </div>
-                                <Button
-                                    size="compact-md"
-                                    onClick={() => navigate(`/inward/create?s=${poNo}`)}
-                                >
-                                    Inward
-                                </Button>
+
+                                <div className="flex items-center gap-2">
+                                    {/* proforma invoice dropdown */}
+                                    <div className="flex items-center justify-center">
+                                        <div className="dropdown">
+                                            <Dropdown
+                                                btnClassName="btn btn-primary dropdown-toggle"
+                                                button={
+                                                    <>
+                                                        Proforma Invoice
+                                                        {pInvoicePdf_pending ? (
+                                                            <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                                                        ) : (
+                                                            <span className="ml-1 inline-block">
+                                                                <IconCaretDown />
+                                                            </span>
+                                                        )}
+                                                    </>
+                                                }
+                                            >
+                                                <ul className="!min-w-[170px]">
+                                                    <li>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => downloadPinvoice(data?.data?.id)}
+                                                        >
+                                                            Download(pdf)
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button type="button">send(email)</button>
+                                                    </li>
+                                                </ul>
+                                            </Dropdown>
+                                        </div>
+                                    </div>
+
+                                    <Button
+                                        // size="compact-md"
+                                        className='btn btn-primary'
+                                        onClick={() => navigate(`/inward/create?s=${poNo}`)}
+                                    >
+                                        Inward
+                                    </Button>
+                                </div>
                             </div>
                             <table className="w-full text-[13px] border-collapse">
                                 <tbody>

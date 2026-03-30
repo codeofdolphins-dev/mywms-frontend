@@ -103,11 +103,7 @@ const BlanketPO = () => {
                 >
                     {
                         bpoList?.data?.map((item, idx) => {
-
-                            console.log(item)
                             const isBuyer = item?.buyer_tenant === TENANT ? true : false;
-                            console.log(isBuyer)
-
 
                             return (<TableRow
                                 key={item.id}

@@ -108,9 +108,6 @@ const CreateInward = () => {
         const res = await createData({ path: "/inward/create", formData: data });
     };
 
-
-    if (isLoading) return <Loader />
-
     /** status color change helper */
     const statusColor = (status) => {
         switch (status) {
@@ -120,6 +117,8 @@ const CreateInward = () => {
             default: return "bg-light";    // Fallback
         }
     }
+
+    if (isLoading) return <Loader />
 
     return (
         <div>
@@ -136,6 +135,7 @@ const CreateInward = () => {
 
                 : <form onSubmit={handleSubmit(submitForm)}>
                     <div className="panel space-y-6">
+                        
                         {/* detail section */}
                         <div className="max-h-56 overflow-y-auto">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -286,35 +286,7 @@ const CreateInward = () => {
                             </div>
                         </div>
 
-                        {/* inward type select section */}
-                        <div className="mb-4 flex items-start gap-4">
-                            <h1 className='text-lg font-bold text-gray-800 mb-4'>Select Inward Type</h1>
-
-                            <div className="flex flex-wrap gap-4 mt-3">
-                                <div
-                                    className={`px-4 py-2 rounded-xl cursor-pointer border-2 transition-all duration-200 ${activeTab === 1
-                                        ? 'bg-[#f5f3ff] border-[#6d28d9] shadow-sm shadow-blue-100'
-                                        : 'bg-white border-gray-200 hover:border-[#6d28d96b] hover:bg-gray-50'
-                                        }`}
-                                    onClick={() => setActiveTab(1)}
-                                >
-                                    <h3 className={`font-bold text-[15px] ${activeTab === 1 ? 'text-[#6d28d9]' : 'text-gray-800'}`}>Purchase Inward</h3>
-                                    <p className={`text-xs font-medium ${activeTab === 1 ? 'text-[#6d28d9]' : 'text-gray-500'}`}>PO / MFG RM Inward</p>
-                                </div>
-
-                                <div
-                                    className={`px-4 py-2 rounded-xl cursor-pointer border-2 transition-all duration-200 ${activeTab === 2
-                                        ? 'bg-[#fff7ed] border-[#c2410c] shadow-sm shadow-blue-100'
-                                        : 'bg-white border-gray-200 hover:border-[#c2400c6b] hover:bg-gray-50'
-                                        }`}
-                                    onClick={() => setActiveTab(2)}
-                                >
-                                    <h3 className={`font-bold text-[15px] ${activeTab === 2 ? 'text-[#c2410c]' : 'text-gray-800'}`}>Production Receipt</h3>
-                                    <p className={`text-[12px] font-medium ${activeTab === 2 ? 'text-[#c2410c]' : 'text-gray-500'}`}>Internal FG Inward</p>
-                                </div>
-                            </div>
-                        </div>
-
+                        
                         {/* accordian section */}
                         <div className="max-h-96 overflow-auto">
                             <div className="space-y-2">

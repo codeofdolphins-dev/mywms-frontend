@@ -1,7 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import masterData from "../../Backend/master.backend";
 import { currencyFormatter } from "../../utils/currencyFormatter";
+import { Button } from "@mantine/core";
 
-const ReleaseOrderPreview = ({ formData, setFormData, onConfirm, setIsShow, rhfSetValue, allFields }) => {
+const ReleaseOrderPreview = ({
+    formData,
+    setFormData,
+    setIsShow,
+    rhfSetValue,
+    allFields
+}) => {
     const { bpo_no, target_store, required_by, priority, instructions, items } = formData;
+
+    const navigate = useNavigate();
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
 
     // Compute grand_total dynamically from current items
     const grand_total = items?.reduce((acc, item) => {
@@ -42,6 +55,20 @@ const ReleaseOrderPreview = ({ formData, setFormData, onConfirm, setIsShow, rhfS
             ...prev,
             items: prev.items.filter((item) => item.bpo_item_id !== id),
         }));
+    }
+
+    async function handleConfirm() {
+        // console.log(formData); return
+
+        try {
+            const res = await createData({ path: "/indent/create", formData });
+            if (res.success) {
+                navigate("/order")
+            }
+            setIsShow(false);
+        } catch (error) {
+            console.error("Error creating release order:", error);
+        }
     }
 
     return (
@@ -148,17 +175,21 @@ const ReleaseOrderPreview = ({ formData, setFormData, onConfirm, setIsShow, rhfS
                         </tbody>
                         <tfoot className="border-t border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
                             <tr className="p-5">
-                                <td
+                                {/* <td
                                     colSpan={3}
                                     className="px-5 py-3 text-right text-xs text-white-dark"
                                 >
-                                    Release order total (approx)
-                                </td>
+
+                                </td> */}
                                 <td
-                                    colSpan={2}
-                                    className="px-5 py-3 text-right text-base font-bold"
+                                    colSpan={5}
+                                    className="px-5 py-3 text-base font-bold"
                                 >
-                                    {currencyFormatter(grand_total)}
+                                    <div className="flex items-center justify-end gap-2 ">
+                                        <p className="text-white-dark">Total release order value (approx):</p>
+                                        <p className="text-success">{currencyFormatter(grand_total)}</p>
+
+                                    </div>
                                 </td>
                             </tr>
                         </tfoot>
@@ -174,9 +205,14 @@ const ReleaseOrderPreview = ({ formData, setFormData, onConfirm, setIsShow, rhfS
                 <button type="button" onClick={() => setIsShow(false)} className="btn btn-outline-danger">
                     Cancel
                 </button>
-                <button type="button" onClick={() => onConfirm(true)} className="btn btn-primary">
+                <Button
+                    type="button"
+                    onClick={handleConfirm}
+                    className="btn btn-primary"
+                    loading={createPending}
+                >
                     Confirm release order
-                </button>
+                </Button>
             </div>
         </div>
     );

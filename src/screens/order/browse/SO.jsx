@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import TableRow from '../../../components/table/TableRow';
 import TableBody from '../../../components/table/TableBody';
-import { PURCHASE_ORDER_BROWSE } from '../../../utils/helper';
+import { PURCHASE_ORDER_BROWSE, SALES_ORDER_BROWSE } from '../../../utils/helper';
 import { useNavigate } from 'react-router-dom';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
 import { utcToLocal } from '../../../utils/UTCtoLocal';
@@ -34,25 +34,25 @@ const SO = ({ debounceSearch }) => {
     return (
         <div className="panel min-h-64 z-0 relative">
             <TableBody
-                columns={PURCHASE_ORDER_BROWSE}
+                columns={SALES_ORDER_BROWSE}
                 isEmpty={isEmpty}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
                 limit={limit}
                 setLimit={setLimit}
-                totalPage={data?.meta?.totalPages}
+                totalPage={data?.pagination?.totalPages}
             >
                 {
                     data?.data?.map((item, idx) => {
                         return (<TableRow
                             key={idx}
-                            columns={PURCHASE_ORDER_BROWSE}
-                            onClick={() => navigate(`/purchase-order/${item?.po_no}`)}
+                            columns={SALES_ORDER_BROWSE}
+                            onClick={() => navigate(`/order/${item?.so_no}`)}
                             row={{
-                                no: item?.po_no,
-                                to: item?.poToBusinessNode?.nodeDetails?.name,
+                                no: item?.so_no,
+                                from: item?.poBuyer?.name,
                                 date: utcToLocal(item?.createdAt),
-                                items: item?.purchasOrderItems?.length,
+                                items: item?.salesOrderItems?.length,
                                 price: currencyFormatter(item?.grand_total),
                                 status: (
                                     <div>
