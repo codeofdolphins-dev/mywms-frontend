@@ -35,8 +35,10 @@ const colName_finished = [
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },
     { key: "sku", label: "SKU" },
+    { key: "measure", label: "Measure" },
+    { key: "unit_type", label: "Unit" },
     { key: "package_type", label: "Package Type" },
-    { key: "productBrands", label: "Brands", type: "nested", nested: (items) => Array.isArray(items) ? items.map(i => i.name) : "-" },
+    { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];

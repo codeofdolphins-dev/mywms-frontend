@@ -292,18 +292,19 @@ export const SALES_ORDER_BROWSE = [
 ];
 
 
-export const PURCHASE_ORDER = [
+export const ORDER = [
     { key: "barcode", label: "Barcode", width: "150px" },
     { key: "product", label: "Product" },
     { key: "brand", label: "Brand" },
     { key: "category", label: "Category" },
     { key: "subCategory", label: "Sub Category" },
+    { key: "packSize", label: "Pack Size" },
     { key: "qty", label: "Qty" },
     // { key: "tax", label: "Tax %" },
     { key: "unitPrice", label: "Unit Price" },
     { key: "total", label: "Total" },
 ];
-export const PURCHASE_ORDER_RAW = [
+export const ORDER_RAW = [
     { key: "product", label: "Product" },
     { key: "sku", label: "Code / SKU" },
     { key: "uom", label: "Masure Unit" },

@@ -70,6 +70,10 @@ const BPODetailsPage = () => {
 		if (bpoData?.blanketOrderItems) {
 			const initialItems = bpoData.blanketOrderItems.map(item => ({
 				bpo_item_id: item.id, // reference to original ID
+
+				buyer_product_id: item.buyer_product_id,
+				vendor_product_id: item.vendor_product_id,
+
 				product: item.product,
 				unit_price: item.unit_price,
 				total_qty: item.total_contracted_qty,

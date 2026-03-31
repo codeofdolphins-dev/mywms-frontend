@@ -48,7 +48,7 @@ const PO = ({ debounceSearch }) => {
                         return (<TableRow
                             key={idx}
                             columns={PURCHASE_ORDER_BROWSE}
-                            onClick={() => navigate(`/order/${item?.po_no}`)}
+                            onClick={() => navigate(`/order/${item?.po_no}?type=purchase`)}
                             row={{
                                 no: item?.po_no,
                                 to: item?.poToBusinessNode?.nodeDetails?.name ?? item?.poVendor?.name,

@@ -92,11 +92,8 @@ const Form = ({ editId = null, setIsShow = false }) => {
                             </div>
                             <div className='flex items-center gap-5'>
                                 <Controller
-                                    name="suppliers"
+                                    name="vendor_id"
                                     control={control}
-                                    rules={{
-                                        required: "This field is required!!!"
-                                    }}
                                     render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                         <RHSelect
                                             ref={(el) => {
@@ -108,16 +105,18 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                             onChange={onChange}
                                             error={error?.message}
 
-                                            label="Supplier"
+                                            label="Vendor"
                                             options={supplierData?.data}
-                                            required={true}
                                             isMulti={true}
                                             selectKey={"name"}
                                             selectSubKey={"full_name"}
                                             className='w-full'
 
+                                            disabled={true}
+
                                             addButton={true}
                                             buttonOnClick={() => setIsSupplierPopup(true)}
+                                            buttonDisabled={true}
                                         />
                                     )}
                                 />

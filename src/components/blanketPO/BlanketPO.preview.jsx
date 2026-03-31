@@ -23,8 +23,10 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
                     buyer_product_id: item.sourceRfqItem.product_id,
                     total_contracted_qty: item.qty,
                     unit_price: item.offer_price,
+                    product_map_id: item.product_map_id,
                 }))
             };
+            // console.log("data", data);
             // console.log(formData); return;
 
             const res = await createData({ path: "/rfq/blanket-order/create", formData });

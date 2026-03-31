@@ -2,12 +2,14 @@ import { Button } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { currencyFormatter } from '../../utils/currencyFormatter';
 import Input from '../inputs/Input';
-import { useForm, useFieldArray, useWatch } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, Controller } from 'react-hook-form';
 import masterData from '../../Backend/master.backend';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import IconPencil from '../Icon/IconPencil';
 import CustomeButton from "../inputs/Button"
 import { FiFileText, FiPackage, FiCheckCircle, FiEdit3 } from 'react-icons/fi';
+import fetchData from '../../Backend/fetchData.backend';
+import RHSelect from '../../components/inputs/RHF/Select.RHF';
 
 
 const RFQPreview = ({
@@ -18,7 +20,12 @@ const RFQPreview = ({
 }) => {
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["rfqQuotationList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["rfqQuotationList"]);
+
+    const { data: productList, isLoading } = fetchData.TQProductList({ type: "finished" });
+
     const [allowEdit, setAllowEdit] = useState(false);
+
+
     const { handleSubmit, register, setValue, reset, control, watch, formState: { errors } } = useForm({
         defaultValues: {
             grandTotal: currencyFormatter(details?.grand_total) ?? "",
@@ -87,6 +94,7 @@ const RFQPreview = ({
 
 
     async function submit(data) {
+        // console.log(data); return
         // console.log(details); return
         try {
             if (isEditable && allowEdit) {
@@ -245,13 +253,13 @@ const RFQPreview = ({
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <span className="font-semibold text-gray-800 text-sm block mb-1 truncate">{field?.product_name}</span>
-                                                        <div className="flex items-center gap-3 text-xs">
+                                                        <div className="flex items-center gap-3 text-xs flex-wrap">
                                                             <div className="flex items-center text-gray-600">
                                                                 <span className="text-gray-400 mr-1 font-medium uppercase tracking-wider text-[10px]">Qty:</span>
                                                                 <span className="font-bold">{field?.qty}</span>
                                                                 <span className="ml-1">{field?.uom}</span>
                                                             </div>
-                                                            <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                                                            <div className="w-1 h-1 rounded-full bg-gray-300" />
                                                             <div className="flex items-center text-gray-600">
                                                                 <span className="text-gray-400 mr-1 font-medium uppercase tracking-wider text-[10px]">Limit:</span>
                                                                 <span className="font-medium">{currencyFormatter(field?.price_limit)}</span>
@@ -260,24 +268,65 @@ const RFQPreview = ({
                                                     </div>
                                                 </div>
 
-                                                <div className="shrink-0 relative bg-gray-50/50 rounded-lg p-3 border border-gray-50 transition-colors group-hover:bg-white group-hover:border-blue-50 whitespace-nowrap">
-                                                    <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom}</label>
-                                                    {isEditable
-                                                        ? allowEdit
-                                                            ? <Input
+                                                <div className="flex items-center justify-end w-1/2 gap-4">
+
+                                                    {/* Choose your product */}
+                                                    {!isEditable &&
+                                                        <div className="w-full whitespace-nowrap">
+                                                            <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">
+                                                                Choose your product
+                                                                <span className='text-danger text-sm'> *</span>
+                                                            </label>
+                                                            <div className="">
+                                                                <Controller
+                                                                    name={`items.${idx}.supplier_product_id`}
+                                                                    control={control}
+                                                                    rules={{
+                                                                        required: "This field is required!!!"
+                                                                    }}
+                                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                                        <RHSelect
+                                                                            ref={(el) => {
+                                                                                ref({
+                                                                                    focus: () => el?.focus(),
+                                                                                });
+                                                                            }}
+                                                                            value={value}
+                                                                            onChange={onChange}
+
+                                                                            options={productList?.data?.filter(product => {
+                                                                                return !items?.some((item, i) => i !== idx && item?.supplier_product_id === product.id);
+                                                                            })}
+                                                                            error={errors?.items?.[idx]?.supplier_product_id?.message || error?.message}
+                                                                            required={true}
+                                                                            isClearable={true}
+                                                                        />
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                    {/* Your Price */}
+                                                    <div className={`whitespace-nowrap ${!isEditable ? "w-full" : ""}`}>
+                                                        <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom}</label>
+                                                        {isEditable
+                                                            ? allowEdit
+                                                                ? <Input
+                                                                    placeholder="Enter price"
+                                                                    className="!mb-0"
+                                                                    {...register(`items.${idx}.offer_price`)}
+                                                                />
+                                                                : <div className="w-36 font-bold text-lg text-gray-800 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                                    {currencyFormatter(field?.offer_price)}
+                                                                </div>
+                                                            : <Input
                                                                 placeholder="Enter price"
                                                                 className="!mb-0"
                                                                 {...register(`items.${idx}.offer_price`)}
                                                             />
-                                                            : <div className="font-bold text-lg text-gray-800 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                                                {currencyFormatter(field?.offer_price)}
-                                                            </div>
-                                                        : <Input
-                                                            placeholder="Enter price"
-                                                            className="!mb-0"
-                                                            {...register(`items.${idx}.offer_price`)}
-                                                        />
-                                                    }
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

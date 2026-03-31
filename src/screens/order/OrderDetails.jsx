@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { FiHome, FiPlus } from 'react-icons/fi';
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import SearchInput from '../../components/inputs/SearchInput';
 import TableHeader from '../../components/table/TableHeader';
-import { PURCHASE_ORDER, PURCHASE_ORDER_RAW } from '../../utils/helper';
+import { ORDER, ORDER_RAW } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
@@ -27,19 +27,28 @@ const headerLink = [
 
 const OrderDetails = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const activeNode = useSelector((state) => state.auth.userData?.activeNode);
-    const { id: poNo } = useParams();
+
+    const { id } = useParams();
+    const type = searchParams.get("type");
+
+    const isPurchase = type === "purchase" ? true : false;
 
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [vendor, setVendor] = useState({});
 
     const params = {
-        poNo,
+        ...(isPurchase ? { poNo: id } : { soNo: id }),
         page: currentPage,
         limit: limit,
     };
-    const { data, isLoading } = order.TQPurchaseOrderItemDetails(params, Boolean(poNo));
+    const { data: poData, isLoading: poLoading } = order.TQPurchaseOrderItemDetails(params, Boolean(isPurchase));
+    const { data: soData, isLoading: soLoading } = order.TQSalesOrderItemDetails(params, Boolean(!isPurchase));
+
+    const data = isPurchase ? poData : soData;
+    const isLoading = isPurchase ? poLoading : soLoading;
     const isEmpty = data?.data?.items?.length > 0 ? false : true;
     const isInternal = data?.data?.type === "internal" ? true : false;
     const purchasOrderItems = data?.data?.items ?? [];
@@ -48,14 +57,13 @@ const OrderDetails = () => {
 
     /** set business node location */
     useEffect(() => {
-        setVendor(data?.data?.poVendor);
+        const vendor = isPurchase ? data?.data?.poVendor : data?.data?.soBuyer;
+        setVendor(vendor);
     }, [data, isLoading]);
-
 
     async function downloadPinvoice(id) {
         const res = await pInvoicePdf_download({ po_id: id });
     }
-
 
     /** status color change helper */
     const statusColor = (status) => {
@@ -103,17 +111,17 @@ const OrderDetails = () => {
                 <div className="max-h-56 overflow-y-auto">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
 
-                        {/* PO Card */}
+                        {/* PO / SO Card */}
                         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden border-t-[3px] border-t-blue-600">
                             <div className="flex items-center gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
                                 <FcDocument size={20} />
-                                <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Purchase Order</span>
+                                <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">{isPurchase ? "Purchase Order" : "Sales Order"}</span>
                                 <span className={`badge ${statusColor(data?.data?.priority)}`}>{data?.data?.priority?.toUpperCase() || "N/A"}</span>
                             </div>
                             <table className="w-full text-[13px] border-collapse">
                                 <tbody>
                                     <tr className="border-b border-gray-100">
-                                        <td className="px-3.5 py-2 text-gray-400 w-[45%]">PO Number</td>
+                                        <td className="px-3.5 py-2 text-gray-400 w-[45%]">{isPurchase ? "PO Number" : "SO Number"}</td>
                                         <td className="px-3.5 py-2 font-medium text-right">
                                             <span className="font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
                                                 #{data?.data?.po_no || "N/A"}
@@ -139,80 +147,91 @@ const OrderDetails = () => {
                                             {data?.data?.note || "N/A"}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td className="px-3.5 py-2 text-gray-400">Created By</td>
-                                        <td className="px-3.5 py-2 text-right">
-                                            <div className="inline-flex items-center gap-1.5">
-                                                <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[9px] font-bold text-white">
-                                                    {data?.data?.POcreatedBy?.name?.full_name?.slice(0, 2).toUpperCase() || "—"}
+
+                                    {isPurchase &&
+                                        <tr>
+                                            <td className="px-3.5 py-2 text-gray-400">Created By</td>
+                                            <td className="px-3.5 py-2 text-right">
+                                                <div className="inline-flex items-center gap-1.5">
+                                                    <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[9px] font-bold text-white">
+                                                        {data?.data?.POcreatedBy?.name?.full_name?.slice(0, 2).toUpperCase() || "—"}
+                                                    </div>
+                                                    <span className="font-medium">
+                                                        {data?.data?.POcreatedBy?.name?.full_name || "N/A"}
+                                                    </span>
                                                 </div>
-                                                <span className="font-medium">
-                                                    {data?.data?.POcreatedBy?.name?.full_name || "N/A"}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>
 
-                        {/* Supplier Card */}
+                        {/* Supplier/  buyer Card */}
                         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden border-t-[3px] border-t-violet-600">
+
+                            {/* card header */}
                             <div className="flex items-center justify-between px-3.5 py-2 bg-violet-50 border-b border-violet-100">
                                 <div className="flex items-center gap-2 ">
                                     <FiHome size={20} className='text-violet-600' />
-                                    <span className="text-[12px] font-semibold text-violet-600 uppercase tracking-wider">Supplier Details</span>
+                                    <span className="text-[12px] font-semibold text-violet-600 uppercase tracking-wider">{isPurchase ? "Supplier Details" : "Buyer Details"}</span>
                                 </div>
 
+                                {/* right side buttons */}
                                 <div className="flex items-center gap-2">
-                                    {/* proforma invoice dropdown */}
-                                    <div className="flex items-center justify-center">
-                                        <div className="dropdown">
-                                            <Dropdown
-                                                btnClassName="btn btn-primary dropdown-toggle"
-                                                button={
-                                                    <>
-                                                        Proforma Invoice
-                                                        {pInvoicePdf_pending ? (
-                                                            <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
-                                                        ) : (
-                                                            <span className="ml-1 inline-block">
-                                                                <IconCaretDown />
-                                                            </span>
-                                                        )}
-                                                    </>
-                                                }
-                                            >
-                                                <ul className="!min-w-[170px]">
-                                                    <li>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => downloadPinvoice(data?.data?.id)}
-                                                        >
-                                                            Download(pdf)
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">send(email)</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
+                                    {!isPurchase ?
+                                        // proforma invoice dropdown
+                                        <div className="flex items-center justify-center">
+                                            <div className="dropdown">
+                                                <Dropdown
+                                                    btnClassName="btn btn-primary dropdown-toggle"
+                                                    button={
+                                                        <>
+                                                            Proforma Invoice
+                                                            {pInvoicePdf_pending ? (
+                                                                <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                                                            ) : (
+                                                                <span className="ml-1 inline-block">
+                                                                    <IconCaretDown />
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    }
+                                                >
+                                                    <ul className="!min-w-[170px]">
+                                                        <li>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => downloadPinvoice(data?.data?.id)}
+                                                            >
+                                                                Download(pdf)
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button type="button">send(email)</button>
+                                                        </li>
+                                                    </ul>
+                                                </Dropdown>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <Button
-                                        // size="compact-md"
-                                        className='btn btn-primary'
-                                        onClick={() => navigate(`/inward/create?s=${poNo}`)}
-                                    >
-                                        Inward
-                                    </Button>
+                                        :
+                                        <Button
+                                            // size="compact-md"
+                                            className='btn btn-primary'
+                                            onClick={() => navigate(`/inward/create?s=${id}`)}
+                                        // onClick={() => navigate(`/inward/create?s=${poNo}&type=${type}`)}
+                                        >
+                                            Inward
+                                        </Button>
+                                    }
                                 </div>
                             </div>
+
+                            {/* card body */}
                             <table className="w-full text-[13px] border-collapse">
                                 <tbody>
                                     <tr className="border-b border-gray-100">
-                                        <td className="px-3.5 py-2 text-gray-400 w-[45%]">Supplier Name</td>
+                                        <td className="px-3.5 py-2 text-gray-400 w-[45%]">{isPurchase ? "Supplier Name" : "Buyer Name"}</td>
                                         <td className="px-3.5 py-2 font-medium text-right">
                                             {vendor?.nodeDetails?.name || vendor?.name || "N/A"}
                                         </td>
@@ -297,7 +316,7 @@ const OrderDetails = () => {
 
             <div className="panel mt-5 min-h-64 relative">
                 <TableBody
-                    columns={isInternal ? PURCHASE_ORDER : PURCHASE_ORDER_RAW}
+                    columns={(isInternal || !isPurchase) ? ORDER : ORDER_RAW}
                     isEmpty={isEmpty}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
@@ -307,11 +326,12 @@ const OrderDetails = () => {
                 >
                     {
                         purchasOrderItems?.map((item, idx) => {
+                            const data = item?.poi_product ?? item?.soi_product;
                             return (<TableRow
                                 key={idx}
-                                columns={isInternal ? PURCHASE_ORDER : PURCHASE_ORDER_RAW}
+                                columns={(isInternal || !isPurchase) ? ORDER : ORDER_RAW}
                                 row={{
-                                    product: item?.poi_sourceRequisitionItem?.product?.name ?? item?.poi_product?.name,
+                                    product: data?.name,
                                     sku: item?.poi_product?.sku,
                                     uom: item?.poi_product?.unit_type,
                                     qty: item?.qty,
@@ -319,10 +339,11 @@ const OrderDetails = () => {
                                     total: item?.line_total,
 
                                     // optional fields for finished goods which are not present in raw material items
-                                    barcode: item?.poi_sourceRequisitionItem?.product?.barcode,
-                                    brand: item?.poi_sourceRequisitionItem?.brand,
-                                    category: item?.poi_sourceRequisitionItem?.category,
-                                    subCategory: item?.poi_sourceRequisitionItem?.sub_category,
+                                    barcode: data?.barcode,
+                                    brand: data?.brand?.name,
+                                    category: data?.productCategories?.[0]?.name,
+                                    subCategory: data?.productSubCategories?.[0]?.name,
+                                    packSize: `${data?.measure} ${data?.unit_type} ${data?.package_type}`,
                                 }}
                             />);
                         })

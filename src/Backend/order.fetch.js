@@ -40,6 +40,19 @@ class Order {
             enabled: isEnabled,
         });
     };
+
+    TQSalesOrderItemDetails(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["salesOrderItemDetails", params],
+            queryFn: async () => {
+                const res = await API.get("/sales-order/item-details", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 export const order = new Order();

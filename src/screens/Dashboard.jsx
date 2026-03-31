@@ -61,13 +61,12 @@ const Dashboard = () => {
                                         </td>
                                         <td className="px-3 py-3">
                                             <span
-                                                className={`badge rounded-full capitalize text-xs ${
-                                                    item?.priority?.toLowerCase() === "high"
-                                                        ? "badge-outline-danger"
-                                                        : item?.priority?.toLowerCase() === "normal"
-                                                          ? "badge-outline-primary"
-                                                          : "badge-outline-secondary"
-                                                }`}
+                                                className={`badge rounded-full capitalize text-xs ${item?.priority?.toLowerCase() === "high"
+                                                    ? "badge-outline-danger"
+                                                    : item?.priority?.toLowerCase() === "normal"
+                                                        ? "badge-outline-primary"
+                                                        : "badge-outline-secondary"
+                                                    }`}
                                             >
                                                 {item?.priority || "N/A"}
                                             </span>
@@ -102,9 +101,12 @@ const Dashboard = () => {
                 maxWidth="55"
                 placement="start"
 
-                // blur={false}
+            // blur={false}
             >
-                <RequisitionCard details={selectedItem} setIsRequisitionCardShow={setIsShow} />
+                <RequisitionCard
+                    details={selectedItem}
+                    setIsRequisitionCardShow={setIsShow}
+                />
             </AddModal>
         </div>
     );

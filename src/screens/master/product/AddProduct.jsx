@@ -20,7 +20,13 @@ import BooleanSwitch from '../../../components/inputs/BooleanSwitch';
 import RHRadioGroup from '../../../components/inputs/RHF/RHRadioGroup';
 import RHSelect from '../../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../../components/inputs/TextArea';
+import SearchableSelect from '../../../components/inputs/SearchableSelect';
 
+
+const PRODUCT_TYPE = [
+    { label: "Finished Product", value: "finished" },
+    { label: "Raw Product", value: "raw" },
+]
 
 const AddProduct = () => {
     const navigate = useNavigate();
@@ -133,25 +139,57 @@ const AddProduct = () => {
                         <form onSubmit={handleSubmit(submit)} className="space-y-5">
 
                             {/* 1st row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                {/* Product Name */}
-                                <div>
-                                    <Input
-                                        label={"Product Name"}
-                                        placeholder={"Enter product name..."}
-                                        {...register("name", {
-                                            required: "This field is required!!!"
-                                        })}
-                                        error={errors.name?.message}
-                                        required={true}
-                                    />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Product Name */}
+                                    <div>
+                                        <Input
+                                            label={"Product Name"}
+                                            placeholder={"Enter product name..."}
+                                            {...register("name", {
+                                                required: "This field is required!!!"
+                                            })}
+                                            error={errors.name?.message}
+                                            required={true}
+                                        />
+                                    </div>
+
+                                    {/* product Type */}
+                                    <div>
+                                        <Controller
+                                            name="product_type"
+                                            rules={{
+                                                required: "This field is required!!!"
+                                            }}
+                                            control={control}
+                                            defaultValue="finished"
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <SearchableSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    isSearchable={false}
+
+                                                    label="Product Type"
+                                                    options={PRODUCT_TYPE}
+
+                                                    required={true}
+                                                    error={error?.message}
+                                                />
+                                            )}
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* brand */}
                                 <div className="">
                                     <Controller
-                                        name="brands"
+                                        name="brand_id"
                                         control={control}
                                         rules={{
                                             required: "This field is required!!!"

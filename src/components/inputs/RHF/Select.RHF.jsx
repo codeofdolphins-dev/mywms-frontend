@@ -24,6 +24,7 @@ function RHSelect({
 
     addButton = false,
     buttonTitle = "Add",
+    buttonDisabled = false,
     buttonOnClick,
 }, ref) {
 
@@ -136,12 +137,13 @@ function RHSelect({
                             className="px-4 btn-info text-white rounded-r flex items-center"
                             onClick={buttonOnClick}
                             type="button"
+                            disabled={buttonDisabled}
                         >
                             <FiPlus size={20} />{buttonTitle}
                         </button>
                     }
                 </div>
-                {error && <span className='text-danger'>{error}</span>}
+                {error && <span className='text-danger text-[11px] block mt-0.5 whitespace-nowrap'>{error}</span>}
             </div>
         </div>
     );

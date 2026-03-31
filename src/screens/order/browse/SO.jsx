@@ -47,7 +47,7 @@ const SO = ({ debounceSearch }) => {
                         return (<TableRow
                             key={idx}
                             columns={SALES_ORDER_BROWSE}
-                            onClick={() => navigate(`/order/${item?.so_no}`)}
+                            onClick={() => navigate(`/order/${item?.so_no}?type=sales`)}
                             row={{
                                 no: item?.so_no,
                                 from: item?.poBuyer?.name,
