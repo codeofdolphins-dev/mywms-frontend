@@ -18,6 +18,13 @@ import { FcDocument } from "react-icons/fc";
 import Dropdown from '../../components/Dropdown';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
+import masterData from '../../Backend/master.backend';
+import { extractString } from '../../helper/support';
+import AddModal from '../../components/Add.modal';
+import { Controller, useForm } from 'react-hook-form';
+import RHSelect from "../../components/inputs/RHF/Select.RHF";
+import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
+import fetchData from '../../Backend/fetchData.backend';
 
 
 const headerLink = [
@@ -30,6 +37,12 @@ const OrderDetails = () => {
     const [searchParams] = useSearchParams();
     const activeNode = useSelector((state) => state.auth.userData?.activeNode);
 
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
+
+
+    const { control, watch, formState: { errors } } = useForm();
+
+
     const { id } = useParams();
     const type = searchParams.get("type");
 
@@ -38,6 +51,8 @@ const OrderDetails = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [vendor, setVendor] = useState({});
+    const [isShow, setIsShow] = useState(false);
+    const [store, setStore] = useState(null);
 
     const params = {
         ...(isPurchase ? { poNo: id } : { soNo: id }),
@@ -46,6 +61,8 @@ const OrderDetails = () => {
     };
     const { data: poData, isLoading: poLoading } = order.TQPurchaseOrderItemDetails(params, Boolean(isPurchase));
     const { data: soData, isLoading: soLoading } = order.TQSalesOrderItemDetails(params, Boolean(!isPurchase));
+    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, !isPurchase);
+
 
     const data = isPurchase ? poData : soData;
     const isLoading = isPurchase ? poLoading : soLoading;
@@ -53,7 +70,8 @@ const OrderDetails = () => {
     const isInternal = data?.data?.type === "internal" ? true : false;
     const purchasOrderItems = data?.data?.items ?? [];
 
-    const { mutateAsync: pInvoicePdf_download, isPending: pInvoicePdf_pending } = pdf.TQProformaInvoicePDFDownload();
+    const { mutateAsync: pInvoicePdf_download, isPending: pInvoicePdf_pending } = pdf.TQProformaInvoicePDFDownload(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
+
 
     /** set business node location */
     useEffect(() => {
@@ -61,12 +79,23 @@ const OrderDetails = () => {
         setVendor(vendor);
     }, [data, isLoading]);
 
+
     async function downloadPinvoice(id) {
-        const res = await pInvoicePdf_download({ po_id: id });
+        const res = await pInvoicePdf_download({ so_id: id });
     }
 
-    /** status color change helper */
-    const statusColor = (status) => {
+    /** acknowledge purchase order & approve */
+    async function handleApprove(id, bpo_id) {
+        const res = await updateData({ path: "/indent/update-status", formData: { po_id: id, bpo_id, status: "approved" } });
+    }
+
+    /** acknowledge purchase order & reject */
+    async function handleReject(id, bpo_id) {
+        const res = await updateData({ path: "/indent/update-status", formData: { po_id: id, bpo_id, status: "cancelled" } });
+    }
+
+    /** priority color change helper */
+    const priorityColor = (status) => {
         switch (status) {
             case "urgent": return "bg-danger";   // Red — most critical
             case "high": return "bg-orange-400";  // Orange/Yellow — high priority
@@ -74,6 +103,24 @@ const OrderDetails = () => {
             default: return "bg-light";    // Fallback
         }
     }
+
+    /** status color change helper */
+    const statusColor = (status) => {
+        switch (status) {
+            case "draft": return "bg-secondary";
+            case "sent_to_supplier": return "bg-info";
+            case "waiting_for_poi": return "bg-warning";
+            case "poi_received": return "bg-success";
+            case "approved": return "bg-success";
+            case "picking_in_progress": return "bg-primary";
+            case "closed": return "bg-dark";
+            case "cancelled": return "bg-danger";
+            default: return "bg-warning";
+        }
+    }
+
+    const fgStore = watch("fg_store")
+    console.log(fgStore)
 
     if (isLoading) return <FullScreenLoader />
 
@@ -87,36 +134,23 @@ const OrderDetails = () => {
             />
 
             <div className="panel mt-1 !py-3">
-                {/* <div className="flex items-center gap-2">
-                    <Button
-                        // loading={true}
-                        color='green'
-                        size="compact-md"
-                        className='rounded-full'
-                    >
-                        Approve
-                    </Button>
-
-                    <Button
-                        // loading={true}
-                        color='red'
-                        size="compact-md"
-                        className='rounded-full'
-                    >
-                        Cancelled
-                    </Button>
-                </div> */}
-
                 {/* Top Info Cards */}
                 <div className="max-h-56 overflow-y-auto">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
 
                         {/* PO / SO Card */}
                         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden border-t-[3px] border-t-blue-600">
-                            <div className="flex items-center gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
-                                <FcDocument size={20} />
-                                <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">{isPurchase ? "Purchase Order" : "Sales Order"}</span>
-                                <span className={`badge ${statusColor(data?.data?.priority)}`}>{data?.data?.priority?.toUpperCase() || "N/A"}</span>
+
+                            <div className="flex items-center justify-between gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
+                                <div className="flex items-center gap-2">
+                                    <FcDocument size={20} />
+                                    <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider whitespace-nowrap">{isPurchase ? "Purchase Order" : "Sales Order"}</span>
+                                    <span className={`badge ${priorityColor(data?.data?.priority)}`}>{data?.data?.priority?.toUpperCase() || "N/A"}</span>
+                                </div>
+
+                                <div className="">
+                                    <h2>Status: <span className={`badge ${statusColor(data?.data?.status)}`}>{extractString(data?.data?.status) || "N/A"}</span></h2>
+                                </div>
                             </div>
                             <table className="w-full text-[13px] border-collapse">
                                 <tbody>
@@ -179,19 +213,30 @@ const OrderDetails = () => {
 
                                 {/* right side buttons */}
                                 <div className="flex items-center gap-2">
+
+                                    {/* button for outward order */}
+                                    {(!isPurchase && data?.data?.status === "approved") &&
+                                        <Button
+                                            className="btn !btn-primary rounded-full py-1 px-1"
+                                            onClick={() => setIsShow(true)}
+                                        >
+                                            <span className='text-xs'>Assign to FG Store</span>
+                                        </Button>
+                                    }
+
+                                    {/* proforma invoice dropdown */}
                                     {!isPurchase ?
-                                        // proforma invoice dropdown
                                         <div className="flex items-center justify-center">
                                             <div className="dropdown">
                                                 <Dropdown
-                                                    btnClassName="btn btn-primary dropdown-toggle"
+                                                    btnClassName="btn btn-primary dropdown-toggle rounded-full py-2 px-2 flex items-center"
                                                     button={
                                                         <>
-                                                            Proforma Invoice
+                                                            <span className="text-xs">Proforma Invoice</span>
                                                             {pInvoicePdf_pending ? (
-                                                                <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                                                                <span className="ml-1 inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-white flex-shrink-0" />
                                                             ) : (
-                                                                <span className="ml-1 inline-block">
+                                                                <span className="ml-1 inline-block flex-shrink-0">
                                                                     <IconCaretDown />
                                                                 </span>
                                                             )}
@@ -208,21 +253,42 @@ const OrderDetails = () => {
                                                             </button>
                                                         </li>
                                                         <li>
-                                                            <button type="button">send(email)</button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => alert("Working!!!")}
+                                                            >send(email)
+                                                            </button>
                                                         </li>
                                                     </ul>
                                                 </Dropdown>
                                             </div>
                                         </div>
                                         :
-                                        <Button
-                                            // size="compact-md"
-                                            className='btn btn-primary'
-                                            onClick={() => navigate(`/inward/create?s=${id}`)}
-                                        // onClick={() => navigate(`/inward/create?s=${poNo}&type=${type}`)}
-                                        >
-                                            Inward
-                                        </Button>
+                                        <>
+                                            {(isPurchase && data?.data?.status === "poi_received") &&
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        // loading={true}
+                                                        color='green'
+                                                        size="compact-md"
+                                                        className='rounded-full'
+                                                        onClick={() => handleApprove(data?.data?.id, data?.data?.bpo_id)}
+                                                    >
+                                                        Approve
+                                                    </Button>
+
+                                                    <Button
+                                                        // loading={true}
+                                                        color='red'
+                                                        size="compact-md"
+                                                        className='rounded-full'
+                                                        onClick={() => handleReject(data?.data?.id, data?.data?.bpo_id)}
+                                                    >
+                                                        Cancelled
+                                                    </Button>
+                                                </div>
+                                            }
+                                        </>
                                     }
                                 </div>
                             </div>
@@ -350,6 +416,78 @@ const OrderDetails = () => {
                     }
                 </TableBody>
             </div>
+
+
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title="Assign FG Store"
+            >
+                <div className="panel">
+
+                    <div>
+                        {/* fg_store */}
+                        <Controller
+                            name="fg_store"
+                            control={control}
+                            rules={{
+                                required: "This field is required!!!"
+                            }}
+                            render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
+                                <RHSelect
+                                    ref={(el) => {
+                                        ref({
+                                            focus: () => el?.focus(),
+                                        });
+                                    }}
+                                    value={value}
+                                    onChange={onChange}
+
+                                    label="Select FG Store"
+                                    // labelPosition='inline'
+                                    options={storeList?.data}
+                                    required={true}
+                                    // error={error?.message}
+                                    objectReturn={true}
+
+                                    addButton={true}
+                                    buttonTitle="Add FG Store"
+                                    buttonOnClick={() => setStore("FIN")}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 mt-10">
+                        <Button
+                            className="btn !btn-primary rounded-full"
+                            onClick={() => setIsShow(false)}
+                        >
+                            <span>Cancel</span>
+                        </Button>
+                        <Button
+                            className="btn !btn-primary rounded-full"
+                            onClick={() => setIsShow(false)}
+                        >
+                            <span>Assign</span>
+                        </Button>
+                    </div>
+                </div>
+            </AddModal>
+
+            <AddModal
+                isShow={Boolean(store)}
+                setIsShow={setStore}
+                title={"Add New RM Store"}
+                maxWidth='75'
+            >
+                <CreateStoreForm
+                    selectedStore={store}
+                    setSelectedStore={setStore}
+                    isTypeDisabled={true}
+                />
+            </AddModal>
+
         </div >
     )
 }

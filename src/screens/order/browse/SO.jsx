@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
 import { utcToLocal } from '../../../utils/UTCtoLocal';
 import { order } from '../../../Backend/order.fetch';
+import { extractString } from '../../../helper/support';
 
 const SO = ({ debounceSearch }) => {
     const navigate = useNavigate();
@@ -25,12 +26,18 @@ const SO = ({ debounceSearch }) => {
     /** status color change helper */
     const statusColor = (status) => {
         switch (status) {
-            case "created": return "bg-secondary";
-            case "released": return "bg-secondary";
-            case "rejected": return "bg-danger";
+            case "draft": return "bg-secondary";
+            case "sent_to_supplier": return "bg-info";
+            case "waiting_for_poi": return "bg-warning";
+            case "poi_received": return "bg-success";
+            case "approved": return "bg-success";
+            case "picking_in_progress": return "bg-primary";
+            case "closed": return "bg-dark";
+            case "cancelled": return "bg-danger";
             default: return "bg-warning";
         }
     }
+    
     return (
         <div className="panel min-h-64 z-0 relative">
             <TableBody
@@ -56,7 +63,7 @@ const SO = ({ debounceSearch }) => {
                                 price: currencyFormatter(item?.grand_total),
                                 status: (
                                     <div>
-                                        <span className={`badge  ${statusColor(item?.status)}`}>{item?.status?.toUpperCase()}</span>
+                                        <span className={`badge whitespace-nowrap ${statusColor(item?.status)}`}>{extractString(item?.status)}</span>
                                     </div>
                                 ),
                                 createdBy: item?.POcreatedBy?.name?.full_name,

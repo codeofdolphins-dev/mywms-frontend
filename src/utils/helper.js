@@ -263,32 +263,26 @@ export const PURCHASE_ORDER_BROWSE = [
     },
     {
         key: "items", label: "Total Items", align: "center"
-        // width: "200px"
     },
     { key: "price", label: "Total Price" },
-    { key: "status", label: "Status" },
+    { key: "status", label: "Status", width: "150px" },
     { key: "createdBy", label: "Created By" },
 ];
 export const SALES_ORDER_BROWSE = [
     {
-        key: "no", label: "#",
-        align: "center"
+        key: "no", label: "#", align: "center"
     },
     {
-        key: "from", label: "From",
-        align: "center"
+        key: "from", label: "From", align: "center"
     },
     {
-        key: "date", label: "Date",
-        width: "150px",
-        align: "center"
+        key: "date", label: "Date", width: "150px", align: "center"
     },
     {
         key: "items", label: "Total Items", align: "center"
-        // width: "200px"
     },
     { key: "price", label: "Total Price" },
-    { key: "status", label: "Status" }
+    { key: "status", label: "Status", width: "150px" }
 ];
 
 

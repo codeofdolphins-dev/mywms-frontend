@@ -30,9 +30,10 @@ const headerLink = [
 ]
 
 const PRIORITY = [
+	{ label: "Urgent", value: "urgent" },
 	{ label: "High", value: "high" },
+	{ label: "Medium", value: "medium" },
 	{ label: "Low", value: "low" },
-	{ label: "Normal", value: "normal" },
 ]
 
 
