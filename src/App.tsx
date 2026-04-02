@@ -40,6 +40,8 @@ import Store from './screens/admin/store/Store';
 import OrderBrowse from './screens/order/OrderBrowse';
 import OrderDetails from './screens/order/OrderDetails';
 import Test from './screens/CreateInward';
+import Outward from './screens/outward/Outward';
+import OutwardDetails from './screens/outward/OutwardDetails';
 
 
 function App() {
@@ -71,7 +73,7 @@ function App() {
                             <Route index element={<Admin />} />
                             <Route path="register" element={<RegisterNode />} />
                         </Route>
-                        
+
                         {/* business */}
                         <Route path="store" >
                             <Route index element={<Store />} />
@@ -145,12 +147,6 @@ function App() {
                     </Route>
 
 
-
-
-
-
-
-
                     {/* supplier */}
                     <Route path="supplier" >
                         <Route path="" element={<Browse
@@ -158,21 +154,27 @@ function App() {
                         />} />
                     </Route>
 
-
                     {/* inward */}
                     <Route path="inward" >
                         <Route index element={<Inward />} />
                         <Route path="create" element={<CreateInward />} />
                     </Route>
 
+
+
+
+
                     {/* outward */}
                     <Route path="outward" >
-                        <Route path="" element={<Browse
-                            pageName="Warehouse"
-                        />} />
-                        <Route path="create" element={<Master />} />
+                        <Route index element={<Outward />} />
+                        <Route path=':id' element={<OutwardDetails />} />
                     </Route>
                 </Route>
+
+
+
+
+
                 <Route path="/test" element={<Test />} />
 
                 <Route path="*" element={<Error404 />} />

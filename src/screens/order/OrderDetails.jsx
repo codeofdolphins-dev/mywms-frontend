@@ -37,6 +37,7 @@ const OrderDetails = () => {
     const [searchParams] = useSearchParams();
     const activeNode = useSelector((state) => state.auth.userData?.activeNode);
 
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
 
 
@@ -119,8 +120,31 @@ const OrderDetails = () => {
         }
     }
 
-    const fgStore = watch("fg_store")
-    console.log(fgStore)
+    const fgStore = watch("fg_store");
+    async function assignFgStore() {
+
+        const item = data?.data?.items?.map((item) => {
+            return {
+                sales_order_item_id: item.id,
+                vendor_product_id: item.vendor_product_id,
+                requested_qty: item.qty,
+                unit_price: item.unit_price
+            }
+        });
+
+        const payload = {
+            sales_order_id: data?.data?.id,
+            store_id: fgStore?.id,
+            priority: data?.data?.priority,
+            note: data?.data?.note,
+            items: item
+        }
+
+        const res = await createData({ path: "/outward/create", formData: payload });
+        if (res?.success) {
+            setIsShow(false);
+        }
+    }
 
     if (isLoading) return <FullScreenLoader />
 
@@ -422,9 +446,9 @@ const OrderDetails = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Assign FG Store"
+                maxWidth='50'
             >
                 <div className="panel">
-
                     <div>
                         {/* fg_store */}
                         <Controller
@@ -467,7 +491,7 @@ const OrderDetails = () => {
                         </Button>
                         <Button
                             className="btn !btn-primary rounded-full"
-                            onClick={() => setIsShow(false)}
+                            onClick={assignFgStore}
                         >
                             <span>Assign</span>
                         </Button>

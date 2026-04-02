@@ -251,6 +251,20 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+    
+    
+    TQOutwardList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["outwardList", params],
+            queryFn: async () => {
+                const res = await API.get("/outward/list", {
+                    params
+                });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const fetchData = new FetchData;

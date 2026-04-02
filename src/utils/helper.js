@@ -14,25 +14,15 @@ export const PERMISSION_COL = [
 ];
 
 export const ROLE_COL = [
+    { key: "id", label: "#", },
+    { key: "role", label: "Role", },
     {
-        key: "id",
-        label: "#",
-    },
-    {
-        key: "role",
-        label: "Role",
-    },
-    {
-        key: "action",
-        label: "Action",
+        key: "action", label: "Action", align: "center"
         // width: "120px",
-        align: "center"
     },
     {
-        key: "status",
-        label: "Status",
+        key: "status", label: "Status", align: "center"
         // width: "120px",
-        align: "center"
     },
 ];
 
@@ -108,31 +98,25 @@ export const REQUISITION_COLUMN = [
 
 export const REQUISITION_ITEMS_COLUMN = [
     {
-        key: "id",
-        label: "#",
-        width: "0.3fr",
+        key: "id", label: "#", width: "0.3fr",
         // align: "center"
     },
     {
-        key: "barcode",
-        label: "Barcode",
+        key: "barcode", label: "Barcode",
         // width: "2fr"
     },
     {
-        key: "productName",
-        label: "Product Name",
+        key: "productName", label: "Product Name",
         // width: "120px",
         // align: "center"
     },
     {
-        key: "productType",
-        label: "Product Type",
+        key: "productType", label: "Product Type",
         // width: "120px",
         // align: "center"
     },
     {
-        key: "qty",
-        label: "QTY",
+        key: "qty", label: "QTY",
         // width: "120px",
         // align: "center"
     },
@@ -159,50 +143,16 @@ export const EXTERNAL_QUOTATION_COLUMN = [
 ];
 
 export const QUOTATION_RECEIVE_COLUMN = [
-    {
-        key: "barcode",
-        label: "Barcode",
-        textBlur: true
-    },
-    {
-        key: "product",
-        label: "Product Name",
-        textBlur: true
-    },
-    {
-        key: "brand",
-        label: "Brand",
-        textBlur: true
-    },
-    {
-        key: "category",
-        label: "Category",
-        textBlur: true
-    },
-    {
-        key: "subCategory",
-        label: "Sub Category",
-        textBlur: true
-    },
-    {
-        key: "qty",
-        label: "QTY",
-        textBlur: true
-    },
-    {
-        key: "priceLimit",
-        label: "Price Limit",
-        textBlur: true
-    },
-    {
-        key: "offerPrice",
-        label: "Offer Price",
-    },
+    { key: "barcode", label: "Barcode", textBlur: true },
+    { key: "product", label: "Product Name", textBlur: true },
+    { key: "brand", label: "Brand", textBlur: true },
+    { key: "category", label: "Category", textBlur: true },
+    { key: "subCategory", label: "Sub Category", textBlur: true },
+    { key: "qty", label: "QTY", textBlur: true },
+    { key: "priceLimit", label: "Price Limit", textBlur: true },
+    { key: "offerPrice", label: "Offer Price", },
     // { key: "tax", label: "TAX %" },
-    {
-        key: "total",
-        label: "Total",
-    },
+    { key: "total", label: "Total", },
 ];
 
 export const QUOTATION_RECEIVE_RAW_COLUMN = [
@@ -309,7 +259,7 @@ export const ORDER_RAW = [
 
 
 export const BPO_COLUMN = [
-    { key: "id", label: "#", align: "center", width: "200px"},
+    { key: "id", label: "#", align: "center", width: "200px" },
     { key: "partner", label: "Business Partner", width: "200px" },
     { key: "items", label: "Total Items", align: "center" },
     { key: "status", label: "Status" },
@@ -397,3 +347,23 @@ export const STORE_LIST_COLUMN = [
     { key: "status", label: "Status" },
     { key: "action", label: "Action" },
 ]
+
+
+export const OUTWARD_COLUMN = [
+    { key: "id", label: "#", align: "center" },
+    { key: "status", label: "Status", align: "center" },
+    { key: "priority", label: "Priority", align: "center" },
+    { key: "note", label: "Notes" },
+    { key: "itemsCount", label: "Total Items", align: "center" },
+    { key: "action", label: "Action", align: "center" },
+];
+
+
+export const PRODUCT_COLUMN = [
+    { key: "barcode", label: "Barcode" },
+    { key: "product", label: "Name" },
+    { key: "sku", label: "sku" },
+    { key: "packSize", label: "Pack Size" },
+    { key: "reqQty", label: "Req Qty." },
+    { key: "price", label: "Price" },
+];
