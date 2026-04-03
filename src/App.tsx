@@ -167,7 +167,7 @@ function App() {
                     {/* outward */}
                     <Route path="outward" >
                         <Route index element={<Outward />} />
-                        <Route path=':id' element={<OutwardDetails />} />
+                        <Route path=':out_no' element={<OutwardDetails />} />
                     </Route>
                 </Route>
 

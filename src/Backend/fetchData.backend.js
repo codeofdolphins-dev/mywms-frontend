@@ -215,7 +215,7 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-    
+
     TQAppliedRfqList(isEnabled = true) {
         return useQuery({
             queryKey: ["appliedRfqList"],
@@ -240,7 +240,7 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-    
+
     TQStoreCount(isEnabled = true) {
         return useQuery({
             queryKey: ["storeCount"],
@@ -251,8 +251,8 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-    
-    
+
+
     TQOutwardList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["outwardList", params],
@@ -260,6 +260,17 @@ class FetchData {
                 const res = await API.get("/outward/list", {
                     params
                 });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
+    TQOutwardDetails(out_no, isEnabled = true) {
+        return useQuery({
+            queryKey: ["outwardDetails", out_no],
+            queryFn: async () => {
+                const res = await API.get(`/outward/${out_no}`);
                 return res.data;
             },
             enabled: isEnabled,
