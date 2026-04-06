@@ -42,6 +42,7 @@ import OrderDetails from './screens/order/OrderDetails';
 import Test from './screens/CreateInward';
 import Outward from './screens/outward/Outward';
 import OutwardDetails from './screens/outward/OutwardDetails';
+import Inventory from './screens/inventory/Inventory';
 
 
 function App() {
@@ -86,6 +87,11 @@ function App() {
                             <Route path="register" element={<CreateUser />} />
                             <Route path="update/:id" element={<CreateUser />} />
                             <Route path="profile/:id" element={<UserProfile />} />
+                        </Route>
+
+                        {/* inventory */}
+                        <Route path="inventory" >
+                            <Route index element={<Inventory />} />
                         </Route>
                     </Route>
 

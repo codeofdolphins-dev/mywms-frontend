@@ -27,6 +27,10 @@ const ADMIN_MENU = [
             { name: "Register User", path: "/admin/user/register" }
         ]
     },
+    {
+        name: "Inventory",
+        path: "/admin/inventory",
+    },
 ];
 
 

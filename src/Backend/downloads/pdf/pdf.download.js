@@ -8,7 +8,7 @@ class PDF {
         return useMutation({
             mutationFn: async (reqNo) => {
                 const res = await API.post(
-                    "/pdf/requisition/details",
+                    "/download/pdf/requisition/details",
                     reqNo,
                     {
                         responseType: "blob",
@@ -52,7 +52,7 @@ class PDF {
         return useMutation({
             mutationFn: async (params) => {
                 const res = await API.post(
-                    "/pdf/proforma-invoice/details",
+                    "/download/pdf/proforma-invoice/details",
                     params,
                     {
                         responseType: "blob",

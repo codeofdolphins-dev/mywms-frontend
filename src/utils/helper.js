@@ -367,3 +367,30 @@ export const PRODUCT_COLUMN = [
     { key: "reqQty", label: "Req Qty." },
     { key: "price", label: "Price" },
 ];
+
+
+export const INVENTORY_COLUMN = [
+    { key: "product", label: "Product" },
+    { key: "sku", label: "SKU" },
+    { key: "category", label: "Category" },
+    { key: "location", label: "Location" },
+    { key: "totalQty", label: "Total Qty", align: "center" },
+    { key: "availableQty", label: "Available", align: "center" },
+    { key: "reservedQty", label: "Reserved", align: "center" },
+    { key: "reorderLevel", label: "Reorder Lvl", align: "center" },
+    { key: "stockStatus", label: "Status", align: "center" },
+    { key: "unitPrice", label: "Unit Price", align: "right" },
+    { key: "stockValue", label: "Stock Value", align: "right" },
+    { key: "action", label: "", align: "center", width: "60px" },
+];
+
+export const INVENTORY_BATCH_COLUMN = [
+    { key: "batchNo", label: "Batch / Lot #" },
+    { key: "qty", label: "Qty", align: "center" },
+    { key: "mfgDate", label: "Mfg. Date" },
+    { key: "expiryDate", label: "Expiry Date" },
+    { key: "daysToExpiry", label: "Days Left", align: "center" },
+    { key: "grnRef", label: "GRN Ref" },
+    { key: "storageLocation", label: "Zone / Bin" },
+    { key: "batchStatus", label: "Status", align: "center" },
+];
