@@ -61,3 +61,28 @@ const SearchableSelect = ({
 };
 
 export default React.forwardRef(SearchableSelect);
+
+// implementation in form
+
+{/* <Controller
+    name="storeType"
+    control={control}
+    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+        <SearchableSelect
+            ref={(el) => {
+                ref({
+                    focus: () => el?.focus(),
+                });
+            }}
+            value={value}
+            onChange={onChange}
+            isSearchable={false}
+
+            label="Store Type"
+            options={[
+                { label: "Raw", value: "raw" },
+                { label: "Finished", value: "finished" },
+            ]}
+        />
+    )}
+/> */}

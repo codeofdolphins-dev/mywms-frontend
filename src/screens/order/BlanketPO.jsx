@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import BasicPagination from '../../components/BasicPagination';
-import SearchableSelect from '../../components/inputs/SearchableSelect';
 import ComponentHeader from '../../components/ComponentHeader';
 import bpo from '../../Backend/bpo.fetch';
 import { BPO_COLUMN } from '../../utils/helper';

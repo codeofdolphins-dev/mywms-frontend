@@ -150,3 +150,30 @@ function RHSelect({
 }
 
 export default React.forwardRef(RHSelect);
+
+/** example */
+{/* <Controller
+    name="locationId"
+    control={control}
+    rules={{
+        required: "This field is required!!!"
+    }}
+    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+        <RHSelect
+            ref={(el) => {
+                ref({
+                    focus: () => el?.focus(),
+                });
+            }}
+            value={value}
+            onChange={onChange}
+
+            label="Select Location"
+            labelPosition="inline"
+            options={registeredNodeList?.data}
+            error={error?.message}
+            objectReturn={true}
+            required={true}
+        />
+    )}
+/> */}

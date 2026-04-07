@@ -81,8 +81,6 @@ const CreateStoreForm = ({
         navigate("/admin/business/register", {
             state: { ...mfg }
         });
-
-
     }
 
     async function submit(data) {

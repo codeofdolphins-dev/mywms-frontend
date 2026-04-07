@@ -705,10 +705,6 @@ const Inventory = () => {
             >
                 <BulkCreationModal
                     onCancel={() => setIsBulkShow(false)}
-                    onImport={(data) => {
-                        console.log('Import data:', data);
-                        setIsBulkShow(false);
-                    }}
                 />
             </AddModal>
         </>

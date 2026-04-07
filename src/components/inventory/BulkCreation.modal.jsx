@@ -3,23 +3,26 @@ import { FiDownload, FiFile, FiTrash2, FiInfo, FiUploadCloud, FiLink } from 'rea
 import { BsFiletypeCsv, BsFiletypeXlsx } from 'react-icons/bs';
 import AddModal from '../Add.modal';
 import SampleFileForm from './SampleFile.form';
+import masterData from '../../Backend/master.backend';
+import { Button } from '@mantine/core';
 
 const ACCEPTED_TYPES = [
     'text/csv',
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ];
-const ACCEPTED_EXTENSIONS = ['.csv', '.xlsx', '.xls'];
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const ACCEPTED_EXTENSIONS = ['.xlsx', '.xls'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-const BulkCreationModal = ({ onCancel, onImport }) => {
+const BulkCreationModal = ({ onCancel }) => {
     const fileInputRef = useRef(null);
     const [file, setFile] = useState(null);
-    const [url, setUrl] = useState('');
     const [isDragOver, setIsDragOver] = useState(false);
     const [error, setError] = useState('');
 
     const [isShow, setIsShow] = useState(false);
+
+    const { mutateAsync: upload, isPending: uploadPending } = masterData.TQCreateMaster();
 
     /** validate & set file */
     const handleFile = useCallback((selectedFile) => {
@@ -39,7 +42,6 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
         }
 
         setFile(selectedFile);
-        setUrl('');
     }, []);
 
     /** drag events */
@@ -79,6 +81,15 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
         return <BsFiletypeXlsx size={28} className="text-primary" />;
     };
 
+    function uploadFile() {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        upload({ path: "/batch/bulk-create", formData }).then(() => onCancel());
+    }
+
     return (
         <>
             <div className="p-5 pt-4">
@@ -115,7 +126,7 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
                         </div>
 
                         <p className="text-sm font-semibold text-gray-700 mb-1">
-                            Drag CSV file to import
+                            Drag XLSX file to import
                         </p>
 
                         <button
@@ -128,7 +139,7 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
                         </button>
 
                         <p className="text-[11px] text-gray-400 mt-5">
-                            Max file size: 100MB. Supported file types: .csv, .xlsx, .xls
+                            Max file size: 10MB. Supported file types: .xlsx, .xls
                         </p>
 
                         <input
@@ -176,7 +187,7 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
                 )}
 
                 {/* ─── Footer ────────────────────────────────────────── */}
-                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-end mt-6 pt-4 border-t border-gray-100">
 
                     <div className="flex items-center gap-3">
                         <button
@@ -186,19 +197,14 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
                         >
                             Cancel
                         </button>
-                        <button
+                        <Button
                             type="button"
                             className="btn btn-sm btn-primary !px-6 rounded-lg"
-                            onClick={() => {
-                                if (file) {
-                                    onImport?.({ type: 'file', value: file });
-                                } else if (url.trim()) {
-                                    onImport?.({ type: 'url', value: url.trim() });
-                                }
-                            }}
+                            loading={uploadPending}
+                            onClick={uploadFile}
                         >
                             Import
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -207,11 +213,13 @@ const BulkCreationModal = ({ onCancel, onImport }) => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Sample File"
+                title="Download Sample File"
                 maxWidth='50'
-                // placement='start'
+            // placement='start'
             >
-                <SampleFileForm />
+                <SampleFileForm
+                    onCancel={() => { onCancel(); setIsShow(false) }}
+                />
             </AddModal>
         </>
     );

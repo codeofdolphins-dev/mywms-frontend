@@ -35,7 +35,7 @@ const RegisterNode = () => {
     const node = watch("node");
 
     useEffect(() => {
-        setValue("node", mfg);
+        if (typeof mfg === "object") setValue("node", mfg);
     }, [businessNodeLoading, mfg])
 
     const submitForm = async (data) => {
@@ -46,7 +46,7 @@ const RegisterNode = () => {
 
             if (res.success) {
                 if (mfg) navigate(-1);
-                
+
                 reset({ node: null });
             }
         } catch (error) {
@@ -55,7 +55,7 @@ const RegisterNode = () => {
     }
 
 
-    console.log(node);
+    // console.log(node);
 
     return (
         <div>
