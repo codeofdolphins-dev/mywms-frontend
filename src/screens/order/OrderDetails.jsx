@@ -157,6 +157,7 @@ const OrderDetails = () => {
                 showSearch={false}
             />
 
+            {/* Order Details */}
             <div className="panel mt-1 !py-3">
                 {/* Top Info Cards */}
                 <div className="max-h-56 overflow-y-auto">
@@ -176,6 +177,7 @@ const OrderDetails = () => {
                                     <h2>Status: <span className={`badge ${statusColor(data?.data?.status)}`}>{extractString(data?.data?.status) || "N/A"}</span></h2>
                                 </div>
                             </div>
+
                             <table className="w-full text-[13px] border-collapse">
                                 <tbody>
                                     <tr className="border-b border-gray-100">
@@ -238,7 +240,7 @@ const OrderDetails = () => {
                                 {/* right side buttons */}
                                 <div className="flex items-center gap-2">
 
-                                    {/* button for outward order */}
+                                    {/* button for Assign to FG Store (outward order) */}
                                     {(!isPurchase && data?.data?.status === "approved") &&
                                         <Button
                                             className="btn !btn-primary rounded-full py-1 px-1"
@@ -288,31 +290,41 @@ const OrderDetails = () => {
                                             </div>
                                         </div>
                                         :
-                                        <>
-                                            {(isPurchase && data?.data?.status === "poi_received") &&
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        // loading={true}
-                                                        color='green'
-                                                        size="compact-md"
-                                                        className='rounded-full'
-                                                        onClick={() => handleApprove(data?.data?.id, data?.data?.bpo_id)}
-                                                    >
-                                                        Approve
-                                                    </Button>
+                                        (isPurchase && data?.data?.status === "poi_received") &&
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                // loading={true}
+                                                color='green'
+                                                size="compact-md"
+                                                className='rounded-full'
+                                                onClick={() => handleApprove(data?.data?.id, data?.data?.bpo_id)}
+                                            >
+                                                Approve
+                                            </Button>
 
-                                                    <Button
-                                                        // loading={true}
-                                                        color='red'
-                                                        size="compact-md"
-                                                        className='rounded-full'
-                                                        onClick={() => handleReject(data?.data?.id, data?.data?.bpo_id)}
-                                                    >
-                                                        Cancelled
-                                                    </Button>
-                                                </div>
-                                            }
-                                        </>
+                                            <Button
+                                                // loading={true}
+                                                color='red'
+                                                size="compact-md"
+                                                className='rounded-full'
+                                                onClick={() => handleReject(data?.data?.id, data?.data?.bpo_id)}
+                                            >
+                                                Cancelled
+                                            </Button>
+                                        </div>
+                                    }
+
+                                    {
+                                        (isPurchase && data?.data?.status === "approved") &&
+                                        <Button
+                                            // loading={true}
+                                            color='primary'
+                                            size="compact-md"
+                                            className='rounded-lg'
+                                            onClick={() => navigate(`/inward/create?s=${data?.data?.po_no}`)}
+                                        >
+                                            Inward
+                                        </Button>
                                     }
                                 </div>
                             </div>
@@ -404,6 +416,7 @@ const OrderDetails = () => {
                 </div>
             </div>
 
+            {/* Item Table */}
             <div className="panel mt-5 min-h-64 relative">
                 <TableBody
                     columns={(isInternal || !isPurchase) ? ORDER : ORDER_RAW}
@@ -442,6 +455,7 @@ const OrderDetails = () => {
             </div>
 
 
+            {/* Assign FG Store */}
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
@@ -499,6 +513,7 @@ const OrderDetails = () => {
                 </div>
             </AddModal>
 
+            {/* Add New RM Store */}
             <AddModal
                 isShow={Boolean(store)}
                 setIsShow={setStore}

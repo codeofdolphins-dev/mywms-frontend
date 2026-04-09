@@ -4,58 +4,8 @@ import { useParams } from 'react-router-dom';
 import Select from 'react-select';
 import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
+import ComponentHeader from '../../components/ComponentHeader';
 
-// Mock Data representing the Outward Details
-const mockData = {
-    buyer: {
-        name: "Acme Corporation",
-        email: "contact@acmecorp.com",
-        phone: "+1 800 555 0199",
-        address: "123 Business Rd, Metropolis, NY 10001",
-    },
-    location: {
-        warehouse: "Main DC",
-        zone: "Zone A",
-        aisle: "Aisle 4",
-        dispatchDock: "Dock 02",
-    },
-    items: [
-        {
-            id: "item1",
-            code: "LAPTOP-X1",
-            name: "ThinkPad X1 Carbon",
-            requestedQty: 10,
-            uom: "PCs",
-            availableBatches: [
-                { batchNo: "B-2023-01", qty: 25, expiry: "2025-12-31" },
-                { batchNo: "B-2023-02", qty: 50, expiry: "2025-12-31" },
-                { batchNo: "B-2023-03", qty: 5, expiry: "2026-06-30" },
-            ]
-        },
-        {
-            id: "item2",
-            code: "MOUSE-W1",
-            name: "Logitech Wireless Mouse",
-            requestedQty: 25,
-            uom: "PCs",
-            availableBatches: [
-                { batchNo: "B-882-1", qty: 100, expiry: "2026-06-30" },
-                { batchNo: "B-882-2", qty: 20, expiry: "2025-06-30" },
-            ]
-        },
-        {
-            id: "item3",
-            code: "KEYBOARD-M1",
-            name: "Mechanical Keyboard Pro",
-            requestedQty: 15,
-            uom: "PCs",
-            availableBatches: [
-                { batchNo: "B-911-5", qty: 15, expiry: "2028-01-01" },
-                { batchNo: "B-911-6", qty: 40, expiry: "2030-01-01" },
-            ]
-        }
-    ]
-};
 
 const OutwardDetails = () => {
     const { out_no } = useParams();
@@ -80,7 +30,10 @@ const OutwardDetails = () => {
     const destAddess = data?.buyer?.meta?.address;
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
+    const isPreview = data?.status === "dispatched";
+
     // console.log(data)
+    // console.log(isPreview)
 
     async function handleConfirmAllocation() {
         const items = [];
@@ -88,7 +41,7 @@ const OutwardDetails = () => {
         for (const [key, value] of Object.entries(selectedBatches)) {
             items.push({
                 product_id: key,
-                batchs: value ? value.map(opt => opt.value) : []
+                batches: value ? value.map(opt => opt.value) : []
             });
         }
 
@@ -103,21 +56,47 @@ const OutwardDetails = () => {
         console.log(res);
     }
 
+
+    /** Get status badge */
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case "pending":
+                return "bg-yellow-100 text-yellow-800";
+            case "allocated":
+                return "bg-blue-100 text-blue-800";
+            case "dispatched":
+                return "bg-green-100 text-green-800";
+            default:
+                return "bg-gray-100 text-gray-800";
+        }
+    };
+
     return (
-        <div className="p-6 bg-slate-50 min-h-screen">
+        <div className="bg-slate-50 min-h-screen">
+            <ComponentHeader
+                headerLink={[
+                    { title: "outward", link: "/outward" },
+                    { title: "details" }
+                ]}
+                showSearch={false}
+                addButton={false}
+            />
+
             {/* Header Section */}
-            <div className="mb-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+            <div className="my-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">Outward Details</h1>
-                    <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#OUT-2026-0042</span></p>
+                    <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
                 </div>
-                <button
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
-                    onClick={handleConfirmAllocation}
-                >
-                    <FiCheckCircle size={18} />
-                    Confirm Allocation
-                </button>
+                {!isPreview &&
+                    <button
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
+                        onClick={handleConfirmAllocation}
+                    >
+                        <FiCheckCircle size={18} />
+                        Confirm Dispatch
+                    </button>
+                }
             </div>
 
             {/* Top Cards: Buyer & Location Information */}
@@ -129,7 +108,10 @@ const OutwardDetails = () => {
                         <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-md text-blue-600">
                             <FiUser size={20} strokeWidth={2.5} />
                         </div>
-                        <h2 className="text-lg font-medium text-slate-900">Buyer information</h2>
+                        <h2 className="text-lg font-medium text-slate-900">
+                            Buyer information
+                            <span className={`ml-2 badge ${getStatusBadge(data?.status)}`}>{data?.status?.toUpperCase()}</span>
+                        </h2>
                     </div>
 
                     {/* Info Grid */}
@@ -162,6 +144,11 @@ const OutwardDetails = () => {
                         <div className="flex items-center justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Destination address</label>
                             <p className=" font-medium text-slate-900 leading-relaxed">{destAddessStr}</p>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-1 bg-yellow-100 py-2 px-3 rounded-lg border-l-4 border-l-yellow-600">
+                            <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Note</label>
+                            <p className=" font-medium text-slate-900 leading-relaxed">{data?.note}</p>
                         </div>
 
                         {/* Coordinates - Separated */}
@@ -288,6 +275,12 @@ const OutwardDetails = () => {
                                     label: `${b.batch_no} | Available: ${b.available_qty} | Exp: ${b.expiry_date || 'N/A'}`
                                 }));
 
+                                const allocatedBatches = item?.alloted_batch?.map(b => ({
+                                    id: b.id,
+                                    code: b.batch.batch_no,
+                                    qty: b.allocated_qty
+                                }));
+
                                 const product = item?.outwardProduct;
 
                                 return (
@@ -304,65 +297,74 @@ const OutwardDetails = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-2">
-                                            <div className="w-full max-w-lg">
-                                                <Select
-                                                    isMulti
-                                                    options={batchOptions}
-                                                    className="text-sm"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select from available batches..."
-                                                    onChange={(val) => handleBatchChange(val, item.vendor_product_id)}
-                                                    value={selectedBatches[item.vendor_product_id] || []}
-                                                    styles={{
-                                                        control: (baseStyles, state) => ({
-                                                            ...baseStyles,
-                                                            borderColor: state.isFocused ? '#6366f1' : '#e2e8f0',
-                                                            boxShadow: state.isFocused ? '0 0 0 1px #6366f1' : 'none',
-                                                            borderRadius: '0.75rem',
-                                                            padding: '2px 4px',
-                                                            minHeight: '44px',
-                                                            backgroundColor: state.isFocused ? '#ffffff' : '#f8fafc',
-                                                            '&:hover': {
-                                                                borderColor: state.isFocused ? '#6366f1' : '#cbd5e1'
-                                                            }
-                                                        }),
-                                                        menu: (baseStyles) => ({
-                                                            ...baseStyles,
-                                                            zIndex: 50,
-                                                            borderRadius: '0.75rem',
-                                                            overflow: 'hidden',
-                                                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
-                                                        }),
-                                                        option: (baseStyles, state) => ({
-                                                            ...baseStyles,
-                                                            backgroundColor: state.isSelected ? '#indigo-500' : state.isFocused ? '#e0e7ff' : 'white',
-                                                            color: state.isSelected ? 'white' : '#1e293b',
-                                                            padding: '10px 14px',
-                                                            cursor: 'pointer'
-                                                        }),
-                                                        multiValue: (baseStyles) => ({
-                                                            ...baseStyles,
-                                                            backgroundColor: '#e0e7ff',
-                                                            borderRadius: '0.375rem',
-                                                            padding: '2px'
-                                                        }),
-                                                        multiValueLabel: (baseStyles) => ({
-                                                            ...baseStyles,
-                                                            color: '#4338ca',
-                                                            fontWeight: '600'
-                                                        }),
-                                                        multiValueRemove: (baseStyles) => ({
-                                                            ...baseStyles,
-                                                            color: '#4338ca',
-                                                            ':hover': {
-                                                                backgroundColor: '#c7d2fe',
-                                                                color: '#312e81',
-                                                                borderRadius: '0.25rem'
-                                                            }
-                                                        })
-                                                    }}
+
+                                            {isPreview ? (
+                                                <AllocatedBatchesCell
+                                                    allocatedBatches={allocatedBatches}
+                                                    requiredQty={item?.requested_qty}
+                                                    unit={product?.unit_type}
                                                 />
-                                            </div>
+                                            ) : (
+                                                <div className="w-full max-w-lg">
+                                                    <Select
+                                                        isMulti
+                                                        options={batchOptions}
+                                                        className="text-sm"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select from available batches..."
+                                                        onChange={(val) => handleBatchChange(val, item.vendor_product_id)}
+                                                        value={selectedBatches[item.vendor_product_id] || []}
+                                                        styles={{
+                                                            control: (baseStyles, state) => ({
+                                                                ...baseStyles,
+                                                                borderColor: state.isFocused ? '#6366f1' : '#e2e8f0',
+                                                                boxShadow: state.isFocused ? '0 0 0 1px #6366f1' : 'none',
+                                                                borderRadius: '0.75rem',
+                                                                padding: '2px 4px',
+                                                                minHeight: '44px',
+                                                                backgroundColor: state.isFocused ? '#ffffff' : '#f8fafc',
+                                                                '&:hover': {
+                                                                    borderColor: state.isFocused ? '#6366f1' : '#cbd5e1'
+                                                                }
+                                                            }),
+                                                            menu: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                zIndex: 50,
+                                                                borderRadius: '0.75rem',
+                                                                overflow: 'hidden',
+                                                                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                                                            }),
+                                                            option: (baseStyles, state) => ({
+                                                                ...baseStyles,
+                                                                backgroundColor: state.isSelected ? '#indigo-500' : state.isFocused ? '#e0e7ff' : 'white',
+                                                                color: state.isSelected ? 'white' : '#1e293b',
+                                                                padding: '10px 14px',
+                                                                cursor: 'pointer'
+                                                            }),
+                                                            multiValue: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                backgroundColor: '#e0e7ff',
+                                                                borderRadius: '0.375rem',
+                                                                padding: '2px'
+                                                            }),
+                                                            multiValueLabel: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                color: '#4338ca',
+                                                                fontWeight: '600'
+                                                            }),
+                                                            multiValueRemove: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                color: '#4338ca',
+                                                                ':hover': {
+                                                                    backgroundColor: '#c7d2fe',
+                                                                    color: '#312e81',
+                                                                    borderRadius: '0.25rem'
+                                                                }
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
                                         </td>
                                     </tr>
                                 )
@@ -377,3 +379,49 @@ const OutwardDetails = () => {
 };
 
 export default OutwardDetails;
+
+
+const AllocatedBatchesCell = ({ allocatedBatches = [], requiredQty, unit }) => {
+    const totalAllocated = allocatedBatches.reduce((sum, b) => sum + Number(b.qty), 0);
+    const isFulfilled = totalAllocated >= requiredQty;
+    const isOver = totalAllocated > requiredQty;
+
+    return (
+        <td className="px-4 py-3 align-top">
+            {allocatedBatches.length === 0 ? (
+                <span className="text-xs text-gray-400 italic">No batches allocated</span>
+            ) : (
+                <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap gap-1.5">
+                        {allocatedBatches.map((batch) => (
+                            <span
+                                key={batch.id}
+                                className="inline-flex items-center gap-1.5 border border-gray-200 rounded px-2 py-1 text-xs text-gray-700 bg-gray-50"
+                            >
+                                <span className="font-mono">{batch.code}</span>
+                                <span className="bg-blue-50 text-blue-600 font-mono font-medium rounded px-1.5 py-0.5 text-[11px]">
+                                    {batch.qty} {unit}
+                                </span>
+                            </span>
+                        ))}
+                    </div>
+
+                    <span
+                        className={`inline-flex items-center gap-1 w-fit text-[11px] font-medium rounded px-2 py-0.5 ${isOver
+                            ? "bg-amber-50 text-amber-600"
+                            : isFulfilled
+                                ? "bg-green-50 text-green-600"
+                                : "bg-red-50 text-red-500"
+                            }`}
+                    >
+                        {isFulfilled && !isOver && "✓"}
+                        {isOver && "!"}
+                        {!isFulfilled && "✗"}
+                        {totalAllocated} / {requiredQty} {unit}
+                        {isOver ? " over-allocated" : isFulfilled ? " fulfilled" : " remaining"}
+                    </span>
+                </div>
+            )}
+        </td>
+    );
+};

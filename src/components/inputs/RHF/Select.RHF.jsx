@@ -134,7 +134,7 @@ function RHSelect({
                     {
                         addButton &&
                         <button
-                            className="px-4 btn-info text-white rounded-r flex items-center"
+                            className={`px-4 btn-info text-white rounded-r flex items-center ${buttonDisabled ? "opacity-60 cursor-not-allowed" : ""}`}
                             onClick={buttonOnClick}
                             type="button"
                             disabled={buttonDisabled}

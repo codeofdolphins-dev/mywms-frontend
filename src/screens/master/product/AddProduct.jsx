@@ -50,15 +50,8 @@ const AddProduct = () => {
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["productList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["productList"]);
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-        watch,
-        setValue
-    } = useForm();
+    /** form control */
+    const { control, register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm();
 
     useEffect(() => {
         if (!id) return;
@@ -79,6 +72,9 @@ const AddProduct = () => {
         }
 
     }, [id, product, isLoading]);
+
+    const productType = watch("product_type");
+    const isRaw = productType === "raw";
 
 
     const submit = async (data) => {
@@ -191,9 +187,6 @@ const AddProduct = () => {
                                     <Controller
                                         name="brand_id"
                                         control={control}
-                                        rules={{
-                                            required: "This field is required!!!"
-                                        }}
                                         render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                             <RHSelect
                                                 ref={(el) => {
@@ -207,8 +200,6 @@ const AddProduct = () => {
                                                 label="Brand"
                                                 options={brandData?.data}
                                                 error={error?.message}
-                                                // isMulti={true}
-                                                required={true}
 
                                                 addButton={true}
                                                 buttonTitle='brand'
@@ -230,10 +221,10 @@ const AddProduct = () => {
                                         <Input
                                             label={"Barcode"}
                                             placeholder={"Enter Barcode"}
-                                            {...register("barcode", { required: "This field is required!!!" })}
+                                            {...register("barcode", { required: !isRaw && "This field is required!!!" })}
                                             error={errors.barcode?.message}
-                                            required={true}
-                                            disabled={id ? true : false}
+                                            required={!isRaw}
+                                            disabled={(id || isRaw) ? true : false}
                                         />
                                     </div>
 
@@ -248,15 +239,14 @@ const AddProduct = () => {
                                         />
                                     </div>
 
-
+                                    {/* hsn_id */}
                                     <div className="">
-                                        {/* hsn_id */}
                                         <div className=''>
                                             <Controller
                                                 name="hsn_id"
                                                 control={control}
                                                 rules={{
-                                                    required: "This field is required!!!"
+                                                    required: !isRaw && "This field is required!!!"
                                                 }}
                                                 render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                                     <RHSelect
@@ -272,11 +262,13 @@ const AddProduct = () => {
                                                         selectKey='hsn_code'
                                                         options={hsnData?.data}
                                                         error={error?.message}
-                                                        required={true}
+                                                        required={!isRaw}
+                                                        disabled={isRaw}
 
                                                         addButton={true}
                                                         buttonTitle='HSN'
                                                         buttonOnClick={() => setShowHSN(true)}
+                                                        buttonDisabled={isRaw}
                                                     />
                                                 )}
                                             />
@@ -368,7 +360,7 @@ const AddProduct = () => {
                                         name="package_type_id"
                                         control={control}
                                         rules={{
-                                            required: "This field is required!!!"
+                                            required: !isRaw && "This field is required!!!"
                                         }}
                                         render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                             <RHSelect
@@ -383,11 +375,13 @@ const AddProduct = () => {
                                                 label="Package Type"
                                                 options={packageTypeData?.data}
                                                 error={error?.message}
-                                                required={true}
+                                                required={!isRaw}
+                                                disabled={isRaw}
 
                                                 addButton={true}
                                                 buttonTitle='type'
                                                 buttonOnClick={() => setShowPackageType(true)}
+                                                buttonDisabled={isRaw}
                                             />
                                         )}
                                     />
@@ -401,6 +395,7 @@ const AddProduct = () => {
                                             label={"Measure"}
                                             placeholder={"Enter Measure"}
                                             {...register("measure")}
+                                            disabled={isRaw}
                                         />
                                     </div>
 

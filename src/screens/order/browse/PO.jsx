@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import TableRow from '../../../components/table/TableRow';
 import TableBody from '../../../components/table/TableBody';
 import { PURCHASE_ORDER_BROWSE } from '../../../utils/helper';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
 import { utcToLocal } from '../../../utils/UTCtoLocal';
 import { order } from '../../../Backend/order.fetch';
@@ -54,9 +54,13 @@ const PO = ({ debounceSearch }) => {
                         return (<TableRow
                             key={idx}
                             columns={PURCHASE_ORDER_BROWSE}
-                            onClick={() => navigate(`/order/${item?.po_no}?type=purchase`)}
                             row={{
-                                no: item?.po_no,
+                                no: (<Link
+                                    to={`/order/${item?.po_no}?type=purchase`}
+                                    className="text-primary hover:underline"
+                                >
+                                    {item?.po_no}
+                                </Link>),
                                 to: item?.poToBusinessNode?.nodeDetails?.name ?? item?.poVendor?.name,
                                 date: utcToLocal(item?.createdAt),
                                 items: item?.purchasOrderItems?.length,

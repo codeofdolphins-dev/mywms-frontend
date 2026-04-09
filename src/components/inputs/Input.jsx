@@ -12,6 +12,7 @@ const Input = React.forwardRef(({
     className = '',
     error,
     required = false,
+    disabled = false,
     isLoading = false,
     Icon = false,
     ...props
@@ -26,7 +27,7 @@ const Input = React.forwardRef(({
             {
                 label && <label
                     htmlFor={_id}
-                    className={`inline-block mb-1 pl-1 text-sm ${labelcolor} ${labelPosition === "inline" ? "w-1/3" : ""}`}
+                    className={`inline-block mb-1 pl-1 text-sm ${labelcolor} ${labelPosition === "inline" ? "w-1/3" : ""} ${disabled ? "opacity-60" : ""}`}
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>
@@ -40,10 +41,11 @@ const Input = React.forwardRef(({
                         className={`
                             px-3 py-2 text-sm rounded-md  focus:outline-2 outline-blue-500 duration-200 border border-[#b3b3b3c7] w-full 
                             ${error ? "border-red-500" : ""} 
-                            ${props.disabled ? "bg-gray-200 text-gray-500" : "bg-white text-black"}
+                            ${disabled ? "bg-gray-100 text-gray-500 opacity-60" : "bg-white text-black"}
                             ${Icon ? "ps-10" : ""}
                             ${className}
                         `}
+                        disabled={disabled}
                         {...props}
                     />
                     {
