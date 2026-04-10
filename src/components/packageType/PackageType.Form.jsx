@@ -73,6 +73,7 @@ const PackageTypeForm = ({ setIsShow, editId = null }) => {
                                     })}
                                     error={errors.name?.message}
                                     required={true}
+                                    autoFocus={true}
                                 />
                             </div>
                             <div className="col-span-3">

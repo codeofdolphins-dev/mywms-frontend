@@ -79,6 +79,7 @@ const CategoryForm = ({ setIsShow, data = [], editId }) => {
                             {...register("name", { required: "This field is required!!!" })}
                             error={errors.name?.message}
                             required={true}
+                            autoFocus={true}
                         />
 
                         <Controller

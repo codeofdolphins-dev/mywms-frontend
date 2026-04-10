@@ -69,7 +69,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
         }
     }
 
-    if (supplierLoading) return <Loader />;
+    // if (supplierLoading) return <Loader />;
 
     return (
         <div className="panel" id="forms_grid">
@@ -88,6 +88,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                     })}
                                     error={errors.name?.message}
                                     required={true}
+                                    autoFocus={true}
                                 />
                             </div>
                             <div className='flex items-center gap-5'>
@@ -148,6 +149,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                     label="Description"
                                     placeholder="Enter Description"
                                     className="text-sm"
+                                    rows={1}
                                     {...register("description")}
                                 />
                             </div>

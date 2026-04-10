@@ -8,19 +8,19 @@ import masterData from '@/Backend/master.backend';
 import { RHFToFormData } from '@/utils/RHFtoFD';
 import CategoryTree from '../../../components/CategoryTree';
 import { successAlert } from '@/utils/alerts';
-import FullScreenLoader from '@/components/loader/FullScreenLoader';
-import AddModal from '@/components/Add.modal';
-import BrandForm from '@/components/brand/Form';
-import HSNForm from '@/components/HSN/HSN.Form';
-import CategoryForm from '@/components/category/CategoryForm';
-import UnitTypeForm from '@/components/unit/UnitType.Form';
-import PackageTypeForm from '@/components/packageType/PackageType.Form';
+import FullScreenLoader from '@/components/loader/FullScreenLoader'
 import Input from '../../../components/inputs/Input';
 import BooleanSwitch from '../../../components/inputs/BooleanSwitch';
 import RHRadioGroup from '../../../components/inputs/RHF/RHRadioGroup';
 import RHSelect from '../../../components/inputs/RHF/Select.RHF';
 import TextArea from '../../../components/inputs/TextArea';
 import SearchableSelect from '../../../components/inputs/SearchableSelect';
+import AddModal from '../../../components/Add.modal';
+import BrandForm from '../../../components/brand/Form';
+import HSNForm from '../../../components/HSN/HSN.Form';
+import CategoryForm from '../../../components/category/CategoryForm';
+import UnitTypeForm from '../../../components/unit/UnitType.Form';
+import PackageTypeForm from '../../../components/packageType/PackageType.Form';
 
 
 const PRODUCT_TYPE = [
@@ -148,6 +148,7 @@ const AddProduct = () => {
                                             })}
                                             error={errors.name?.message}
                                             required={true}
+                                            autoFocus={true}
                                         />
                                     </div>
 

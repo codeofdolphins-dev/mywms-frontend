@@ -81,6 +81,7 @@ const HSNForm = ({ setIsShow, editId = null }) => {
                                 })}
                                 error={errors.code?.message}
                                 required={true}
+                                autoFocus={true}
                             />
                         </div>
 

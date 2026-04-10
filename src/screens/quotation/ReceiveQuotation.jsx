@@ -163,7 +163,7 @@ const ReceiveQuotation = () => {
                         // console.log(item)
                         return (
                             <div
-                                className={`border border-[#d3d3d3] rounded `}
+                                className="border border-[#d3d3d3] rounded"
                                 key={idx}
                             >
                                 {/* supplier listing */}
