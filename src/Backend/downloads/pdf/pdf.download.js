@@ -20,7 +20,7 @@ class PDF {
                 successAlert("PDF generated successfully");
 
                 if (key.length > 0) {
-                    QueryClient.invalidateQueries(key);
+                    QueryClient.invalidateQueries({ queryKey: key });
                 }
 
 
@@ -64,7 +64,7 @@ class PDF {
                 successAlert("PDF generated successfully");
 
                 if (key.length > 0) {
-                    QueryClient.invalidateQueries(key);
+                    QueryClient.invalidateQueries({ queryKey: key });
                 }
 
 

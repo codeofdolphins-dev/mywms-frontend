@@ -22,7 +22,7 @@ const ProfileCard = ({
                 <h5 className="font-semibold text-lg ">{onCreate ? "Profile Preview" : "Profile"}</h5>
                 {
                     !onCreate &&
-                    <Link to={`/user/update/${id}`} className="ml-auto btn btn-primary p-2 rounded-full">
+                    <Link to={`/admin/user/update/${id}`} className="ml-auto btn btn-primary p-2 rounded-full">
                         <IconPencilPaper />
                     </Link>
                 }

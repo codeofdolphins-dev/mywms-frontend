@@ -15,12 +15,9 @@ import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import { USER_LIST_COLUMN } from '../../utils/helper';
 import { confirmation } from '../../utils/alerts';
+import { headerLink_userBrowse } from './helper';
 
 
-const headerLink = [
-    // { title: "master", link: "/master" },
-    { title: "user" },
-]
 
 const UserBrowse = () => {
     const navigate = useNavigate();
@@ -51,10 +48,11 @@ const UserBrowse = () => {
 
 
     function handleEdit(id) {
-        navigate(`/user/update/${id}`)
+        navigate(`/admin/user/update/${id}`)
     };
 
     async function handleDelete(id) {
+        alert("Working!!!"); return;
         console.log(id)
         try {
             const isConfirm = await confirmation();
@@ -74,7 +72,7 @@ const UserBrowse = () => {
         <div className='space-y-4'>
             {/* Header Section */}
             <ComponentHeader
-                headerLink={headerLink}
+                headerLink={headerLink_userBrowse}
                 primaryText='All Users'
                 searchPlaceholder='Search by name, email, phone...'
                 setDebounceSearch={setDebounceSearch}
@@ -99,7 +97,7 @@ const UserBrowse = () => {
                             <TableRow
                                 key={item.id}
                                 columns={USER_LIST_COLUMN}
-                                onClick={() => navigate(`/user/profile/${item.id}`)}
+                                onClick={() => navigate(`/admin/user/profile/${item.id}`)}
                                 row={{
                                     logo: (
                                         <ImageComponent

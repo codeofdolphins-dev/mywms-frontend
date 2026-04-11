@@ -18,7 +18,7 @@ class Excel {
                 successAlert("Excel generated successfully");
 
                 if (key.length > 0) {
-                    QueryClient.invalidateQueries(key);
+                    QueryClient.invalidateQueries({ queryKey: key });
                 }
 
 

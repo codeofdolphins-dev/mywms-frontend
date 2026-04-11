@@ -15,7 +15,7 @@ const AuthBootstrap = ({ children }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const shouldFetch = Boolean(token && !isLogin);
+    const shouldFetch = Boolean(token);
 
     const { isError, isSuccess, data, isLoading } = authService.TQCurrentUser(shouldFetch);
     const { isSuccess: locationIsSuccess, data: locationData } = fetchData.TQStateList(shouldFetch);

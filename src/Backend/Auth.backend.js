@@ -65,7 +65,7 @@ class AuthService {
 
     TQCurrentUser(isEnable) {
         return useQuery({
-            queryKey: ["current-user"],
+            queryKey: ["currentUser"],
             queryFn: async () => {
                 const res = await API.get("/user/current-user");
                 return res.data;

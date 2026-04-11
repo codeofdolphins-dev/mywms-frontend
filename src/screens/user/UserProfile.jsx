@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import ProfileCard from '@/components/user/userProfile/ProfileCard'
-import ActivityCard from '@/components/user/userProfile/ActivityCard';
-import BasicCardContent from '@/components/user/userProfile/components/BasicCardContent';
 import fetchData from '../../Backend/fetchData.backend';
+import ActivityCard from '../../components/user/userProfile/ActivityCard';
+import ProfileCard from '../../components/user/userProfile/ProfileCard';
+import BasicCardContent from '../../components/user/userProfile/components/BasicCardContent';
+import ComponentHeader from '../../components/ComponentHeader';
+import { headerLink_userProfile } from './helper';
+
 
 const UserProfile = () => {
     const { id } = useParams();
@@ -21,17 +24,10 @@ const UserProfile = () => {
 
     return (
         <div>
-            {/* breadcrumb */}
-            <ul className="flex space-x-2">
-                <li>
-                    <Link to="/user" className="text-primary hover:underline">
-                        Users
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2">
-                    <span>Profile</span>
-                </li>
-            </ul>
+            <ComponentHeader
+                headerLink={headerLink_userProfile}
+                showSearch={false}
+            />
 
             <div className="pt-5">
                 {/* first row */}

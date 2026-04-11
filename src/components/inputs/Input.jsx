@@ -4,6 +4,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 const Input = React.forwardRef(({
+    id,
     label,
     labelPosition = "",
     labelcolor = "text-gray-600",
@@ -18,7 +19,7 @@ const Input = React.forwardRef(({
     ...props
 }, ref) => {
 
-    const _id = useId();
+    const _id = id ?? useId();
     const [isPasswordSeen, setIsPasswordSeen] = useState(false);
 
 

@@ -14,18 +14,10 @@ import business from '../../Backend/business.fetch';
 import ProfileCard from '../../components/user/userProfile/ProfileCard';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
+import ComponentHeader from '../../components/ComponentHeader';
+import { deptType_createUser } from './helper';
 
-const USER_TYPE = [
-    { label: "Select..." },
-    { label: "Location Admin", value: true },
-    { label: "Location User", value: false },
-]
 
-const DEPT_TYPE = [
-    { label: "Purchase", value: "purchase" },
-    { label: "Sales", value: "sales" },
-    { label: "Both", value: "both" },
-]
 
 const CreateUser = () => {
     const { id } = useParams();
@@ -133,7 +125,7 @@ const CreateUser = () => {
             {/* breadcrumb */}
             <ul className="flex space-x-2">
                 <li>
-                    <Link to="/user" className="text-primary hover:underline">
+                    <Link to="/admin/user" className="text-primary hover:underline">
                         user
                     </Link>
                 </li>
@@ -204,7 +196,7 @@ const CreateUser = () => {
 
                                                         label="Department"
                                                         labelPosition={"inline"}
-                                                        options={DEPT_TYPE}
+                                                        options={deptType_createUser}
                                                         disabled={node === null ? true : false}
                                                     />
                                                 )}
