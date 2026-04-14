@@ -17,7 +17,6 @@ import AssignRole from './screens/access/AssignRole';
 import Quotation from './screens/quotation/Quotation';
 import ReceiveQuotation from './screens/quotation/ReceiveQuotation';
 import ReceiveRequision from './screens/requisition/ReceiveRequision';
-import RegisterNode from './screens/admin/RegisterNode';
 import CreateUser from './screens/user/CreateUser';
 import UserBrowse from './screens/user/UserBrowse';
 import UserProfile from './screens/user/UserProfile';
@@ -33,7 +32,6 @@ import Admin from './screens/admin/Admin';
 import SuperAdmin from './screens/superAdmin/SuperAdmin';
 import Vendor from './screens/vendor/Vendor';
 import VendorCategory from './screens/vendor/VendorCategory';
-import Dashboard from './screens/Dashboard';
 import BlanketPO from './screens/order/BlanketPO';
 import BPODetailsPage from './screens/order/BPODetailsPage';
 import Store from './screens/admin/store/Store';
@@ -43,6 +41,9 @@ import Test from './screens/CreateInward';
 import Outward from './screens/outward/Outward';
 import OutwardDetails from './screens/outward/OutwardDetails';
 import Inventory from './screens/inventory/Inventory';
+import OpenForum from './screens/OpenForum';
+import RegisterLocation from './screens/admin/locations/RegisterLocation';
+import Location from './screens/admin/locations/Location';
 
 
 function App() {
@@ -58,7 +59,7 @@ function App() {
 
                 {/* app */}
                 <Route path="/" element={<AppLayout />}>
-                    <Route index element={<Dashboard />} />
+                    <Route index element={<OpenForum />} />
 
                     {/* super admin */}
                     <Route path="super-admin" >
@@ -66,19 +67,18 @@ function App() {
                         <Route path="business-flow" element={<Rules />} />
                     </Route>
 
+
                     {/* admin */}
                     <Route path="admin" >
-
-                        {/* business */}
-                        <Route path="business" >
-                            <Route index element={<Admin />} />
-                            <Route path="register" element={<RegisterNode />} />
+                        {/* location */}
+                        <Route path="location" >
+                            <Route index element={<Location />} />
+                            <Route path="register" element={<RegisterLocation />} />
                         </Route>
 
-                        {/* business */}
+                        {/* store */}
                         <Route path="store" >
                             <Route index element={<Store />} />
-                            <Route path="register" element={<RegisterNode />} />
                         </Route>
 
                         {/* user */}

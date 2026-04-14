@@ -5,10 +5,10 @@ import { NavLink } from "react-router-dom";
 const ADMIN_MENU = [
     {
         name: "Location (Main WH)",
-        path: "/admin/business",
+        path: "/admin/location",
         children: [
-            { name: "Browse Nodes", path: "/admin/business" },
-            { name: "Register Node", path: "/admin/business/register" }
+            { name: "Browse Locations", path: "/admin/location" },
+            { name: "Register Location", path: "/admin/location/register" }
         ]
     },
     {

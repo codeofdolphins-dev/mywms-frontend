@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, Navigate } from 'react-router-dom'
 import secureLocalStorage from 'react-secure-storage'
 import API from '../Backend';
 import authService from '../Backend/Auth.backend';
@@ -9,22 +9,27 @@ import FullScreenLoader from '../components/loader/FullScreenLoader';
 
 const AuthLayout = () => {
     const isLogin = useSelector(state => state.auth.status);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const token = secureLocalStorage.getItem("token");
+    // const navigate = useNavigate();
+    
+    // const dispatch = useDispatch();
 
-    const { data, isLoading, isSuccess } = authService.TQCurrentUser(isLogin);
+    // const { data, isLoading, isSuccess } = authService.TQCurrentUser(isLogin);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if(isSuccess){
-            dispatch(storeLogin(data.data));
-            navigate("/");
-        }
+    //     if(isSuccess){
+    //         dispatch(storeLogin(data.data));
+    //         navigate("/");
+    //     }
 
-    }, [isSuccess, data])
+    // }, [isSuccess, data])
 
-    if(isLoading) return <FullScreenLoader />
-  return <Outlet />
+    // if (isLoading) return <FullScreenLoader />
+    
+    if (isLogin || token) return <Navigate to="/" replace />;
+    
+    return <Outlet />
 }
 
 export default AuthLayout

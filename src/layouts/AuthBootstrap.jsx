@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
 import authService from '../Backend/Auth.backend';
 import { storeLogin } from '../store/AuthSlice';
@@ -14,6 +14,7 @@ const AuthBootstrap = ({ children }) => {
     const token = secureLocalStorage.getItem("token");
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const shouldFetch = Boolean(token);
 
@@ -27,12 +28,16 @@ const AuthBootstrap = ({ children }) => {
         }
     }, [isSuccess, data, locationData, locationIsSuccess]);
 
-    if (!token) return <Navigate to="/auth/login" replace />;
+    if (!token) {
+        if (location.pathname === '/') return children;
+        return <Navigate to="/auth/login" replace />;
+    }
 
     if (isLoading) return <FullScreenLoader />;
 
     if (isError) {
         secureLocalStorage.clear();
+        if (location.pathname === '/') return children;
         return <Navigate to="/auth/login" replace />;
     }
 

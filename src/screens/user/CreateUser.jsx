@@ -30,6 +30,7 @@ const CreateUser = () => {
     const [preview, setPreview] = useState(null);
     const [oldPreview, setOldPreview] = useState(null);
     const [fileKey, setFileKey] = useState(0);
+    const [nodeOptions, setNodeOptions] = useState([]);
 
 
     const { handleSubmit, register, control, setValue, reset, watch, formState: { errors } } = useForm({
@@ -54,11 +55,11 @@ const CreateUser = () => {
     const image = watch("image") || null;
     const email = watch("email") || null;
 
+    // console.log(node)
 
-    // console.log(isNodeAdmin)
 
 
-    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQTenantRegisteredNodeList();
+    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQTenantRegisteredNodeList({ isAllowOwner: true, noLimit: true });
     const { data: editUserDetails, isLoading: editUserDetailsLoading } = fetchData.TQAllUserList({ id }, !!id);
 
 
@@ -85,14 +86,23 @@ const CreateUser = () => {
             email: data?.email,
         });
         setOldPreview(data?.profile_image);
-    }, [editUserDetailsLoading])
+    }, [editUserDetailsLoading]);
+
+    useEffect(() => {
+        const options = registeredNodeList?.data?.map(item => ({
+            ...item,
+            name: item?.businessNode?.node_type_code === null ? item?.name : `${item?.name} - ${item?.businessNode?.name}`,
+        }))
+        setNodeOptions(options)
+    }, [registeredNodeList]);
 
 
     async function submitForm(data) {
+        data.node_id = node?.businessNode?.id;
         if (id) data.id = id;
         const formData = RHFToFormData(data);
 
-        console.log(data)
+        // console.log(data); return
 
         try {
             if (id) {
@@ -167,7 +177,8 @@ const CreateUser = () => {
 
                                                 label="Assign Place"
                                                 labelPosition={"inline"}
-                                                options={registeredNodeList?.data}
+                                                // options={registeredNodeList?.data}
+                                                options={nodeOptions}
                                                 error={error?.message}
                                                 objectReturn={true}
                                                 isClearable={true}
@@ -177,7 +188,7 @@ const CreateUser = () => {
                                 </div>
 
                                 {node !== null && (
-                                    node?.node_type_code === null ? <>
+                                    node?.businessNode?.node_type_code === null ? <>
                                         {/* dept */}
                                         <div className="">
                                             <Controller

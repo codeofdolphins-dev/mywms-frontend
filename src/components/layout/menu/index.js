@@ -10,11 +10,13 @@ import Quotation from "./Quotation.menu";
 import Requisition from "./Requisition.menu";
 import SuperAdmin from "./SuperAdmin.menu";
 import Order from "./Order.menu";
+import OpenForum from "./OpenForum.menu";
 
 
 export {
     Dashboard,
     Master,
+    OpenForum,
     Admin,
     ManageAccess,
     Requisition,

@@ -394,3 +394,14 @@ export const INVENTORY_BATCH_COLUMN = [
     { key: "storageLocation", label: "Zone / Bin" },
     { key: "batchStatus", label: "Status", align: "center" },
 ];
+
+export const LOCATION_LIST_COLUMN = [
+    { key: "name", label: "Name", width: "200px" },
+    { key: "location", label: "Location" },
+    { key: "type", label: "Type", width: "200px" },
+    { key: "category", label: "Category", width: "150px" },
+    { key: "address", label: "State/District", width: "150px" },
+    { key: "gst", label: "GST No" },
+    { key: "license", label: "License No" },
+    { key: "action", label: "Action", align: "center", width: "80px" },
+];

@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import RHSelect from "../../components/inputs/RHF/Select.RHF";
-import RegisterWarehouseNode from '../../components/admin/register/RegisterWarehouseNode';
-import RegisterPartnerNode from '../../components/admin/register/RegisterPartnerNode';
-import masterData from '../../Backend/master.backend';
-import { RHFToFormData } from '../../utils/RHFtoFD';
+import RHSelect from "../../../components/inputs/RHF/Select.RHF";
+import RegisterWarehouseNode from '../../../components/admin/register/RegisterWarehouseNode';
+import RegisterPartnerNode from '../../../components/admin/register/RegisterPartnerNode';
+import masterData from '../../../Backend/master.backend';
+import { RHFToFormData } from '../../../utils/RHFtoFD';
 import path from 'path';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import business from '../../Backend/business.fetch';
+import business from '../../../Backend/business.fetch';
 
-const RegisterNode = () => {
+const RegisterLocation = () => {
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -18,15 +18,7 @@ const RegisterNode = () => {
     const { data: businessNodes, isLoading: businessNodeLoading } = business.TQTenantBusinessNodeList();
     const { mutateAsync: registerWarehouse, isLoading: isPendingWarehouse } = masterData.TQCreateMaster(["tenantRegisteredNodeList"]);
 
-    const {
-        register,
-        control,
-        handleSubmit,
-        formState: { errors },
-        watch,
-        reset,
-        setValue
-    } = useForm({
+    const { register, control, handleSubmit, formState: { errors }, watch, reset, setValue } = useForm({
         defaultValues: {
             node: null
         }
@@ -48,6 +40,7 @@ const RegisterNode = () => {
                 if (mfg) navigate(-1);
 
                 reset({ node: null });
+                navigate("/admin/location")
             }
         } catch (error) {
             console.log(error)
@@ -117,4 +110,4 @@ const RegisterNode = () => {
     )
 }
 
-export default RegisterNode
+export default RegisterLocation

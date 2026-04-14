@@ -24,6 +24,7 @@ import {
     Outward,
     SuperAdmin,
     Order,
+    OpenForum
 } from './menu';
 import Production from './menu/production.menu';
 
@@ -68,7 +69,7 @@ const NavBar = () => {
 
             {/* dashboard */}
             {
-                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Dashboard location={location} />
+                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <OpenForum location={location} />
             }
 
             {/* master */}
