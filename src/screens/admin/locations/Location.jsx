@@ -8,13 +8,15 @@ import IconPencil from '../../../components/Icon/IconPencil';
 import IconTrashLines from '../../../components/Icon/IconTrashLines';
 import { LOCATION_LIST_COLUMN } from '../../../utils/helper';
 import business from '../../../Backend/business.fetch';
+import masterData from '../../../Backend/master.backend';
+import { headLink_register } from './helper';
+import { confirmation } from '../../../utils/alerts';
 
-const headLink = [
-  { title: "All Locations" }
-]
+
 
 const Location = () => {
   const navigate = useNavigate();
+  const { mutateAsync: deleteData, isPending: deleteIsPending } = masterData.TQDeleteMaster(["tenantRegisteredNodeList"]);
 
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,18 +27,34 @@ const Location = () => {
     ...(search && { search }),
     page: currentPage,
     limit: limit,
-  }
+  };
   const { data: locations, isLoading } = business.TQTenantRegisteredNodeList(params);
   const data = locations?.data;
   const isEmpty = data?.length === 0;
 
-  console.log(data)
+  // console.log(data);
+
+  function editLocation(id) {
+    navigate(`update/${id}`);
+  }
+
+
+  /** handel delete location */
+  function deleteLocation(id) {
+    confirmation("Are you sure you want to delete this location?")
+      .then((res) => {
+        if (res) {
+          deleteData({ path: `business/delete/${id}` })
+        }
+      });
+  }
+
 
   return (
     <div className='space-y-4'>
       {/* Header Section */}
       <ComponentHeader
-        headerLink={headLink}
+        headerLink={headLink_register}
         primaryText='All Locations'
         searchPlaceholder='Search Location...'
         setDebounceSearch={setSearch}
@@ -86,13 +104,14 @@ const Location = () => {
                         <CustomeButton onClick={(e) => {
                           e.stopPropagation();
                           // TODO: Handle Edit action
+                          editLocation(item.id);
                         }}>
                           <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                         </CustomeButton>
 
                         <CustomeButton onClick={(e) => {
                           e.stopPropagation();
-                          // TODO: Handle Delete action
+                          deleteLocation(item.id);
                         }}>
                           <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                         </CustomeButton>

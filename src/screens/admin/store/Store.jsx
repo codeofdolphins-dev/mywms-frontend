@@ -119,7 +119,7 @@ const Store = () => {
     }
 
     const handelShow = (item) => {
-        console.log(item)
+        // console.log(item)
         setEditData(item);
         setSelectedStore(true);
     }

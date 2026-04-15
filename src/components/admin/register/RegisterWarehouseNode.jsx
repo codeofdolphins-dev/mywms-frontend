@@ -9,13 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import fetchData from '../../../Backend/fetchData.backend';
 
-const RegisterWarehouseNode = ({
-    control,
-    register,
-    errors,
-    watch,
-    header
-}) => {
+const RegisterWarehouseNode = ({ control, register, errors, watch, header }) => {
     const stateData = useSelector(state => state.location);
     const navigate = useNavigate();
     const password = watch("password");
@@ -206,7 +200,7 @@ const RegisterWarehouseNode = ({
             </div>
 
 
-            {/* 6th row */}
+            {/* 5th row */}
             <div className='grid grid-cols-1 gap-4'>
                 <TextArea
                     label="Description"

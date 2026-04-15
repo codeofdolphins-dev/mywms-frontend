@@ -13,13 +13,14 @@ class Business {
         });
     };
 
-    TQTenantRegisteredNodeList(params = {}) {
+    TQTenantRegisteredNodeList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["tenantRegisteredNodeList", params],
             queryFn: async () => {
                 const res = await API.get("/business/registered-node-list", { params });
                 return res.data;
             },
+            enabled: isEnabled
         });
     };
 

@@ -74,6 +74,7 @@ function App() {
                         <Route path="location" >
                             <Route index element={<Location />} />
                             <Route path="register" element={<RegisterLocation />} />
+                            <Route path="update/:id" element={<RegisterLocation />} />
                         </Route>
 
                         {/* store */}
