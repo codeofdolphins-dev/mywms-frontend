@@ -121,8 +121,8 @@ const OrderDetails = () => {
     }
 
     const fgStore = watch("fg_store");
+    
     async function assignFgStore() {
-
         const item = data?.data?.items?.map((item) => {
             return {
                 sales_order_item_id: item.id,
@@ -297,7 +297,7 @@ const OrderDetails = () => {
                                                 color='green'
                                                 size="compact-md"
                                                 className='rounded-full'
-                                                onClick={() => handleApprove(data?.data?.id, data?.data?.bpo_id)}
+                                                onClick={() => handleApprove(data?.data?.id, data?.data?.central_bpo_id)}
                                             >
                                                 Approve
                                             </Button>

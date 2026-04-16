@@ -405,3 +405,13 @@ export const LOCATION_LIST_COLUMN = [
     { key: "license", label: "License No" },
     { key: "action", label: "Action", align: "center", width: "80px" },
 ];
+
+
+export const INWARD_COLUMN = [
+    { key: "no", label: "#", align: "center", width: "200px", },
+    { key: "po_no", label: "PO No", align: "center", width: "200px", },
+    { key: "date", label: "Receive Date", width: "150px", align: "center" },
+    { key: "items", label: "Total Items", align: "center" },
+    { key: "status", label: "Status", width: "150px" },
+    { key: "createdBy", label: "Created By" },
+];
