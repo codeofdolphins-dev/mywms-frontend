@@ -164,7 +164,7 @@ function App() {
                     {/* inward */}
                     <Route path="inward" >
                         <Route index element={<Inward />} />
-                        <Route path="create" element={<CreateInward />} />
+                        <Route path="create/:poNo" element={<CreateInward />} />
                     </Route>
 
 

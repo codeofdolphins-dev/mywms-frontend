@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FiHome, FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'
 import { QUOTATION_RECEIVE_COLUMN } from '../../utils/helper'
@@ -24,6 +24,7 @@ import { Button } from '@mantine/core'
 import Loader from '../../components/loader/Loader'
 import NoRecord from '../../components/NoRecord'
 import { FcDocument } from 'react-icons/fc'
+import inward from '../../Backend/inward.fetch'
 // import Loader from '../../components/loader/Loader'
 
 
@@ -33,17 +34,11 @@ const headerLink = [
 ]
 
 const CreateInward = () => {
-    const [searchParams] = useSearchParams();
-    const poNo = searchParams.get("s") ?? "";
+    const { poNo } = useParams();
+    const location = useLocation();
+    const grn_no = location.state?.grn_no;
 
     const [activeTab, setActiveTab] = useState(1);
-    const [debounceSearch, setDebounceSearch] = useState("");
-
-    /** set reset search value */
-    useEffect(() => {
-        if (debounceSearch.length > 0) return;
-        setDebounceSearch(poNo);
-    }, [poNo, debounceSearch]);
 
     /** for accordian */
     const [active, setActive] = useState('0');
@@ -55,9 +50,11 @@ const CreateInward = () => {
 
     const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster();
 
-    const { data, isLoading } = order.TQPurchaseOrderItemDetails({ poNo: debounceSearch, noLimit: true }, Boolean(debounceSearch));
+    const { data, isLoading } = order.TQPurchaseOrderItemDetails({ poNo, noLimit: true }, Boolean(poNo));
     const details = data?.data;
     const purchasOrderItems = details?.items;
+
+    const { data: inwardData, isLoading: inwardLoading } = inward.TQInwardItemDetails(poNo, Boolean(poNo));
 
     const isEmpty = data?.data?.items?.length > 0 ? false : true;
     const isInternal = data?.data?.type === "internal" ? true : false;
@@ -81,31 +78,58 @@ const CreateInward = () => {
 
     /** prepare form for multiple items DYNAMIC */
     useEffect(() => {
-        if (!purchasOrderItems?.length) return;
+        const sourceData = inwardData?.data;
+        if (!sourceData?.length) return;
 
-        const items = purchasOrderItems.map(item => ({
-            po_item_id: item?.id,
-            product_id: item?.product_id,
-            ...(item?.poi_product?.barcode && { barcode: item?.poi_product?.barcode }),
-            qty: item?.qty,
-            d_qty: "",
-            s_qty: "",
-            r_qty: "",
-            m_date: "",
-            e_date: ""
-        }));
+        const items = sourceData.map(item => {
+            // Find the matching PO item using the buyer_product_id
+            const matchingPoItem = purchasOrderItems?.find(
+                (poItem) => poItem.buyer_product_id === item.buyer_product_id
+            );
+
+            const allocations = item.outwardItemAllocations?.length > 0
+                ? item.outwardItemAllocations.map(alloc => ({
+                    batch_no: alloc.batch_no || "",
+                    qty: item.requested_qty,
+                    d_qty: "",
+                    s_qty: "",
+                    r_qty: item.requested_qty,
+                    e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
+                }))
+                : [{
+                    batch_no: "",
+                    qty: item.requested_qty,
+                    d_qty: "",
+                    s_qty: "",
+                    r_qty: item.requested_qty,
+                    e_date: ""
+                }];
+
+            return {
+                // id: item.id,
+                po_item_id: matchingPoItem ? matchingPoItem.id : null,
+                vendor_product_id: item.vendor_product_id,
+                buyer_product_id: item.buyer_product_id,
+                allocations
+            };
+        });
 
         reset({ items });
-    }, [purchasOrderItems, reset]);
+    }, [inwardData?.data, purchasOrderItems, reset]);
 
 
     async function submitForm(data) {
-        if (!details?.po_no) return;
+        if (!details?.po_no || !grn_no) {
+            warningAlert("Missing PO Number or GRN Number");
+            return;
+        }
 
-        data.po_no = details?.po_no;
-        console.log(data);
+        data.po_no = details?.po_no || poNo;
+        data.grn_no = grn_no;
 
-        const res = await createData({ path: "/inward/create", formData: data });
+        console.log("Submitting Form Data:", data);
+
+        // const res = await createData({ path: "/inward/create", formData: data });
     };
 
     /** status color change helper */
@@ -124,18 +148,15 @@ const CreateInward = () => {
         <div>
             <ComponentHeader
                 headerLink={headerLink}
-                searchPlaceholder='Search by name or description...'
-                setDebounceSearch={setDebounceSearch}
                 addButton={false}
-                className='mb-2 justify-between'
+                showSearch={false}
             />
 
             {!data ?
                 <NoRecord />
-
                 : <form onSubmit={handleSubmit(submitForm)}>
-                    <div className="panel space-y-6">
-                        
+                    <div className="panel space-y-6 mt-2">
+
                         {/* detail section */}
                         <div className="max-h-56 overflow-y-auto">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -286,62 +307,64 @@ const CreateInward = () => {
                             </div>
                         </div>
 
-                        
-                        {/* accordian section */}
-                        <div className="max-h-96 overflow-auto">
-                            <div className="space-y-2">
-                                {fields?.map((field, idx) => {
-                                    const item = purchasOrderItems?.[idx]; // 🔗 FULL DATA
-                                    const product = item?.poi_product;
 
-                                    // console.log(item)
+                        {/* accordian section */}
+                        <div className="max-h-96 overflow-auto shadow-sm">
+                            <div className="space-y-4">
+                                {fields?.map((field, idx) => {
+                                    const item = inwardData?.data?.[idx]; // 🔗 FULL DATA
+                                    const product = item?.buyer_product_details;
+
+                                    if (!item) return null;
+
+                                    const reqQtyNum = Number(item.requested_qty) || 0;
 
                                     return (
                                         <div
-                                            className={`border border-[#d3d3d3] rounded `}
-                                            key={idx}
+                                            className={`border border-[#d3d3d3] rounded bg-white overflow-hidden`}
+                                            key={field.id}
                                         >
-                                            {/* supplier listing */}
+                                            {/* product listing */}
                                             <div
-                                                className={`flex items-center justify-between cursor-pointer`}
+                                                className={`flex items-center justify-between cursor-pointer px-4 bg-gray-50`}
                                                 onClick={() => togglePara(item)}
                                             >
-                                                <table>
+                                                <table className="w-full">
                                                     <thead>
                                                         <tr
-                                                            className={`py-1 w-full flex items-center justify-between ${active === `${item?.id}` ? '!text-primary' : ''
+                                                            className={`py-3 w-full flex items-center justify-between ${active === `${item?.id}` ? 'text-blue-600' : 'text-gray-700'
                                                                 }`}
                                                         >
                                                             {/* 1️⃣ barcode */}
                                                             {product?.barcode &&
-                                                                <th className="w-[20%] text-start break-words !pr-0">
+                                                                <th className="w-[20%] text-start break-words !pr-0 font-medium">
                                                                     {product?.barcode}
                                                                 </th>
                                                             }
 
                                                             {/* 2️⃣ name */}
-                                                            <th className="w-[10%] text-start truncate">
+                                                            <th className="w-[20%] text-start truncate font-semibold">
                                                                 {product?.name}
                                                             </th>
 
-                                                            {/* 3️⃣ brand */}
-                                                            <th className="w-[10%] text-center truncate !px-0">
-                                                                {product?.brand}
+                                                            {/* 3️⃣ sku */}
+                                                            <th className="w-[20%] text-start truncate !px-0 font-mono text-xs">
+                                                                {product?.sku}
                                                             </th>
 
-                                                            {/* 4️⃣ category */}
-                                                            <th className="w-[5%] text-start truncate !px-0">
-                                                                {product?.category}
+                                                            {/* 4️⃣ product_type */}
+                                                            <th className="w-[15%] text-start truncate !px-0 uppercase text-[11px] font-bold tracking-wider">
+                                                                {product?.product_type}
                                                             </th>
 
-                                                            {/* 5️⃣ sub_category */}
-                                                            <th className="w-[5%] text-start truncate !px-0">
-                                                                {product?.sub_category}
+                                                            {/* 5️⃣ requested_qty */}
+                                                            <th className="w-[15%] text-start truncate !px-0">
+                                                                Req. Qty: <span className="font-bold">{item.requested_qty} {product?.unit_type}</span>
                                                             </th>
 
                                                             {/* 6️⃣ Expand icon */}
-                                                            <th className="w-[10%] flex justify-center !px-0">
-                                                                <div className={`${active === `${item?.id}` ? 'rotate-180' : ''}`}>
+                                                            <th className="w-[10%] flex justify-end !px-0">
+                                                                <div className={`transition-transform duration-200 ${active === `${item?.id}` ? 'rotate-180 text-blue-600' : 'text-gray-400'}`}>
                                                                     <IconCaretDown className='w-6 h-6' />
                                                                 </div>
                                                             </th>
@@ -351,121 +374,121 @@ const CreateInward = () => {
                                                 </table>
                                             </div>
 
-                                            {/* table view */}
+                                            {/* table view mapping over allocations */}
                                             <AnimateHeight duration={300} height={active === `${item?.id}` ? 'auto' : 0}>
-                                                <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
+                                                <div className="space-y-4 p-5 text-gray-700 text-[13px] border-t border-[#d3d3d3] bg-white">
+                                                    {field.allocations?.map((alloc, allocIdx) => (
+                                                        <div key={allocIdx} className="grid grid-cols-6 gap-4 items-start border-b border-gray-100 pb-5 mb-2 last:border-0 last:pb-0 last:mb-0">
+                                                            {/* Batch No */}
+                                                            <div className="">
+                                                                <Input
+                                                                    label="Batch No:"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.batch_no`)}
+                                                                />
+                                                            </div>
 
-                                                    <div className="grid grid-cols-6 space-x-5">
-                                                        {/* Order Qty */}
-                                                        <div className="">
-                                                            <Input
-                                                                label="Order Qty:"
-                                                                // labelPosition="inline"
-                                                                {...register(`items.${idx}.qty`)}
-                                                                disabled={true}
-                                                                required={true}
-                                                            />
-                                                        </div>
+                                                            {/* Order Qty */}
+                                                            <div className="">
+                                                                <Input
+                                                                    label="Alloc Qty:"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.qty`)}
+                                                                    disabled={true}
+                                                                    required={true}
+                                                                />
+                                                            </div>
 
-                                                        {/* Damage Qty */}
-                                                        <div className="">
-                                                            <Input
-                                                                label="Damage Qty:"
-                                                                // labelPosition="inline"
-                                                                placeholder="Enter damage qty"
-                                                                {...register(`items.${idx}.d_qty`, {
-                                                                    min: {
-                                                                        value: 0,
-                                                                        message: "Damage qty cannot be negative"
-                                                                    },
-                                                                    validate: (value) => value <= item.qty || "Damage qty cannot exceed available qty",
-                                                                    pattern: {
-                                                                        value: /^(0|[1-9]\d*)$/,
-                                                                        message: "Only numbers allowed"
-                                                                    },
-                                                                })}
-                                                                error={errors?.items?.[idx]?.d_qty?.message}
-                                                            />
-                                                        </div>
-
-                                                        {/* Shortage Qty */}
-                                                        <div className="">
-                                                            <Input
-                                                                label="Shortage Qty:"
-                                                                // labelPosition="inline"
-                                                                placeholder="Enter shortage qty"
-                                                                {...register(`items.${idx}.s_qty`, {
-                                                                    min: {
-                                                                        value: 0,
-                                                                        message: "Damage qty cannot be negative"
-                                                                    },
-                                                                    validate: (value) => value <= item.qty || "Shortage qty cannot exceed available qty",
-                                                                    pattern: {
-                                                                        value: /^(0|[1-9]\d*)$/,
-                                                                        message: "Only numbers allowed"
-                                                                    }
-                                                                })}
-                                                                error={errors?.items?.[idx]?.s_qty?.message}
-                                                            />
-                                                        </div>
-
-                                                        {/* Receive Qty */}
-                                                        <div className="">
-                                                            <Input
-                                                                label="Receive Qty:"
-                                                                // labelPosition="inline"
-                                                                placeholder="Enter receive qty"
-                                                                {...register(`items.${idx}.r_qty`, {
-                                                                    min: {
-                                                                        value: 0,
-                                                                        message: "Receive qty cannot be negative"
-                                                                    },
-                                                                    validate: {
-                                                                        notEmpty: (value) => value !== "" || "This field required!!!",
-                                                                        notExceedBase: (value) => value <= item.qty || "Receive qty cannot exceed available qty",
-                                                                        invalideEntry: (value) => {
-                                                                            const d_qty = Number(getValues(`items.${idx}.d_qty`));
-                                                                            const s_qty = Number(getValues(`items.${idx}.s_qty`));
-                                                                            const total = d_qty + s_qty + Number(value || 0);
-
-                                                                            return total <= item.qty || "";
+                                                            {/* Damage Qty */}
+                                                            <div className="">
+                                                                <Input
+                                                                    label="Damage Qty:"
+                                                                    placeholder="0"
+                                                                    className="text-red-500"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
+                                                                        min: {
+                                                                            value: 0,
+                                                                            message: "Cannot be negative"
                                                                         },
-                                                                    },
-                                                                    pattern: {
-                                                                        value: /^(0|[1-9]\d*)$/,
-                                                                        message: "Only numbers allowed"
-                                                                    }
-                                                                })}
-                                                                required={true}
-                                                                error={errors?.items?.[idx]?.r_qty?.message}
-                                                            />
-                                                        </div>
+                                                                        validate: (value) => Number(value || 0) <= reqQtyNum || "Exceeds max req qty",
+                                                                        pattern: {
+                                                                            value: /^(0|[1-9]\d*(\.\d+)?)$/,
+                                                                            message: "Numbers only"
+                                                                        },
+                                                                    })}
+                                                                    error={errors?.items?.[idx]?.allocations?.[allocIdx]?.d_qty?.message}
+                                                                />
+                                                            </div>
 
-                                                        {/* Manufacturing Date */}
-                                                        <div className="">
-                                                            <Input
-                                                                type="date"
-                                                                label="Mfg. Date:"
-                                                                {...register(`items.${idx}.m_date`)}
-                                                            />
-                                                        </div>
+                                                            {/* Shortage Qty */}
+                                                            <div className="">
+                                                                <Input
+                                                                    label="Shortage Qty:"
+                                                                    placeholder="0"
+                                                                    className="text-red-500"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
+                                                                        min: {
+                                                                            value: 0,
+                                                                            message: "Cannot be negative"
+                                                                        },
+                                                                        validate: (value) => Number(value || 0) <= reqQtyNum || "Exceeds max req qty",
+                                                                        pattern: {
+                                                                            value: /^(0|[1-9]\d*(\.\d+)?)$/,
+                                                                            message: "Numbers only"
+                                                                        }
+                                                                    })}
+                                                                    error={errors?.items?.[idx]?.allocations?.[allocIdx]?.s_qty?.message}
+                                                                />
+                                                            </div>
 
-                                                        {/* Expiry Date */}
-                                                        <div className="">
-                                                            <Input
-                                                                type="date"
-                                                                label="Expiry Date:"
-                                                                {...register(`items.${idx}.e_date`)}
-                                                            />
-                                                        </div>
-                                                    </div>
+                                                            {/* Receive Qty */}
+                                                            <div className="">
+                                                                <Input
+                                                                    label="Receive Qty:"
+                                                                    placeholder="0"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.r_qty`, {
+                                                                        min: {
+                                                                            value: 0,
+                                                                            message: "Cannot be negative"
+                                                                        },
+                                                                        validate: {
+                                                                            notEmpty: (value) => value !== "" || "Required!!!",
+                                                                            notExceedBase: (value) => Number(value || 0) <= reqQtyNum || "Exceeds max qty",
+                                                                            invalideEntry: (value) => {
+                                                                                const d_qty = Number(getValues(`items.${idx}.allocations.${allocIdx}.d_qty`) || 0);
+                                                                                const s_qty = Number(getValues(`items.${idx}.allocations.${allocIdx}.s_qty`) || 0);
+                                                                                const total = d_qty + s_qty + Number(value || 0);
 
-                                                    {
-                                                        (errors?.items?.[idx]?.r_qty?.type === "invalideEntry") &&
-                                                        <div className="flex items-center justify-center">
-                                                            <p className="text-lg text-danger">Invalide Qty!!!</p>
+                                                                                return total <= reqQtyNum || "";
+                                                                            },
+                                                                        },
+                                                                        pattern: {
+                                                                            value: /^(0|[1-9]\d*(\.\d+)?)$/,
+                                                                            message: "Numbers only"
+                                                                        }
+                                                                    })}
+                                                                    required={true}
+                                                                    error={errors?.items?.[idx]?.allocations?.[allocIdx]?.r_qty?.message}
+                                                                />
+                                                            </div>
+
+                                                            {/* Expiry Date */}
+                                                            <div className="">
+                                                                <Input
+                                                                    type="date"
+                                                                    label="Expiry Date:"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.e_date`)}
+                                                                />
+                                                            </div>
                                                         </div>
-                                                    }
+                                                    ))}
+
+                                                    {/* Total Validation Display - loops error check */}
+                                                    {field.allocations?.map((alloc, allocIdx) => (
+                                                        errors?.items?.[idx]?.allocations?.[allocIdx]?.r_qty?.type === "invalideEntry" ? (
+                                                            <div key={`err-${allocIdx}`} className="flex items-center justify-center p-2 bg-red-50 text-red-600 rounded">
+                                                                <p className="text-sm font-bold">Invalid Qty on row {allocIdx + 1}!!! Ensure Receive + Damage + Shortage does not exceed Requested Qty.</p>
+                                                            </div>
+                                                        ) : null
+                                                    ))}
 
                                                 </div>
                                             </AnimateHeight>
@@ -476,32 +499,13 @@ const CreateInward = () => {
                         </div>
 
                         {/* button section */}
-                        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-5 !mt-14">
-                            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <Input
-                                    label="Batch No:"
-                                    labelPosition="inline"
-                                    labelcolor="text-black whitespace-nowrap"
-                                    placeholder="Enter batch number..."
-                                    {...register("batch")}
-                                />
-                                <Input
-                                    type="date"
-                                    label="Receive Date:"
-                                    labelPosition="inline"
-                                    labelcolor="text-black whitespace-nowrap"
-                                    placeholder="Enter batch number..."
-                                    {...register("received_date")}
-                                />
-                            </div>
-                            <div className="">
-                                <Button
-                                    type='submit'
-                                    loading={createDataPending}
-                                >
-                                    Receive & Post
-                                </Button>
-                            </div>
+                        <div className="flex justify-end">
+                            <Button
+                                type='submit'
+                                loading={createDataPending}
+                            >
+                                Receive & Post
+                            </Button>
                         </div>
                     </div>
                 </form >
