@@ -84,7 +84,7 @@ const Dashboard = () => {
                                         <td className="px-3 py-3">
                                             <div className="flex items-center gap-1.5">
                                                 <FiMapPin size={13} className="text-danger shrink-0" />
-                                                <span className="text-xs truncate max-w-[130px]">{item?.meta?.location || "N/A"}</span>
+                                                <span className="text-xs truncate max-w-[130px]">{item?.meta?.nodeDetails?.location || "N/A"}</span>
                                             </div>
                                         </td>
                                     </tr>

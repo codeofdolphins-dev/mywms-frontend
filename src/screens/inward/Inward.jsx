@@ -63,18 +63,18 @@ const Inward = () => {
                             return (<TableRow
                                 key={idx}
                                 columns={INWARD_COLUMN}
-                                onClick={() => { navigate(`/inward/create/${item?.purchase_order}`, { state: { grn_no: item?.grn_no } }) }}
+                                onClick={() => { navigate(`/inward/create/${item?.purchase_order}`, { state: { grn_no: item?.grn_no, status: item?.status } }) }}
                                 row={{
                                     no: item?.grn_no,
                                     po_no: item?.purchase_order,
-                                    date: utcToLocal(item?.received_date) || "-",
-                                    items: item?.purchasOrderItems?.length || "-",
+                                    date: utcToLocal(item?.received_date),
+                                    items: item?.grnLineItems?.length || "-",
                                     status: (
                                         <div>
                                             <span className={`badge whitespace-nowrap ${statusColor(item?.status)}`}>{item?.status?.toUpperCase()}</span>
                                         </div>
                                     ),
-                                    createdBy: item?.POcreatedBy?.name?.full_name,
+                                    createdBy: item?.creator?.name?.full_name,
                                 }}
                             />);
                         })

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FiHome, FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
-import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'
 import { QUOTATION_RECEIVE_COLUMN } from '../../utils/helper'
@@ -34,9 +34,10 @@ const headerLink = [
 ]
 
 const CreateInward = () => {
+    const navigate = useNavigate();
     const { poNo } = useParams();
     const location = useLocation();
-    const grn_no = location.state?.grn_no;
+    const { grn_no, status } = location.state;
 
     const [activeTab, setActiveTab] = useState(1);
 
@@ -53,19 +54,15 @@ const CreateInward = () => {
     const { data, isLoading } = order.TQPurchaseOrderItemDetails({ poNo, noLimit: true }, Boolean(poNo));
     const details = data?.data;
     const purchasOrderItems = details?.items;
+    const vendor = details?.poVendor;
+
 
     const { data: inwardData, isLoading: inwardLoading } = inward.TQInwardItemDetails(poNo, Boolean(poNo));
-
-    const isEmpty = data?.data?.items?.length > 0 ? false : true;
-    const isInternal = data?.data?.type === "internal" ? true : false;
-    // const purchasOrderItems = data?.data?.items ?? [];
-    const vendor = data?.data?.vendor;
-
 
     // console.log(details)
 
 
-    const { handleSubmit, register, formState: { errors }, watch, control, reset, getValues } = useForm({
+    const { handleSubmit, register, formState: { errors }, watch, control, reset, getValues, setValue } = useForm({
         defaultValues: {
             items: []
         }
@@ -119,17 +116,18 @@ const CreateInward = () => {
 
 
     async function submitForm(data) {
-        if (!details?.po_no || !grn_no) {
-            warningAlert("Missing PO Number or GRN Number");
+        if (!grn_no) {
+            warningAlert("Missing GRN Number");
             return;
         }
 
-        data.po_no = details?.po_no || poNo;
         data.grn_no = grn_no;
+        if (poNo) data.po_no = poNo;
 
-        console.log("Submitting Form Data:", data);
-
-        // const res = await createData({ path: "/inward/create", formData: data });
+        const res = await createData({ path: "/inward/create", formData: data });
+        if (res.success) {
+            navigate("/inward");
+        }
     };
 
     /** status color change helper */
@@ -390,7 +388,7 @@ const CreateInward = () => {
                                                             {/* Order Qty */}
                                                             <div className="">
                                                                 <Input
-                                                                    label="Alloc Qty:"
+                                                                    label="Requested Qty:"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.qty`)}
                                                                     disabled={true}
                                                                     required={true}
@@ -404,6 +402,13 @@ const CreateInward = () => {
                                                                     placeholder="0"
                                                                     className="text-red-500"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
+                                                                        onChange: (e) => {
+                                                                            const d_qty = Number(e.target.value) || 0;
+                                                                            const s_qty = Number(getValues(`items.${idx}.allocations.${allocIdx}.s_qty`)) || 0;
+                                                                            const qty = Number(getValues(`items.${idx}.allocations.${allocIdx}.qty`)) || 0;
+                                                                            const new_r_qty = qty - d_qty - s_qty;
+                                                                            setValue(`items.${idx}.allocations.${allocIdx}.r_qty`, new_r_qty >= 0 ? new_r_qty : 0, { shouldValidate: true });
+                                                                        },
                                                                         min: {
                                                                             value: 0,
                                                                             message: "Cannot be negative"
@@ -425,6 +430,13 @@ const CreateInward = () => {
                                                                     placeholder="0"
                                                                     className="text-red-500"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
+                                                                        onChange: (e) => {
+                                                                            const s_qty = Number(e.target.value) || 0;
+                                                                            const d_qty = Number(getValues(`items.${idx}.allocations.${allocIdx}.d_qty`)) || 0;
+                                                                            const qty = Number(getValues(`items.${idx}.allocations.${allocIdx}.qty`)) || 0;
+                                                                            const new_r_qty = qty - d_qty - s_qty;
+                                                                            setValue(`items.${idx}.allocations.${allocIdx}.r_qty`, new_r_qty >= 0 ? new_r_qty : 0, { shouldValidate: true });
+                                                                        },
                                                                         min: {
                                                                             value: 0,
                                                                             message: "Cannot be negative"
@@ -499,14 +511,16 @@ const CreateInward = () => {
                         </div>
 
                         {/* button section */}
-                        <div className="flex justify-end">
-                            <Button
-                                type='submit'
-                                loading={createDataPending}
-                            >
-                                Receive & Post
-                            </Button>
-                        </div>
+                        {status !== "accepted" && (
+                            <div className="flex justify-end">
+                                <Button
+                                    type='submit'
+                                    loading={createDataPending}
+                                >
+                                    Receive & Post
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </form >
             }

@@ -1,4 +1,5 @@
 export const utcToLocal = (date) => {
+    if (!date) return "-";
     const newDate = new Date(date);
 
     // Check if invalid
