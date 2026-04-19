@@ -57,7 +57,7 @@ const CreateInward = () => {
     const vendor = details?.poVendor;
 
 
-    const { data: inwardData, isLoading: inwardLoading } = inward.TQInwardItemDetails(poNo, Boolean(poNo));
+    const { data: inwardData, isLoading: inwardLoading } = inward.TQInwardItemDetails(grn_no, Boolean(grn_no));
 
     // console.log(details)
 
@@ -75,38 +75,38 @@ const CreateInward = () => {
 
     /** prepare form for multiple items DYNAMIC */
     useEffect(() => {
-        const sourceData = inwardData?.data;
+        const sourceData = inwardData?.data?.grnLineItems;
         if (!sourceData?.length) return;
 
         const items = sourceData.map(item => {
-            // Find the matching PO item using the buyer_product_id
+            // Find the matching PO item using the product_id
             const matchingPoItem = purchasOrderItems?.find(
-                (poItem) => poItem.buyer_product_id === item.buyer_product_id
+                (poItem) => poItem.product_id === item.product_id
             );
 
-            const allocations = item.outwardItemAllocations?.length > 0
-                ? item.outwardItemAllocations.map(alloc => ({
+            const allocations = item.grnItemBatches?.length > 0
+                ? item.grnItemBatches.map(alloc => ({
                     batch_no: alloc.batch_no || "",
-                    qty: item.requested_qty,
+                    qty: alloc.received_qty || item.ordered_qty,
                     d_qty: "",
                     s_qty: "",
-                    r_qty: item.requested_qty,
+                    r_qty: alloc.received_qty || item.ordered_qty,
                     e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
                 }))
                 : [{
                     batch_no: "",
-                    qty: item.requested_qty,
+                    qty: item.ordered_qty,
                     d_qty: "",
                     s_qty: "",
-                    r_qty: item.requested_qty,
+                    r_qty: item.ordered_qty,
                     e_date: ""
                 }];
 
             return {
                 // id: item.id,
-                po_item_id: matchingPoItem ? matchingPoItem.id : null,
-                vendor_product_id: item.vendor_product_id,
-                buyer_product_id: item.buyer_product_id,
+                po_item_id: item.purchase_order_item_id || (matchingPoItem ? matchingPoItem.id : null),
+                vendor_product_id: item.product_id,
+                buyer_product_id: item.product_id,
                 allocations
             };
         });
@@ -123,11 +123,12 @@ const CreateInward = () => {
 
         data.grn_no = grn_no;
         if (poNo) data.po_no = poNo;
+        console.log(data)
 
-        const res = await createData({ path: "/inward/create", formData: data });
-        if (res.success) {
-            navigate("/inward");
-        }
+        // const res = await createData({ path: "/inward/create", formData: data });
+        // if (res.success) {
+        //     navigate("/inward");
+        // }
     };
 
     /** status color change helper */
@@ -163,16 +164,26 @@ const CreateInward = () => {
                                 <div className="bg-white border border-gray-100 rounded-xl overflow-hidden border-t-[3px] border-t-blue-600">
                                     <div className="flex items-center gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
                                         <FcDocument size={20} />
-                                        <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Purchase Order</span>
+                                        <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Good Receipt Note (GRN)</span>
                                         <span className={`badge ${statusColor(data?.data?.priority)}`}>{data?.data?.priority?.toUpperCase() || "N/A"}</span>
                                     </div>
                                     <table className="w-full text-[13px] border-collapse">
                                         <tbody>
                                             <tr className="border-b border-gray-100">
-                                                <td className="px-3.5 py-2 text-gray-400 w-[45%]">PO Number</td>
+                                                <td className="px-3.5 py-2 text-gray-400 w-[45%]">GRN Number</td>
                                                 <td className="px-3.5 py-2 font-medium text-right">
-                                                    <span className="font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                                                        #{data?.data?.po_no || "N/A"}
+                                                    #
+                                                    <span className="ml-1 font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
+                                                        {grn_no || "N/A"}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400 w-[45%]">Reference (PO)</td>
+                                                <td className="px-3.5 py-2 font-medium text-right">
+                                                    #
+                                                    <span className="ml-1 font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
+                                                        {data?.data?.po_no || "N/A"}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -310,12 +321,12 @@ const CreateInward = () => {
                         <div className="max-h-96 overflow-auto shadow-sm">
                             <div className="space-y-4">
                                 {fields?.map((field, idx) => {
-                                    const item = inwardData?.data?.[idx]; // 🔗 FULL DATA
-                                    const product = item?.buyer_product_details;
+                                    const item = inwardData?.data?.grnLineItems?.[idx]; // 🔗 FULL DATA
+                                    const product = item?.grnProduct;
 
                                     if (!item) return null;
 
-                                    const reqQtyNum = Number(item.requested_qty) || 0;
+                                    const reqQtyNum = Number(item.ordered_qty) || 0;
 
                                     return (
                                         <div
@@ -357,7 +368,7 @@ const CreateInward = () => {
 
                                                             {/* 5️⃣ requested_qty */}
                                                             <th className="w-[15%] text-start truncate !px-0">
-                                                                Req. Qty: <span className="font-bold">{item.requested_qty} {product?.unit_type}</span>
+                                                                Req. Qty: <span className="font-bold">{item.ordered_qty} {product?.unit_type}</span>
                                                             </th>
 
                                                             {/* 6️⃣ Expand icon */}
