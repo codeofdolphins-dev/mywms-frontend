@@ -73,6 +73,7 @@ const Quotation = () => {
     function handelEdit(id) {
         console.log(id)
     }
+
     async function handleDelete(id) {
         try {
             if (activeTab === 1) { }
@@ -86,6 +87,7 @@ const Quotation = () => {
             console.warn(error);
         }
     }
+
     function handelShow(items, idx = 0) {
         if (activeTab === 1) {
             setIsShowPreview(true);
@@ -193,11 +195,11 @@ const Quotation = () => {
                                                 <IconPencil className="text-success hover:scale-110 cursor-pointer" />
                                             </CustomeButton> */}
 
-                                            {/* <CustomeButton
-                                                    onClick={() => handleDelete(item.id)}
-                                                >
-                                                    <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                                </CustomeButton> */}
+                                            <CustomeButton
+                                                onClick={() => handleDelete(item.id)}
+                                            >
+                                                <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
 
                                             <CustomeButton
                                                 onClick={() => handelShow(item.quotationItem)}
@@ -267,9 +269,9 @@ const Quotation = () => {
                                                     <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                                 </CustomeButton>
 
-                                                {/* <CustomeButton onClick={() => handleDelete(item.id)}>
+                                                <CustomeButton onClick={() => handleDelete(item.id)}>
                                                     <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                                </CustomeButton> */}
+                                                </CustomeButton>
                                             </div>
                                         )
                                     }}

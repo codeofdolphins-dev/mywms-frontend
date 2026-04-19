@@ -4,7 +4,7 @@ import masterData from '../../Backend/master.backend'
 import { Button } from '@mantine/core';
 
 const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList", "rfqQuotationReceiveList"]);
 
 
     async function submit() {

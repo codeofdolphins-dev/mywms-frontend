@@ -18,8 +18,8 @@ const RFQPreview = ({
     setIsPreviewCardShow,
     setIsShowPreviewEX
 }) => {
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["rfqQuotationList"]);
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["rfqQuotationList"]);
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["rfqQuotationList", "appliedRfqList"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["rfqQuotationList", "appliedRfqList"]);
 
     const { data: productList, isLoading } = fetchData.TQProductList({ type: "finished" });
 

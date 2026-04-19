@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FiUser, FiMapPin, FiShoppingBag, FiCheckCircle } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
@@ -9,8 +9,9 @@ import ComponentHeader from '../../components/ComponentHeader';
 
 const OutwardDetails = () => {
     const { out_no } = useParams();
+    const navigate = useNavigate();
 
-    const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster();
+    const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["outwardDetails", "outwardList"]);
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
@@ -50,10 +51,10 @@ const OutwardDetails = () => {
             items: items
         };
 
-        console.log(payload);
-
         const res = await update({ path: "/outward/dispatch", formData: payload });
-        console.log(res);
+        if (res?.success) {
+            // navigate("/outward");
+        }
     }
 
 

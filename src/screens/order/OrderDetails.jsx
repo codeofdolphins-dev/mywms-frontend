@@ -121,7 +121,7 @@ const OrderDetails = () => {
     }
 
     const fgStore = watch("fg_store");
-    
+
     async function assignFgStore() {
         const item = data?.data?.items?.map((item) => {
             return {

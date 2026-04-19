@@ -57,7 +57,7 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
             <div className="relative bg-primary/10 dark:bg-primary/5 p-6 pb-8">
                 <div className="flex items-start justify-between relative z-10">
                     <div className="flex gap-4 items-start">
-                        <div className="w-14 h-14 bg-white dark:bg-black rounded-xl shadow-sm border border-[#e0e6ed] dark:border-[#1b2e4b] flex items-center justify-center p-1 relative z-20 overflow-hidden shrink-0">
+                        <div className="w-14 h-14 bg-white rounded-xl shadow-sm border border-[#e0e6ed] flex items-center justify-center p-1 relative z-20 overflow-hidden shrink-0">
                             <ImageComponent
                                 src={details?.meta?.image}
                                 dummyImage={3}

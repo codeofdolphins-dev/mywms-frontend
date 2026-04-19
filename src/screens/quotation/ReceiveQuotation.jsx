@@ -81,8 +81,8 @@ const ReceiveQuotation = () => {
         page: currentPage,
         limit: limit,
     };
-    const { data, isLoading } = quotation.TQReceiveQuotationList(params, !isManufacture);
-    const { data: rfqQuotationData, isLoading: rfqQuotationLoading } = rfqQuotation.TQRfqQuotationReceiveList(params, isManufacture);
+    const { data, isLoading } = quotation.TQReceiveQuotationList(params, (!isManufacture && Boolean(debounceSearch)));
+    const { data: rfqQuotationData, isLoading: rfqQuotationLoading } = rfqQuotation.TQRfqQuotationReceiveList(params, (isManufacture && Boolean(debounceSearch)));
 
 
 
