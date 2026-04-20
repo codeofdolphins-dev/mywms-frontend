@@ -63,7 +63,7 @@ const Inward = () => {
                             return (<TableRow
                                 key={idx}
                                 columns={INWARD_COLUMN}
-                                onClick={() => { navigate(`/inward/create/${item?.purchase_order}`, { state: { grn_no: item?.grn_no, status: item?.status } }) }}
+                                onClick={() => { navigate(`/inward/create/${item?.grn_no}`) }}
                                 row={{
                                     no: item?.grn_no,
                                     po_no: item?.purchase_order,

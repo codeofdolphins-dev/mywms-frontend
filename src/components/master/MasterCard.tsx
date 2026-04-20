@@ -9,6 +9,7 @@ import { TbCircleDottedLetterN } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import { GiWeight } from "react-icons/gi";
 import { FaBoxArchive } from "react-icons/fa6";
+import { FaSitemap } from 'react-icons/fa';
 
 
 const icons: Record<string, any> = {
@@ -20,6 +21,7 @@ const icons: Record<string, any> = {
     supplier: FaTruckRampBox,
     unit: GiWeight,
     packageType: FaBoxArchive,
+    bom: FaSitemap
 };
 
 type MasterCardProps = {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FiHome, FiPlus } from 'react-icons/fi'
 import SearchInput from '../../components/inputs/SearchInput'
-import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'
 import { QUOTATION_RECEIVE_COLUMN } from '../../utils/helper'
@@ -17,15 +17,13 @@ import { currencyFormatter } from '../../utils/currencyFormatter'
 import { warningAlert } from '../../utils/alerts'
 import { utcToLocal } from '../../utils/UTCtoLocal'
 import { MdCurrencyRupee } from 'react-icons/md'
-import { order } from '../../Backend/order.fetch'
 import Input from '../../components/inputs/Input'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { Button } from '@mantine/core'
 import Loader from '../../components/loader/Loader'
 import NoRecord from '../../components/NoRecord'
 import { FcDocument } from 'react-icons/fc'
 import inward from '../../Backend/inward.fetch'
-// import Loader from '../../components/loader/Loader'
+import { Button } from '@mantine/core'
 
 
 const headerLink = [
@@ -35,11 +33,11 @@ const headerLink = [
 
 const CreateInward = () => {
     const navigate = useNavigate();
-    const { poNo } = useParams();
-    const location = useLocation();
-    const { grn_no, status } = location.state;
+    const { grn_no } = useParams();
 
-    const [activeTab, setActiveTab] = useState(1);
+
+    const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster(["inwardItemDetails"]);
+
 
     /** for accordian */
     const [active, setActive] = useState('0');
@@ -49,24 +47,16 @@ const CreateInward = () => {
         });
     };
 
-    const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster();
-
-    const { data, isLoading } = order.TQPurchaseOrderItemDetails({ poNo, noLimit: true }, Boolean(poNo));
-    const details = data?.data;
-    const purchasOrderItems = details?.items;
-    const vendor = details?.poVendor;
-
 
     const { data: inwardData, isLoading: inwardLoading } = inward.TQInwardItemDetails(grn_no, Boolean(grn_no));
-
-    // console.log(details)
+    const vendor = inwardData?.data?.vendor;
+    const status = inwardData?.data?.status;
 
 
     const { handleSubmit, register, formState: { errors }, watch, control, reset, getValues, setValue } = useForm({
-        defaultValues: {
-            items: []
-        }
+        defaultValues: { items: [] }
     });
+
     const { fields } = useFieldArray({
         control,
         name: "items"
@@ -79,18 +69,15 @@ const CreateInward = () => {
         if (!sourceData?.length) return;
 
         const items = sourceData.map(item => {
-            // Find the matching PO item using the product_id
-            const matchingPoItem = purchasOrderItems?.find(
-                (poItem) => poItem.product_id === item.product_id
-            );
 
             const allocations = item.grnItemBatches?.length > 0
                 ? item.grnItemBatches.map(alloc => ({
+                    grn_item_batch_id: alloc.id,
                     batch_no: alloc.batch_no || "",
-                    qty: alloc.received_qty || item.ordered_qty,
+                    qty: alloc.received_qty,
                     d_qty: "",
                     s_qty: "",
-                    r_qty: alloc.received_qty || item.ordered_qty,
+                    r_qty: alloc.received_qty,
                     e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
                 }))
                 : [{
@@ -103,18 +90,39 @@ const CreateInward = () => {
                 }];
 
             return {
-                // id: item.id,
-                po_item_id: item.purchase_order_item_id || (matchingPoItem ? matchingPoItem.id : null),
-                vendor_product_id: item.product_id,
-                buyer_product_id: item.product_id,
+                grn_item_id: item.id,
+                ...(item.purchase_order_item_id && { po_item_id: item.purchase_order_item_id }),
+                product_id: item.product_id,
                 allocations
             };
         });
 
         reset({ items });
-    }, [inwardData?.data, purchasOrderItems, reset]);
+    }, [inwardData?.data, reset]);
 
 
+    /** handle submit form error */
+    const onSubmitError = (errors) => {
+        // If there are errors in the items arrays, open the first accordion that has an error
+        if (errors?.items) {
+            let errorIndex = -1;
+            if (Array.isArray(errors.items)) {
+                errorIndex = errors.items.findIndex(err => err);
+            } else {
+                const keys = Object.keys(errors.items);
+                if (keys.length > 0) errorIndex = keys[0];
+            }
+
+            if (errorIndex !== -1) {
+                const item = inwardData?.data?.grnLineItems?.[errorIndex];
+                if (item) {
+                    setActive(String(item.id));
+                }
+            }
+        }
+    };
+
+    /** handle submit form */
     async function submitForm(data) {
         if (!grn_no) {
             warningAlert("Missing GRN Number");
@@ -122,26 +130,24 @@ const CreateInward = () => {
         }
 
         data.grn_no = grn_no;
-        if (poNo) data.po_no = poNo;
-        console.log(data)
+        if (inwardData?.data?.purchase_order) data.po_no = inwardData?.data?.purchase_order;
 
-        // const res = await createData({ path: "/inward/create", formData: data });
-        // if (res.success) {
-        //     navigate("/inward");
-        // }
+        const res = await createData({ path: "/inward/create", formData: data });
+        if (res.success) {
+            // navigate("/inward");
+        }
     };
 
     /** status color change helper */
     const statusColor = (status) => {
         switch (status) {
-            case "urgent": return "bg-danger";   // Red — most critical
-            case "high": return "bg-orange-400";  // Orange/Yellow — high priority
-            case "medium": return "bg-secondary"; // Grey — moderate
-            default: return "bg-light";    // Fallback
+            case "draft": return "bg-info";
+            case "accepted": return "bg-success";
+            default: return "bg-warning";
         }
     }
 
-    if (isLoading) return <Loader />
+    if (inwardLoading) return <Loader />
 
     return (
         <div>
@@ -151,9 +157,9 @@ const CreateInward = () => {
                 showSearch={false}
             />
 
-            {!data ?
+            {!inwardData ?
                 <NoRecord />
-                : <form onSubmit={handleSubmit(submitForm)}>
+                : <form onSubmit={handleSubmit(submitForm, onSubmitError)}>
                     <div className="panel space-y-6 mt-2">
 
                         {/* detail section */}
@@ -165,7 +171,7 @@ const CreateInward = () => {
                                     <div className="flex items-center gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
                                         <FcDocument size={20} />
                                         <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Good Receipt Note (GRN)</span>
-                                        <span className={`badge ${statusColor(data?.data?.priority)}`}>{data?.data?.priority?.toUpperCase() || "N/A"}</span>
+                                        <span className={`badge ${statusColor(inwardData?.data?.status)}`}>{inwardData?.data?.status?.toUpperCase() || "N/A"}</span>
                                     </div>
                                     <table className="w-full text-[13px] border-collapse">
                                         <tbody>
@@ -174,7 +180,7 @@ const CreateInward = () => {
                                                 <td className="px-3.5 py-2 font-medium text-right">
                                                     #
                                                     <span className="ml-1 font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                                                        {grn_no || "N/A"}
+                                                        {inwardData?.data?.grn_no || grn_no || "N/A"}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -183,27 +189,27 @@ const CreateInward = () => {
                                                 <td className="px-3.5 py-2 font-medium text-right">
                                                     #
                                                     <span className="ml-1 font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                                                        {data?.data?.po_no || "N/A"}
+                                                        {inwardData?.data?.purchase_order || "N/A"}
                                                     </span>
                                                 </td>
                                             </tr>
                                             <tr className="border-b border-gray-100">
                                                 <td className="px-3.5 py-2 text-gray-400">Issue Date</td>
-                                                <td className="px-3.5 py-2 font-medium text-right">{utcToLocal(data?.data?.createdAt)}</td>
+                                                <td className="px-3.5 py-2 font-medium text-right">{utcToLocal(inwardData?.data?.createdAt)}</td>
                                             </tr>
-                                            <tr className="border-b border-gray-100">
+                                            {/* <tr className="border-b border-gray-100">
                                                 <td className="px-3.5 py-2 text-gray-400">Grand Total</td>
                                                 <td className="px-3.5 py-2 text-right">
                                                     <span className="text-sm font-bold text-green-600 flex items-center justify-end gap-0.5">
                                                         <MdCurrencyRupee />
-                                                        {data?.data?.grand_total}
+                                                        {inwardData?.data?.grand_total || "0"}
                                                     </span>
                                                 </td>
-                                            </tr>
+                                            </tr> */}
                                             <tr className="border-b border-gray-100">
                                                 <td className="px-3.5 py-2 text-gray-400">Note</td>
                                                 <td className="px-3.5 py-2 text-right italic text-gray-400">
-                                                    {data?.data?.note || "N/A"}
+                                                    {inwardData?.data?.note || "N/A"}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -211,10 +217,10 @@ const CreateInward = () => {
                                                 <td className="px-3.5 py-2 text-right">
                                                     <div className="inline-flex items-center gap-1.5">
                                                         <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[9px] font-bold text-white">
-                                                            {data?.data?.POcreatedBy?.name?.full_name?.slice(0, 2).toUpperCase() || "—"}
+                                                            {inwardData?.data?.created_by?.name?.full_name?.slice(0, 2).toUpperCase() || "—"}
                                                         </div>
                                                         <span className="font-medium">
-                                                            {data?.data?.POcreatedBy?.name?.full_name || "N/A"}
+                                                            {inwardData?.data?.created_by?.name?.full_name || "N/A"}
                                                         </span>
                                                     </div>
                                                 </td>
@@ -335,13 +341,13 @@ const CreateInward = () => {
                                         >
                                             {/* product listing */}
                                             <div
-                                                className={`flex items-center justify-between cursor-pointer px-4 bg-gray-50`}
+                                                className={`flex items-center justify-between cursor-pointer px-4 ${errors?.items?.[idx] ? 'bg-red-100' : 'bg-gray-50'}`}
                                                 onClick={() => togglePara(item)}
                                             >
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr
-                                                            className={`py-3 w-full flex items-center justify-between ${active === `${item?.id}` ? 'text-blue-600' : 'text-gray-700'
+                                                            className={`py-3 w-full flex items-center justify-between ${active === `${item?.id}` ? 'text-blue-600' : (errors?.items?.[idx] ? 'text-red-500' : 'text-gray-700')
                                                                 }`}
                                                         >
                                                             {/* 1️⃣ barcode */}
@@ -393,6 +399,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     label="Batch No:"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.batch_no`)}
+                                                                    disabled={status === "accepted"}
                                                                 />
                                                             </div>
 
@@ -412,6 +419,7 @@ const CreateInward = () => {
                                                                     label="Damage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
+                                                                    disabled={status === "accepted"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
                                                                         onChange: (e) => {
                                                                             const d_qty = Number(e.target.value) || 0;
@@ -440,6 +448,7 @@ const CreateInward = () => {
                                                                     label="Shortage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
+                                                                    disabled={status === "accepted"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
                                                                         onChange: (e) => {
                                                                             const s_qty = Number(e.target.value) || 0;
@@ -467,6 +476,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     label="Receive Qty:"
                                                                     placeholder="0"
+                                                                    disabled={status === "accepted"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.r_qty`, {
                                                                         min: {
                                                                             value: 0,
@@ -498,6 +508,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     type="date"
                                                                     label="Expiry Date:"
+                                                                    disabled={status === "accepted"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.e_date`)}
                                                                 />
                                                             </div>

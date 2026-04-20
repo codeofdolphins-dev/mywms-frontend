@@ -44,6 +44,7 @@ import Inventory from './screens/inventory/Inventory';
 import OpenForum from './screens/OpenForum';
 import RegisterLocation from './screens/admin/locations/RegisterLocation';
 import Location from './screens/admin/locations/Location';
+import BOMPage from './screens/master/bom/BOM';
 
 
 function App() {
@@ -111,6 +112,7 @@ function App() {
                         <Route path="products/edit-product/:id" element={<AddProduct />} />
                         <Route path="unit-types" element={<UnitType />} />
                         <Route path="package-types" element={<PackageType />} />
+                        <Route path="bom" element={<BOMPage />} />
                     </Route>
 
                     {/* access */}
@@ -164,7 +166,7 @@ function App() {
                     {/* inward */}
                     <Route path="inward" >
                         <Route index element={<Inward />} />
-                        <Route path="create/:poNo" element={<CreateInward />} />
+                        <Route path="create/:grn_no" element={<CreateInward />} />
                     </Route>
 
 

@@ -55,14 +55,14 @@ const CategoryTree = ({
     const TreeNode = ({ node, level = 0 }) => {
         const hasChildren = node.subcategories?.length > 0;
         const isExpanded = expanded[node.id];
-        const checked = value.includes(node.id);
+        const checked = Array.isArray(value) ? value.includes(node.id) : false;
 
         const toggleCheck = () => {
             if (disabled) return;
 
             // If already selected → clear everything
             if (checked) {
-                onChange([]);
+                onChange(undefined);
                 return;
             }
 
