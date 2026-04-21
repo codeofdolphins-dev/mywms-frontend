@@ -42,6 +42,7 @@ const CreateUser = () => {
             node: null,
             isNodeAdmin: false,
             image: null,
+            store_id: null,
         }
     });
 
@@ -49,6 +50,7 @@ const CreateUser = () => {
     const password = watch("password");
     const node = watch("node") || null;
     const isNodeAdmin = watch("isNodeAdmin") || null;
+    const storeType = watch("storeType") || null;
     const dept = watch("dept") || null;
     const full_name = watch("full_name") || null;
     const phone_no = watch("phone_no") || null;
@@ -56,6 +58,13 @@ const CreateUser = () => {
     const email = watch("email") || null;
 
     // console.log(node)
+
+    const params = {
+        location_id: node?.id,
+        noLimit: true,
+        store_type: storeType
+    };
+    const { data: storeData, isLoading: storeLoading } = fetchData.TQStoreList(params, Boolean(node?.id && storeType));
 
 
 
@@ -219,7 +228,7 @@ const CreateUser = () => {
                                             <Controller
                                                 name="isNodeAdmin"
                                                 control={control}
-                                                defaultValue={false}
+                                                defaultValue={"false"}
                                                 render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                                     <RHRadioGroup
                                                         ref={(el) => {
@@ -239,6 +248,65 @@ const CreateUser = () => {
                                                 )}
                                             />
                                         </div>
+
+                                        {node?.businessNode?.type?.category === "manufacturing" && <>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                {/* select store type */}
+                                                <div className="">
+                                                    <Controller
+                                                        name="storeType"
+                                                        control={control}
+                                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                            <SearchableSelect
+                                                                ref={(el) => {
+                                                                    ref({
+                                                                        focus: () => el?.focus(),
+                                                                    });
+                                                                }}
+                                                                value={value}
+                                                                onChange={onChange}
+                                                                isSearchable={false}
+
+                                                                label="Store Type"
+                                                                labelPosition='inline'
+                                                                options={[
+                                                                    { label: "FG Store", value: "fg_store" },
+                                                                    { label: "RM Store", value: "rm_store" },
+                                                                ]}
+                                                            />
+                                                        )}
+                                                    />
+                                                </div>
+
+                                                {/* select store */}
+                                                <div className="">
+                                                    <Controller
+                                                        name="store_id"
+                                                        control={control}
+                                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                            <RHSelect
+                                                                ref={(el) => {
+                                                                    ref({
+                                                                        focus: () => el?.focus(),
+                                                                    });
+                                                                }}
+                                                                value={value}
+                                                                onChange={onChange}
+
+                                                                label="Select Store"
+                                                                labelPosition="inline"
+                                                                options={storeData?.data}
+                                                                error={error?.message}
+
+                                                            // addButton={true}
+                                                            // buttonTitle="Store"
+                                                            // buttonOnClick={() => setStore(true)}
+                                                            />
+                                                        )}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </>}
                                     </>
                                 )}
                             </div>
@@ -346,6 +414,16 @@ const CreateUser = () => {
                                 Cancel
                             </button>
 
+                            <Button
+                                type='button'
+                                className='btn btn-info'
+                                onClick={() => {
+                                    reset();
+                                    // setFileKey(prev => prev + 1);
+                                }}
+                            >
+                                Reset
+                            </Button>
                             <Button
                                 type='submit'
                                 className='btn btn-info'

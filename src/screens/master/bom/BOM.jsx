@@ -100,7 +100,7 @@ const BOM = () => {
             <div className="panel">
                 <div className="relative table-responsive mb-5 min-h-56">
                     {/* table header */}
-                    <table className="w-full">
+                    {/* <table className="w-full">
                         <thead>
                             <tr>
                                 <th className="px-3 py-2 w-[30px]"></th>
@@ -114,7 +114,7 @@ const BOM = () => {
                                 ))}
                             </tr>
                         </thead>
-                    </table>
+                    </table> */}
 
                     {/* data rows */}
                     {(!bomList?.data || bomList.data.length === 0) ? (
@@ -163,13 +163,13 @@ const BOM = () => {
 
                                             {/* output qty */}
                                             <td className="px-3 text-left flex-1">
-                                                <span className="font-bold">{bom.output_qty}</span>
+                                                <span className="font-bold">{bom.output_qty} {bom.output_uom}</span>
                                             </td>
 
                                             {/* uom */}
-                                            <td className="px-3 text-left flex-1">
+                                            {/* <td className="px-3 text-left flex-1">
                                                 {bom.output_uom || "—"}
-                                            </td>
+                                            </td> */}
 
                                             {/* items count */}
                                             <td className="px-3 text-center flex-1">
@@ -217,7 +217,7 @@ const BOM = () => {
                                                                     <td className="px-3 py-2 text-sm font-medium">
                                                                         {item.rawProduct?.name || "—"}
                                                                     </td>
-                                                                    <td className="px-3 py-2 text-sm font-mono text-xs">
+                                                                    <td className="px-3 py-2 text-sm font-mono">
                                                                         {item.rawProduct?.sku || "—"}
                                                                     </td>
                                                                     <td className="px-3 py-2 text-sm font-bold">
