@@ -59,6 +59,13 @@ const items: Record<string, string>[] = [
         color: "bg-orange-500",
         link: "package-types",
     },
+    {
+        title: "BOM",
+        description: "Manage Bill of Materials for production.",
+        icon: "bom",
+        color: "bg-yellow-500",
+        link: "bom",
+    },
 ]
 
 const Master = () => {

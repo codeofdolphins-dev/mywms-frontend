@@ -51,7 +51,15 @@ const AddProduct = () => {
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["productList"]);
 
     /** form control */
-    const { control, register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm();
+    const { control, register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm({
+        defaultValues: {
+            brand_id: "",
+            categories: "",
+            hsn_id: "",
+            unit_type_id: "",
+            package_type_id: "",
+        }
+    });
 
     useEffect(() => {
         if (!id) return;
@@ -326,10 +334,10 @@ const AddProduct = () => {
                                     <Controller
                                         name="categories"
                                         control={control}
-                                        rules={{
-                                            validate: (v) =>
-                                                v?.length > 0 || "Please select at least one category",
-                                        }}
+                                        // rules={{
+                                        //     validate: (v) =>
+                                        //         v?.length > 0 || "Please select at least one category",
+                                        // }}
                                         render={({ field: { value, onChange }, fieldState }) => (
                                             <>
                                                 <CategoryTree
@@ -341,11 +349,11 @@ const AddProduct = () => {
                                                     buttonOnClick={() => setShowCategory(true)}
                                                 />
 
-                                                {fieldState.error && (
+                                                {/* {fieldState.error && (
                                                     <p className="text-red-500 text-xs mt-1">
                                                         {fieldState.error.message}
                                                     </p>
-                                                )}
+                                                )} */}
                                             </>
                                         )}
                                     />
