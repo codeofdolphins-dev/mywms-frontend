@@ -10,20 +10,20 @@ const PRODUCTION_MENU = [
         path: "/production/store",
         children: [
             { name: "RM Store", path: "/production/store/rm" },
-            { name: "Production Unit", path: "/production/store/production" },
+            { name: "Production Unit", path: "/production/store/wip" },
             { name: "FG Store", path: "/production/store/fg" }
         ]
     },
-    {
-        name: "MFG Operations",
-        path: "/production/store",
-        children: [
-            { name: "Bill of Materials (BOM)", path: "" },
-            { name: "Production Orders", path: "" },
-            { name: "Material Issue", path: "" },
-            { name: "Production Receipt", path: "" }
-        ]
-    },
+    // {
+    //     name: "MFG Operations",
+    //     path: "/production/store",
+    //     children: [
+    //         { name: "Bill of Materials (BOM)", path: "" },
+    //         { name: "Production Orders", path: "" },
+    //         { name: "Material Issue", path: "" },
+    //         { name: "Production Receipt", path: "" }
+    //     ]
+    // },
 ];
 
 const Production = ({ location }) => {
@@ -31,7 +31,7 @@ const Production = ({ location }) => {
         <li className="menu nav-item relative !ml-0">
             <button
                 type="button"
-                className={`nav-link ${location.pathname.includes("production") ? 'active' : ''} !cursor-default`}
+                className={`nav-link ${location.pathname.includes("production/store") ? 'active' : ''} !cursor-default`}
             >
                 <div className="flex items-center">
                     <BiSolidFactory />

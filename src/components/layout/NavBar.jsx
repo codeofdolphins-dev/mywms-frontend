@@ -65,79 +65,80 @@ const NavBar = () => {
     const nodeName = userData?.userBusinessNode?.nodeDetails?.name.toLowerCase();
 
     return (
-        <ul className="horizontal-menu gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 bg-white border-t border-[#ebedf2] text-black">
+        <div className="overflow-x-auto pb-[30rem] -mb-[30rem] pointer-events-none relative z-20 [&::-webkit-scrollbar]:hidden">
+            <ul className="horizontal-menu pointer-events-auto flex w-max min-w-full flex-nowrap whitespace-nowrap gap-1 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 bg-white border-t border-[#ebedf2] text-black">
 
-            {/* dashboard */}
-            {
-                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <OpenForum location={location} />
-            }
+                {/* dashboard */}
+                {
+                    (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <OpenForum location={location} />
+                }
 
-            {/* master */}
-            {
-                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Master location={location} />
-            }
+                {/* master */}
+                {
+                    (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Master location={location} />
+                }
 
-            {/* super admin */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <SuperAdmin location={location} />
-            }
-            {/* admin */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Admin location={location} />
-            }
+                {/* super admin */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <SuperAdmin location={location} />
+                }
+                {/* admin */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <Admin location={location} />
+                }
 
-            {/* manage access */}
-            {
-                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />
-            }
+                {/* manage access */}
+                {
+                    (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <ManageAccess location={location} />
+                }
 
-            {/* production */}
-            {
-                (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Production location={location} />
-            }
+                {/* production */}
+                {
+                    (DEV_BYPASS || hasRoleAccess(["system", "owner", "company"], userRoles)) && <Production location={location} />
+                }
 
-            {/* requisition */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Requisition location={location} />
-            }
+                {/* requisition */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <Requisition location={location} />
+                }
 
-            {/* Quotation */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Quotation location={location} />
-            }
+                {/* Quotation */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <Quotation location={location} />
+                }
 
-            {/* Order */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Order location={location} />
-            }
+                {/* Order */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <Order location={location} />
+                }
 
-            {/* Inward */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Inward location={location} />
-            }
+                {/* Inward */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <Inward location={location} />
+                }
 
-            {/* outward */}
-            {
-                (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
-                    || ((hasNodeAccess(["distributor"], nodeName))))
-                && <Outward location={location} />
-            }
+                {/* outward */}
+                {
+                    (DEV_BYPASS || (hasRoleAccess(["system", "owner", "company"], userRoles))
+                        || ((hasNodeAccess(["distributor"], nodeName))))
+                    && <Outward location={location} />
+                }
 
 
-            {/* vendor */}
-            {/* <li className="menu nav-item relative !ml-0" >
+                {/* vendor */}
+                {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/supplier' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <FaTruckRampBox />
@@ -156,8 +157,8 @@ const NavBar = () => {
                 </ul>
             </li> */}
 
-            {/* retailer */}
-            {/* <li className="menu nav-item relative !ml-0" >
+                {/* retailer */}
+                {/* <li className="menu nav-item relative !ml-0" >
                 <button type="button" className={`nav-link ${location.pathname === '/retailer' ? 'active' : ''} `}>
                     <div className="flex items-center">
                         <FaUserGroup />
@@ -175,7 +176,8 @@ const NavBar = () => {
                     ))}
                 </ul>
             </li> */}
-        </ul>
+            </ul>
+        </div>
     )
 }
 

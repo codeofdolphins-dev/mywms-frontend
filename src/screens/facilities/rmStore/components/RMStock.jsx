@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import ComponentHeader from '../../components/ComponentHeader';
-import TableBody from '../../components/table/TableBody';
-import TableRow from '../../components/table/TableRow';
-import AddModal from '../../components/Add.modal';
-import { INVENTORY_COLUMN, INVENTORY_BATCH_COLUMN } from '../../utils/helper';
-import { currencyFormatter } from '../../utils/currencyFormatter';
+import ComponentHeader from '../../../../components/ComponentHeader';
+import TableBody from '../../../../components/table/TableBody';
+import TableRow from '../../../../components/table/TableRow';
+import AddModal from '../../../../components/Add.modal';
+import { INVENTORY_COLUMN, INVENTORY_BATCH_COLUMN } from '../../../../utils/helper';
+import { currencyFormatter } from '../../../../utils/currencyFormatter';
 import {
     FiPackage, FiAlertTriangle, FiTrendingUp, FiTrendingDown,
     FiBox, FiCalendar, FiLayers, FiEye, FiFilter,
@@ -14,8 +14,8 @@ import { BsBoxSeam, BsExclamationTriangle } from 'react-icons/bs';
 import { MdOutlineInventory2, MdOutlineWarehouse } from 'react-icons/md';
 import { HiOutlineCube } from 'react-icons/hi';
 import Tippy from '@tippyjs/react';
-import StatCard from '../../components/inventory/inventoryCard';
-import BulkCreationModal from '../../components/inventory/BulkCreation.modal';
+import StatCard from '../../../../components/inventory/inventoryCard';
+import BulkCreationModal from '../../../../components/inventory/BulkCreation.modal';
 
 // ─── Mock inventory data ───────────────────────────────────────────────────────
 const INVENTORY_DATA = [
@@ -309,9 +309,9 @@ function computeStats(items) {
 
 // ─── Component ──────────────────────────────────────────────────────────────────
 
-const headerLink = [{ title: "inventory" }];
 
-const Inventory = () => {
+
+const RMstock = () => {
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -370,16 +370,6 @@ const Inventory = () => {
 
     return (
         <>
-            {/* Header */}
-            <ComponentHeader
-                headerLink={headerLink}
-                searchPlaceholder="Search by product, SKU, barcode, category..."
-                setDebounceSearch={setDebounceSearch}
-                addButton={false}
-                addButton2={true}
-                btn2Title="Bulk Creation"
-                btn2OnClick={() => setIsBulkShow(true)}
-            />
 
             {/* ─── Dashboard KPI Cards ──────────────────────────────────────── */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mt-5">
@@ -711,7 +701,7 @@ const Inventory = () => {
     );
 };
 
-export default Inventory;
+export default RMstock;
 
 
 // ─── Sub-components ─────────────────────────────────────────────────────────────

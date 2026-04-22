@@ -3,9 +3,11 @@ import { Outlet } from 'react-router-dom';
 import NavBar from '../components/layout/NavBar';
 import AuthBootstrap from './AuthBootstrap';
 import Header from '../components/layout/Header';
+import { useSelector } from 'react-redux';
 
 
 const AppLayout = () => {
+    const isLogin = useSelector(state => state.auth.status)
 
     const [showLoader, setShowLoader] = useState(true);
     const [showTopButton, setShowTopButton] = useState(false);
@@ -59,7 +61,7 @@ const AppLayout = () => {
 
                         <div className="main-content flex flex-col min-h-screen">
                             <Header />
-                            <NavBar />
+                            {isLogin && <NavBar />}
 
                             <Suspense>
                                 <div className={`px-6 py-3 animate__animated`}>

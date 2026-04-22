@@ -16,6 +16,11 @@ const SearchInput = ({
     addButton2 = false,
     btn2Title,
     btn2OnClick,
+
+    addButton3 = false,
+    btn3Title,
+    btn3OnClick,
+
     ...rest
 }) => {
 
@@ -74,6 +79,15 @@ const SearchInput = ({
                     onClick={btn2OnClick}
                 >
                     <FiPlus size={20} className='mr-2' />{btn2Title}
+                </button>
+            }
+
+            {addButton3 &&
+                <button
+                    className='ml-3 px-3 btn-primary text-white rounded-md flex items-center whitespace-nowrap'
+                    onClick={btn3OnClick}
+                >
+                    <FiPlus size={20} className='mr-2' />{btn3Title}
                 </button>
             }
         </div>

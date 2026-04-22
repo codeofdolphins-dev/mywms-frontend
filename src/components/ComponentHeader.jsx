@@ -19,6 +19,10 @@ const ComponentHeader = ({
     addButton2 = false,
     btn2Title = "",
     btn2OnClick,
+    
+    addButton3 = false,
+    btn3Title = "",
+    btn3OnClick,
 
     className = "justify-between",
 }) => {
@@ -44,6 +48,10 @@ const ComponentHeader = ({
                     addButton2={addButton2}
                     btn2Title={btn2Title}
                     btn2OnClick={btn2OnClick}
+                   
+                    addButton3={addButton3}
+                    btn3Title={btn3Title}
+                    btn3OnClick={btn3OnClick}
                 />
             }
 

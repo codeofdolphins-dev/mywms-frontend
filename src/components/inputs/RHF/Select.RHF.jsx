@@ -5,8 +5,11 @@ import Select from "react-select";
 function RHSelect({
     selectKey = "name",
     selectSubKey = "full_name",
+    
     label,
+    labelClassName = "",
     labelPosition = "",
+
     options = [],
     value,
     onChange,
@@ -67,6 +70,7 @@ function RHSelect({
                         block text-sm font-medium mb-0 
                             ${disabled ? "text-gray-400" : "text-gray-700"} 
                             ${labelPosition === "inline" ? "w-1/3" : ""}
+                            ${labelClassName}
                         `}
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}

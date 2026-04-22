@@ -61,7 +61,7 @@ const CreateRequisition = () => {
             priority: "",
         }
     });
-    if(!isManufacture) setValue("buyer", locationName);
+    if (!isManufacture) setValue("buyer", locationName);
 
 
     const [isShow, setIsShow] = useState(false);
@@ -76,6 +76,7 @@ const CreateRequisition = () => {
     }, [selectedItems]);
 
 
+    /** handle submit */
     const onSubmit = async (data) => {
         data.items = selectedItems
         // console.log(data); return
@@ -108,6 +109,9 @@ const CreateRequisition = () => {
         setSelectedItems(prev => prev.filter(item => item.id !== id));
     };
 
+    console.log(selectedItems)
+    console.log(isManufacture)
+
 
     return (
         <div>
@@ -125,13 +129,14 @@ const CreateRequisition = () => {
                     </li>
                 </ul>
 
-                <div
+                <button
                     title='Add Item'
-                    className="w-8 h-8 rounded-full bg-primary flex justify-center items-center cursor-pointer"
+                    className={`w-8 h-8 rounded-full bg-primary flex justify-center items-center ${isManufacture && selectedItems?.length >= 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     onClick={() => setIsShow(true)}
+                    disabled={isManufacture && selectedItems?.length >= 1}
                 >
                     <FiPlus size={22} color='white' />
-                </div>
+                </button>
             </div>
 
 
@@ -236,7 +241,7 @@ const CreateRequisition = () => {
                                 <div>
                                     <Input
                                         type="date"
-                                        label="Required Date"
+                                        label={isManufacture ? "Deadline" : "Required Date"}
                                         labelPosition="inline"
                                         {...register("required_by_date")}
                                     />
@@ -307,7 +312,7 @@ const CreateRequisition = () => {
                                 >
                                     {selectedItems?.map((item, idx) => (
                                         isManufacture ? (
-                                            /** finished product preview */
+                                            /** raw material preview */
                                             <TableRow
                                                 key={idx}
                                                 columns={REQUISITION_CREATE_RAW_COLUMN_ACTION}

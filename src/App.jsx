@@ -45,6 +45,8 @@ import OpenForum from './screens/OpenForum';
 import RegisterLocation from './screens/admin/locations/RegisterLocation';
 import Location from './screens/admin/locations/Location';
 import BOMPage from './screens/master/bom/BOM';
+import RMBrowse from './screens/facilities/rmStore/RMBrowse';
+import ProductionBrowse from './screens/facilities/production/ProductionBrowse';
 
 
 function App() {
@@ -153,6 +155,12 @@ function App() {
                     <Route path="production" >
                         <Route path='vendor' element={<Vendor />} />
                         <Route path='vendor/category' element={<VendorCategory />} />
+
+                        <Route path='store' >
+                            <Route path='rm' element={<RMBrowse />} />
+                            <Route path='wip' element={<ProductionBrowse />} />
+                            {/* <Route path='fg' element={<FGstore />} /> */}
+                        </Route>
                     </Route>
 
 

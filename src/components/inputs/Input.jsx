@@ -8,6 +8,7 @@ const Input = React.forwardRef(({
     label,
     labelPosition = "",
     labelcolor = "text-gray-600",
+    labelClassName = "",
     type = 'text',
     fieldColor = '',
     className = '',
@@ -28,7 +29,7 @@ const Input = React.forwardRef(({
             {
                 label && <label
                     htmlFor={_id}
-                    className={`inline-block mb-1 pl-1 text-sm ${labelcolor} ${labelPosition === "inline" ? "w-1/3" : ""} ${disabled ? "opacity-60" : ""}`}
+                    className={`inline-block mb-1 pl-1 text-sm ${labelcolor} ${labelPosition === "inline" ? "w-1/3" : ""} ${disabled ? "opacity-60" : ""} ${labelClassName}`}
                 >
                     {label}{required ? <span className='text-danger'>*</span> : ''}
                 </label>

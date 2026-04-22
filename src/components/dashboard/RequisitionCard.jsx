@@ -11,8 +11,10 @@ import RFQPreview from './RFQPreview';
 import { FiMapPin, FiClock, FiFileText, FiTag, FiHash, FiPackage } from 'react-icons/fi';
 import { MdOutlineAttachMoney } from 'react-icons/md';
 import secureLocalStorage from 'react-secure-storage';
+import { useSelector } from 'react-redux';
 
 const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
+    const isLogin = useSelector(state => state.auth.status);
     const buyerTenant = secureLocalStorage.getItem("tenant");
 
     const [data, setData] = useState(null);
@@ -213,7 +215,7 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                             <span>Deadline: {new Date(details?.submission_deadline).toLocaleDateString()}</span>
                         </div>
                     )}
-                    {buyerTenant !== details?.buyer_tenant && (
+                    {(isLogin && buyerTenant !== details?.buyer_tenant) && (
                         <button
                             type="button"
                             onClick={previewCumSubmit}
