@@ -3,6 +3,7 @@ import ComponentHeader from '../../../components/ComponentHeader'
 import RMstock from '../rmStore/components/RMStock';
 import AddModal from '../../../components/Add.modal';
 import ItemIssueForm from '../../../components/store/production/ItemIssue.form';
+import TransferOrderList from '../transferOrderList';
 
 
 const headerLink = [{ title: "production" }];
@@ -58,6 +59,7 @@ const ProductionBrowse = () => {
             </div>
 
             {activeTab === 1 && <RMstock />}
+            {activeTab === 2 && <TransferOrderList />}
 
             <AddModal
                 isShow={isIssueItemShow}

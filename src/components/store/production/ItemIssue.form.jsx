@@ -27,10 +27,8 @@ const ItemIssueForm = ({ setIsShow }) => {
     /**************** form methods *******************/
     const { register, handleSubmit, formState: { errors }, control, reset, watch, getValues } = useForm({
         defaultValues: {
-            title: "",
             rm_store_id: "",
             required_date: "",
-            desc: "",
             items: [{ raw_product_id: "", required_qty: "" }]
         }
     });
@@ -62,8 +60,8 @@ const ItemIssueForm = ({ setIsShow }) => {
 
     async function handleConfirmSubmit() {
         try {
-            // Uncomment and configure your API call here
-            // const result = await createBOM({ path: "/issue/create", formData: previewData });
+            previewData.type = "material_issue";
+            const result = await createData({ path: "/transfer-order/create", formData: previewData });
             // if (result?.success) {
             //     reset();
             //     setPreviewData(null);
@@ -83,20 +81,8 @@ const ItemIssueForm = ({ setIsShow }) => {
                     <form onSubmit={handleSubmit(submitData)} className="space-y-5">
 
                         {/* Row 1: Finished Product + Output Qty */}
-                        <div className="grid grid-cols-4 gap-4">
-                            <div>
-                                <Input
-                                    label="Title"
-                                    placeholder="Enter title..."
-                                    {...register("title", {
-                                        required: "Title required!!!",
-                                    })}
-                                    required={true}
-                                    error={errors.title?.message}
-                                    autoFocus={true}
-                                />
-                            </div>
-                            <div>
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className='col-span-2'>
                                 <Controller
                                     name="rm_store_id"
                                     control={control}
@@ -128,13 +114,6 @@ const ItemIssueForm = ({ setIsShow }) => {
                                     })}
                                     required={true}
                                     error={errors.required_date?.message}
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    label="Description"
-                                    placeholder="Optional notes..."
-                                    {...register("desc")}
                                 />
                             </div>
                         </div>

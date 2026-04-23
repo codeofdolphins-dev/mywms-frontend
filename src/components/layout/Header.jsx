@@ -24,18 +24,30 @@ import ProfileForm from '../user/Profile.form';
 
 
 const Header = () => {
-    const isLogin = useSelector(state => state.auth.status);
+    const auth = useSelector(state => state.auth);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const userData = useSelector(state => state.auth.userData);
-    const nodeName = userData?.nodeDetails?.name ?? null;
+    const userData = auth.userData;
+    const nodeDetails = userData?.activeNode?.nodeDetails;
+    const isLogin = auth.status;
+
 
     const [isProfileShow, setIsProfileShow] = useState(false);
 
     function createMarkup(messages) {
         return { __html: messages };
     }
+
+    /** Open profile details modal automatically after 1.5 seconds if nodeDetails is null */
+    useEffect(() => {
+        if (nodeDetails === null) {
+            const timeRef = setTimeout(() => {
+                setIsProfileShow(true);
+            }, 1500);
+            return () => clearTimeout(timeRef);
+        }
+    }, [nodeDetails]);
 
 
     const [notifications, setNotifications] = useState([
@@ -102,9 +114,9 @@ const Header = () => {
                     </div>
 
                     <div className="">
-                        {nodeName ?
+                        {nodeDetails?.name ?
                             <span className="text-lg ml-1.5 font-semibold  align-middle hidden md:inline transition-all duration-300">
-                                {`${nodeName} ${userData?.email}`}
+                                {`${nodeDetails?.name} ${userData?.email}`}
                             </span>
                             :
                             <span className="text-lg ml-1.5 font-semibold  align-middle hidden md:inline transition-all duration-300">{userData?.company_name}</span>

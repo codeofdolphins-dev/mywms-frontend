@@ -33,11 +33,11 @@ const ReceiveQuotation = () => {
 
 
     /**************** global variable *******************/
-    const isManufacture = user?.activeNode?.NodeUser?.department !== null ? true : false;
     const reqNo = searchParams.get("s") ?? "";
 
     const [previewData, setPreviewData] = useState(null);
     const [isShowPreview, setIsShowPreviewsShow] = useState(false);
+    const [isExternal, setIsExternal] = useState(false);
 
 
     /**************** APT mutation *******************/
@@ -63,6 +63,7 @@ const ReceiveQuotation = () => {
     useEffect(() => {
         if (debounceSearch.length > 0) return;
         setDebounceSearch(reqNo);
+        setIsExternal(reqNo.startsWith("EX") || debounceSearch.startsWith("EX"));
     }, [reqNo, debounceSearch])
 
     const [active, setActive] = useState('0');
@@ -81,14 +82,14 @@ const ReceiveQuotation = () => {
         page: currentPage,
         limit: limit,
     };
-    const { data, isLoading } = quotation.TQReceiveQuotationList(params, (!isManufacture && Boolean(debounceSearch)));
-    const { data: rfqQuotationData, isLoading: rfqQuotationLoading } = rfqQuotation.TQRfqQuotationReceiveList(params, (isManufacture && Boolean(debounceSearch)));
+    const { data, isLoading } = quotation.TQReceiveQuotationList(params, (!isExternal && Boolean(debounceSearch)));
+    const { data: rfqQuotationData, isLoading: rfqQuotationLoading } = rfqQuotation.TQRfqQuotationReceiveList(params, (isExternal && Boolean(debounceSearch)));
 
 
 
     /** status color change helper */
     const statusColor = (status) => {
-        if (isManufacture) {
+        if (isExternal) {
             switch (status) {
                 case "sent": return "bg-secondary";
                 case "negotiate": return "bg-primary";

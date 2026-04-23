@@ -313,19 +313,6 @@ const OrderDetails = () => {
                                             </Button>
                                         </div>
                                     }
-
-                                    {
-                                        (isPurchase && data?.data?.status === "approved") &&
-                                        <Button
-                                            // loading={true}
-                                            color='primary'
-                                            size="compact-md"
-                                            className='rounded-lg'
-                                            onClick={() => navigate(`/inward/create?s=${data?.data?.po_no}`)}
-                                        >
-                                            Inward
-                                        </Button>
-                                    }
                                 </div>
                             </div>
 

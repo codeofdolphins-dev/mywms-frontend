@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import RMstock from './components/RMStock';
 import ComponentHeader from '../../../components/ComponentHeader';
+import TransferOrderList from '../transferOrderList';
 
 
 const headerLink = [{ title: "raw material store" }];
@@ -52,11 +53,9 @@ const RMBrowse = () => {
                 </ul>
             </div>
 
-            {activeTab === 1 && (<RMstock />)}
+            {activeTab === 1 && <RMstock />}
+            {activeTab === 2 && <TransferOrderList />}
 
-            {activeTab === 2 && (
-                {/* <RMrequest /> */ }
-            )}
         </div>
     )
 }

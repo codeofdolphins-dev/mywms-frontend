@@ -270,8 +270,9 @@ const CreateUser = () => {
                                                                 label="Store Type"
                                                                 labelPosition='inline'
                                                                 options={[
-                                                                    { label: "FG Store", value: "fg_store" },
                                                                     { label: "RM Store", value: "rm_store" },
+                                                                    { label: "Production", value: "production" },
+                                                                    { label: "FG Store", value: "fg_store" },
                                                                 ]}
                                                             />
                                                         )}
