@@ -39,13 +39,9 @@ const BlanketPO = () => {
     // console.log(bpoList)
 
 
-    async function handelDownload(params) {
-
-    }
-    function handelShow(items) {
-    }
-    async function handleDelete(id) {
-    };
+    async function handelDownload(params) { };
+    function handelShow(items) { };
+    async function handleDelete(id) { };
 
 
 

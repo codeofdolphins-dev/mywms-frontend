@@ -5,18 +5,19 @@ import Select from 'react-select';
 import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import ComponentHeader from '../../components/ComponentHeader';
+import { transferOrder } from '../../Backend/production.fetch';
 
 
-const OutwardDetails = () => {
-    const { out_no } = useParams();
+const TransferOrderDispatch = () => {
+    const { to_no } = useParams();
     const navigate = useNavigate();
 
-    const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["outwardDetails", "outwardList"]);
+    const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["transferOrderList", "transferOrderItem"]);
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
 
-    const { data: outwardDetails, isLoading, isError } = fetchData.TQOutwardDetails(out_no, Boolean(out_no));
+    const { data: toDetails, isLoading, isError } = transferOrder.TQTransferOrderItem(to_no, Boolean(to_no));
 
     // Handle change of batches dropdown
     const handleBatchChange = (selectedOptions, itemId) => {
@@ -26,9 +27,9 @@ const OutwardDetails = () => {
         }));
     };
 
-    const data = outwardDetails?.data;
-    const items = data?.outwardItemList;
-    const destAddess = data?.buyer?.meta?.address;
+    const data = toDetails?.data;
+    const items = data?.transferOrderItem;
+    const destAddess = data?.sendTo?.address;
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
     const isPreview = data?.status === "dispatched";
@@ -37,21 +38,23 @@ const OutwardDetails = () => {
     // console.log(isPreview)
 
     async function handleConfirmAllocation() {
-        const items = [];
+        const payloadItems = [];
 
         for (const [key, value] of Object.entries(selectedBatches)) {
-            items.push({
-                product_id: key,
+            const toItem = items?.find(i => i.id.toString() === key);
+            payloadItems.push({
+                item_id: Number(key),
+                product_id: toItem?.product_id,
                 batches: value ? value.map(opt => opt.value) : []
             });
         }
 
         const payload = {
-            outward_no: out_no,
-            items: items
+            transfer_order_no: to_no,
+            items: payloadItems
         };
 
-        const res = await update({ path: "/outward/dispatch", formData: payload });
+        const res = await update({ path: "/transfer-order/dispatch", formData: payload });
         if (res?.success) {
             // navigate("/outward");
         }
@@ -61,12 +64,14 @@ const OutwardDetails = () => {
     /** Get status badge */
     const getStatusBadge = (status) => {
         switch (status) {
-            case "pending":
+            case "requested":
                 return "bg-yellow-100 text-yellow-800";
-            case "allocated":
-                return "bg-blue-100 text-blue-800";
             case "dispatched":
+                return "bg-blue-100 text-blue-800";
+            case "received":
                 return "bg-green-100 text-green-800";
+            case "cancelled":
+                return "bg-red-100 text-red-800";
             default:
                 return "bg-gray-100 text-gray-800";
         }
@@ -76,7 +81,7 @@ const OutwardDetails = () => {
         <div className="bg-slate-50 min-h-screen">
             <ComponentHeader
                 headerLink={[
-                    { title: "outward", link: "/outward" },
+                    { title: "RM store", link: "/production/store/rm" },
                     { title: "details" }
                 ]}
                 showSearch={false}
@@ -86,8 +91,8 @@ const OutwardDetails = () => {
             {/* Header Section */}
             <div className="my-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Outward Details</h1>
-                    <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
+                    <h1 className="text-2xl font-bold text-slate-800">Dispatch Details</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{to_no}</span></p>
                 </div>
                 {!isPreview &&
                     <button
@@ -102,7 +107,6 @@ const OutwardDetails = () => {
 
             {/* Top Cards: Buyer & Location Information */}
             <div className="grid grid-cols-1 gap-6 mb-8">
-
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-2 pb-2 border-b border-slate-100">
@@ -110,7 +114,7 @@ const OutwardDetails = () => {
                             <FiUser size={20} strokeWidth={2.5} />
                         </div>
                         <h2 className="text-lg font-medium text-slate-900">
-                            Buyer information
+                            Send To
                             <span className={`ml-2 badge ${getStatusBadge(data?.status)}`}>{data?.status?.toUpperCase()}</span>
                         </h2>
                     </div>
@@ -120,40 +124,23 @@ const OutwardDetails = () => {
                         {/* Name */}
                         <div className="flex items-center justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.name}</p>
-                        </div>
-
-                        {/* Warehouse */}
-                        <div className="flex items-center justify-between gap-1">
-                            <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Warehouse</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.meta?.parentBusinessNode?.name}</p>
-                        </div>
-
-                        {/* Email */}
-                        <div className="flex items-center justify-between gap-1">
-                            <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email address</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.contact_email}</p>
+                            <p className=" font-medium text-slate-900">{data?.sendTo?.name}</p>
                         </div>
 
                         {/* Phone */}
                         <div className="flex items-center justify-between gap-1">
-                            <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone number</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.contact_phone}</p>
+                            <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Store Location</label>
+                            <p className=" font-medium text-slate-900">{data?.sendTo?.location}</p>
                         </div>
 
                         {/* Address - Full Width */}
-                        <div className="flex items-center justify-between gap-1">
+                        <div className="flex items-center pt-2 border-t justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Destination address</label>
                             <p className=" font-medium text-slate-900 leading-relaxed text-right">{destAddessStr}</p>
                         </div>
 
-                        <div className="flex items-center justify-between gap-1 bg-yellow-100 py-2 px-3 rounded-lg border-l-4 border-l-yellow-600">
-                            <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Note</label>
-                            <p className=" font-medium text-slate-900 leading-relaxed">{data?.note}</p>
-                        </div>
-
                         {/* Coordinates - Separated */}
-                        <div className="col-span-2 pt-2 border-t border-slate-100">
+                        <div className="col-span- pt-2 border-t">
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="flex items-center justify-between gap-1">
                                     <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Latitude</label>
@@ -167,88 +154,19 @@ const OutwardDetails = () => {
                         </div>
                     </div>
                 </div>
-
-
-                {/* Buyer Card */}
-                {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4">
-                        <div className="bg-blue-50 p-3 rounded-xl text-blue-600">
-                            <FiUser size={22} className="stroke-[2.5]" />
-                        </div>
-                        <h2 className="text-lg font-semibold text-slate-800">Buyer Information</h2>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Name</span>
-                            <span className="font-semibold text-slate-800 text-right">{data?.buyer?.name}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Email Address</span>
-                            <span className="font-medium text-slate-700 text-right">{data?.buyer?.contact_email}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Phone Number</span>
-                            <span className="font-medium text-slate-700 text-right">{data?.buyer?.contact_phone}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Warehouse</span>
-                            <span className="font-medium text-slate-700 text-right">{data?.buyer?.meta?.parentBusinessNode?.name}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Destination Address</span>
-                            <span className="font-medium text-slate-700 text-right max-w-[200px] leading-snug">{destAddessStr}</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex items-center justify-between">
-                                <span className="text-slate-500 text-sm font-medium">Lat</span>
-                                <span className="font-medium text-slate-700">{destAddess?.lat || "N/A"}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-slate-500 text-sm font-medium">Long</span>
-                                <span className="font-medium text-slate-700">{destAddess?.long || "N/A"}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
-                {/* Location Card */}
-                {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4">
-                        <div className="bg-emerald-50 p-3 rounded-xl text-emerald-600">
-                            <FiMapPin size={22} className="stroke-[2.5]" />
-                        </div>
-                        <h2 className="text-lg font-semibold text-slate-800">Dispatch Location</h2>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Source Warehouse</span>
-                            <span className="font-semibold text-slate-800 text-right">{mockData.location.warehouse}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Storage Zone</span>
-                            <span className="font-medium text-slate-700 text-right">{mockData.location.zone}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Pick Aisle</span>
-                            <span className="font-medium text-slate-700 text-right">{mockData.location.aisle}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Dispatch Dock</span>
-                            <span className="font-medium text-slate-700 text-right">{mockData.location.dispatchDock}</span>
-                        </div>
-                    </div>
-                </div> */}
             </div>
 
             {/* Outward Items Table */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-visible">
+
+                {/* header section */}
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="bg-indigo-50 p-3 rounded-xl text-indigo-600">
                             <FiShoppingBag size={22} className="stroke-[2.5]" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-semibold text-slate-800">Outward Items</h2>
+                            <h2 className="text-lg font-semibold text-slate-800">Dispatch Items</h2>
                             <p className="text-xs text-slate-500 mt-0.5">Select batches to fulfill the requested quantities</p>
                         </div>
                     </div>
@@ -257,14 +175,14 @@ const OutwardDetails = () => {
                     </span>
                 </div>
 
+                {/* body section */}
                 <div className="overflow-visible min-h-[300px]">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/80 text-slate-600 text-sm border-b border-slate-200">
-                                <th className="px-6 py-4 font-semibold w-1/5">Barcode</th>
-                                <th className="px-6 py-4 font-semibold w-1/5">Product Name</th>
-                                <th className="px-6 py-4 font-semibold w-1/5">Product SKU</th>
-                                <th className="px-6 py-4 font-semibold w-[12%]">Req. Qty</th>
+                                <th className="px-6 py-4 font-semibold">Product Name</th>
+                                <th className="px-6 py-4 font-semibold">Product SKU / Code</th>
+                                <th className="px-6 py-4 font-semibold">Req. Qty</th>
                                 <th className="px-6 py-4 font-semibold">Allocate Batches</th>
                             </tr>
                         </thead>
@@ -277,16 +195,15 @@ const OutwardDetails = () => {
                                 }));
 
                                 const allocatedBatches = item?.alloted_batch?.map(b => ({
-                                    id: b.id,
-                                    code: b.batch.batch_no,
-                                    qty: b.allocated_qty
+                                    id: b?.id,
+                                    code: b?.batch?.batch_no,
+                                    qty: b?.allocated_qty
                                 }));
 
-                                const product = item?.outwardProduct;
+                                const product = item?.transferProduct;
 
                                 return (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-2 font-medium text-slate-800">{product?.barcode}</td>
                                         <td className="px-6 py-2">
                                             <div className="font-medium text-slate-700">{product?.name}</div>
                                         </td>
@@ -300,7 +217,7 @@ const OutwardDetails = () => {
                                         <td className="px-6 py-2">
 
                                             {isPreview ? (
-                                                <AllocatedBatchesCell
+                                                <AllocatedBatchesCellPreview
                                                     allocatedBatches={allocatedBatches}
                                                     requiredQty={item?.requested_qty}
                                                     unit={product?.unit_type}
@@ -313,8 +230,8 @@ const OutwardDetails = () => {
                                                         className="text-sm"
                                                         classNamePrefix="react-select"
                                                         placeholder="Select from available batches..."
-                                                        onChange={(val) => handleBatchChange(val, item.vendor_product_id)}
-                                                        value={selectedBatches[item.vendor_product_id] || []}
+                                                        onChange={(val) => handleBatchChange(val, item?.id)}
+                                                        value={selectedBatches[item?.id] || []}
                                                         styles={{
                                                             control: (baseStyles, state) => ({
                                                                 ...baseStyles,
@@ -379,10 +296,10 @@ const OutwardDetails = () => {
     );
 };
 
-export default OutwardDetails;
+export default TransferOrderDispatch;
 
 
-const AllocatedBatchesCell = ({ allocatedBatches = [], requiredQty, unit }) => {
+const AllocatedBatchesCellPreview = ({ allocatedBatches = [], requiredQty, unit }) => {
     const totalAllocated = allocatedBatches.reduce((sum, b) => sum + Number(b.qty), 0);
     const isFulfilled = totalAllocated >= requiredQty;
     const isOver = totalAllocated > requiredQty;

@@ -14,6 +14,16 @@ class TransferOrder {
             enabled: isEnabled,
         });
     };
+    TQTransferOrderItem(to_no = "", isEnabled = true) {
+        return useQuery({
+            queryKey: ["transferOrderItem", to_no],
+            queryFn: async () => {
+                const res = await API.get(`/transfer-order/${to_no}`);
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 export const transferOrder = new TransferOrder();

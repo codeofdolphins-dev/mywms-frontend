@@ -109,9 +109,6 @@ const CreateRequisition = () => {
         setSelectedItems(prev => prev.filter(item => item.id !== id));
     };
 
-    console.log(selectedItems)
-    console.log(isManufacture)
-
 
     return (
         <div>

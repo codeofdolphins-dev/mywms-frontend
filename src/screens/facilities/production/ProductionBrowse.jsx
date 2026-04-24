@@ -3,7 +3,8 @@ import ComponentHeader from '../../../components/ComponentHeader'
 import RMstock from '../rmStore/components/RMStock';
 import AddModal from '../../../components/Add.modal';
 import ItemIssueForm from '../../../components/store/production/ItemIssue.form';
-import TransferOrderList from '../transferOrderList';
+import TransferOrderList from '../TransferOrderList';
+import ProductionInward from './components/ProductionInward';
 
 
 const headerLink = [{ title: "production" }];
@@ -33,10 +34,6 @@ const ProductionBrowse = () => {
                 addButton2={true}
                 btn2Title="Request Items"
                 btn2OnClick={() => setIsIssueItemShow(true)}
-
-                addButton3={true}
-                btn3Title="Generate Work Order"
-                btn3OnClick={() => setIsBulkShow(true)}
             />
 
             {/* wizards */}
@@ -60,6 +57,7 @@ const ProductionBrowse = () => {
 
             {activeTab === 1 && <RMstock />}
             {activeTab === 2 && <TransferOrderList />}
+            {/* {activeTab === 3 && <ProductionInward />} */}
 
             <AddModal
                 isShow={isIssueItemShow}
@@ -68,6 +66,7 @@ const ProductionBrowse = () => {
             >
                 <ItemIssueForm
                     setIsShow={setIsIssueItemShow}
+                    setActiveTab={setActiveTab}
                 />
             </AddModal>
 

@@ -47,6 +47,8 @@ import Location from './screens/admin/locations/Location';
 import BOMPage from './screens/master/bom/BOM';
 import RMBrowse from './screens/facilities/rmStore/RMBrowse';
 import ProductionBrowse from './screens/facilities/production/ProductionBrowse';
+import TransferOrderDispatch from './screens/facilities/TransferOrderDispatch';
+import ProductionInward from './screens/facilities/production/components/ProductionInward';
 
 
 function App() {
@@ -158,7 +160,9 @@ function App() {
 
                         <Route path='store' >
                             <Route path='rm' element={<RMBrowse />} />
+                            <Route path='rm/:to_no' element={<TransferOrderDispatch />} />
                             <Route path='wip' element={<ProductionBrowse />} />
+                            <Route path='wip/:to_no' element={<ProductionInward />} />
                             {/* <Route path='fg' element={<FGstore />} /> */}
                         </Route>
                     </Route>

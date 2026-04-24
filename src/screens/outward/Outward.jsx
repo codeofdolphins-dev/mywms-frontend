@@ -27,7 +27,7 @@ const Outward = () => {
 
     const { data: outwardList, isLoading: outwardListLoading } = fetchData.TQOutwardList();
 
-    const isEmpty = outwardList?.length < 1;
+    const isEmpty = outwardList?.data?.length < 1;
 
     function handelShow(items) {
         setSelectedItem(items);

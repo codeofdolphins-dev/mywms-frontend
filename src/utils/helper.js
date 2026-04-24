@@ -358,7 +358,6 @@ export const OUTWARD_COLUMN = [
     { key: "action", label: "Action", align: "center" },
 ];
 
-
 export const PRODUCT_COLUMN = [
     { key: "barcode", label: "Barcode" },
     { key: "product", label: "Name" },
@@ -367,6 +366,14 @@ export const PRODUCT_COLUMN = [
     { key: "reqQty", label: "Req Qty." },
     { key: "price", label: "Price" },
 ];
+
+export const TRANSFER_ORDER_RAW_PRODUCT_COLUMN = [
+    { key: "name", label: "Name" },
+    { key: "sku", label: "sku" },
+    { key: "packSize", label: "Pack Size" },
+    { key: "reqQty", label: "Req Qty." },
+];
+
 
 
 export const INVENTORY_COLUMN = [

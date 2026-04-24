@@ -26,9 +26,6 @@ const Inward = () => {
     const { data: inwardData, isLoading, isError } = inward.TQInwardList();
     const isEmpty = inwardData?.data?.length === 0;
 
-    console.log(inwardData);
-
-
     /** status color change helper */
     const statusColor = (status) => {
         switch (status) {

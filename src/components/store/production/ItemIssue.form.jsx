@@ -10,7 +10,7 @@ import IconTrashLines from '../../Icon/IconTrashLines'
 import Tippy from '@tippyjs/react'
 
 
-const ItemIssueForm = ({ setIsShow }) => {
+const ItemIssueForm = ({ setIsShow, setActiveTab }) => {
     /**************** states *******************/
     const [previewData, setPreviewData] = useState(null);
 
@@ -62,12 +62,12 @@ const ItemIssueForm = ({ setIsShow }) => {
         try {
             previewData.type = "material_issue";
             const result = await createData({ path: "/transfer-order/create", formData: previewData });
-            // if (result?.success) {
-            //     reset();
-            //     setPreviewData(null);
-            //     setIsShow(false);
-            // }
-            console.log("Confirmed Data to Submit:", previewData);
+            if (result?.success) {
+                reset();
+                setActiveTab(2)
+                setPreviewData(null);
+                setIsShow(false);
+            }
         } catch (error) {
             console.log(error);
         }

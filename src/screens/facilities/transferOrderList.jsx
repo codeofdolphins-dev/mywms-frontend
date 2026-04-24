@@ -9,6 +9,8 @@ import { TRANSFER_ORDER_COLUMN } from './helper'
 import TableBody from '../../components/table/TableBody'
 import TableRow from '../../components/table/TableRow'
 import { useSelector } from 'react-redux'
+import AddModal from '../../components/Add.modal'
+import { TRANSFER_ORDER_RAW_PRODUCT_COLUMN } from '../../utils/helper'
 
 
 
@@ -40,6 +42,9 @@ const TransferOrderList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
+    const [isShow, setIsShow] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
     const { data: transferOrderData, isLoading: transferOrderLoading } = transferOrder.TQTransferOrderList();
     const isEmpty = transferOrderData?.data?.length < 1;
 
@@ -49,8 +54,8 @@ const TransferOrderList = () => {
     };
 
     function handleShowDetails(items) {
-        // Handle showing details logic
-        console.log("Details", items);
+        setSelectedItem(items);
+        setIsShow(true);
     }
 
     return (
@@ -67,13 +72,18 @@ const TransferOrderList = () => {
                     isEmpty={isEmpty}
                     isLoading={transferOrderLoading}
                 >
-                    {transferOrderData?.data?.map((item) => (
-                        <TableRow
+                    {transferOrderData?.data?.map((item) => {
+                        const isReceiver = store.id === item?.to_location_id;
+
+                        return <TableRow
                             key={item.id}
                             columns={TRANSFER_ORDER_COLUMN}
                             row={{
                                 transfer_no: (
-                                    <span className="font-semibold text-primary cursor-pointer hover:underline">
+                                    <span
+                                        className={`font-semibold ${isReceiver ? "text-primary cursor-pointer hover:underline" : ""}`}
+                                        onClick={isReceiver ? () => navigate(item.transfer_no) : {}}
+                                    >
                                         {item.transfer_no}
                                     </span>
                                 ),
@@ -104,9 +114,52 @@ const TransferOrderList = () => {
                                 )
                             }}
                         />
-                    ))}
+                    })}
                 </TableBody>
             </div>
+
+            {/* Item details modal */}
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title="Transfer Order Item Details"
+                maxWidth='75'
+            >
+                <div className="panel mt-5 z-0">
+                    <div className="table-responsive max-h-[400px] overflow-y-auto">
+                        <table className="table-hover">
+                            <thead className="sticky top-0 bg-white z-10">
+                                <tr>
+                                    {TRANSFER_ORDER_RAW_PRODUCT_COLUMN.map((col, idx) => (
+                                        <th key={idx}>{col.label}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {(!selectedItem || selectedItem.length < 1) ? (
+                                    <tr>
+                                        <td colSpan={TRANSFER_ORDER_RAW_PRODUCT_COLUMN.length} className="text-center py-4">
+                                            No Data Available
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    selectedItem.map((item, idx) => {
+                                        const product = item?.transferProduct;
+                                        return (
+                                            <tr key={item.id}>
+                                                <td>{product?.name}</td>
+                                                <td>{product?.sku}</td>
+                                                <td>{`${product?.measure || ''} ${product?.unit_type || ''} ${product?.package_type || ''}`.trim()}</td>
+                                                <td>{item?.requested_qty}</td>
+                                            </tr>
+                                        )
+                                    })
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </AddModal>
 
         </div>
     )

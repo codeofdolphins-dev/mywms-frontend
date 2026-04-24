@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import RMstock from './components/RMStock';
 import ComponentHeader from '../../../components/ComponentHeader';
-import TransferOrderList from '../transferOrderList';
+import TransferOrderList from '../TransferOrderList';
 
 
-const headerLink = [{ title: "raw material store" }];
+const headerLink = [{ title: "RM store" }];
 
 const RMBrowse = () => {
     const [activeTab, setActiveTab] = useState(1);
@@ -20,9 +20,7 @@ const RMBrowse = () => {
                 searchPlaceholder="Search by product, SKU, barcode, category..."
                 setDebounceSearch={setDebounceSearch}
                 addButton={false}
-                addButton2={true}
-                btn2Title="Bulk Creation"
-                btn2OnClick={() => setIsBulkShow(true)}
+                showSearch={false}  
             />
 
             {/* wizards */}
