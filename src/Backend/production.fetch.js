@@ -24,6 +24,28 @@ class TransferOrder {
             enabled: isEnabled,
         });
     };
+
+    TQProductionOrderList(params = "", isEnabled = true) {
+        return useQuery({
+            queryKey: ["productionOrderList", params],
+            queryFn: async () => {
+                const res = await API.get(`/production-order/list`, { params });
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+    
+    TQProductionOrderItem(pro_no = "", isEnabled = true) {
+        return useQuery({
+            queryKey: ["productionOrderItem", pro_no],
+            queryFn: async () => {
+                const res = await API.get(`/production-order/${pro_no}`);
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 export const transferOrder = new TransferOrder();

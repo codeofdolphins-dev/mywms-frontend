@@ -22,12 +22,18 @@ import masterData from '../../../../Backend/master.backend'
 import { transferOrder } from '../../../../Backend/production.fetch'
 
 
+const headerLink = [
+    { title: "RM Issue", link: "/production/store/wip?tab=2" },
+    { title: "RM Inward" }
+]
+
+
 const ProductionInward = () => {
     const navigate = useNavigate();
     const { to_no } = useParams();
 
 
-    const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster(["inwardItemDetails"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["transferOrderItem", "transferOrderList"]);
 
 
     /** for accordian */
@@ -61,18 +67,17 @@ const ProductionInward = () => {
         const items = sourceData.map(item => {
 
             const allocations = item?.alloted_batch?.map(alloc => ({
-                to_item_batch_id: alloc.id,
-                batch_no: alloc.batch_no || "",
-                qty: alloc.received_qty,
-                d_qty: "",
-                s_qty: "",
-                r_qty: alloc.received_qty,
-                e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
+                item_alloc_id: alloc.id,
+                batch_no: alloc?.allocatedBatch?.batch_no || "",
+                qty: Number(alloc?.allocated_qty),
+                d_qty: Number(alloc?.demaged_qty) || "",
+                s_qty: Number(alloc?.shortage_qty) || "",
+                r_qty: Number(alloc?.allocated_qty),
+                e_date: alloc?.allocatedBatch?.expiry_date
             }))
 
             return {
-                grn_item_id: item.id,
-                ...(item.purchase_order_item_id && { po_item_id: item.purchase_order_item_id }),
+                item_id: item.id,
                 product_id: item.product_id,
                 allocations
             };
@@ -105,15 +110,16 @@ const ProductionInward = () => {
 
     /** handle submit form */
     async function submitForm(data) {
-        if (!grn_no) {
-            warningAlert("Missing GRN Number");
+        if (!to_no) {
+            warningAlert("Missing TO Number");
             return;
         }
 
-        data.grn_no = grn_no;
-        if (toDetails?.data?.purchase_order) data.po_no = toDetails?.data?.purchase_order;
+        data.to_no = to_no;
+        // console.log(data);
+        // return;
 
-        const res = await createData({ path: "/inward/create", formData: data });
+        const res = await updateData({ path: "/transfer-order/receive", formData: data });
         if (res.success) {
             // navigate("/inward");
         }
@@ -123,7 +129,9 @@ const ProductionInward = () => {
     const statusColor = (status) => {
         switch (status) {
             case "draft": return "bg-info";
-            case "accepted": return "bg-success";
+            case "requested": return "bg-warning";
+            case "dispatched": return "bg-success";
+            case "received": return "bg-success";
             default: return "bg-warning";
         }
     }
@@ -132,6 +140,11 @@ const ProductionInward = () => {
 
     return (
         <div>
+            <ComponentHeader
+                headerLink={headerLink}
+                addButton={false}
+                showSearch={false}
+            />
 
             {!toDetails ?
                 <NoRecord />
@@ -142,12 +155,12 @@ const ProductionInward = () => {
                         <div className="max-h-96 overflow-auto shadow-sm">
                             <div className="space-y-4">
                                 {fields?.map((field, idx) => {
-                                    const item = toDetails?.data?.grnLineItems?.[idx]; // 🔗 FULL DATA
-                                    const product = item?.grnProduct;
+                                    const item = toDetails?.data?.transferOrderItem?.[idx]; // 🔗 FULL DATA
+                                    const product = item?.transferProduct;
 
                                     if (!item) return null;
 
-                                    const reqQtyNum = Number(item.ordered_qty) || 0;
+                                    const reqQtyNum = Number(item?.requested_qty);
 
                                     return (
                                         <div
@@ -189,7 +202,7 @@ const ProductionInward = () => {
 
                                                             {/* 5️⃣ requested_qty */}
                                                             <th className="w-[15%] text-start truncate !px-0">
-                                                                Req. Qty: <span className="font-bold">{item.ordered_qty} {product?.unit_type}</span>
+                                                                Req. Qty: <span className="font-bold">{item.requested_qty} {product?.unit_type}</span>
                                                             </th>
 
                                                             {/* 6️⃣ Expand icon */}
@@ -214,7 +227,7 @@ const ProductionInward = () => {
                                                                 <Input
                                                                     label="Batch No:"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.batch_no`)}
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status === "received"}
                                                                 />
                                                             </div>
 
@@ -234,7 +247,7 @@ const ProductionInward = () => {
                                                                     label="Damage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status === "received"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
                                                                         onChange: (e) => {
                                                                             const d_qty = Number(e.target.value) || 0;
@@ -263,7 +276,7 @@ const ProductionInward = () => {
                                                                     label="Shortage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status === "received"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
                                                                         onChange: (e) => {
                                                                             const s_qty = Number(e.target.value) || 0;
@@ -291,7 +304,7 @@ const ProductionInward = () => {
                                                                 <Input
                                                                     label="Receive Qty:"
                                                                     placeholder="0"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status === "received"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.r_qty`, {
                                                                         min: {
                                                                             value: 0,
@@ -323,7 +336,7 @@ const ProductionInward = () => {
                                                                 <Input
                                                                     type="date"
                                                                     label="Expiry Date:"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status === "received"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.e_date`)}
                                                                 />
                                                             </div>
@@ -348,13 +361,13 @@ const ProductionInward = () => {
                         </div>
 
                         {/* button section */}
-                        {status !== "accepted" && (
+                        {status !== "received" && (
                             <div className="flex justify-end">
                                 <Button
                                     type='submit'
-                                    loading={createDataPending}
+                                    loading={updatePending}
                                 >
-                                    Receive & Post
+                                    Receive & Update Stock
                                 </Button>
                             </div>
                         )}

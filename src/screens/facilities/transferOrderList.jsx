@@ -74,10 +74,16 @@ const TransferOrderList = () => {
                 >
                     {transferOrderData?.data?.map((item) => {
                         const isReceiver = store.id === item?.to_location_id;
+                        const isSender = store.id === item?.from_location_id;
+                        const isNotRequested = item.status !== "requested";
 
                         return <TableRow
                             key={item.id}
                             columns={TRANSFER_ORDER_COLUMN}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (isSender && isNotRequested) navigate(item.transfer_no);
+                            }}
                             row={{
                                 transfer_no: (
                                     <span

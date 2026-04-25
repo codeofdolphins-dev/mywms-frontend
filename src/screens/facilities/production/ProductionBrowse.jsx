@@ -1,25 +1,44 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ComponentHeader from '../../../components/ComponentHeader'
 import RMstock from '../rmStore/components/RMStock';
 import AddModal from '../../../components/Add.modal';
 import ItemIssueForm from '../../../components/store/production/ItemIssue.form';
 import TransferOrderList from '../TransferOrderList';
 import ProductionInward from './components/ProductionInward';
+import ProductionOrder from './components/ProductionOrder';
+import { useSearchParams } from 'react-router-dom';
 
 
-const headerLink = [{ title: "production" }];
+const headerLink = [{ title: "Production" }];
 
 const tabList = [
-    { id: 1, title: "Rm Stock" },
-    { id: 2, title: "Rm Issue" },
-    { id: 3, title: "Inward" },
-    { id: 4, title: "Outward" },
+    { id: 1, title: "RM Stock" },
+    { id: 2, title: "RM Issue" },
+    { id: 3, title: "Production Order" },
+    { id: 4, title: "Outward" }
 ]
 
 const ProductionBrowse = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabValue = searchParams.get('tab');
+
     const [isIssueItemShow, setIsIssueItemShow] = useState(false);
     const [debounceSearch, setDebounceSearch] = useState('');
-    const [activeTab, setActiveTab] = useState(1);
+
+    const [activeTab, setActiveTab] = useState(tabValue ? Number(tabValue) : 1);
+
+    useEffect(() => {
+        if (tabValue && Number(tabValue) !== activeTab) {
+            setActiveTab(Number(tabValue));
+        }
+    }, [tabValue]);
+
+    useEffect(() => {
+        setSearchParams(prev => {
+            prev.set('tab', activeTab);
+            return prev;
+        });
+    }, [activeTab, setSearchParams]);
 
 
     return (
@@ -57,6 +76,7 @@ const ProductionBrowse = () => {
 
             {activeTab === 1 && <RMstock />}
             {activeTab === 2 && <TransferOrderList />}
+            {activeTab === 3 && <ProductionOrder />}
             {/* {activeTab === 3 && <ProductionInward />} */}
 
             <AddModal
