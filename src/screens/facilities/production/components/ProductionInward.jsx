@@ -19,7 +19,7 @@ import { FcDocument } from 'react-icons/fc'
 import inward from '../../../../Backend/inward.fetch'
 import { Button } from '@mantine/core'
 import masterData from '../../../../Backend/master.backend'
-import { transferOrder } from '../../../../Backend/production.fetch'
+import { production } from '../../../../Backend/production.fetch'
 
 
 const headerLink = [
@@ -45,7 +45,7 @@ const ProductionInward = () => {
     };
 
 
-    const { data: toDetails, isLoading, isError } = transferOrder.TQTransferOrderItem(to_no, Boolean(to_no));
+    const { data: toDetails, isLoading, isError } = production.TQTransferOrderItem(to_no, Boolean(to_no));
     const status = toDetails?.data?.status;
 
 

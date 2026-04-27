@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import TableBody from '../../../../components/table/TableBody'
 import TableRow from '../../../../components/table/TableRow'
-import { transferOrder } from '../../../../Backend/production.fetch';
 import { useParams } from 'react-router-dom';
 import { PRODUCTION_ORDER_ITEM_COLUMN } from '../helper';
 import ComponentHeader from '../../../../components/ComponentHeader';
+import { production } from '../../../../Backend/production.fetch';
 
 
 const headerLink = [
@@ -15,7 +15,7 @@ const headerLink = [
 const ProductionOrderDetails = () => {
     const { pro_no } = useParams();
 
-    const { data: productionOrder, isLoading: isProductionOrderLoading } = transferOrder.TQProductionOrderItem(pro_no, Boolean(pro_no));
+    const { data: productionOrder, isLoading: isProductionOrderLoading } = production.TQProductionOrderItem(pro_no, Boolean(pro_no));
 
     const order = productionOrder?.data;
     const items = productionOrder?.data?.productionOrderItem;

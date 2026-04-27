@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { FiUser, FiMapPin, FiShoppingBag, FiCheckCircle } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
-import fetchData from '../../Backend/fetchData.backend';
-import masterData from '../../Backend/master.backend';
-import ComponentHeader from '../../components/ComponentHeader';
-import { transferOrder } from '../../Backend/production.fetch';
+import fetchData from '../../../../Backend/fetchData.backend';
+import masterData from '../../../../Backend/master.backend';
+import ComponentHeader from '../../../../components/ComponentHeader';
+import { production } from '../../../../Backend/production.fetch';
 
+
+const headerLink = [
+    { title: "RM store", link: "/production/store/rm?tab=2" },
+    { title: "Dispatch Details" }
+]
 
 const TransferOrderDispatch = () => {
     const { to_no } = useParams();
@@ -17,7 +22,7 @@ const TransferOrderDispatch = () => {
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
 
-    const { data: toDetails, isLoading, isError } = transferOrder.TQTransferOrderItem(to_no, Boolean(to_no));
+    const { data: toDetails, isLoading, isError } = production.TQTransferOrderItem(to_no, Boolean(to_no));
 
     // Handle change of batches dropdown
     const handleBatchChange = (selectedOptions, itemId) => {
@@ -32,7 +37,7 @@ const TransferOrderDispatch = () => {
     const destAddess = data?.sendTo?.address;
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
-    const isPreview = data?.status === "dispatched";
+    const isPreview = data?.status === "dispatched" || data?.status === "received";
 
     // console.log(data)
     // console.log(isPreview)
@@ -80,10 +85,7 @@ const TransferOrderDispatch = () => {
     return (
         <div className="bg-slate-50 min-h-screen">
             <ComponentHeader
-                headerLink={[
-                    { title: "RM store", link: "/production/store/rm" },
-                    { title: "details" }
-                ]}
+                headerLink={headerLink}
                 showSearch={false}
                 addButton={false}
             />

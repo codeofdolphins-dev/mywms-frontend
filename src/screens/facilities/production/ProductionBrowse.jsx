@@ -7,6 +7,7 @@ import TransferOrderList from '../TransferOrderList';
 import ProductionInward from './components/ProductionInward';
 import ProductionOrder from './components/ProductionOrder';
 import { useSearchParams } from 'react-router-dom';
+import ProductionReceipt from './components/ProductionReceipt';
 
 
 const headerLink = [{ title: "Production" }];
@@ -15,8 +16,8 @@ const tabList = [
     { id: 1, title: "RM Stock" },
     { id: 2, title: "RM Issue" },
     { id: 3, title: "Production Order" },
-    { id: 4, title: "Outward" }
-]
+    { id: 4, title: "Production Receipt" }
+];
 
 const ProductionBrowse = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -77,7 +78,7 @@ const ProductionBrowse = () => {
             {activeTab === 1 && <RMstock />}
             {activeTab === 2 && <TransferOrderList />}
             {activeTab === 3 && <ProductionOrder />}
-            {/* {activeTab === 3 && <ProductionInward />} */}
+            {activeTab === 4 && <ProductionReceipt />}
 
             <AddModal
                 isShow={isIssueItemShow}

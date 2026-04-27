@@ -4,13 +4,13 @@ import ComponentHeader from '@/components/ComponentHeader'
 import IconTrashLines from '@/components/Icon/IconTrashLines'
 import CustomeButton from "@/components/inputs/Button"
 import IconMenuNotes from '@/components/Icon/Menu/IconMenuNotes'
-import { transferOrder } from '../../Backend/production.fetch'
 import { TRANSFER_ORDER_COLUMN } from './helper'
 import TableBody from '../../components/table/TableBody'
 import TableRow from '../../components/table/TableRow'
 import { useSelector } from 'react-redux'
 import AddModal from '../../components/Add.modal'
 import { TRANSFER_ORDER_RAW_PRODUCT_COLUMN } from '../../utils/helper'
+import { production } from '../../Backend/production.fetch'
 
 
 
@@ -29,11 +29,6 @@ const getStatusColor = (status) => {
     }
 };
 
-const headerLink = [
-    { title: "facilities", link: "/facilities" },
-    { title: "Transfer Orders" },
-];
-
 
 const TransferOrderList = () => {
     const store = useSelector(state => state.auth.userData.activeNode?.store);
@@ -45,7 +40,7 @@ const TransferOrderList = () => {
     const [isShow, setIsShow] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const { data: transferOrderData, isLoading: transferOrderLoading } = transferOrder.TQTransferOrderList();
+    const { data: transferOrderData, isLoading: transferOrderLoading } = production.TQTransferOrderList();
     const isEmpty = transferOrderData?.data?.length < 1;
 
     function handleDelete(id) {

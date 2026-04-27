@@ -35,9 +35,18 @@ const TableBody = ({
     }
 
     return <>
-        <div className="overflow-auto">
-            <TableHeader columns={columns} />
-            {children}
+        <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+                <colgroup>
+                    {columns.map(col => (
+                        <col key={col.key} style={col.width ? { width: col.width } : {}} />
+                    ))}
+                </colgroup>
+                <TableHeader columns={columns} />
+                <tbody>
+                    {children}
+                </tbody>
+            </table>
         </div>
         {
             showPagination &&

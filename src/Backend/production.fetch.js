@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import API from ".";
 
-class TransferOrder {
+class Production {
     TQTransferOrderList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["transferOrderList", params],
@@ -46,6 +46,17 @@ class TransferOrder {
             enabled: isEnabled,
         });
     };
+    
+    TQProductionReceiptList(pro_no = "", isEnabled = true) {
+        return useQuery({
+            queryKey: ["productionReceiptList", pro_no],
+            queryFn: async () => {
+                const res = await API.get(`/production-receipt/list`);
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
-export const transferOrder = new TransferOrder();
+export const production = new Production();

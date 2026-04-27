@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import RMstock from './components/RMStock';
 import ComponentHeader from '../../../components/ComponentHeader';
+import RMstock from '../rmStore/components/RMStock';
 import TransferOrderList from '../TransferOrderList';
 
 
-const headerLink = [{ title: "RM store" }];
+const headerLink = [{ title: "FG store" }];
 
-const RMBrowse = () => {
+const FGBrowse = () => {
     const [activeTab, setActiveTab] = useState(1);
     const [isBulkShow, setIsBulkShow] = useState(false);
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -58,4 +58,4 @@ const RMBrowse = () => {
     )
 }
 
-export default RMBrowse
+export default FGBrowse
