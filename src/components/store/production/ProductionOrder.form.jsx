@@ -108,6 +108,7 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                 <Input
                                     label="Planned Qty"
                                     type="number"
+                                    placeholder="Planned qty"
                                     {...register("planned_qty", {
                                         required: "Planned qty required!!!",
                                         min: {

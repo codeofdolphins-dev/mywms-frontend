@@ -163,7 +163,7 @@ function App() {
                         <Route path='store' >
                             <Route path='rm' element={<RMBrowse />} />
                             <Route path='rm/:to_no' element={<TransferOrderDispatch />} />
-                            
+
                             <Route path='wip' element={<ProductionBrowse />} />
                             <Route path='wip/:to_no' element={<ProductionInward />} />
                             <Route path='wip/order/:pro_no' element={<ProductionOrderDetails />} />

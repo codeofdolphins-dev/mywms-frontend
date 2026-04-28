@@ -134,7 +134,7 @@ const CreateInward = () => {
 
         const res = await createData({ path: "/inward/create", formData: data });
         if (res.success) {
-            // navigate("/inward");
+            navigate("/inward");
         }
     };
 

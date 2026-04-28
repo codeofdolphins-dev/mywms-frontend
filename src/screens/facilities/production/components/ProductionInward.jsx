@@ -69,7 +69,7 @@ const ProductionInward = () => {
             const allocations = item?.alloted_batch?.map(alloc => ({
                 item_alloc_id: alloc.id,
                 batch_no: alloc?.allocatedBatch?.batch_no || "",
-                qty: Number(alloc?.allocated_qty),
+                qty: Number(item?.requested_qty),
                 d_qty: Number(alloc?.demaged_qty) || "",
                 s_qty: Number(alloc?.shortage_qty) || "",
                 r_qty: Number(alloc?.allocated_qty),
@@ -116,12 +116,9 @@ const ProductionInward = () => {
         }
 
         data.to_no = to_no;
-        // console.log(data);
-        // return;
-
         const res = await updateData({ path: "/transfer-order/receive", formData: data });
         if (res.success) {
-            // navigate("/inward");
+            navigate("/production/store/wip?tab=2");
         }
     };
 

@@ -52,7 +52,9 @@ const RFQPreview = ({
                 product_name: item?.product_name,
                 uom: item?.uom,
                 price_limit: item?.price_limit,
-                offer_price: item?.offer_price ?? ""
+                offer_price: item?.offer_price ?? "",
+                supplier_product_id: item?.vendor_product?.id ?? null,
+                // vendor_product: item?.vendor_product
             }));
             reset({ items });
         }
@@ -64,7 +66,7 @@ const RFQPreview = ({
                 product_name: item?.sourceRfqItem?.product_name,
                 uom: item?.sourceRfqItem?.uom,
                 price_limit: item?.sourceRfqItem?.price_limit,
-                offer_price: item?.offer_price ?? ""
+                offer_price: item?.offer_price ?? "",
             }));
             reset({ items });
         }
@@ -140,7 +142,7 @@ const RFQPreview = ({
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 flex-wrap mb-2">
                                     <h2 className="text-xl font-bold leading-tight text-gray-800">
-                                        {details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name}
+                                        {details?.name ? `${details?.name}` : details?.buyer_name}
                                     </h2>
                                     {details?.priority && (
                                         <span
@@ -170,7 +172,7 @@ const RFQPreview = ({
                     </div>
 
                     {/* Decorative background pattern */}
-                    <div className="absolute right-2 bottom-0 opacity-50 blur-sm transform translate-y-1/2 translate-x-1/4 text-green-600">
+                    <div className="absolute right-2 bottom-0 opacity-20 blur-sm transform translate-y-1/2 translate-x-1/4 text-gray-600">
                         <FiCheckCircle size={120} />
                     </div>
                 </div>
@@ -300,6 +302,7 @@ const RFQPreview = ({
                                                                             error={errors?.items?.[idx]?.supplier_product_id?.message || error?.message}
                                                                             required={true}
                                                                             isClearable={true}
+                                                                            disabled={!!details?.items?.[idx]?.vendor_product}
                                                                         />
                                                                     )}
                                                                 />

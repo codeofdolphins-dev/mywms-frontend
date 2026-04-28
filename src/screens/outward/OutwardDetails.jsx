@@ -53,7 +53,7 @@ const OutwardDetails = () => {
 
         const res = await update({ path: "/outward/dispatch", formData: payload });
         if (res?.success) {
-            // navigate("/outward");
+            navigate("/outward");
         }
     }
 

@@ -61,7 +61,7 @@ const TransferOrderDispatch = () => {
 
         const res = await update({ path: "/transfer-order/dispatch", formData: payload });
         if (res?.success) {
-            // navigate("/outward");
+            navigate(-1);
         }
     }
 

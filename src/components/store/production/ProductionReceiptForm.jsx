@@ -12,7 +12,7 @@ import RHSelect from '../../inputs/RHF/Select.RHF'
 const ProductionReceiptForm = ({ productionOrder, setIsShow }) => {
     const [previewData, setPreviewData] = useState(null);
 
-    const { mutateAsync: createData, isPending: createIsPending } = masterData.TQCreateMaster(["productionReceiptList"]);
+    const { mutateAsync: createData, isPending: createIsPending } = masterData.TQCreateMaster(["productionOrderList", "productionReceiptList"]);
 
     /**************** data fetching *******************/
     const { data: storeList, isLoading: storesLoading } = fetchData.TQStoreList(
@@ -26,7 +26,7 @@ const ProductionReceiptForm = ({ productionOrder, setIsShow }) => {
             production_order_id: productionOrder?.id ?? "",
             product_id: productionOrder?.target_product_id ?? "",
             fg_store_id: "",
-            received_qty: "",
+            send_qty: "",
             mfg_date: "",
         },
     });
@@ -126,15 +126,15 @@ const ProductionReceiptForm = ({ productionOrder, setIsShow }) => {
                     {/* ── Row 3: Received Qty + Mfg Date ── */}
                     <div className="grid grid-cols-2 gap-4">
                         <Input
-                            label="Received Qty"
+                            label="Release Qty"
                             type="number"
                             step="0.01"
                             placeholder="0.00"
-                            {...register("received_qty", {
-                                required: "Received quantity is required!!!",
+                            {...register("send_qty", {
+                                required: "Release quantity is required!!!",
                                 min: { value: 0.01, message: "Must be greater than 0" },
                             })}
-                            error={errors.received_qty?.message}
+                            error={errors.send_qty?.message}
                             required
                         />
 
@@ -214,8 +214,8 @@ const ProductionReceiptForm = ({ productionOrder, setIsShow }) => {
 
                         <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                                <p className="text-xs text-gray-400 uppercase font-semibold mb-0.5">Received Qty</p>
-                                <p className="font-bold text-gray-800">{previewData.received_qty}</p>
+                                <p className="text-xs text-gray-400 uppercase font-semibold mb-0.5">Send Qty</p>
+                                <p className="font-bold text-gray-800">{previewData.send_qty}</p>
                             </div>
                             <div>
                                 <p className="text-xs text-gray-400 uppercase font-semibold mb-0.5">

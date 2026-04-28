@@ -215,7 +215,7 @@ const BulkCreationModal = ({ onCancel }) => {
                 setIsShow={setIsShow}
                 title="Download Sample File"
                 maxWidth='50'
-            // placement='start'
+                placement='start'
             >
                 <SampleFileForm
                     onCancel={() => { onCancel(); setIsShow(false) }}

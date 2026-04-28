@@ -4,19 +4,20 @@ import TableRow from '../../../../components/table/TableRow'
 import AddModal from '../../../../components/Add.modal';
 import { FiPlus } from 'react-icons/fi';
 import ProductionOrderForm from '../../../../components/store/production/ProductionOrder.form';
-import { PRODUCTION_RECEIPT_COLUMN } from '../helper';
 import { useNavigate } from 'react-router-dom';
 import { production } from '../../../../Backend/production.fetch';
 import ProductionReceiptForm from '../../../../components/store/production/ProductionReceiptForm';
 import { utcToLocal } from '../../../../utils/UTCtoLocal';
+import { FG_RECEIPT_COLUMN } from '../helper';
+import FgReceiveForm from './FgReceiveForm';
 
 
-const ProductionReceipt = () => {
+const FGReceipt = () => {
     const navigate = useNavigate();
 
     const [isShow, setIsShow] = useState(false);
-    const [isPRShow, setIsPRShow] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+
     const [limit, setLimit] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -38,9 +39,9 @@ const ProductionReceipt = () => {
         }
     }
 
-    const handleGeneratePR = (item) => {
+    const handleGenerateInward = (item) => {
         setSelectedItem(item);
-        setIsPRShow(true);
+        setIsShow(true);
     }
 
     return (
@@ -48,13 +49,10 @@ const ProductionReceipt = () => {
 
             <div className="panel z-0">
 
-                {/* Items Listing using TableBody and TableRow */}
                 <div className="">
-                    {/* <div className="bg-white p-5 rounded shadow-sm border border-gray-100"> */}
-
                     <div>
                         <TableBody
-                            columns={PRODUCTION_RECEIPT_COLUMN}
+                            columns={FG_RECEIPT_COLUMN}
                             isEmpty={isEmpty}
                             isLoading={productionLoading}
                             limit={limit}
@@ -65,12 +63,10 @@ const ProductionReceipt = () => {
                             {receiptList?.data?.map((item) => (
                                 <TableRow
                                     key={item.id}
-                                    columns={PRODUCTION_RECEIPT_COLUMN}
-                                    // onClick={() => navigate(`order/${item?.production_order_no}`)}
+                                    columns={FG_RECEIPT_COLUMN}
+                                    onClick={() => handleGenerateInward(item)}
                                     row={{
                                         no: <span>{item?.receipt_no}</span>,
-
-                                        pro_no: <span>{item?.parentProductionOrder?.production_order_no}</span>,
 
                                         barcode: <span className="font-semibold text-gray-800">{item?.receivedProduct?.barcode}</span>,
 
@@ -82,9 +78,7 @@ const ProductionReceipt = () => {
 
                                         mfg_date: <span className="font-semibold text-gray-800">{utcToLocal(item?.mfg_date)}</span>,
 
-                                        status: <span className={`badge whitespace-nowrap uppercase ${statusColor(item?.status)}`}>{item?.status?.replace("_", " ")}</span>,
-
-                                        createdBy: <span className="font-semibold text-gray-800">{item?.proReceiptCreator?.name?.full_name}</span>
+                                        status: <span className={`badge whitespace-nowrap uppercase ${statusColor(item?.status)}`}>{item?.status?.replace("_", " ")}</span>
                                     }}
                                 />
                             ))}
@@ -96,25 +90,15 @@ const ProductionReceipt = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Create Production Order"
-            // placement='start'
+                title="Generate Inward"
             >
-                <ProductionOrderForm setIsShow={setIsShow} />
-            </AddModal>
-
-            <AddModal
-                isShow={isPRShow}
-                setIsShow={setIsPRShow}
-                title="Production Receipt"
-            // placement='start'
-            >
-                <ProductionReceiptForm
-                    productionOrder={selectedItem}
-                    setIsShow={setIsPRShow}
+                <FgReceiveForm
+                    setIsShow={setIsShow}
+                    receipt={selectedItem}
                 />
             </AddModal>
         </div>
     )
 }
 
-export default ProductionReceipt;
+export default FGReceipt;

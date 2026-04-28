@@ -35,7 +35,7 @@ class Production {
             enabled: isEnabled,
         });
     };
-    
+
     TQProductionOrderItem(pro_no = "", isEnabled = true) {
         return useQuery({
             queryKey: ["productionOrderItem", pro_no],
@@ -46,17 +46,31 @@ class Production {
             enabled: isEnabled,
         });
     };
-    
-    TQProductionReceiptList(pro_no = "", isEnabled = true) {
+
+    TQProductionReceiptList(params = "", isEnabled = true) {
         return useQuery({
-            queryKey: ["productionReceiptList", pro_no],
+            queryKey: ["productionReceiptList", params],
             queryFn: async () => {
-                const res = await API.get(`/production-receipt/list`);
+                const res = await API.get(`/production-receipt/list`, {
+                    params
+                });
                 return res.data;
             },
             enabled: isEnabled,
         });
     };
+
+    TQProductionReceiptItem(pr_no = "", isEnabled = true) {
+        return useQuery({
+            queryKey: ["productionReceiptItem", pr_no],
+            queryFn: async () => {
+                const res = await API.get(`/production-receipt/${pr_no}`);
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
+
 }
 
 export const production = new Production();

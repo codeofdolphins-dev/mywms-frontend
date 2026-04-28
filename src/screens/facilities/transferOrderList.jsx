@@ -31,7 +31,7 @@ const getStatusColor = (status) => {
 
 
 const TransferOrderList = () => {
-    const store = useSelector(state => state.auth.userData.activeNode?.store);
+    const store = useSelector(state => state.auth.userData?.activeNode?.store);
     const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(1);

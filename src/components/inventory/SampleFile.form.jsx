@@ -63,7 +63,7 @@ const SampleFileForm = ({ onCancel }) => {
             code: "L-101",
             category: "manufacturing"
         };
-        navigate("/admin/business/register", {
+        navigate("/admin/location/register", {
             state: { ...mfg }
         });
     }

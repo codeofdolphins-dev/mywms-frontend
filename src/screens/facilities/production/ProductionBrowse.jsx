@@ -28,12 +28,14 @@ const ProductionBrowse = () => {
 
     const [activeTab, setActiveTab] = useState(tabValue ? Number(tabValue) : 1);
 
+    /** sync the active tab from the url search params */
     useEffect(() => {
         if (tabValue && Number(tabValue) !== activeTab) {
             setActiveTab(Number(tabValue));
         }
     }, [tabValue]);
 
+    /** update the tab to url search params when active tab is changed */
     useEffect(() => {
         setSearchParams(prev => {
             prev.set('tab', activeTab);
