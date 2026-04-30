@@ -27,27 +27,28 @@ import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import fetchData from '../../Backend/fetchData.backend';
 
 
-const headerLink = [
-    { title: "order", link: "/order" },
-    { title: "details" },
-];
 
 const OrderDetails = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const type = searchParams.get("type");
+    const isPurchase = type === "purchase" ? true : false;
+
+
+    const headerLink = [
+        { title: "order", link: `/order?tab=${isPurchase ? 1 : 2}` },
+        { title: "details" },
+    ];
+
     const activeNode = useSelector((state) => state.auth.userData?.activeNode);
 
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster();
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
 
 
     const { control, watch, formState: { errors } } = useForm();
 
-
     const { id } = useParams();
-    const type = searchParams.get("type");
-
-    const isPurchase = type === "purchase" ? true : false;
 
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -116,6 +117,7 @@ const OrderDetails = () => {
             case "picking_in_progress": return "bg-primary";
             case "closed": return "bg-dark";
             case "cancelled": return "bg-danger";
+            case "assign_fg": return "bg-secondary";
             default: return "bg-warning";
         }
     }
@@ -184,7 +186,7 @@ const OrderDetails = () => {
                                         <td className="px-3.5 py-2 text-gray-400 w-[45%]">{isPurchase ? "PO Number" : "SO Number"}</td>
                                         <td className="px-3.5 py-2 font-medium text-right">
                                             <span className="font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                                                #{data?.data?.po_no || "N/A"}
+                                                #{data?.data?.po_no || data?.data?.so_no || "N/A"}
                                             </span>
                                         </td>
                                     </tr>

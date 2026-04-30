@@ -76,7 +76,7 @@ const ProductionReceipt = () => {
 
                                         product: <span className="font-semibold text-gray-800">{item?.receivedProduct?.name}</span>,
 
-                                        qty: <span className="font-semibold text-gray-800">{item?.received_qty}</span>,
+                                        qty: <span className="font-semibold text-gray-800">{item?.send_qty}</span>,
 
                                         fg_store: <span className="font-semibold text-gray-800">{item?.fgStore?.name ?? "-"}</span>,
 

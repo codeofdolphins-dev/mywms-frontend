@@ -23,7 +23,6 @@ const ProductionBrowse = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const tabValue = searchParams.get('tab');
 
-    const [isIssueItemShow, setIsIssueItemShow] = useState(false);
     const [debounceSearch, setDebounceSearch] = useState('');
 
     const [activeTab, setActiveTab] = useState(tabValue ? Number(tabValue) : 1);
@@ -49,13 +48,8 @@ const ProductionBrowse = () => {
             {/* compheader */}
             <ComponentHeader
                 headerLink={headerLink}
-                searchPlaceholder="Search by product, SKU, barcode, category..."
-                setDebounceSearch={setDebounceSearch}
+                showSearch={false}
                 addButton={false}
-
-                addButton2={true}
-                btn2Title="Request Items"
-                btn2OnClick={() => setIsIssueItemShow(true)}
             />
 
             {/* wizards */}
@@ -81,17 +75,6 @@ const ProductionBrowse = () => {
             {activeTab === 2 && <TransferOrderList />}
             {activeTab === 3 && <ProductionOrder />}
             {activeTab === 4 && <ProductionReceipt />}
-
-            <AddModal
-                isShow={isIssueItemShow}
-                setIsShow={setIsIssueItemShow}
-                title="Raw Material Issue Form"
-            >
-                <ItemIssueForm
-                    setIsShow={setIsIssueItemShow}
-                    setActiveTab={setActiveTab}
-                />
-            </AddModal>
 
         </div>
     )

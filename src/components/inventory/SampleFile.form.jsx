@@ -202,11 +202,13 @@ const SampleFileForm = ({ onCancel }) => {
             <AddModal
                 isShow={store}
                 setIsShow={setStore}
-                title={"Add New Store"}
+                title={"Add New FG Store"}
                 maxWidth='75'
             >
                 <CreateStoreForm
+                    selectedStore="FIN"
                     setSelectedStore={setStore}
+                    isTypeDisabled={true}
                 />
             </AddModal>
         </>

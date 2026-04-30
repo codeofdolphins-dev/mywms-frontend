@@ -120,7 +120,7 @@ const CreateUser = () => {
                     reset();
                     setPreview(null);
                     setFileKey(prev => prev + 1);
-                    navigate(-1);
+                    navigate("/admin/user");
                 }
 
             } else {
@@ -131,6 +131,7 @@ const CreateUser = () => {
                     setPreview(null);
                     setOldPreview(null);
                     setFileKey(prev => prev + 1);
+                    navigate("/admin/user");
                 }
             }
         } catch (error) {

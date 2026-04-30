@@ -376,6 +376,54 @@ export const TRANSFER_ORDER_RAW_PRODUCT_COLUMN = [
 
 
 
+export const RM_INVENTORY_COLUMN = [
+    { key: "product", label: "Product" },
+    { key: "sku", label: "SKU" },
+    { key: "category", label: "Category" },
+    { key: "totalQty", label: "Total Qty", align: "center" },
+    { key: "availableQty", label: "Available", align: "center" },
+    { key: "reservedQty", label: "Reserved", align: "center" },
+    { key: "reorderLevel", label: "Reorder Lvl", align: "center" },
+    { key: "stockStatus", label: "Status", align: "center" },
+    { key: "unitPrice", label: "Unit Price", align: "right" },
+    { key: "stockValue", label: "Stock Value", align: "right" },
+    { key: "action", label: "", align: "center", width: "60px" },
+];
+
+export const RM_INVENTORY_BATCH_COLUMN = [
+    { key: "batchNo", label: "Batch / Lot #" },
+    { key: "qty", label: "Qty", align: "center" },
+    { key: "unitPrice", label: "Unit Price", align: "right" },
+    { key: "mfgDate", label: "Mfg. Date" },
+    { key: "expiryDate", label: "Expiry Date" },
+    { key: "daysToExpiry", label: "Days Left", align: "center" },
+    { key: "grnRef", label: "GRN Ref" },
+    { key: "batchStatus", label: "Status", align: "center" },
+];
+
+export const LOCATION_LIST_COLUMN = [
+    { key: "name", label: "Name", width: "200px" },
+    { key: "location", label: "Location" },
+    { key: "type", label: "Type", width: "200px" },
+    { key: "category", label: "Category", width: "150px" },
+    { key: "address", label: "State/District", width: "150px" },
+    { key: "gst", label: "GST No" },
+    { key: "license", label: "License No" },
+    { key: "action", label: "Action", align: "center", width: "80px" },
+];
+
+
+export const INWARD_COLUMN = [
+    { key: "no", label: "#", align: "center", width: "200px", },
+    { key: "po_no", label: "PO No", align: "center", width: "200px", },
+    { key: "date", label: "Receive Date", width: "150px", align: "center" },
+    { key: "items", label: "Total Items", align: "center" },
+    { key: "status", label: "Status", width: "150px" },
+    { key: "createdBy", label: "Created By" },
+];
+
+
+
 export const INVENTORY_COLUMN = [
     { key: "product", label: "Product" },
     { key: "sku", label: "SKU" },
@@ -400,25 +448,4 @@ export const INVENTORY_BATCH_COLUMN = [
     { key: "grnRef", label: "GRN Ref" },
     { key: "storageLocation", label: "Zone / Bin" },
     { key: "batchStatus", label: "Status", align: "center" },
-];
-
-export const LOCATION_LIST_COLUMN = [
-    { key: "name", label: "Name", width: "200px" },
-    { key: "location", label: "Location" },
-    { key: "type", label: "Type", width: "200px" },
-    { key: "category", label: "Category", width: "150px" },
-    { key: "address", label: "State/District", width: "150px" },
-    { key: "gst", label: "GST No" },
-    { key: "license", label: "License No" },
-    { key: "action", label: "Action", align: "center", width: "80px" },
-];
-
-
-export const INWARD_COLUMN = [
-    { key: "no", label: "#", align: "center", width: "200px", },
-    { key: "po_no", label: "PO No", align: "center", width: "200px", },
-    { key: "date", label: "Receive Date", width: "150px", align: "center" },
-    { key: "items", label: "Total Items", align: "center" },
-    { key: "status", label: "Status", width: "150px" },
-    { key: "createdBy", label: "Created By" },
 ];

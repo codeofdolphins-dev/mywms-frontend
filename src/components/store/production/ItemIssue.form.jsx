@@ -10,7 +10,7 @@ import IconTrashLines from '../../Icon/IconTrashLines'
 import Tippy from '@tippyjs/react'
 
 
-const ItemIssueForm = ({ setIsShow, setActiveTab }) => {
+const ItemIssueForm = ({ setIsShow }) => {
     /**************** states *******************/
     const [previewData, setPreviewData] = useState(null);
 
@@ -64,7 +64,6 @@ const ItemIssueForm = ({ setIsShow, setActiveTab }) => {
             const result = await createData({ path: "/transfer-order/create", formData: previewData });
             if (result?.success) {
                 reset();
-                setActiveTab(2)
                 setPreviewData(null);
                 setIsShow(false);
             }

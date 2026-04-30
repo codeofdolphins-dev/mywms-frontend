@@ -58,6 +58,8 @@ const AddProduct = () => {
             hsn_id: "",
             unit_type_id: "",
             package_type_id: "",
+            has_expiry: false,
+            shelf_life: null,
         }
     });
 
@@ -69,7 +71,7 @@ const AddProduct = () => {
             // console.log(data);
             reset({
                 ...data,
-                brands: data?.productBrands?.[0]?.id,
+                brand_id: data?.productBrands?.[0]?.id,
                 categories: data?.selectedCategoryIds,
                 hsn_id: data?.hsn?.id,
                 unit_type_id: data?.unitRef?.id,
@@ -83,6 +85,15 @@ const AddProduct = () => {
 
     const productType = watch("product_type");
     const isRaw = productType === "raw";
+
+    const hasExpiry = watch("has_expiry");
+
+    // Reset shelf_life whenever user toggles Has Expiry back to No
+    useEffect(() => {
+        if (!hasExpiry) {
+            setValue("shelf_life", null, { shouldValidate: false });
+        }
+    }, [hasExpiry, setValue]);
 
 
     const submit = async (data) => {
@@ -248,8 +259,9 @@ const AddProduct = () => {
                                         />
                                     </div>
 
-                                    {/* hsn_id */}
-                                    <div className="">
+                                    {/* hsn + type */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {/* hsn_id */}
                                         <div className=''>
                                             <Controller
                                                 name="hsn_id"
@@ -283,31 +295,16 @@ const AddProduct = () => {
                                             />
                                         </div>
 
-                                        {/* GST Rate % */}
-                                        {/* <div className='w-full flex-1'>
-                                            <Input
-                                                label={"GST Rate %"}
-                                                placeholder={"Enter GST Rate %"}
-                                                {...register("gst_rate", {
-                                                    required: "This field is required!!!",
-                                                    pattern: {
-                                                        value: /^\d+(\.\d+)?$/,
-                                                        message: "decimals allowed only",
-                                                    },
-                                                })}
-                                                error={errors.gst_rate?.message}
-                                                required={true}
-                                            />
-                                        </div> */}
-
-                                        {/* Is Taxable % */}
-                                        {/* <div className='flex-shrink-0'>
+                                        {/* Package Type */}
+                                        <div>
                                             <Controller
-                                                name="is_taxable"
+                                                name="package_type_id"
                                                 control={control}
-                                                defaultValue={true}
+                                                rules={{
+                                                    required: !isRaw && "This field is required!!!"
+                                                }}
                                                 render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                    <RHRadioGroup
+                                                    <RHSelect
                                                         ref={(el) => {
                                                             ref({
                                                                 focus: () => el?.focus(),
@@ -315,15 +312,21 @@ const AddProduct = () => {
                                                         }}
                                                         value={value}
                                                         onChange={onChange}
-                                                        label="Taxable"
-                                                        options={[
-                                                            { label: "Yes", value: true },
-                                                            { label: "No", value: false },
-                                                        ]}
+
+                                                        label="Package Type"
+                                                        options={packageTypeData?.data}
+                                                        error={error?.message}
+                                                        required={!isRaw}
+                                                        disabled={isRaw}
+
+                                                        addButton={true}
+                                                        buttonTitle='type'
+                                                        buttonOnClick={() => setShowPackageType(true)}
+                                                        buttonDisabled={isRaw}
                                                     />
                                                 )}
                                             />
-                                        </div> */}
+                                        </div>
                                     </div>
 
                                 </div>
@@ -362,41 +365,10 @@ const AddProduct = () => {
                             </div>
 
                             {/* 3rd row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {/* Package Type */}
-                                <div>
-                                    <Controller
-                                        name="package_type_id"
-                                        control={control}
-                                        rules={{
-                                            required: !isRaw && "This field is required!!!"
-                                        }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                                label="Package Type"
-                                                options={packageTypeData?.data}
-                                                error={error?.message}
-                                                required={!isRaw}
-                                                disabled={isRaw}
-
-                                                addButton={true}
-                                                buttonTitle='type'
-                                                buttonOnClick={() => setShowPackageType(true)}
-                                                buttonDisabled={isRaw}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
+                                {/* measure + unit */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Measure */}
                                     <div>
                                         <Input
@@ -436,6 +408,47 @@ const AddProduct = () => {
                                                     buttonOnClick={() => setShowUnitType(true)}
                                                 />
                                             )}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-[auto_1fr] gap-4 items-start">
+
+                                    {/* Has Expiry radio — takes only its natural width */}
+                                    <div className="shrink-0">
+                                        <Controller
+                                            name="has_expiry"
+                                            control={control}
+                                            defaultValue={false}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHRadioGroup
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    label="Has Expiry"
+                                                    options={[
+                                                        { label: "Yes", value: true },
+                                                        { label: "No", value: false },
+                                                    ]}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* Shelf Life — fills the remaining space */}
+                                    <div className="min-w-0">
+                                        <Input
+                                            type={"number"}
+                                            label={"Shelf Life (Days)"}
+                                            placeholder={"Enter Shelf Life (Days)"}
+                                            {...register("shelf_life")}
+                                            disabled={!hasExpiry}
+                                            required={hasExpiry}
+                                            error={errors.shelf_life?.message}
                                         />
                                     </div>
                                 </div>

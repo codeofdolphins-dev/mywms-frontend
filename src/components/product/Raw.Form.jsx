@@ -12,8 +12,10 @@ import UnitTypeForm from '../unit/UnitType.Form'
 import masterData from '../../Backend/master.backend'
 import { RHFToFormData } from '../../utils/RHFtoFD'
 import { errorAlert } from '../../utils/alerts'
+import { useNavigate } from 'react-router-dom'
 
 const RawForm = ({ setIsShow, editRawProduct }) => {
+    const navigate = useNavigate();
     const [showUnitType, setShowUnitType] = useState(false);
 
     const { mutateAsync: createRaw, isPending: createRawPending } = masterData.TQCreateMaster(["productList"]);
@@ -83,6 +85,8 @@ const RawForm = ({ setIsShow, editRawProduct }) => {
                     setIsShow(false);
                 }
             }
+            navigate("/master/products?tab=2");
+
         } catch (error) {
             console.log(error);
         }

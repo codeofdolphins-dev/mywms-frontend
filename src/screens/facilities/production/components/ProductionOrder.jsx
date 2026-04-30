@@ -52,8 +52,6 @@ const ProductionOrder = () => {
 
                 {/* Items Listing using TableBody and TableRow */}
                 <div className="">
-                    {/* <div className="bg-white p-5 rounded shadow-sm border border-gray-100"> */}
-
                     <div className="flex justify-end items-center mb-4">
                         {/* <h3 className="text-lg font-semibold text-gray-800">Required Raw Materials</h3> */}
                         <button className="btn btn-primary" onClick={() => setIsShow(true)}><FiPlus size={20} className='mr-2' />Production Order</button>

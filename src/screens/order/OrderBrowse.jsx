@@ -12,7 +12,7 @@ import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
 import { Button } from '@mantine/core';
 import { currencyFormatter } from '../../utils/currencyFormatter';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import PO from './browse/PO';
 import SO from './browse/SO';
 
@@ -22,11 +22,28 @@ const headerLink = [
 ];
 
 const OrderBrowse = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabValue = searchParams.get("tab");
+
     const [debounceSearch, setDebounceSearch] = useState('');
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(tabValue ? Number(tabValue) : 1);
 
     // console.log(data)
 
+    /** sync the active tab from the url search params */
+    useEffect(() => {
+        if (tabValue && Number(tabValue) !== activeTab) {
+            setActiveTab(Number(tabValue));
+        }
+    }, [tabValue]);
+
+    /** update the tab to url search params when active tab is changed */
+    useEffect(() => {
+        setSearchParams(prev => {
+            prev.set('tab', activeTab);
+            return prev;
+        });
+    }, [activeTab, setSearchParams]);
 
 
     // if (isLoading) return <FullScreenLoader />
@@ -65,15 +82,11 @@ const OrderBrowse = () => {
                 </ul>
             </div>
 
-            {
-                activeTab === 1 && <PO debounceSearch={debounceSearch} />
-            }
+            {activeTab === 1 && <PO debounceSearch={debounceSearch} />}
 
-            {
-                activeTab === 2 && <SO debounceSearch={debounceSearch} />
-            }
+            {activeTab === 2 && <SO debounceSearch={debounceSearch} />}
         </div >
     )
 }
 
-export default OrderBrowse
+export default OrderBrowse;

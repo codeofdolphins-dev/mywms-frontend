@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import SearchInput from '@/components/inputs/SearchInput'
 import IconSettings from '@/components/Icon/IconSettings';
 import IconPencil from '@/components/Icon/IconPencil';
@@ -38,6 +38,8 @@ const colName_finished = [
     { key: "measure", label: "Measure" },
     { key: "unit_type", label: "Unit" },
     { key: "package_type", label: "Package Type" },
+    { key: "has_expiry", label: "Has Expiry", render: v => v ? "Yes" : "No" },
+    { key: "shelf_life", label: "Shelf Life" },
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
@@ -50,6 +52,9 @@ const headerLink = [
 
 const Product = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabValue = searchParams.get("tab");
+
 
     const [isShow, setIsShow] = useState(false);
     const [activeTab, setActiveTab] = useState(1);
@@ -60,6 +65,18 @@ const Product = () => {
     const [limit, setLimit] = useState(10);
 
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["productList"]);
+
+    useEffect(() => {
+        if (tabValue && Number(tabValue) !== activeTab) setActiveTab(Number(tabValue));
+    }, [tabValue]);
+
+    useEffect(() => {
+        setSearchParams(prev => {
+            prev.set("tab", activeTab);
+            return prev;
+        });
+    }, [activeTab]);
+
 
     const params = {
         ...(debounceSearch && { text: debounceSearch }),

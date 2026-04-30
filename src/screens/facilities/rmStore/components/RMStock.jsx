@@ -3,313 +3,127 @@ import ComponentHeader from '../../../../components/ComponentHeader';
 import TableBody from '../../../../components/table/TableBody';
 import TableRow from '../../../../components/table/TableRow';
 import AddModal from '../../../../components/Add.modal';
-import { INVENTORY_COLUMN, INVENTORY_BATCH_COLUMN } from '../../../../utils/helper';
+import { RM_INVENTORY_COLUMN, RM_INVENTORY_BATCH_COLUMN } from '../../../../utils/helper';
 import { currencyFormatter } from '../../../../utils/currencyFormatter';
 import {
     FiPackage, FiAlertTriangle, FiTrendingUp, FiTrendingDown,
-    FiBox, FiCalendar, FiLayers, FiEye, FiFilter,
-    FiChevronDown, FiSearch
+    FiCalendar, FiLayers, FiEye, FiFilter, FiSearch
 } from 'react-icons/fi';
-import { BsBoxSeam, BsExclamationTriangle } from 'react-icons/bs';
+import { BsExclamationTriangle } from 'react-icons/bs';
 import { MdOutlineInventory2, MdOutlineWarehouse } from 'react-icons/md';
 import { HiOutlineCube } from 'react-icons/hi';
 import Tippy from '@tippyjs/react';
 import StatCard from '../../../../components/inventory/inventoryCard';
 import BulkCreationModal from '../../../../components/inventory/BulkCreation.modal';
-
-// ─── Mock inventory data ───────────────────────────────────────────────────────
-const INVENTORY_DATA = [
-    {
-        id: 1,
-        name: "Paracetamol 500mg Tablets",
-        sku: "MED-PCM-500",
-        barcode: "8901234567890",
-        category: "Pharmaceuticals",
-        brand: "CurePharma",
-        location: "Store A - Rack 3",
-        totalQty: 12500,
-        availableQty: 10200,
-        reservedQty: 2300,
-        reorderLevel: 5000,
-        unitPrice: 2.50,
-        unit: "Strip",
-        lastInwardDate: "2026-03-28",
-        lastOutwardDate: "2026-04-02",
-        batches: [
-            { batchNo: "BT-PCM-2601", qty: 5000, mfgDate: "2026-01-15", expiryDate: "2028-01-15", grnRef: "GRN-00284", storageLocation: "Zone-A / Bin-12" },
-            { batchNo: "BT-PCM-2602", qty: 4200, mfgDate: "2026-02-10", expiryDate: "2028-02-10", grnRef: "GRN-00301", storageLocation: "Zone-A / Bin-13" },
-            { batchNo: "BT-PCM-2503", qty: 3300, mfgDate: "2025-11-05", expiryDate: "2027-11-05", grnRef: "GRN-00198", storageLocation: "Zone-A / Bin-14" },
-        ]
-    },
-    {
-        id: 2,
-        name: "Amoxicillin 250mg Capsules",
-        sku: "MED-AMX-250",
-        barcode: "8901234567891",
-        category: "Antibiotics",
-        brand: "BioGenix",
-        location: "Store A - Rack 5",
-        totalQty: 800,
-        availableQty: 650,
-        reservedQty: 150,
-        reorderLevel: 1000,
-        unitPrice: 8.75,
-        unit: "Strip",
-        lastInwardDate: "2026-03-15",
-        lastOutwardDate: "2026-04-01",
-        batches: [
-            { batchNo: "BT-AMX-2601", qty: 500, mfgDate: "2026-01-20", expiryDate: "2027-07-20", grnRef: "GRN-00289", storageLocation: "Zone-B / Bin-04" },
-            { batchNo: "BT-AMX-2502", qty: 300, mfgDate: "2025-09-10", expiryDate: "2027-03-10", grnRef: "GRN-00172", storageLocation: "Zone-B / Bin-05" },
-        ]
-    },
-    {
-        id: 3,
-        name: "Surgical Gloves (Large)",
-        sku: "SUP-GLV-LRG",
-        barcode: "8901234567892",
-        category: "Surgical Supplies",
-        brand: "MedSafe",
-        location: "Store B - Rack 1",
-        totalQty: 25000,
-        availableQty: 22000,
-        reservedQty: 3000,
-        reorderLevel: 8000,
-        unitPrice: 5.20,
-        unit: "Pair",
-        lastInwardDate: "2026-04-01",
-        lastOutwardDate: "2026-04-05",
-        batches: [
-            { batchNo: "BT-GLV-2603", qty: 15000, mfgDate: "2026-03-01", expiryDate: "2029-03-01", grnRef: "GRN-00318", storageLocation: "Zone-C / Bin-01" },
-            { batchNo: "BT-GLV-2601", qty: 10000, mfgDate: "2026-01-10", expiryDate: "2029-01-10", grnRef: "GRN-00276", storageLocation: "Zone-C / Bin-02" },
-        ]
-    },
-    {
-        id: 4,
-        name: "Ibuprofen 400mg Tablets",
-        sku: "MED-IBU-400",
-        barcode: "8901234567893",
-        category: "Pharmaceuticals",
-        brand: "CurePharma",
-        location: "Store A - Rack 3",
-        totalQty: 300,
-        availableQty: 180,
-        reservedQty: 120,
-        reorderLevel: 2000,
-        unitPrice: 3.10,
-        unit: "Strip",
-        lastInwardDate: "2026-02-20",
-        lastOutwardDate: "2026-04-03",
-        batches: [
-            { batchNo: "BT-IBU-2601", qty: 200, mfgDate: "2026-02-01", expiryDate: "2028-02-01", grnRef: "GRN-00295", storageLocation: "Zone-A / Bin-15" },
-            { batchNo: "BT-IBU-2502", qty: 100, mfgDate: "2025-08-15", expiryDate: "2026-05-15", grnRef: "GRN-00156", storageLocation: "Zone-A / Bin-16" },
-        ]
-    },
-    {
-        id: 5,
-        name: "IV Saline 500ml",
-        sku: "MED-SAL-500",
-        barcode: "8901234567894",
-        category: "Infusions",
-        brand: "AquaMed",
-        location: "Cold Store - Shelf 2",
-        totalQty: 4800,
-        availableQty: 4000,
-        reservedQty: 800,
-        reorderLevel: 2000,
-        unitPrice: 45.00,
-        unit: "Bottle",
-        lastInwardDate: "2026-03-22",
-        lastOutwardDate: "2026-04-04",
-        batches: [
-            { batchNo: "BT-SAL-2602", qty: 3000, mfgDate: "2026-02-01", expiryDate: "2027-08-01", grnRef: "GRN-00305", storageLocation: "Cold-A / Shelf-2" },
-            { batchNo: "BT-SAL-2601", qty: 1800, mfgDate: "2026-01-10", expiryDate: "2027-07-10", grnRef: "GRN-00280", storageLocation: "Cold-A / Shelf-3" },
-        ]
-    },
-    {
-        id: 6,
-        name: "Disposable Syringes 5ml",
-        sku: "SUP-SYR-005",
-        barcode: "8901234567895",
-        category: "Surgical Supplies",
-        brand: "MedSafe",
-        location: "Store B - Rack 4",
-        totalQty: 50000,
-        availableQty: 42000,
-        reservedQty: 8000,
-        reorderLevel: 10000,
-        unitPrice: 3.50,
-        unit: "Piece",
-        lastInwardDate: "2026-04-02",
-        lastOutwardDate: "2026-04-05",
-        batches: [
-            { batchNo: "BT-SYR-2604", qty: 20000, mfgDate: "2026-04-01", expiryDate: "2030-04-01", grnRef: "GRN-00325", storageLocation: "Zone-D / Bin-01" },
-            { batchNo: "BT-SYR-2603", qty: 18000, mfgDate: "2026-03-15", expiryDate: "2030-03-15", grnRef: "GRN-00312", storageLocation: "Zone-D / Bin-02" },
-            { batchNo: "BT-SYR-2601", qty: 12000, mfgDate: "2026-01-05", expiryDate: "2030-01-05", grnRef: "GRN-00272", storageLocation: "Zone-D / Bin-03" },
-        ]
-    },
-    {
-        id: 7,
-        name: "Cetirizine 10mg Tablets",
-        sku: "MED-CTZ-010",
-        barcode: "8901234567896",
-        category: "Antihistamines",
-        brand: "AllerFree",
-        location: "Store A - Rack 7",
-        totalQty: 6200,
-        availableQty: 5500,
-        reservedQty: 700,
-        reorderLevel: 2000,
-        unitPrice: 1.80,
-        unit: "Strip",
-        lastInwardDate: "2026-03-30",
-        lastOutwardDate: "2026-04-06",
-        batches: [
-            { batchNo: "BT-CTZ-2603", qty: 3000, mfgDate: "2026-03-20", expiryDate: "2028-09-20", grnRef: "GRN-00315", storageLocation: "Zone-A / Bin-22" },
-            { batchNo: "BT-CTZ-2602", qty: 2000, mfgDate: "2026-02-10", expiryDate: "2028-08-10", grnRef: "GRN-00298", storageLocation: "Zone-A / Bin-23" },
-            { batchNo: "BT-CTZ-2501", qty: 1200, mfgDate: "2025-12-01", expiryDate: "2028-06-01", grnRef: "GRN-00245", storageLocation: "Zone-A / Bin-24" },
-        ]
-    },
-    {
-        id: 8,
-        name: "Digital Thermometer Pro",
-        sku: "EQP-THR-PRO",
-        barcode: "8901234567897",
-        category: "Equipment",
-        brand: "ThermoTech",
-        location: "Store C - Rack 1",
-        totalQty: 150,
-        availableQty: 120,
-        reservedQty: 30,
-        reorderLevel: 50,
-        unitPrice: 450.00,
-        unit: "Piece",
-        lastInwardDate: "2026-03-10",
-        lastOutwardDate: "2026-04-01",
-        batches: [
-            { batchNo: "BT-THR-2603", qty: 80, mfgDate: "2026-03-01", expiryDate: "N/A", grnRef: "GRN-00310", storageLocation: "Zone-E / Bin-01" },
-            { batchNo: "BT-THR-2601", qty: 70, mfgDate: "2026-01-15", expiryDate: "N/A", grnRef: "GRN-00282", storageLocation: "Zone-E / Bin-02" },
-        ]
-    },
-    {
-        id: 9,
-        name: "Antiseptic Solution 500ml",
-        sku: "MED-ANT-500",
-        barcode: "8901234567898",
-        category: "Antiseptics",
-        brand: "CleanGuard",
-        location: "Store B - Rack 6",
-        totalQty: 0,
-        availableQty: 0,
-        reservedQty: 0,
-        reorderLevel: 500,
-        unitPrice: 120.00,
-        unit: "Bottle",
-        lastInwardDate: "2026-01-15",
-        lastOutwardDate: "2026-03-28",
-        batches: []
-    },
-    {
-        id: 10,
-        name: "Bandage Roll 10cm x 4m",
-        sku: "SUP-BDG-010",
-        barcode: "8901234567899",
-        category: "Surgical Supplies",
-        brand: "MedSafe",
-        location: "Store B - Rack 2",
-        totalQty: 3200,
-        availableQty: 2900,
-        reservedQty: 300,
-        reorderLevel: 1000,
-        unitPrice: 15.00,
-        unit: "Roll",
-        lastInwardDate: "2026-03-25",
-        lastOutwardDate: "2026-04-05",
-        batches: [
-            { batchNo: "BT-BDG-2603", qty: 2000, mfgDate: "2026-03-15", expiryDate: "2029-03-15", grnRef: "GRN-00316", storageLocation: "Zone-C / Bin-10" },
-            { batchNo: "BT-BDG-2602", qty: 1200, mfgDate: "2026-02-01", expiryDate: "2029-02-01", grnRef: "GRN-00292", storageLocation: "Zone-C / Bin-11" },
-        ]
-    },
-];
+import inventory from '../../../../Backend/business.fetch copy';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
+/**
+ * The API returns products with nested batches[].
+ * Aggregate qty/price fields so the rest of the component works uniformly.
+ * When batches have different unit prices, we store both min and max
+ * so the UI can display a price range.
+ */
+function enrichProduct(product) {
+    const batches = product?.batches ?? [];
+    const totalQty = batches.reduce(
+        (sum, b) => sum + parseFloat(b.available_qty ?? 0) + parseFloat(b.reserved_qty ?? 0),
+        0
+    );
+    const availableQty = batches.reduce((sum, b) => sum + parseFloat(b.available_qty ?? 0), 0);
+    const reservedQty = batches.reduce((sum, b) => sum + parseFloat(b.reserved_qty ?? 0), 0);
+
+    // Price range — min & max across batches
+    const prices = batches.map(b => parseFloat(b.unit_price ?? 0)).filter(p => p > 0);
+    const minPrice = prices.length ? Math.min(...prices) : 0;
+    const maxPrice = prices.length ? Math.max(...prices) : 0;
+
+    // Weighted stock value = sum of each batch's (qty × unit_price)
+    const stockValue = batches.reduce((sum, b) => {
+        const batchQty = parseFloat(b.available_qty ?? 0) + parseFloat(b.reserved_qty ?? 0);
+        return sum + batchQty * parseFloat(b.unit_price ?? 0);
+    }, 0);
+
+    return { ...product, totalQty, availableQty, reservedQty, minPrice, maxPrice, stockValue };
+}
+
+/** Format unit price — shows a range when min ≠ max */
+function formatPriceRange(minPrice, maxPrice) {
+    if (minPrice === maxPrice) return currencyFormatter(maxPrice);
+    return `${currencyFormatter(minPrice)} – ${currencyFormatter(maxPrice)}`;
+}
+
 function getStockStatus(item) {
-    if (item.totalQty === 0) return "out_of_stock";
-    if (item.totalQty <= item.reorderLevel * 0.5) return "critical";
-    if (item.totalQty <= item.reorderLevel) return "low_stock";
-    return "in_stock";
+    if (item.totalQty === 0) return 'out_of_stock';
+    if (item.totalQty <= item.reorder_level * 0.5) return 'critical';
+    if (item.totalQty <= item.reorder_level) return 'low_stock';
+    return 'in_stock';
 }
 
 function getStatusBadge(status) {
     const map = {
-        in_stock: { label: "In Stock", cls: "bg-success" },
-        low_stock: { label: "Low Stock", cls: "bg-warning" },
-        critical: { label: "Critical", cls: "bg-danger" },
-        out_of_stock: { label: "Out of Stock", cls: "bg-dark" },
+        in_stock: { label: 'In Stock', cls: 'bg-success' },
+        low_stock: { label: 'Low Stock', cls: 'bg-warning' },
+        critical: { label: 'Critical', cls: 'bg-danger' },
+        out_of_stock: { label: 'Out of Stock', cls: 'bg-dark' },
     };
     const s = map[status] || map.in_stock;
-    return <span className={`badge uppercase rounded-full text-[10px] tracking-wide ${s.cls}`}>{s.label}</span>;
+    return <span className={`badge uppercase text-nowrap rounded-full text-[10px] tracking-wide ${s.cls}`}>{s.label}</span>;
 }
 
 function getDaysToExpiry(expiryDate) {
-    if (!expiryDate || expiryDate === "N/A") return null;
+    if (!expiryDate || expiryDate === 'N/A') return null;
     const now = new Date();
     const exp = new Date(expiryDate);
-    const diffMs = exp - now;
-    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
 }
 
 function getBatchStatus(expiryDate) {
     const days = getDaysToExpiry(expiryDate);
-    if (days === null) return <span className="badge bg-secondary rounded-full text-[10px]">No Expiry</span>;
-    if (days <= 0) return <span className="badge bg-dark rounded-full text-[10px]">Expired</span>;
-    if (days <= 90) return <span className="badge bg-danger rounded-full text-[10px]">Expiring Soon</span>;
-    if (days <= 180) return <span className="badge bg-warning rounded-full text-[10px]">Monitor</span>;
-    return <span className="badge bg-success rounded-full text-[10px]">Good</span>;
+    if (days === null) return <span className="badge bg-secondary rounded-full text-[10px] text-nowrap">No Expiry</span>;
+    if (days <= 0) return <span className="badge bg-dark rounded-full text-[10px] text-nowrap">Expired</span>;
+    if (days <= 90) return <span className="badge bg-danger rounded-full text-[10px] text-nowrap">Expiring Soon</span>;
+    if (days <= 180) return <span className="badge bg-warning rounded-full text-[10px] text-nowrap">Monitor</span>;
+    return <span className="badge bg-success rounded-full text-[10px] text-nowrap">Good</span>;
 }
 
 function formatDate(dateStr) {
-    if (!dateStr || dateStr === "N/A") return "N/A";
-    return new Date(dateStr).toLocaleDateString('en-IN', {
-        day: '2-digit', month: 'short', year: 'numeric'
-    });
+    if (!dateStr || dateStr === 'N/A') return '—';
+    return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function formatQty(qty) {
-    return qty?.toLocaleString('en-IN') ?? '0';
+    if (qty === undefined || qty === null) return '0';
+    return Number(qty).toLocaleString('en-IN');
 }
 
 // ─── Dashboard Stats ────────────────────────────────────────────────────────────
 
 function computeStats(items) {
-    let totalProducts = items.length;
-    let totalSKUs = new Set(items.map(i => i.sku)).size;
+    let totalProducts = items?.length ?? 0;
     let totalStockValue = 0;
     let lowStockCount = 0;
     let outOfStockCount = 0;
     let expiringCount = 0;
     let totalQty = 0;
 
-    items.forEach(item => {
-        const val = item.totalQty * item.unitPrice;
-        totalStockValue += val;
-        totalQty += item.totalQty;
+    items?.forEach(item => {
+        totalStockValue += item?.stockValue ?? 0;
+        totalQty += item?.totalQty ?? 0;
         const status = getStockStatus(item);
-        if (status === "low_stock" || status === "critical") lowStockCount++;
-        if (status === "out_of_stock") outOfStockCount++;
-        // count batches expiring in < 90 days
+        if (status === 'low_stock' || status === 'critical') lowStockCount++;
+        if (status === 'out_of_stock') outOfStockCount++;
         item.batches?.forEach(b => {
-            const d = getDaysToExpiry(b.expiryDate);
+            const d = getDaysToExpiry(b.expiry_date);
             if (d !== null && d > 0 && d <= 90) expiringCount++;
         });
     });
 
-    return { totalProducts, totalSKUs, totalStockValue, lowStockCount, outOfStockCount, expiringCount, totalQty };
+    return { totalProducts, totalStockValue, lowStockCount, outOfStockCount, expiringCount, totalQty };
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
-
-
 
 const RMstock = () => {
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -319,46 +133,35 @@ const RMstock = () => {
     const [isShow, setIsShow] = useState(false);
     const [isBulkShow, setIsBulkShow] = useState(false);
     const [statusFilter, setStatusFilter] = useState('all');
-    const [categoryFilter, setCategoryFilter] = useState('all');
 
-    // In a real app, this would come from an API via react-query
-    const inventoryData = INVENTORY_DATA;
-    const isLoading = false;
+    const { data, isLoading } = inventory.TQInventoryList();
 
-    // Compute all unique categories for filter
-    const categories = useMemo(() => {
-        const cats = [...new Set(inventoryData.map(i => i.category))];
-        return cats.sort();
-    }, [inventoryData]);
+    // Enrich each product by aggregating qty/price from its batches[]
+    const inventoryData = useMemo(() => {
+        return data?.data?.map(enrichProduct) ?? [];
+    }, [data]);
 
     // Filter
     const filteredData = useMemo(() => {
-        let data = [...inventoryData];
+        let result = [...inventoryData];
 
-        // search
+        // search on real API fields
         if (debounceSearch) {
             const s = debounceSearch.toLowerCase();
-            data = data.filter(item =>
-                item.name.toLowerCase().includes(s) ||
-                item.sku.toLowerCase().includes(s) ||
-                item.barcode.includes(s) ||
-                item.category.toLowerCase().includes(s) ||
-                item.brand.toLowerCase().includes(s)
+            result = result.filter(item =>
+                item?.name?.toLowerCase().includes(s) ||
+                item?.sku?.toLowerCase().includes(s) ||
+                item?.unit_type?.toLowerCase().includes(s)
             );
         }
 
         // status filter
         if (statusFilter !== 'all') {
-            data = data.filter(item => getStockStatus(item) === statusFilter);
+            result = result.filter(item => getStockStatus(item) === statusFilter);
         }
 
-        // category filter
-        if (categoryFilter !== 'all') {
-            data = data.filter(item => item.category === categoryFilter);
-        }
-
-        return data;
-    }, [inventoryData, debounceSearch, statusFilter, categoryFilter]);
+        return result;
+    }, [inventoryData, debounceSearch, statusFilter]);
 
     const stats = useMemo(() => computeStats(inventoryData), [inventoryData]);
     const isEmpty = filteredData.length < 1;
@@ -370,7 +173,6 @@ const RMstock = () => {
 
     return (
         <>
-
             {/* ─── Dashboard KPI Cards ──────────────────────────────────────── */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mt-5">
                 <StatCard
@@ -419,6 +221,18 @@ const RMstock = () => {
                     <span className="font-semibold">Filters:</span>
                 </div>
 
+                {/* Search */}
+                <div className="relative">
+                    <FiSearch size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                        type="text"
+                        className="form-input form-input-sm text-xs pl-7 rounded-full border-gray-200 bg-white min-w-[200px]"
+                        placeholder="Search by name or SKU..."
+                        value={debounceSearch}
+                        onChange={e => { setDebounceSearch(e.target.value); setCurrentPage(1); }}
+                    />
+                </div>
+
                 {/* Status Filter */}
                 <div className="relative">
                     <select
@@ -431,18 +245,6 @@ const RMstock = () => {
                         <option value="low_stock">Low Stock</option>
                         <option value="critical">Critical</option>
                         <option value="out_of_stock">Out of Stock</option>
-                    </select>
-                </div>
-
-                {/* Category Filter */}
-                <div className="relative">
-                    <select
-                        className="form-select form-select-sm text-xs pr-8 rounded-full border-gray-200 bg-white min-w-[160px]"
-                        value={categoryFilter}
-                        onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
-                    >
-                        <option value="all">All Categories</option>
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </div>
 
@@ -476,7 +278,7 @@ const RMstock = () => {
                 </div>
 
                 <TableBody
-                    columns={INVENTORY_COLUMN}
+                    columns={RM_INVENTORY_COLUMN}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     limit={limit}
@@ -495,13 +297,13 @@ const RMstock = () => {
                             return (
                                 <TableRow
                                     key={item.id}
-                                    columns={INVENTORY_COLUMN}
+                                    columns={RM_INVENTORY_COLUMN}
                                     className={
                                         isOut
-                                            ? "bg-danger/[0.03] hover:!bg-danger/[0.07]"
+                                            ? 'bg-danger/[0.03] hover:!bg-danger/[0.07]'
                                             : isLow
-                                                ? "bg-warning/[0.03] hover:!bg-warning/[0.07]"
-                                                : ""
+                                                ? 'bg-warning/[0.03] hover:!bg-warning/[0.07]'
+                                                : ''
                                     }
                                     row={{
                                         product: (
@@ -510,43 +312,41 @@ const RMstock = () => {
                                                     <HiOutlineCube size={18} />
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-semibold text-sm text-gray-800 truncate max-w-[180px]">{item.name}</p>
-                                                    <p className="text-[11px] text-gray-400 font-mono">{item.barcode}</p>
+                                                    <p className="font-semibold text-sm text-gray-800 truncate max-w-[180px]">{item?.name}</p>
+                                                    <p className="text-[11px] text-gray-400 font-mono">{item?.unit_type ?? '—'}</p>
                                                 </div>
                                             </div>
                                         ),
                                         sku: (
-                                            <span className="font-mono text-xs bg-gray-50 px-2 py-1 rounded text-gray-600">{item.sku}</span>
+                                            <span className="font-mono text-xs bg-gray-50 px-2 py-1 rounded text-gray-600">{item?.sku}</span>
                                         ),
                                         category: (
-                                            <span className="text-xs bg-primary/5 text-primary font-semibold px-2 py-1 rounded-full">{item.category}</span>
-                                        ),
-                                        location: (
-                                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                                                <MdOutlineWarehouse size={14} className="text-gray-400 shrink-0" />
-                                                <span className="truncate max-w-[120px]">{item.location}</span>
-                                            </div>
+                                            <span className="text-xs bg-primary/5 text-primary font-semibold px-2 py-1 rounded-full capitalize">
+                                                {item?.product_type ?? '—'}
+                                            </span>
                                         ),
                                         totalQty: (
                                             <span className={`font-bold text-sm ${isOut ? 'text-danger' : isLow ? 'text-warning' : 'text-gray-700'}`}>
-                                                {formatQty(item.totalQty)}
+                                                {formatQty(item?.totalQty)}
                                             </span>
                                         ),
                                         availableQty: (
-                                            <span className="text-sm font-semibold text-success">{formatQty(item.availableQty)}</span>
+                                            <span className="text-sm font-semibold text-success">{formatQty(item?.availableQty)}</span>
                                         ),
                                         reservedQty: (
-                                            <span className="text-sm text-secondary font-medium">{formatQty(item.reservedQty)}</span>
+                                            <span className="text-sm text-secondary font-medium">{formatQty(item?.reservedQty)}</span>
                                         ),
                                         reorderLevel: (
-                                            <span className="text-xs text-gray-500">{formatQty(item.reorderLevel)}</span>
+                                            <span className="text-xs text-gray-500">{formatQty(item?.reorder_level)}</span>
                                         ),
                                         stockStatus: getStatusBadge(status),
                                         unitPrice: (
-                                            <span className="text-sm font-medium text-gray-600">{currencyFormatter(item.unitPrice)}</span>
+                                            <span className="text-sm font-medium text-gray-600 text-nowrap">
+                                                {formatPriceRange(item?.minPrice, item?.maxPrice)}
+                                            </span>
                                         ),
                                         stockValue: (
-                                            <span className="text-sm font-bold text-gray-800">{currencyFormatter(item.totalQty * item.unitPrice)}</span>
+                                            <span className="text-sm font-bold text-gray-800">{currencyFormatter(item?.stockValue)}</span>
                                         ),
                                         action: (
                                             <Tippy content="View Batches" placement="left">
@@ -569,11 +369,12 @@ const RMstock = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Batch & Lot Details"
+                title="Batch & Lot Details of RAW Materials"
                 maxWidth="80"
             >
                 {selectedProduct && (
                     <div className="space-y-5">
+
                         {/* Product summary header */}
                         <div className="bg-gradient-to-r from-primary/5 via-primary/[0.02] to-transparent rounded-xl p-5 border border-primary/10">
                             <div className="flex items-start justify-between">
@@ -581,9 +382,9 @@ const RMstock = () => {
                                     <h3 className="text-lg font-bold text-gray-800">{selectedProduct.name}</h3>
                                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                                         <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-xs">{selectedProduct.sku}</span>
-                                        <span>{selectedProduct.brand}</span>
+                                        <span>{selectedProduct.unit_type}</span>
                                         <span>•</span>
-                                        <span>{selectedProduct.category}</span>
+                                        <span className="capitalize">{selectedProduct.product_type}</span>
                                     </div>
                                 </div>
                                 {getStatusBadge(getStockStatus(selectedProduct))}
@@ -593,21 +394,21 @@ const RMstock = () => {
                                 <MiniStat label="Total Qty" value={formatQty(selectedProduct.totalQty)} />
                                 <MiniStat label="Available" value={formatQty(selectedProduct.availableQty)} color="text-success" />
                                 <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" />
-                                <MiniStat label="Stock Value" value={currencyFormatter(selectedProduct.totalQty * selectedProduct.unitPrice)} color="text-primary" />
+                                <MiniStat label="Stock Value" value={currencyFormatter(selectedProduct.stockValue)} color="text-primary" />
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 pt-3 border-t border-gray-100">
                                 <div className="text-xs text-gray-400">
-                                    Reorder Level: <span className="text-gray-600 font-semibold">{formatQty(selectedProduct.reorderLevel)}</span>
+                                    Reorder Level: <span className="text-gray-600 font-semibold">{formatQty(selectedProduct.reorder_level)}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Location: <span className="text-gray-600 font-semibold">{selectedProduct.location}</span>
+                                    Unit Type: <span className="text-gray-600 font-semibold">{selectedProduct.unit_type ?? '—'}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Last Inward: <span className="text-gray-600 font-semibold">{formatDate(selectedProduct.lastInwardDate)}</span>
+                                    Total Batches: <span className="text-gray-600 font-semibold">{selectedProduct.batches?.length ?? 0}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Last Outward: <span className="text-gray-600 font-semibold">{formatDate(selectedProduct.lastOutwardDate)}</span>
+                                    Unit Price: <span className="text-gray-600 font-semibold">{formatPriceRange(selectedProduct.minPrice, selectedProduct.maxPrice)}</span>
                                 </div>
                             </div>
                         </div>
@@ -625,37 +426,42 @@ const RMstock = () => {
                             </div>
 
                             <TableBody
-                                columns={INVENTORY_BATCH_COLUMN}
+                                columns={RM_INVENTORY_BATCH_COLUMN}
                                 showPagination={false}
-                                isEmpty={!selectedProduct.batches?.length}
+                                isEmpty={!selectedProduct?.batches?.length}
                                 isLoading={false}
                             >
-                                {selectedProduct.batches?.map((batch, idx) => {
-                                    const days = getDaysToExpiry(batch.expiryDate);
+                                {selectedProduct?.batches?.map((batch) => {
+                                    const days = getDaysToExpiry(batch?.expiry_date);
                                     return (
                                         <TableRow
-                                            key={batch.batchNo}
-                                            columns={INVENTORY_BATCH_COLUMN}
+                                            key={batch.id}
+                                            columns={RM_INVENTORY_BATCH_COLUMN}
                                             className={
                                                 days !== null && days <= 0
-                                                    ? "bg-danger/[0.04]"
+                                                    ? 'bg-danger/[0.04]'
                                                     : days !== null && days <= 90
-                                                        ? "bg-warning/[0.04]"
-                                                        : ""
+                                                        ? 'bg-warning/[0.04]'
+                                                        : ''
                                             }
                                             row={{
                                                 batchNo: (
-                                                    <span className="font-mono text-xs font-semibold text-gray-700">{batch.batchNo}</span>
+                                                    <span className="font-mono text-xs font-semibold text-gray-700">{batch.batch_no}</span>
                                                 ),
                                                 qty: (
-                                                    <span className="font-bold text-sm">{formatQty(batch.qty)}</span>
+                                                    <span className="font-bold text-sm">
+                                                        {formatQty(parseFloat(batch.available_qty ?? 0) + parseFloat(batch.reserved_qty ?? 0))}
+                                                    </span>
+                                                ),
+                                                unitPrice: (
+                                                    <span className="text-sm font-medium text-gray-600">{currencyFormatter(parseFloat(batch.unit_price ?? 0))}</span>
                                                 ),
                                                 mfgDate: (
-                                                    <span className="text-xs text-gray-500">{formatDate(batch.mfgDate)}</span>
+                                                    <span className="text-xs text-gray-500">{formatDate(batch.mfg_date)}</span>
                                                 ),
                                                 expiryDate: (
                                                     <span className={`text-xs font-semibold ${days !== null && days <= 90 ? 'text-danger' : 'text-gray-600'}`}>
-                                                        {formatDate(batch.expiryDate)}
+                                                        {formatDate(batch.expiry_date)}
                                                     </span>
                                                 ),
                                                 daysToExpiry: days !== null
@@ -666,15 +472,12 @@ const RMstock = () => {
                                                     )
                                                     : <span className="text-xs text-gray-400">—</span>,
                                                 grnRef: (
-                                                    <span className="font-mono text-xs text-primary hover:underline cursor-pointer">{batch.grnRef}</span>
+                                                    <span className="font-mono text-xs text-primary">
+                                                        {batch.reference_type?.toUpperCase() ?? '—'}
+                                                        {batch.reference_id ? ` #${batch.reference_id}` : ''}
+                                                    </span>
                                                 ),
-                                                storageLocation: (
-                                                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                                                        <MdOutlineWarehouse size={13} className="text-gray-400" />
-                                                        {batch.storageLocation}
-                                                    </div>
-                                                ),
-                                                batchStatus: getBatchStatus(batch.expiryDate),
+                                                batchStatus: getBatchStatus(batch.expiry_date),
                                             }}
                                         />
                                     );
@@ -691,7 +494,7 @@ const RMstock = () => {
                 setIsShow={setIsBulkShow}
                 title="Bulk Creation"
                 maxWidth='60'
-                placement='start'  // top | start | center | end
+                placement='start'
             >
                 <BulkCreationModal
                     onCancel={() => setIsBulkShow(false)}
@@ -706,7 +509,7 @@ export default RMstock;
 
 // ─── Sub-components ─────────────────────────────────────────────────────────────
 
-function MiniStat({ label, value, color = "text-gray-800" }) {
+function MiniStat({ label, value, color = 'text-gray-800' }) {
     return (
         <div>
             <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">{label}</p>
