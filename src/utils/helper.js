@@ -13,20 +13,6 @@ export const PERMISSION_COL = [
     { key: "permission", label: "Name" },
 ];
 
-export const ROLE_COL = [
-    { key: "id", label: "#", },
-    { key: "role", label: "Role", },
-    {
-        key: "action", label: "Action", align: "center"
-        // width: "120px",
-    },
-    {
-        key: "status", label: "Status", align: "center"
-        // width: "120px",
-    },
-];
-
-
 
 
 export const REQUISITION_CREATE_COLUMN = [

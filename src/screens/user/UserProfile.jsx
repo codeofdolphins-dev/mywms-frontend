@@ -6,6 +6,8 @@ import ProfileCard from '../../components/user/userProfile/ProfileCard';
 import BasicCardContent from '../../components/user/userProfile/components/BasicCardContent';
 import ComponentHeader from '../../components/ComponentHeader';
 import { headerLink_userProfile } from './helper';
+import AssignRoleForm from '../../components/user/userProfile/AssignRole.form';
+import AddModal from '../../components/Add.modal';
 
 
 const UserProfile = () => {
@@ -13,8 +15,9 @@ const UserProfile = () => {
     const [roles, setRoles] = useState([]);
     const [locations, setLocations] = useState([]);
     const [details, setDetails] = useState({});
+    const [isShowAssignRoleForm, setIsShowAssignRoleForm] = useState(false);
 
-    const { data: userDetails, isLoading } = fetchData.TQAllUserList({ id }, !!id);
+    const { data: userDetails, isLoading, refetch } = fetchData.TQAllUserList({ id }, !!id);
 
     useEffect(() => {
         setDetails(userDetails?.data ?? {});
@@ -39,13 +42,16 @@ const UserProfile = () => {
                     {/* Role section */}
                     <ActivityCard
                         cardTitle='Assigned Roles'
-                        buttonTitle='Add Role'
+                        buttonTitle='Add / Remove Role'
+                        btnOnClick={() => setIsShowAssignRoleForm(true)}
                     >
                         {roles?.length > 0 ?
                             <>{
                                 roles?.map((role, idx) =>
                                     <BasicCardContent
                                         key={idx}
+                                        primaryText={role?.role}
+                                        secondaryText={role?.status}
                                     />
                                 )
                             }
@@ -87,6 +93,19 @@ const UserProfile = () => {
                     </ActivityCard>
                 </div>
             </div>
+
+            <AddModal
+                title="Assign Role"
+                isShow={isShowAssignRoleForm}
+                setIsShow={setIsShowAssignRoleForm}
+                maxWidth="50"
+            >
+                <AssignRoleForm
+                    setIsShow={setIsShowAssignRoleForm}
+                    userId={id}
+                    onSuccess={() => refetch()}
+                />
+            </AddModal>
         </div>
     )
 }

@@ -5,7 +5,6 @@ import SearchInput from '../../components/inputs/SearchInput';
 import ItemTable from '../../components/ItemTable';
 import TableHeader from '../../components/table/TableHeader';
 import TableRow from '../../components/table/TableRow';
-import { ROLE_COL } from '../../utils/helper';
 import BasicPagination from '../../components/BasicPagination';
 import AddModal from '../../components/Add.modal';
 import CategoryForm from '../../components/category/CategoryForm';
@@ -14,35 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import manageAccess from '../../Backend/manageAccess.backend';
-
-
-const rawProducts = [
-    {
-        id: 101,
-        name: "Super Admin",
-        status: "active"
-    },
-    {
-        id: 102,
-        name: "Admin",
-        status: "inactive"
-    },
-    {
-        id: 103,
-        name: "User",
-        status: "active"
-    },
-    {
-        id: 104,
-        name: "Supplier",
-        status: "active"
-    },
-    {
-        id: 105,
-        name: "Distributor",
-        status: "inactive"
-    }
-];
+import { ROLE_COL } from './helper';
+import { FaPencil } from 'react-icons/fa6';
+import Tippy from '@tippyjs/react';
+import { TbClipboardList } from 'react-icons/tb';
+import { IoTrashOutline } from 'react-icons/io5';
+import masterData from '../../Backend/master.backend';
+import { confirmation } from '../../utils/alerts';
 
 
 const headerLink = [
@@ -52,6 +29,9 @@ const headerLink = [
 
 const Role = () => {
     const navigate = useNavigate()
+
+    const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["allRole"]);
+
     const { data: allRole, isLoading: roleLoading } = manageAccess.TQAllRole();
 
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -59,17 +39,26 @@ const Role = () => {
     const [limit, setLimit] = useState(10);
 
     const [isShow, setIsShow] = useState(false);
+    const [editData, setEditData] = useState(null);
 
     const isEmpty = allRole?.data?.length > 0 ? false : true;
 
-    // console.log(allRole?.data)
 
-    // const params = {
-    //     ...(debounceSearch && { text: debounceSearch }),
-    //     page: currentPage || null,
-    //     limit: limit || null
-    // };
-    // const { data, isLoading } = fetchData.TQPermissionList(params)
+    function editHandler(data) {
+        setIsShow(true);
+        setEditData(data);
+    }
+
+    async function deleteHandler(id) {
+        try {
+            const isConfirm = await confirmation()
+            if (isConfirm) {
+                await deleteData({ path: `/role/delete-role/${id}` });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div>
@@ -97,15 +86,41 @@ const Role = () => {
                             key={item.id}
                             columns={ROLE_COL}
                             row={{
-                                id: item.id,
+                                id: index + 1,
                                 role: item.role?.toUpperCase(),
                                 action: (
-                                    <button
-                                        className="text-sm btn btn-primary"
-                                        onClick={() => navigate(`assign/${item?.id}`)}
-                                    >
-                                        Assign Permission
-                                    </button>
+                                    <div className='flex items-center justify-center gap-5'>
+                                        <Tippy content="Assign Permissions" >
+                                            <button
+                                                onClick={() => navigate(`assign/${item?.id}`)}
+                                            >
+                                                <TbClipboardList
+                                                    className=''
+                                                    size={22}
+                                                />
+                                            </button>
+                                        </Tippy>
+                                        <Tippy content="Edit Role" >
+                                            <button
+                                                onClick={() => editHandler(item)}
+                                            >
+                                                <FaPencil
+                                                    className=''
+                                                    size={18}
+                                                />
+                                            </button>
+                                        </Tippy>
+                                        <Tippy content="Delete Role" >
+                                            <button
+                                                onClick={() => deleteHandler(item.id)}
+                                            >
+                                                <IoTrashOutline
+                                                    className='text-red-500'
+                                                    size={20}
+                                                />
+                                            </button>
+                                        </Tippy>
+                                    </div>
                                 ),
                                 status: item.status ? "Active" : "Inactive"
                             }}
@@ -117,11 +132,13 @@ const Role = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title={"Add New Role"}
+                title={editData ? "Edit Role" : "Add New Role"}
                 maxWidth='60'
             >
                 <RoleForm
                     setIsShow={setIsShow}
+                    editData={editData}
+                    setEditData={setEditData}
                 />
             </AddModal>
 

@@ -4,6 +4,7 @@ import Button from '../../inputs/Button'
 const ActivityCard = ({
     cardTitle = "Details",
     buttonTitle = "Details",
+    btnOnClick = () => { },
     children
 }) => {
     return (
@@ -13,6 +14,7 @@ const ActivityCard = ({
                 <Button
                     className={"btn btn-info"}
                     icon={true}
+                    onClick={btnOnClick}
                 >
                     {buttonTitle}
                 </Button>

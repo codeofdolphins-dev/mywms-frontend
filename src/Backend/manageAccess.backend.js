@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import API from ".";
 
 
 class ManageAccess {
-    TQAllRole(isEnabled = true) {
+    TQAllRole(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["allRole"],
+            queryKey: ["allRole", params],
             queryFn: async () => {
-                const res = await API.get("/role/all-role");
+                const res = await API.get("/role/all-role", { params });
                 return res.data;
             },
             enabled: isEnabled,

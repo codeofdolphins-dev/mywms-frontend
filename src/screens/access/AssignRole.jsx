@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@mantine/core';
 import { Link, useNavigate } from 'react-router-dom';
 import ButtonBoolean from '../../components/inputs/ButtonBoolean';
+import ComponentHeader from '../../components/ComponentHeader';
 
 
 const allPermissions = {
@@ -70,6 +71,12 @@ const allPermissions = {
 const allowed = [1, 2, 3, 4, 5, 7, 8, 11];
 
 
+const headerLink = [
+    { title: "role", link: "/access/role" },
+    { title: "assign permission" },
+];
+
+
 const AssignRole = () => {
     const navigate = useNavigate();
 
@@ -89,24 +96,15 @@ const AssignRole = () => {
     return (
         <>
             {/* breadcrumb */}
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <span> Access </span>
-                </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <Link to="/access/role" className="text-primary hover:underline">
-                        Role
-                    </Link>
-                </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span> Assign Permission </span>
-                </li>
-            </ul>
+            <ComponentHeader
+                headerLink={headerLink}
+                showSearch={false}
+            />
 
             {/* Header Section */}
-            <div className="flex justify-between items-center mt-5">
+            <div className="flex justify-between items-center mt-2">
                 <div>
-                    <h1 className="text-3xl font-bold my-3">Assign Permissions to Role: $</h1>
+                    <h1 className="text-2xl font-bold my-3">Assign Permissions to Role: $</h1>
                 </div>
             </div>
 
