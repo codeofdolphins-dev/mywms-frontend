@@ -6,41 +6,7 @@ import { FaQuoteLeft } from "react-icons/fa6";
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
 import { BiSolidFactory } from "react-icons/bi";
 
-/**
- * Centralized navigation configuration.
- *
- * Each item can have:
- *   - key:       unique identifier
- *   - label:     display text
- *   - icon:      react-icon component (top-level only)
- *   - path:      direct navigation path (for simple link items)
- *   - basePath:  path prefix used for active-state highlighting (dropdown items)
- *   - access:    access rules evaluated by checkAccess()
- *   - children:  sub-menu items (can nest one more level for flyouts)
- *
- * Access rules:
- *   roles, permissions     → OR match (any one passes)
- *   nodeTypes              → OR match — specific codes like "L-111"
- *   nodeCategories         → OR match — broad groups: "partner", "warehouse", "manufacturing", "retail"
- *   userTypes              → hard block (must match)
- *   departments            → hard block (must match, "both" passes all)
- *
- * Node Type Codes (from dataset.js):
- *   L-101  Mfg Bond Warehouse        (manufacturing)
- *   L-102  Mother Warehouse           (warehouse)
- *   L-103  Central Warehouse          (warehouse)
- *   L-104  Regional Warehouse         (warehouse)
- *   L-105  State Warehouse            (warehouse)
- *   L-106  CFA / C&F Agent            (partner)
- *   L-107  3PL Warehouse              (partner)
- *   L-108  Storage Hub                (warehouse)
- *   L-109  Super Stockist             (partner)
- *   L-110  Dealer                     (partner)
- *   L-111  Distributor                (partner)
- *   L-112  Sub-Distributor            (partner)
- *   L-113  Fulfilment Centre          (warehouse)
- *   L-114  Retail Warehouse           (retail)
- */
+
 export const NAV_CONFIG = [
     // ─── Open Forum ───
     {
@@ -48,9 +14,7 @@ export const NAV_CONFIG = [
         label: "Open Forum",
         icon: HiUserGroup,
         path: "/",
-        access: {
-            roles: ["system", "owner", "company"],
-        },
+        // allowedRoles: ["system", "owner", "company"],
     },
 
     // ─── Master ───
@@ -59,9 +23,17 @@ export const NAV_CONFIG = [
         label: "Master",
         icon: HiDatabase,
         path: "/master",
-        access: {
-            roles: ["system", "owner", "company"],
-        },
+        allowedRoles: ["system", "owner", "company"],
+        children: [
+            { key: "category", label: "Category", path: "/master/categories" },
+            { key: "brand", label: "Brand", path: "/master/brands" },
+            { key: "product", label: "Product", path: "/master/products" },
+            { key: "hsn", label: "HSN", path: "/master/hsncodes" },
+            { key: "unit", label: "Unit", path: "/master/unit-types" },
+            { key: "package", label: "Package", path: "/master/package-types" },
+            { key: "bom", label: "BOM", path: "/master/bom" },
+            { key: "supplier", label: "Supplier", path: "/master/suppliers" },
+        ],
     },
 
     // ─── Super Admin ───
@@ -70,9 +42,7 @@ export const NAV_CONFIG = [
         label: "Super Admin",
         icon: RiAdminFill,
         basePath: "/super-admin",
-        access: {
-            roles: ["system", "owner"],
-        },
+        allowedRoles: ["system", "owner"],
         children: [
             { label: "Browse", path: "/super-admin/browse" },
             { label: "Business Flow", path: "/super-admin/business-flow" },
@@ -85,10 +55,7 @@ export const NAV_CONFIG = [
         label: "Admin",
         icon: RiAdminFill,
         basePath: "/admin",
-        access: {
-            roles: ["system", "owner", "company", "admin"],
-            nodeCategories: ["partner"],   // distributor, dealer, etc.
-        },
+        allowedRoles: ["system", "owner", "company"],
         children: [
             {
                 label: "Location (Main WH)",
@@ -123,12 +90,10 @@ export const NAV_CONFIG = [
         label: "Manage Access",
         icon: MdAdminPanelSettings,
         basePath: "/access",
-        access: {
-            roles: ["system", "owner", "company"],
-        },
+        allowedRoles: ["system", "owner", "company"],
         children: [
-            { label: "Role", path: "/access/role" },
-            { label: "Permission", path: "/access/permission" },
+            { key: "role", label: "Role", path: "/access/role" },
+            { key: "permission", label: "Permission", path: "/access/permission" },
         ],
     },
 
@@ -138,10 +103,7 @@ export const NAV_CONFIG = [
         label: "Production",
         icon: BiSolidFactory,
         basePath: "/production",
-        access: {
-            roles: ["system", "owner", "company"],
-            userTypes: ["internal"],
-        },
+        allowedRoles: ["system", "owner", "company", "store_rm", "store_wip", "store_fg"],
         children: [
             {
                 label: "Facilities / Stores",
@@ -158,13 +120,11 @@ export const NAV_CONFIG = [
     // ─── Requisition ───
     {
         key: "requisition",
+        matchKeys: [],
         label: "Requisition",
         icon: FaClipboardList,
         basePath: "/requisition",
-        access: {
-            roles: ["system", "owner", "company"],
-            nodeCategories: ["partner"],
-        },
+        allowedRoles: ["system", "owner", "company", "purchase"],
         children: [
             { label: "All List", path: "/requisition" },
             { label: "Create", path: "/requisition/create" },
@@ -175,13 +135,11 @@ export const NAV_CONFIG = [
     // ─── Quotation ───
     {
         key: "quotation",
+        // matchKeys: ["quotation"],
         label: "Quotation",
         icon: FaQuoteLeft,
         basePath: "/quotation",
-        access: {
-            roles: ["system", "owner", "company"],
-            nodeCategories: ["partner"],
-        },
+        allowedRoles: ["system", "owner", "company", "purchase"],
         children: [
             { label: "All List", path: "/quotation" },
             { label: "Receive Quotation", path: "/quotation/received-quotation" },
@@ -194,10 +152,7 @@ export const NAV_CONFIG = [
         label: "Orders",
         icon: MdOutlineReceiptLong,
         basePath: "/order",
-        access: {
-            roles: ["system", "owner", "company"],
-            nodeCategories: ["partner"],
-        },
+        allowedRoles: ["system", "owner", "company", "purchase", "sales"],
         children: [
             { label: "List", path: "/order" },
             { label: "Blanket PO", path: "/order/bpo" },
@@ -211,10 +166,7 @@ export const NAV_CONFIG = [
         label: "Inward",
         icon: BsBoxArrowInDown,
         path: "/inward",
-        access: {
-            roles: ["system", "owner", "company"],
-            nodeCategories: ["partner"],
-        },
+        allowedRoles: ["system", "owner", "company", "store_rm"],
     },
 
     // ─── Outward ───
@@ -223,9 +175,6 @@ export const NAV_CONFIG = [
         label: "Outward",
         icon: BsBoxArrowUp,
         path: "/outward",
-        access: {
-            roles: ["system", "owner", "company"],
-            nodeCategories: ["partner"],
-        },
+        allowedRoles: ["system", "owner", "company", "store_fg"],
     },
 ];

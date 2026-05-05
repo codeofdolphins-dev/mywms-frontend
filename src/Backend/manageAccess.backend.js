@@ -13,6 +13,17 @@ class ManageAccess {
             enabled: isEnabled,
         });
     };
+    
+    TQRolePermission(role_id, isEnabled = true) {
+        return useQuery({
+            queryKey: ["rolePermission", role_id],
+            queryFn: async () => {
+                const res = await API.get(`/manage-permission/${role_id}`);
+                return res.data;
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const manageAccess = new ManageAccess();

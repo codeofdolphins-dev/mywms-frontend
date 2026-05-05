@@ -1,4 +1,3 @@
-
 /**
  * Multi-dimensional access check.
  *
@@ -25,8 +24,8 @@ export const checkAccess = (accessRules, ctx) => {
 
     const { userRoles = [], permissions = [], userType, nodeType, nodeCategory, department } = ctx;
 
-    // console.log("accessRules", accessRules)
-    // console.log("ctx", ctx)
+    console.log("accessRules", accessRules)
+    console.log("ctx", ctx)
 
     // Hard blocks
     if (accessRules.userTypes?.length && !accessRules.userTypes.includes(userType)) return false;

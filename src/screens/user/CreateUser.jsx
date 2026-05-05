@@ -105,6 +105,13 @@ const CreateUser = () => {
         setNodeOptions(options)
     }, [registeredNodeList]);
 
+    // useEffect(() => {
+    //     reset({
+    //         node: node
+    //     })
+    // }, [node])
+
+
 
     async function submitForm(data) {
         data.node_id = node?.businessNode?.id;
@@ -182,6 +189,21 @@ const CreateUser = () => {
                                                         setValue("isNodeAdmin", null);
                                                         setValue("dept", null);
                                                     }
+                                                    reset({
+                                                        full_name: "",
+                                                        phone_no: "",
+                                                        email: "",
+                                                        password: "",
+                                                        isNodeAdmin: "false",
+                                                        image: null,
+                                                        store_id: null,
+                                                        storeType: null,
+                                                        dept: null,
+                                                        node: e
+                                                    });
+                                                    setPreview(null);
+                                                    
+                                                    // Keep ONLY its own value
                                                     return onChange(e);
                                                 }}
 
@@ -416,7 +438,7 @@ const CreateUser = () => {
                                 Cancel
                             </button>
 
-                            <Button
+                            {/* <Button
                                 type='button'
                                 className='btn btn-info'
                                 onClick={() => {
@@ -425,7 +447,7 @@ const CreateUser = () => {
                                 }}
                             >
                                 Reset
-                            </Button>
+                            </Button> */}
                             <Button
                                 type='submit'
                                 className='btn btn-info'

@@ -49,7 +49,8 @@ const DynamicMenuItem = ({ item, location }) => {
         <li className="menu nav-item relative !ml-0">
             <button
                 type="button"
-                className={`nav-link ${isParentActive ? "active" : ""} !cursor-default`}
+                className={`nav-link ${isParentActive ? "active" : ""} ${item.key === "master" ? "" : "!cursor-default"}`}
+                onClick={() => item.key === "master" && navigate(item.path)}
             >
                 <div className="flex items-center">
                     {Icon && <Icon className="shrink-0" />}

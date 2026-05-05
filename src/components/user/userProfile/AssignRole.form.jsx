@@ -10,7 +10,7 @@ const AssignRoleForm = ({ setIsShow, userId, onSuccess }) => {
     const { mutateAsync: updateData, isPending } = masterData.TQUpdateMaster()
 
 
-    const { data: rolesData, isLoading: rolesLoading } = manageAccess.TQAllRole({ id: userId });
+    const { data: rolesData, isLoading: rolesLoading } = manageAccess.TQAllRole({ id: userId, is_default: true });
 
 
     const { handleSubmit, control, formState: { errors }, reset } = useForm({
