@@ -23,7 +23,7 @@ export const NAV_CONFIG = [
         label: "Master",
         icon: HiDatabase,
         path: "/master",
-        allowedRoles: ["system", "owner", "company"],
+        allowedRoles: ["system", "owner", "company", "admin"],
         children: [
             { key: "category", label: "Category", path: "/master/categories" },
             { key: "brand", label: "Brand", path: "/master/brands" },
@@ -55,7 +55,7 @@ export const NAV_CONFIG = [
         label: "Admin",
         icon: RiAdminFill,
         basePath: "/admin",
-        allowedRoles: ["system", "owner", "company"],
+        allowedRoles: ["system", "owner", "company", "admin"],
         children: [
             {
                 label: "Location (Main WH)",
@@ -90,7 +90,7 @@ export const NAV_CONFIG = [
         label: "Manage Access",
         icon: MdAdminPanelSettings,
         basePath: "/access",
-        allowedRoles: ["system", "owner", "company"],
+        allowedRoles: ["system", "owner", "company", "admin"],
         children: [
             { key: "role", label: "Role", path: "/access/role" },
             { key: "permission", label: "Permission", path: "/access/permission" },
@@ -103,18 +103,18 @@ export const NAV_CONFIG = [
         label: "Production",
         icon: BiSolidFactory,
         basePath: "/production",
-        allowedRoles: ["system", "owner", "company", "store_rm", "store_wip", "store_fg"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "store_wip", "store_fg"],
+        // children: [
+        //     {
+        //         label: "Facilities / Stores",
+        //         basePath: "/production/store",
         children: [
-            {
-                label: "Facilities / Stores",
-                basePath: "/production/store",
-                children: [
-                    { label: "RM Store", path: "/production/store/rm" },
-                    { label: "Production Unit", path: "/production/store/wip" },
-                    { label: "FG Store", path: "/production/store/fg" },
-                ],
-            },
+            { key: "store", label: "RM Store", path: "/production/store/rm" },
+            { key: "store", label: "Production Unit", path: "/production/store/wip" },
+            { key: "store", label: "FG Store", path: "/production/store/fg" },
         ],
+        //     },
+        // ],
     },
 
     // ─── Requisition ───
@@ -124,7 +124,7 @@ export const NAV_CONFIG = [
         label: "Requisition",
         icon: FaClipboardList,
         basePath: "/requisition",
-        allowedRoles: ["system", "owner", "company", "purchase"],
+        allowedRoles: ["system", "owner", "company", "admin", "purchase", "warehouse_admin"],
         children: [
             { label: "All List", path: "/requisition" },
             { label: "Create", path: "/requisition/create" },
@@ -139,7 +139,7 @@ export const NAV_CONFIG = [
         label: "Quotation",
         icon: FaQuoteLeft,
         basePath: "/quotation",
-        allowedRoles: ["system", "owner", "company", "purchase"],
+        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales", "warehouse_admin"],
         children: [
             { label: "All List", path: "/quotation" },
             { label: "Receive Quotation", path: "/quotation/received-quotation" },
@@ -152,7 +152,7 @@ export const NAV_CONFIG = [
         label: "Orders",
         icon: MdOutlineReceiptLong,
         basePath: "/order",
-        allowedRoles: ["system", "owner", "company", "purchase", "sales"],
+        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales", "warehouse_admin"],
         children: [
             { label: "List", path: "/order" },
             { label: "Blanket PO", path: "/order/bpo" },
@@ -166,7 +166,7 @@ export const NAV_CONFIG = [
         label: "Inward",
         icon: BsBoxArrowInDown,
         path: "/inward",
-        allowedRoles: ["system", "owner", "company", "store_rm"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "warehouse_admin"],
     },
 
     // ─── Outward ───
@@ -175,6 +175,6 @@ export const NAV_CONFIG = [
         label: "Outward",
         icon: BsBoxArrowUp,
         path: "/outward",
-        allowedRoles: ["system", "owner", "company", "store_fg"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse_admin"],
     },
 ];

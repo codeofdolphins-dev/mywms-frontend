@@ -70,8 +70,8 @@ class AuthService {
                 const res = await API.get("/user/current-user");
                 return res.data;
             },
-            staleTime: Infinity,
-            gcTime: Infinity,
+            // staleTime: Infinity,
+            // gcTime: Infinity,
             enabled: isEnable,
             onSuccess: (data) => {
                 console.log(data);

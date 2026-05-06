@@ -50,8 +50,8 @@ const Brand = () => {
         page: currentPage || null,
         limit: limit || null
     };
-    const { data, isLoading } = fetchData.TQAllBrandList(params);
-    const isEmpty = data?.data?.length === 0;
+    const { data, isLoading, isError } = fetchData.TQAllBrandList(params);
+    const isEmpty = data?.data?.length === 0 || isError;
 
     useEffect(() => {
         setCurrentPage(1);

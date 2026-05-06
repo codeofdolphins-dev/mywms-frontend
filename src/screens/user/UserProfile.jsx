@@ -71,7 +71,7 @@ const UserProfile = () => {
                         {locations?.length > 0 ?
                             <> {
                                 locations?.map((location, idx) => {
-                                    const role = location?.NodeUser?.userRole === "NODE_ADMIN" ? "Location Admin" : "Location User";
+                                    const role = location?.NodeUser?.isNodeAdmin ? "Location Admin" : "Location User";
                                     const details = location?.nodeDetails;
 
                                     return (

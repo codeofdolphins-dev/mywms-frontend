@@ -23,8 +23,6 @@ const AssignRole = () => {
 
     const { data, isLoading } = manageAccess.TQRolePermission(id, Boolean(id));
 
-    const [isShow, setIsShow] = useState(false)
-
     const { register, handleSubmit, setValue } = useForm({
         defaultValues: {
             permissions: []
@@ -38,11 +36,20 @@ const AssignRole = () => {
         }
     }, [data, isLoading, setValue]);
 
-    
+
     const onSubmit = async (data) => {
         const formatArray = data.permissions.map(Number);
 
-        await updateData({ path: "/manage-permission/manage-permissions", formData: { roleId: id, assignedPermissionIds: formatArray } });
+        try {
+            const res = await updateData({ path: "/manage-permission/manage-permissions", formData: { roleId: id, assignedPermissionIds: formatArray } });
+            if (res) {
+                console.log(res);
+            }
+        } catch (error) {
+            if (data?.data?.allowed) {
+                setValue("permissions", data.data.allowed.map(String));
+            }
+        }
     };
 
     return (
@@ -80,7 +87,7 @@ const AssignRole = () => {
                                     <Switch
                                         label={permission.action}
                                         value={permission.id}
-                                        defaultCheck={data?.data?.allowed?.includes(permission.id)}
+                                        // defaultCheck={data?.data?.allowed?.includes(permission.id)}
                                         {...register("permissions")}
                                     />
                                 </label>
@@ -101,7 +108,7 @@ const AssignRole = () => {
                         type="submit"
                         className="mr-5 rounded-md bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700"
                     >
-                        Save Permissions
+                        {isPending ? 'Saving...' : 'Save Permissions'}
                     </Button>
                 </div>
             </form>

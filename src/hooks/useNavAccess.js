@@ -9,6 +9,12 @@ export const useNavAccess = () => {
         const allowedNavItems = [];
 
         for (const item of navConfig) {
+
+            if (item.key === "rm") {
+                console.log(item)
+            }
+
+
             const hasRoleAccess = item.allowedRoles && item.allowedRoles.some(role => roles.includes(role));
 
             const hasPermissionAccess = item.key === "open-forum" ? true : permissions.includes(item.key);
@@ -20,7 +26,7 @@ export const useNavAccess = () => {
             const clonedItem = { ...item };
 
             // --- LOGIC 3: Process Children ---
-            if (clonedItem.children) {
+            if (clonedItem?.children) {
                 // Recursively check children
                 const children = filterNav(clonedItem.children);
 

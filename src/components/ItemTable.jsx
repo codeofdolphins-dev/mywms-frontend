@@ -21,8 +21,9 @@ const ItemTable = ({
     setCurrentPage,
     totalPage,
     setLimit,
-    
-    isLoading = true
+
+    isLoading = true,
+    isEmpty = false
 }) => {
     const imageUrl = import.meta.env.VITE_IMAGE_URL;
     const getValue = (obj, path) => path?.split('.')?.reduce((acc, key) => acc?.[key], obj);
@@ -51,101 +52,99 @@ const ItemTable = ({
                             </tr>
                         </thead>
 
-                        {
-                            items.length === 0 ? <>
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 flex flex-col items-center justify-center gap-4">
-                                    <BsBoxSeam fontSize={40} color='grey' />
-                                    <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
-                                </div>
-                            </> : <>
-                                <tbody>
-                                    {items?.map((row, i) => {
-                                        return (
-                                            <tr key={i}>
-                                                {columns.map((col, j) => {
-                                                    const value = col.key === "id" ? i + 1 : getValue(row, col.key);
-                                                    // const value = getValue(row, col.key);
+                        {(items.length === 0 || isEmpty) ? <>
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 flex flex-col items-center justify-center gap-4">
+                                <BsBoxSeam fontSize={40} color='grey' />
+                                <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
+                            </div>
+                        </> : <>
+                            <tbody>
+                                {items?.map((row, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            {columns.map((col, j) => {
+                                                const value = col.key === "id" ? i + 1 : getValue(row, col.key);
+                                                // const value = getValue(row, col.key);
 
-                                                    return (
-                                                        <td key={j}>
-                                                            {col.render ? (
-                                                                col.render(value, row)
+                                                return (
+                                                    <td key={j}>
+                                                        {col.render ? (
+                                                            col.render(value, row)
 
-                                                            ) : col.type === "image" ? (
-                                                                <ImageComponent
-                                                                    src={value}
-                                                                    className={"w-10 h-10"}
-                                                                    dummyImage={3}
-                                                                />
+                                                        ) : col.type === "image" ? (
+                                                            <ImageComponent
+                                                                src={value}
+                                                                className={"w-10 h-10"}
+                                                                dummyImage={3}
+                                                            />
 
-                                                            ) : col.type === "array" && Array.isArray(value) ? (
-                                                                value.length > 0 ? (
-                                                                    <Tippy
-                                                                        interactive
-                                                                        placement="right"
-                                                                        content={
-                                                                            <div className="max-w-xs p-3">
-                                                                                {renderTwoLevelArray(value, col.arrayRender)}
-                                                                            </div>
-                                                                        }
-                                                                    >
-                                                                        <button
-                                                                            type="button"
-                                                                            className="text-primary font-semibold underline"
-                                                                        >
-                                                                            View ({value.length})
-                                                                        </button>
-                                                                    </Tippy>
-                                                                ) : "-"
-
-                                                            ) : col.type === "nested" ? (
-                                                                col.nested?.(value) ?? "-"
-                                                            ) : (
-                                                                value ?? "-"
-                                                            )}
-                                                        </td>
-                                                    );
-                                                })}
-                                                {
-                                                    (edit || deleteBtn) &&
-                                                    <td className="text-center">
-                                                        <ul className="flex items-center gap-2">
-                                                            {edit &&
-                                                                <li>
-                                                                    <Tippy content="Edit">
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => handleEdit(row?.id)}
-                                                                        >
-                                                                            <IconPencil className="text-success" />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </li>
-                                                            }
-                                                            <li>
-                                                                <Tippy content="Delete">
+                                                        ) : col.type === "array" && Array.isArray(value) ? (
+                                                            value.length > 0 ? (
+                                                                <Tippy
+                                                                    interactive
+                                                                    placement="right"
+                                                                    content={
+                                                                        <div className="max-w-xs p-3">
+                                                                            {renderTwoLevelArray(value, col.arrayRender)}
+                                                                        </div>
+                                                                    }
+                                                                >
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => handleDelete(row?.id)}
+                                                                        className="text-primary font-semibold underline"
                                                                     >
-                                                                        <IconTrashLines className="text-danger" />
+                                                                        View ({value.length})
+                                                                    </button>
+                                                                </Tippy>
+                                                            ) : "-"
+
+                                                        ) : col.type === "nested" ? (
+                                                            col.nested?.(value) ?? "-"
+                                                        ) : (
+                                                            value ?? "-"
+                                                        )}
+                                                    </td>
+                                                );
+                                            })}
+                                            {
+                                                (edit || deleteBtn) &&
+                                                <td className="text-center">
+                                                    <ul className="flex items-center gap-2">
+                                                        {edit &&
+                                                            <li>
+                                                                <Tippy content="Edit">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleEdit(row?.id)}
+                                                                    >
+                                                                        <IconPencil className="text-success" />
                                                                     </button>
                                                                 </Tippy>
                                                             </li>
-                                                        </ul>
-                                                    </td>
-                                                }
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </>
-                        }
+                                                        }
+                                                        <li>
+                                                            <Tippy content="Delete">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleDelete(row?.id)}
+                                                                >
+                                                                    <IconTrashLines className="text-danger" />
+                                                                </button>
+                                                            </Tippy>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            }
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </>}
                     </table>
                 }
             </div>
 
-            {items.length !== 0 &&
+            {items.length !== 0 && !isEmpty &&
                 <BasicPagination
                     totalPage={totalPage}
                     currentPage={currentPage}

@@ -25,7 +25,7 @@ const Permission = () => {
         page: currentPage || null,
         limit: limit || null
     };
-    const { data, isLoading } = fetchData.TQPermissionList(params)
+    const { data, isLoading, isError } = fetchData.TQPermissionList(params)
 
     return (
         <div>
@@ -46,6 +46,7 @@ const Permission = () => {
                     setLimit={setLimit}
                     totalPage={data?.meta?.totalPages}
                     isLoading={isLoading}
+                    isEmpty={isError}
                 />
             </div>
         </div>

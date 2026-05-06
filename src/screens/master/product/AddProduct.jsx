@@ -51,7 +51,7 @@ const AddProduct = () => {
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["productList"]);
 
     /** form control */
-    const { control, register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm({
+    const { control, register, handleSubmit, formState: { errors }, reset, watch, setValue, resetField } = useForm({
         defaultValues: {
             brand_id: "",
             categories: "",
@@ -59,7 +59,7 @@ const AddProduct = () => {
             unit_type_id: "",
             package_type_id: "",
             has_expiry: false,
-            shelf_life: null,
+            shelf_life: ""
         }
     });
 
@@ -71,11 +71,11 @@ const AddProduct = () => {
             // console.log(data);
             reset({
                 ...data,
-                brand_id: data?.productBrands?.[0]?.id,
-                categories: data?.selectedCategoryIds,
-                hsn_id: data?.hsn?.id,
-                unit_type_id: data?.unitRef?.id,
-                package_type_id: data?.packageType?.id,
+                brand_id: data?.productBrands?.[0]?.id || "",
+                categories: data?.selectedCategoryIds || [],
+                hsn_id: data?.hsn?.id || "",
+                unit_type_id: data?.unitRef?.id || "",
+                package_type_id: data?.packageType?.id || "",
             })
         } else {
             reset();
@@ -91,9 +91,9 @@ const AddProduct = () => {
     // Reset shelf_life whenever user toggles Has Expiry back to No
     useEffect(() => {
         if (!hasExpiry) {
-            setValue("shelf_life", null, { shouldValidate: false });
+            resetField("shelf_life");
         }
-    }, [hasExpiry, setValue]);
+    }, [hasExpiry, resetField]);
 
 
     const submit = async (data) => {
@@ -106,14 +106,14 @@ const AddProduct = () => {
                 const res = await updateData({ path: "/product/update", formData: fd });
                 if (res.success) successAlert(res.message);
                 reset();
-                navigate(-1);
+                navigate("/master/products?tab=1");
 
             } else {
                 const fd = RHFToFormData(data);
                 const res = await createData({ path: "/product/create-finish", formData: fd });
                 if (res.success) successAlert(res.message);
                 reset();
-                navigate(-1);
+                navigate("/master/products?tab=1");
             }
 
         } catch (error) {

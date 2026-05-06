@@ -40,11 +40,34 @@ const warningAlert = (message = "Not Possible!!!") => {
 }
 
 const errorAlert = (message = "something wrong!") => {
-
     MySwal.fire({
         title: "Error!",
         text: message,
         icon: "error"
+    });
+}
+
+const errorToastAlert = (message = "something wrong!") => {
+    const Toast = MySwal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    Toast.fire({
+        icon: "error",
+        title: message,
+        color: "white",
+        iconColor: "white",
+        background: "#FF6467",
+        customClass: {
+            title: "white"
+        }
     });
 }
 
@@ -65,7 +88,7 @@ const confirmation = async (msg = "You won't be able to revert this!") => {
 
 const inputAlert = async (title = "Enter details", placeholder = "Type here...") => {
     return await MySwal.fire({
-    // const { value: enteredData } = await MySwal.fire({
+        // const { value: enteredData } = await MySwal.fire({
         title: title,
         input: "text",
         inputPlaceholder: placeholder,
@@ -78,4 +101,4 @@ const inputAlert = async (title = "Enter details", placeholder = "Type here...")
     // return enteredData || null;
 }
 
-export { successAlert, errorAlert, confirmation, warningAlert, inputAlert };
+export { successAlert, errorAlert, confirmation, warningAlert, inputAlert, errorToastAlert };

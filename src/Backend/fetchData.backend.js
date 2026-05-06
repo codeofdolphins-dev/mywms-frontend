@@ -1,15 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import API from ".";
+import { errorToastAlert } from "../utils/alerts";
 
 class FetchData {
     TQAllCategoryList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["category-all-list", params],
             queryFn: async () => {
-                const res = await API.get("/category/all-list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/category/all-list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
             onSuccess: (data) => {
@@ -68,10 +76,17 @@ class FetchData {
         return useQuery({
             queryKey: ["supplierList", params],
             queryFn: async () => {
-                const res = await API.get("/supplier/list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/supplier/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -81,10 +96,17 @@ class FetchData {
         return useQuery({
             queryKey: ["brandList", params],
             queryFn: async () => {
-                const res = await API.get("/brand/all", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/brand/all", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled
         });
@@ -94,10 +116,17 @@ class FetchData {
         return useQuery({
             queryKey: ["hsnList", params],
             queryFn: async () => {
-                const res = await API.get("/hsn/all-list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/hsn/all-list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -107,10 +136,17 @@ class FetchData {
         return useQuery({
             queryKey: ["productList", params],
             queryFn: async () => {
-                const res = await API.get("/product/list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/product/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled
         });
@@ -120,10 +156,17 @@ class FetchData {
         return useQuery({
             queryKey: ["permissionList", params],
             queryFn: async () => {
-                const res = await API.get("/permission/all-permission", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/permission/all-permission", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled
         });
@@ -133,10 +176,17 @@ class FetchData {
         return useQuery({
             queryKey: ["unitTypeList", params],
             queryFn: async () => {
-                const res = await API.get("/unit/all", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/unit/all", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -146,10 +196,17 @@ class FetchData {
         return useQuery({
             queryKey: ["packageTypeList", params],
             queryFn: async () => {
-                const res = await API.get("/package-type/all", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/package-type/all", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -161,10 +218,17 @@ class FetchData {
         return useQuery({
             queryKey: ["allUserList", params],
             queryFn: async () => {
-                const res = await API.get("/user/list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/user/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -174,8 +238,15 @@ class FetchData {
         return useQuery({
             queryKey: ["AllowNodeList"],
             queryFn: async () => {
-                const res = await API.get("/requisition/allow-node");
-                return res.data;
+                try {
+                    const res = await API.get("/requisition/allow-node");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -185,10 +256,17 @@ class FetchData {
         return useQuery({
             queryKey: ["requisitionList", params],
             queryFn: async () => {
-                const res = await API.get("/requisition/list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/requisition/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -198,8 +276,15 @@ class FetchData {
         return useQuery({
             queryKey: ["receiveRequisitionList"],
             queryFn: async () => {
-                const res = await API.get("/requisition/receive-list");
-                return res.data;
+                try {
+                    const res = await API.get("/requisition/receive-list");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -209,8 +294,15 @@ class FetchData {
         return useQuery({
             queryKey: ["rfqList"],
             queryFn: async () => {
-                const res = await API.get("/rfq/list");
-                return res.data;
+                try {
+                    const res = await API.get("/rfq/list");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -220,8 +312,15 @@ class FetchData {
         return useQuery({
             queryKey: ["appliedRfqList"],
             queryFn: async () => {
-                const res = await API.get("/rfq/applied-rfq-list");
-                return res.data;
+                try {
+                    const res = await API.get("/rfq/applied-rfq-list");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -232,10 +331,17 @@ class FetchData {
         return useQuery({
             queryKey: ["storeList", params],
             queryFn: async () => {
-                const res = await API.get("/store/list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/store/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -245,8 +351,15 @@ class FetchData {
         return useQuery({
             queryKey: ["storeCount"],
             queryFn: async () => {
-                const res = await API.get("/store/count-by-type");
-                return res.data;
+                try {
+                    const res = await API.get("/store/count-by-type");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -257,10 +370,17 @@ class FetchData {
         return useQuery({
             queryKey: ["outwardList", params],
             queryFn: async () => {
-                const res = await API.get("/outward/list", {
-                    params
-                });
-                return res.data;
+                try {
+                    const res = await API.get("/outward/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });
@@ -270,8 +390,15 @@ class FetchData {
         return useQuery({
             queryKey: ["outwardDetails", out_no],
             queryFn: async () => {
-                const res = await API.get(`/outward/${out_no}`);
-                return res.data;
+                try {
+                    const res = await API.get(`/outward/${out_no}`);
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
             },
             enabled: isEnabled,
         });

@@ -32,7 +32,7 @@ const Role = () => {
 
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["allRole"]);
 
-    const { data: allRole, isLoading: roleLoading } = manageAccess.TQAllRole();
+    const { data: allRole, isLoading: roleLoading, isError } = manageAccess.TQAllRole();
 
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +41,7 @@ const Role = () => {
     const [isShow, setIsShow] = useState(false);
     const [editData, setEditData] = useState(null);
 
-    const isEmpty = allRole?.data?.length > 0 ? false : true;
+    const isEmpty = allRole?.data?.length === 0 || isError;
 
 
     function editHandler(data) {
@@ -87,12 +87,16 @@ const Role = () => {
                             columns={ROLE_COL}
                             row={{
                                 id: index + 1,
-                                role: item.role?.toUpperCase(),
+                                role: <span className="capitalize font-semibold">{item.role?.replace("_", " ")}</span>,
                                 action: (
                                     <div className='flex items-center justify-center gap-5'>
                                         <Tippy content="Assign Permissions" >
                                             <button
                                                 onClick={() => navigate(`assign/${item?.id}`)}
+                                                disabled={item.is_default}
+                                                className={`
+                                                    ${item.is_default ? "cursor-not-allowed text-gray-400" : "cursor-pointer hover:text-gray-700 "}
+                                                `}
                                             >
                                                 <TbClipboardList
                                                     className=''
@@ -103,6 +107,10 @@ const Role = () => {
                                         <Tippy content="Edit Role" >
                                             <button
                                                 onClick={() => editHandler(item)}
+                                                disabled={item.is_default}
+                                                className={`
+                                                    ${item.is_default ? "cursor-not-allowed text-gray-400" : "cursor-pointer hover:text-gray-700 "}
+                                                `}
                                             >
                                                 <FaPencil
                                                     className=''
@@ -113,9 +121,12 @@ const Role = () => {
                                         <Tippy content="Delete Role" >
                                             <button
                                                 onClick={() => deleteHandler(item.id)}
+                                                disabled={item.is_default}
+                                                className={`
+                                                    ${item.is_default ? "cursor-not-allowed text-gray-400" : "cursor-pointer text-red-500 "}
+                                                `}
                                             >
                                                 <IoTrashOutline
-                                                    className='text-red-500'
                                                     size={20}
                                                 />
                                             </button>

@@ -13,12 +13,12 @@ import ButtonBoolean from '@/components/inputs/ButtonBoolean';
 import { FaPlus } from "react-icons/fa6";
 import AddModal from '@/components/Add.modal';
 import CategoryForm from '@/components/category/CategoryForm';
-import fetchData from '@/Backend/fetchData.backend';
 import FullScreenLoader from '@/components/loader/FullScreenLoader';
 import { utcToLocal } from '@/utils/UTCtoLocal';
 import masterData from '@/Backend/master.backend';
 import { confirmation } from '@/utils/alerts';
 import ComponentHeader from '@/components/ComponentHeader';
+import fetchData from '../../../Backend/fetchData.backend';
 
 
 const headerLink = [
@@ -98,123 +98,120 @@ const Category = () => {
                                         </tr>
                                     </thead>
                                 </table>
-                                {
-                                    data.map((item, i) => {
+                                {data?.map((item, i) => {
+                                    const isSubCate = item.subcategories.length > 0;
 
-                                        const isSubCate = item.subcategories.length > 0;
-
-                                        return <div key={i} className="border border-[#d3d3d3] rounded">
-                                            <button
-                                                type="button"
-                                                className={`p-4 w-full flex items-center text-white-dark bg-[#f6f8fa83] ${(active === `${i + 1}` && isSubCate) ? '!text-primary' : ''} ${isSubCate ? "" : "cursor-default"}`}
-                                                onClick={() => togglePara(`${i + 1}`)}
-                                            >
-                                                <tr className='flex !w-full justify-between items-center mr-2' >
-                                                    <td>
-                                                        <div className="whitespace-nowrap">{item.name}</div>
-                                                    </td>
-                                                    <td>{item.description}</td>
-                                                    <td>{String(item.status)}</td>
-                                                    <td>{utcToLocal(item.createdAt)}</td>
-                                                    <td className="text-center">
-                                                        <ul className="flex items-center justify-center gap-2">
-                                                            <li>
-                                                                <Tippy content="Edit">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            handelEdit(item.id)
-                                                                        }}
-                                                                        className='hover:scale-125'
-                                                                    >
-                                                                        <IconPencil className="text-success" />
-                                                                    </button>
-                                                                </Tippy>
-                                                            </li>
-                                                            <li>
-                                                                <Tippy content="Delete">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            handelDelete(item.id)
-                                                                        }}
-                                                                        className='hover:scale-125'
-                                                                    >
-                                                                        <IconTrashLines className="text-danger" />
-                                                                    </button>
-                                                                </Tippy>
-                                                            </li>
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                                {isSubCate &&
-                                                    <div className={`ml-auto ${active === `${i + 1}` ? 'rotate-180' : ''}`}>
-                                                        <IconCaretDown />
-                                                    </div>
-                                                }
-                                            </button>
-                                            {
-                                                isSubCate
-                                                    ? <div>
-                                                        <AnimateHeight duration={300} height={active === `${i + 1}` ? 'auto' : 0}>
-                                                            <div className="space-y-2 py-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
-
-                                                                {/* checkboxes */}
-                                                                <div className="table-responsive mb-5">
-                                                                    <table>
-                                                                        <tbody>
-                                                                            {item?.subcategories?.map((data) => {
-                                                                                return (
-                                                                                    <tr
-                                                                                        key={data.id}
-                                                                                    >
-                                                                                        <td>
-                                                                                            <div className="whitespace-nowrap">{data.name}</div>
-                                                                                        </td>
-                                                                                        <td>{data.description}</td>
-                                                                                        <td>{String(data.status)}</td>
-                                                                                        <td>{utcToLocal(data.createdAt)}</td>
-                                                                                        <td className="">
-                                                                                            <ul className="flex items-center justify-center gap-2">
-                                                                                                <li>
-                                                                                                    <Tippy content="Edit">
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            onClick={() => handelEdit(data.id)}
-                                                                                                        >
-                                                                                                            <IconPencil className="text-success" />
-                                                                                                        </button>
-                                                                                                    </Tippy>
-                                                                                                </li>
-                                                                                                <li>
-                                                                                                    <Tippy content="Delete">
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            onClick={() => handelDelete(data.id)}
-                                                                                                        >
-                                                                                                            <IconTrashLines className="text-danger" />
-                                                                                                        </button>
-                                                                                                    </Tippy>
-                                                                                                </li>
-                                                                                            </ul>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                );
-                                                                            })}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-
-                                                            </div>
-                                                        </AnimateHeight>
-                                                    </div>
-                                                    : null
+                                    return <div key={i} className="border border-[#d3d3d3] rounded">
+                                        <button
+                                            type="button"
+                                            className={`p-4 w-full flex items-center text-white-dark bg-[#f6f8fa83] ${(active === `${i + 1}` && isSubCate) ? '!text-primary' : ''} ${isSubCate ? "" : "cursor-default"}`}
+                                            onClick={() => togglePara(`${i + 1}`)}
+                                        >
+                                            <tr className='flex !w-full justify-between items-center mr-2' >
+                                                <td>
+                                                    <div className="whitespace-nowrap">{item.name}</div>
+                                                </td>
+                                                <td>{item.description}</td>
+                                                <td>{String(item.status)}</td>
+                                                <td>{utcToLocal(item.createdAt)}</td>
+                                                <td className="text-center">
+                                                    <ul className="flex items-center justify-center gap-2">
+                                                        <li>
+                                                            <Tippy content="Edit">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handelEdit(item.id)
+                                                                    }}
+                                                                    className='hover:scale-125'
+                                                                >
+                                                                    <IconPencil className="text-success" />
+                                                                </button>
+                                                            </Tippy>
+                                                        </li>
+                                                        <li>
+                                                            <Tippy content="Delete">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handelDelete(item.id)
+                                                                    }}
+                                                                    className='hover:scale-125'
+                                                                >
+                                                                    <IconTrashLines className="text-danger" />
+                                                                </button>
+                                                            </Tippy>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                            {isSubCate &&
+                                                <div className={`ml-auto ${active === `${i + 1}` ? 'rotate-180' : ''}`}>
+                                                    <IconCaretDown />
+                                                </div>
                                             }
-                                        </div>
-                                    })
-                                }
+                                        </button>
+                                        {
+                                            isSubCate
+                                                ? <div>
+                                                    <AnimateHeight duration={300} height={active === `${i + 1}` ? 'auto' : 0}>
+                                                        <div className="space-y-2 py-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
+
+                                                            {/* checkboxes */}
+                                                            <div className="table-responsive mb-5">
+                                                                <table>
+                                                                    <tbody>
+                                                                        {item?.subcategories?.map((data) => {
+                                                                            return (
+                                                                                <tr
+                                                                                    key={data.id}
+                                                                                >
+                                                                                    <td>
+                                                                                        <div className="whitespace-nowrap">{data.name}</div>
+                                                                                    </td>
+                                                                                    <td>{data.description}</td>
+                                                                                    <td>{String(data.status)}</td>
+                                                                                    <td>{utcToLocal(data.createdAt)}</td>
+                                                                                    <td className="">
+                                                                                        <ul className="flex items-center justify-center gap-2">
+                                                                                            <li>
+                                                                                                <Tippy content="Edit">
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        onClick={() => handelEdit(data.id)}
+                                                                                                    >
+                                                                                                        <IconPencil className="text-success" />
+                                                                                                    </button>
+                                                                                                </Tippy>
+                                                                                            </li>
+                                                                                            <li>
+                                                                                                <Tippy content="Delete">
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        onClick={() => handelDelete(data.id)}
+                                                                                                    >
+                                                                                                        <IconTrashLines className="text-danger" />
+                                                                                                    </button>
+                                                                                                </Tippy>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            );
+                                                                        })}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                        </div>
+                                                    </AnimateHeight>
+                                                </div>
+                                                : null
+                                        }
+                                    </div>
+                                })}
                             </div>
                         </div>
                     </div>

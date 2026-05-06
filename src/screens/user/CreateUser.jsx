@@ -116,9 +116,14 @@ const CreateUser = () => {
     async function submitForm(data) {
         data.node_id = node?.businessNode?.id;
         if (id) data.id = id;
-        const formData = RHFToFormData(data);
 
-        // console.log(data); return
+        const filteredData = Object.fromEntries(
+            Object.entries(data).filter(([_, value]) => value !== null)
+        )
+
+        const formData = RHFToFormData(filteredData);
+
+        // console.log(filteredData); return
 
         try {
             if (id) {
@@ -202,7 +207,7 @@ const CreateUser = () => {
                                                         node: e
                                                     });
                                                     setPreview(null);
-                                                    
+
                                                     // Keep ONLY its own value
                                                     return onChange(e);
                                                 }}
@@ -220,118 +225,121 @@ const CreateUser = () => {
                                 </div>
 
                                 {node !== null && (
-                                    node?.businessNode?.node_type_code === null ? <>
-                                        {/* dept */}
-                                        <div className="">
-                                            <Controller
-                                                name="dept"
-                                                control={control}
-                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                    <SearchableSelect
-                                                        ref={(el) => {
-                                                            ref({
-                                                                focus: () => el?.focus(),
-                                                            });
-                                                        }}
-                                                        value={value}
-                                                        onChange={onChange}
-                                                        isSearchable={false}
+                                    node?.businessNode?.node_type_code === null ?
+                                        <>
+                                            {/* dept */}
+                                            <div className="">
+                                                <Controller
+                                                    name="dept"
+                                                    control={control}
+                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                        <SearchableSelect
+                                                            ref={(el) => {
+                                                                ref({
+                                                                    focus: () => el?.focus(),
+                                                                });
+                                                            }}
+                                                            value={value}
+                                                            onChange={onChange}
+                                                            isSearchable={false}
 
-                                                        label="Department"
-                                                        labelPosition={"inline"}
-                                                        options={deptType_createUser}
-                                                        disabled={node === null ? true : false}
-                                                    />
-                                                )}
-                                            />
-                                        </div>
-                                    </> : <>
-                                        {/* isNodeAdmin */}
-                                        <div className=''>
-                                            <Controller
-                                                name="isNodeAdmin"
-                                                control={control}
-                                                defaultValue={"false"}
-                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                    <RHRadioGroup
-                                                        ref={(el) => {
-                                                            ref({
-                                                                focus: () => el?.focus(),
-                                                            });
-                                                        }}
-                                                        value={value}
-                                                        onChange={onChange}
-                                                        label="Location Admin"
-                                                        labelPosition={"inline"}
-                                                        options={[
-                                                            { label: "Yes", value: "true" },
-                                                            { label: "No", value: "false" },
-                                                        ]}
-                                                    />
-                                                )}
-                                            />
-                                        </div>
-
-                                        {node?.businessNode?.type?.category === "manufacturing" && <>
-                                            <div className="grid grid-cols-1 gap-4">
-                                                {/* select store type */}
-                                                <div className="">
-                                                    <Controller
-                                                        name="storeType"
-                                                        control={control}
-                                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                            <SearchableSelect
-                                                                ref={(el) => {
-                                                                    ref({
-                                                                        focus: () => el?.focus(),
-                                                                    });
-                                                                }}
-                                                                value={value}
-                                                                onChange={onChange}
-                                                                isSearchable={false}
-
-                                                                label="Store Type"
-                                                                labelPosition='inline'
-                                                                options={[
-                                                                    { label: "RM Store", value: "rm_store" },
-                                                                    { label: "Production", value: "production" },
-                                                                    { label: "FG Store", value: "fg_store" },
-                                                                ]}
-                                                            />
-                                                        )}
-                                                    />
-                                                </div>
-
-                                                {/* select store */}
-                                                <div className="">
-                                                    <Controller
-                                                        name="store_id"
-                                                        control={control}
-                                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                            <RHSelect
-                                                                ref={(el) => {
-                                                                    ref({
-                                                                        focus: () => el?.focus(),
-                                                                    });
-                                                                }}
-                                                                value={value}
-                                                                onChange={onChange}
-
-                                                                label="Select Store"
-                                                                labelPosition="inline"
-                                                                options={storeData?.data}
-                                                                error={error?.message}
-
-                                                            // addButton={true}
-                                                            // buttonTitle="Store"
-                                                            // buttonOnClick={() => setStore(true)}
-                                                            />
-                                                        )}
-                                                    />
-                                                </div>
+                                                            label="Department"
+                                                            labelPosition={"inline"}
+                                                            options={deptType_createUser}
+                                                            disabled={node === null ? true : false}
+                                                        />
+                                                    )}
+                                                />
                                             </div>
-                                        </>}
-                                    </>
+                                        </> : <>
+                                            {node?.businessNode?.type?.category === "manufacturing" ?
+                                                <>
+                                                    <div className="grid grid-cols-1 gap-4">
+                                                        {/* select store type */}
+                                                        <div className="">
+                                                            <Controller
+                                                                name="storeType"
+                                                                control={control}
+                                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                                    <SearchableSelect
+                                                                        ref={(el) => {
+                                                                            ref({
+                                                                                focus: () => el?.focus(),
+                                                                            });
+                                                                        }}
+                                                                        value={value}
+                                                                        onChange={onChange}
+                                                                        isSearchable={false}
+
+                                                                        label="Store Type"
+                                                                        labelPosition='inline'
+                                                                        options={[
+                                                                            { label: "RM Store", value: "rm_store" },
+                                                                            { label: "Production", value: "production" },
+                                                                            { label: "FG Store", value: "fg_store" },
+                                                                        ]}
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </div>
+
+                                                        {/* select store */}
+                                                        <div className="">
+                                                            <Controller
+                                                                name="store_id"
+                                                                control={control}
+                                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                                    <RHSelect
+                                                                        ref={(el) => {
+                                                                            ref({
+                                                                                focus: () => el?.focus(),
+                                                                            });
+                                                                        }}
+                                                                        value={value}
+                                                                        onChange={onChange}
+
+                                                                        label="Select Store"
+                                                                        labelPosition="inline"
+                                                                        options={storeData?.data}
+                                                                        error={error?.message}
+
+                                                                    // addButton={true}
+                                                                    // buttonTitle="Store"
+                                                                    // buttonOnClick={() => setStore(true)}
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </> : <>
+                                                    {/* isNodeAdmin */}
+                                                    <div className=''>
+                                                        <Controller
+                                                            name="isNodeAdmin"
+                                                            control={control}
+                                                            defaultValue={"false"}
+                                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                                <RHRadioGroup
+                                                                    ref={(el) => {
+                                                                        ref({
+                                                                            focus: () => el?.focus(),
+                                                                        });
+                                                                    }}
+                                                                    value={value}
+                                                                    onChange={onChange}
+                                                                    label="Location Admin"
+                                                                    labelPosition={"inline"}
+                                                                    options={[
+                                                                        { label: "Yes", value: "true" },
+                                                                        { label: "No", value: "false" },
+                                                                    ]}
+                                                                />
+                                                            )}
+                                                        />
+                                                    </div>
+                                                </>
+                                            }
+                                        </>
                                 )}
                             </div>
                         }
@@ -433,7 +441,7 @@ const CreateUser = () => {
                             <button
                                 type='button'
                                 className='btn btn-outline-dark'
-                                onClick={() => navigate(-1)}
+                                onClick={() => navigate("/admin/user")}
                             >
                                 Cancel
                             </button>
