@@ -207,7 +207,11 @@ const Store = () => {
                                         name: item?.name,
                                         location: item?.location,
                                         category: item?.store_type === "rm_store" ? "RM Store" : item?.store_type === "fg_store" ? "FG Store" : "Production",
-                                        linked: item?.parentBusinessNode?.name,
+                                        linked: (
+                                            <span className='text-sm capitalize'>
+                                                {`${item?.parentBusinessNode?.nodeDetails?.name} - ${item?.parentBusinessNode?.nodeDetails?.location}`}
+                                            </span>
+                                        ),
                                         status: item?.isActive ? "Active" : "Inactive",
                                         action: (
                                             <div className='flex items-center justify-start space-x-2'>
