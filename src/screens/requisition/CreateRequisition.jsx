@@ -59,6 +59,7 @@ const CreateRequisition = () => {
             title: "",
             required_by_date: "",
             priority: "",
+            requisition_category_id: ""
         }
     });
     if (!isManufacture) setValue("buyer", locationName);
@@ -91,7 +92,8 @@ const CreateRequisition = () => {
                 }
 
             } else {
-                const res = await createData({ path: "/requisition/create", formData: data });
+                data.supplier_node = Array.isArray(data?.supplier_node) ? data?.supplier_node : [data?.supplier_node];
+                const res = await createData({ path: "/requisition/create-internal", formData: data });
                 if (res.success) {
                     reset();
                     setSelectedItems([]);
@@ -160,8 +162,8 @@ const CreateRequisition = () => {
 
                                 {/* conditional rendering supplier or vendor */}
                                 {isManufacture ? (
+                                    // vendor
                                     <>
-                                        {/* vendor */}
                                         <div>
                                             <Controller
                                                 name="requisition_category_id"
@@ -184,8 +186,8 @@ const CreateRequisition = () => {
                                         </div>
                                     </>
                                 ) : (
+                                    // supplier
                                     <>
-                                        {/* supplier */}
                                         <div>
                                             <Controller
                                                 name="supplier_node"
@@ -193,8 +195,13 @@ const CreateRequisition = () => {
                                                 rules={{
                                                     required: "This field is required!!!"
                                                 }}
-                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                    <RHSelect
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                                                    const supplierOptions = allownodeList?.data?.map(node => ({
+                                                        id: node?.id,
+                                                        name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
+                                                    }));
+
+                                                    return <RHSelect
                                                         ref={(el) => {
                                                             ref({
                                                                 focus: () => el?.focus(),
@@ -205,15 +212,13 @@ const CreateRequisition = () => {
 
                                                         label="Supplier"
                                                         labelPosition='inline'
-                                                        selectKey='nodeDetails'
-                                                        selectSubKey='name'
-                                                        options={allownodeList?.data}
+                                                        options={supplierOptions}
                                                         error={error?.message}
                                                         required={true}
-                                                        isMulti={true}
+                                                        // isMulti={true}
                                                         isClearable={true}
                                                     />
-                                                )}
+                                                }}
                                             />
                                         </div>
                                     </>
