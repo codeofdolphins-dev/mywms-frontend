@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import MasterRecord from '../../components/business/MasterRecord';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@mantine/core';
-import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import Basic from '../../components/business/Basic';
 import DragNDropTable from '../../components/business/DragNDropTable';

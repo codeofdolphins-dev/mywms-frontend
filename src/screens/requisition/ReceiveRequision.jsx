@@ -75,8 +75,9 @@ const ReceiveRequision = () => {
 
     /** set selected requisition details */
     function handelShowDetails(data) {
-        setDetails(data);
+        // setDetails(data);
         const isQuoted = ["quoted", "accepted", "rejected"].some(s => s.includes(data?.status));
+        console.log(data)
 
         setItemDetails(isQuoted ? [] : data?.items);
         if (isQuoted) {
@@ -86,7 +87,7 @@ const ReceiveRequision = () => {
             setIsShowDetails(true);
         };
 
-        setRequisitionId(data.id);
+        // setRequisitionId(data.id);
     };
 
     function handleEdit(item) {
@@ -119,7 +120,7 @@ const ReceiveRequision = () => {
     useEffect(() => {
         const quotation = quotationList?.data?.[0]?.quotationItem;
         if (!quotation) return;
-        setItemDetails(quotation);
+        // setItemDetails(quotation);
 
     }, [quotationList, quotationListLoading]);
 

@@ -8,13 +8,16 @@ import { currencyFormatter } from "../utils/currencyFormatter";
 import AddModal from "../components/Add.modal";
 import { FiMapPin, FiUser, FiFileText, FiClock } from "react-icons/fi";
 import { MdOutlineAttachMoney } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
+    const isLogin = useSelector(state => state.auth.status);
+
     const [isShow, setIsShow] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
     const { data: rfqList, isLoading: rfqListLoading } = fetchData.TQRfqList();
-    const { data: appliedRfqList, isLoading: appliedRfqListLoading } = fetchData.TQAppliedRfqList();
+    const { data: appliedRfqList, isLoading: appliedRfqListLoading } = fetchData.TQAppliedRfqList(isLogin);
 
     // const dispatch = useDispatch();
     // useEffect(() => {

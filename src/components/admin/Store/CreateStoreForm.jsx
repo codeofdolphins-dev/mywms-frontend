@@ -71,6 +71,8 @@ const CreateStoreForm = ({
         reset();
     }
 
+
+    /** add manufacturing location on button click */
     function addMfgLocation() {
         const mfg = {
             id: 1,
@@ -83,6 +85,7 @@ const CreateStoreForm = ({
         });
     }
 
+    /** on form submit */
     async function submit(data) {
         // console.log(data); return
         try {
@@ -172,6 +175,7 @@ const CreateStoreForm = ({
 
                                     label="Manufacturing Location"
                                     options={registeredNodeList?.data}
+                                    isLoading={registeredNodeListLoading}
 
                                     required={true}
                                     error={error?.message}
