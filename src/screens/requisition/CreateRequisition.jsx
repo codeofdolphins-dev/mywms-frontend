@@ -66,15 +66,19 @@ const CreateRequisition = () => {
 
 
     const [isShow, setIsShow] = useState(false);
-    const [isEmpty, setIsEmpty] = useState(true);
+    // const [isEmpty, setIsEmpty] = useState(true);
     const [isReqForm, setIsReqForm] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
 
+    /** Calculate total amount of items */
+    // useEffect(() => {
+    //     function calculateTotals(items) {
+    //         return items?.reduce((total, item) => total + parseFloat(item?.total), 0)
+    //     }
 
-    useEffect(() => {
-        setIsEmpty(Boolean(!selectedItems?.length));
-        setValue("total", calculateTotals(selectedItems));
-    }, [selectedItems]);
+    //     setIsEmpty(Boolean(!selectedItems?.length));
+    //     setValue("total", calculateTotals(selectedItems));
+    // }, [selectedItems]);
 
 
     /** handle submit */
@@ -114,7 +118,6 @@ const CreateRequisition = () => {
 
     return (
         <div>
-
             {/* breadcrumb */}
             <div className="flex items-center gap-5 ">
                 <ul className=" flex space-x-2 ">
@@ -145,6 +148,7 @@ const CreateRequisition = () => {
 
                         {/* left side */}
                         <div className="panel">
+
                             <div className="grid grid-cols-1 gap-5">
                                 {/* buyer */}
                                 {!isManufacture &&
@@ -158,7 +162,6 @@ const CreateRequisition = () => {
                                         />
                                     </div>
                                 }
-
 
                                 {/* conditional rendering supplier or vendor */}
                                 {isManufacture ? (
@@ -187,41 +190,39 @@ const CreateRequisition = () => {
                                     </>
                                 ) : (
                                     // supplier
-                                    <>
-                                        <div>
-                                            <Controller
-                                                name="supplier_node"
-                                                control={control}
-                                                rules={{
-                                                    required: "This field is required!!!"
-                                                }}
-                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
-                                                    const supplierOptions = allownodeList?.data?.map(node => ({
-                                                        id: node?.id,
-                                                        name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
-                                                    }));
+                                    <div>
+                                        <Controller
+                                            name="supplier_node"
+                                            control={control}
+                                            rules={{
+                                                required: "This field is required!!!"
+                                            }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                                                const supplierOptions = allownodeList?.data?.map(node => ({
+                                                    id: node?.id,
+                                                    name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
+                                                }));
 
-                                                    return <RHSelect
-                                                        ref={(el) => {
-                                                            ref({
-                                                                focus: () => el?.focus(),
-                                                            });
-                                                        }}
-                                                        value={value}
-                                                        onChange={onChange}
+                                                return <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
 
-                                                        label="Supplier"
-                                                        labelPosition='inline'
-                                                        options={supplierOptions}
-                                                        error={error?.message}
-                                                        required={true}
-                                                        // isMulti={true}
-                                                        isClearable={true}
-                                                    />
-                                                }}
-                                            />
-                                        </div>
-                                    </>
+                                                    label="Supplier"
+                                                    labelPosition='inline'
+                                                    options={supplierOptions}
+                                                    error={error?.message}
+                                                    required={true}
+                                                    // isMulti={true}
+                                                    isClearable={true}
+                                                />
+                                            }}
+                                        />
+                                    </div>
                                 )}
 
 
@@ -274,14 +275,14 @@ const CreateRequisition = () => {
                                 </div>
 
                                 {/* total */}
-                                <div className="">
+                                {/* <div className="">
                                     <Input
                                         label="Total"
                                         labelPosition="inline"
                                         disabled={true}
                                         {...register("total")}
                                     />
-                                </div>
+                                </div> */}
 
                                 {/* note */}
                                 <div className="">
@@ -297,7 +298,7 @@ const CreateRequisition = () => {
                                 <Button
                                     type="submit"
                                     className="btn btn-primary ml-auto"
-                                    disabled={isEmpty}
+                                // disabled={isEmpty}
                                 >
                                     Submit
                                 </Button>
@@ -308,7 +309,7 @@ const CreateRequisition = () => {
                         <div className="panel min-h-64 relative z-0">
                             <div className="overflow-x-auto">
                                 <TableBody
-                                    isEmpty={isEmpty}
+                                    isEmpty={selectedItems?.length === 0}
                                     showPagination={false}
                                     columns={isManufacture ? REQUISITION_CREATE_RAW_COLUMN_ACTION : REQUISITION_CREATE_COLUMN_ACTION}
                                 >
@@ -387,7 +388,7 @@ const CreateRequisition = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title={"Add Item"}
-                maxWidth='55'
+                maxWidth='50'
             >
                 {isManufacture
                     ? <RequisitionItemFormRaw
@@ -413,8 +414,6 @@ const CreateRequisition = () => {
                     setIsShow={setIsReqForm}
                 />
             </AddModal>
-
-
         </div >
     )
 }

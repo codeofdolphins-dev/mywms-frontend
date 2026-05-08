@@ -23,7 +23,7 @@ export const REQUISITION_CREATE_COLUMN = [
     { key: "subCategory", label: "Sub Category" },
     { key: "packSize", label: "Pack Size" },
     { key: "reqQty", label: "Req Qty." },
-    { key: "priceLimit", label: "Price Limit" },
+    // { key: "priceLimit", label: "Price Limit" },
 ];
 export const REQUISITION_CREATE_COLUMN_ACTION = [
     { key: "barcode", label: "Barcode" },
@@ -47,65 +47,21 @@ export const REQUISITION_CREATE_RAW_COLUMN_ACTION = [
 ];
 
 export const REQUISITION_COLUMN = [
-    {
-        key: "id",
-        label: "#",
-        align: "center"
-    },
-    {
-        key: "title",
-        label: "Title",
-    },
-    {
-        key: "status",
-        label: "Status",
-        align: "center"
-    },
-    {
-        key: "priority",
-        label: "Priority",
-        align: "center"
-    },
-    {
-        key: "notes",
-        label: "Notes",
-        align: "center"
-    },
-    {
-        key: "grandTotal",
-        label: "Total",
-    },
-    {
-        key: "action",
-        label: "Action",
-        align: "center"
-    },
+    { key: "id", label: "#", align: "center" },
+    { key: "title", label: "Title" },
+    { key: "status", label: "Status", align: "center" },
+    { key: "priority", label: "Priority", align: "center" },
+    { key: "notes", label: "Notes" },
+    // { key: "grandTotal", label: "Total" },
+    { key: "action", label: "Action", align: "center" },
 ];
 
 export const REQUISITION_ITEMS_COLUMN = [
-    {
-        key: "id", label: "#", width: "0.3fr",
-        // align: "center"
-    },
-    {
-        key: "barcode", label: "Barcode",
-        // width: "2fr"
-    },
-    {
-        key: "productName", label: "Product Name",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "productType", label: "Product Type",
-        // width: "120px",
-        // align: "center"
-    },
-    {
-        key: "qty", label: "QTY",
-        // width: "120px",
-        // align: "center"
-    },
+    { key: "id", label: "#", width: "0.3fr" },
+    { key: "barcode", label: "Barcode" },
+    { key: "productName", label: "Product Name" },
+    { key: "productType", label: "Product Type" },
+    { key: "qty", label: "QTY" },
 ];
 
 
@@ -154,16 +110,13 @@ export const QUOTATION_RECEIVE_RAW_COLUMN = [
 
 
 export const REQUISITION_RECEIVE_COLUMN = [
-    {
-        key: "id", label: "#",
-        // width: "0.5fr",
-        align: "center"
-    },
+    { key: "id", label: "#", align: "center" },
     { key: "title", label: "Title" },
     { key: "sender", label: "Sender" },
     { key: "priority", label: "Priority", align: "center" },
     { key: "status", label: "Status", align: "center" },
     { key: "itemsCount", label: "Total Items", align: "center" },
+    { key: "notes", label: "Notes" },
     { key: "action", label: "Action", align: "center" },
 ];
 

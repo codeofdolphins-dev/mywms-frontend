@@ -78,12 +78,12 @@ const RequisitionItemForm = ({
         if (!barcode?.length) return;
 
         if (product) {
-            setValue("productName", product?.name);
+            setValue("productName", product?.name ?? "");
             setValue("packSize", `${product?.measure} ${product?.unit_type}`);
-            setValue("packageType", product?.package_type);
-            setValue("brand", product?.productBrands?.[0]?.name);
-            setValue("category", product?.productCategories?.[0]?.name);
-            setValue("subCategory", product?.productCategories?.[0]?.subcategories?.[0]?.name);
+            setValue("packageType", product?.package_type ?? "");
+            setValue("brand", product?.productBrands?.[0]?.name ?? "");
+            setValue("category", product?.productCategories?.[0]?.name ?? "");
+            setValue("subCategory", product?.productCategories?.[0]?.subcategories?.[0]?.name ?? "");
 
         } else {
             resetField("productName");
@@ -98,6 +98,9 @@ const RequisitionItemForm = ({
 
 
     function submitForm(data) {
+
+        // console.log(data); return
+
         setSelectedItems(prev => [
             ...prev,
             {
@@ -150,6 +153,7 @@ const RequisitionItemForm = ({
                                 disabled={true}
                             />
                         </div>
+
                     </div>
 
                     {/* 2nd */}
@@ -190,46 +194,29 @@ const RequisitionItemForm = ({
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-5">
-                            {/* Package type */}
-                            <div>
-                                <Input
-                                    label="Package Type"
-                                    placeholder="Enter unit type"
-                                    {...register("packageType")}
-                                    disabled={true}
-                                />
-                            </div>
-
-                            {/* pack size */}
-                            <div>
-                                <Input
-                                    label="Pack Size"
-                                    placeholder="Enter pack size"
-                                    {...register("packSize")}
-                                    disabled={true}
-                                />
-                            </div>
+                        {/* Package type */}
+                        <div>
+                            <Input
+                                label="Package Type"
+                                placeholder="Enter unit type"
+                                {...register("packageType")}
+                                disabled={true}
+                            />
                         </div>
                     </div>
 
                     {/* 4th */}
                     <div className="grid grid-cols-2 gap-5">
-                        {/* Price Limit */}
+                        {/* pack size */}
                         <div>
                             <Input
-                                label="Price Limit"
-                                placeholder="Enter limit"
-                                {...register("priceLimit", {
-                                    required: {
-                                        message: "price limit required!!!",
-                                        value: true
-                                    }
-                                })}
-                                error={errors.priceLimit?.message}
-                                required={true}
+                                label="Pack Size"
+                                placeholder="Enter pack size"
+                                {...register("packSize")}
+                                disabled={true}
                             />
                         </div>
+
 
                         {/* Req Qty */}
                         <div>
@@ -248,6 +235,26 @@ const RequisitionItemForm = ({
                         </div>
                     </div>
 
+                    {/* 5th */}
+                    <div className="grid grid-cols-2 gap-5">
+                        {/* Price Limit */}
+                        {/* <div>
+                            <Input
+                                label="Price Limit"
+                                placeholder="Enter limit"
+                                {...register("priceLimit", {
+                                    required: {
+                                        message: "price limit required!!!",
+                                        value: true
+                                    }
+                                })}
+                                error={errors.priceLimit?.message}
+                                required={true}
+                            />
+                        </div> */}
+                    </div>
+
+                    {/* button section */}
                     <div className="flex items-center justify-end gap-10">
                         <button
                             className='btn btn-outline-dark'
@@ -264,8 +271,8 @@ const RequisitionItemForm = ({
                         </Button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     )
 }
 

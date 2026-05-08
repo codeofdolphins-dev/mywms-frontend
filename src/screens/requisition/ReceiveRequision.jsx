@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import SearchInput from '../../components/inputs/SearchInput';
-import TableHeader from '../../components/table/TableHeader';
-import { QUOTATION_RECEIVE_COLUMN, REQUISITION_CREATE_COLUMN_ACTION, REQUISITION_RECEIVE_COLUMN } from '../../utils/helper';
+import { REQUISITION_CREATE_COLUMN, REQUISITION_RECEIVE_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
-import CustomeButton from "../../components/inputs/Button";
 import AddModal from '../../components/Add.modal';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import fetchData from '../../Backend/fetchData.backend';
-import IconPencil from '../../components/Icon/IconPencil';
-import QuotationForm from '../../components/quotation/QuotationForm';
-import Input from '../../components/inputs/Input';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import masterData from '../../Backend/master.backend';
-import { successAlert } from '../../utils/alerts';
 import { useSelector } from 'react-redux';
 import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
-import { quotation } from '../../Backend/quotation.fetch';
+import Tippy from '@tippyjs/react';
+import { LuBookmarkPlus } from 'react-icons/lu';
+import Button from '../../components/inputs/Button';
+import RHSelect from "../../components/inputs/RHF/Select.RHF"
 
 
 const headerLink = [
@@ -32,7 +28,7 @@ const ReceiveRequision = () => {
     const userData = useSelector(state => state?.auth?.userData);
     const nodeId = userData?.userBusinessNode?.id;
     const navigate = useNavigate();
-    const { handleSubmit, register, watch, formState: { errors }, reset, setValue } = useForm();
+    const { handleSubmit, register, watch, formState: { errors }, reset, setValue, control } = useForm();
 
 
     /**************** pagination state *******************/
@@ -42,21 +38,12 @@ const ReceiveRequision = () => {
 
 
     /**************** details state *******************/
-    const [editId, setEditId] = useState(null);
-    const [requisitionId, setRequisitionId] = useState(null);
     const [details, setDetails] = useState(null);
-
-
-    /**************** modal state array *******************/
-    const [itemDetails, setItemDetails] = useState([]);
-    const [editItem, setEditItem] = useState([]);
-    const [quoteItem, setQuoteItem] = useState([]);
 
 
     /**************** modal state *******************/
     const [isShowDetails, setIsShowDetails] = useState(false);
-    const [isShowEditDetails, setIsShowEditDetails] = useState(false);
-    const [isShowPreview, setIsShowPreview] = useState(false);
+    const [isShow, setIsShow] = useState(false);
 
 
     /**************** APT mutation *******************/
@@ -64,83 +51,42 @@ const ReceiveRequision = () => {
 
 
     /**************** data fetching GET *******************/
-    const { data: quotationList, isLoading: quotationListLoading } = quotation.TQQuotationList({ requisitionId }, Boolean(requisitionId));
     const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
+    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true });
 
-    const isEmpty = receiveRequisitionList
-        ? !receiveRequisitionList?.data?.length
-        : !quotationList?.data?.length;
+    const isEmpty = receiveRequisitionList?.data?.length === 0;
 
+    const fgStore = watch("fg_store");
 
+    /** assign to FG store */
+    async function assignFgStore() {
+        const item = details?.items?.map((item) => {
+            return {
+                vendor_product_id: item.product_id,
+                requested_qty: item.qty,
+            }
+        });
 
-    /** set selected requisition details */
-    function handelShowDetails(data) {
-        // setDetails(data);
-        const isQuoted = ["quoted", "accepted", "rejected"].some(s => s.includes(data?.status));
-        console.log(data)
-
-        setItemDetails(isQuoted ? [] : data?.items);
-        if (isQuoted) {
-            setIsShowPreview(true);
+        const payload = {
+            buyer_business_node_id: details?.buyer_business_node_id,
+            type: "internal",
+            store_id: fgStore?.id,
+            priority: details?.priority,
+            note: details?.notes,
+            required_by_date: details?.required_by_date,
+            items: item
         }
-        else {
-            setIsShowDetails(true);
-        };
 
-        // setRequisitionId(data.id);
-    };
+        // console.log("details", details)
+        // console.log("payload", payload)
 
-    function handleEdit(item) {
-        setIsShowEditDetails(true);
-        setEditItem(item);
-    };
-
-    function handelShow(id) {
-        setEditId(id);
-        setIsShowEditDetails(true);
-    };
-
-
-
-    /** reset all state as fresh */
-    useEffect(() => {
-        if (isShowDetails) return;
-
-        setItemDetails([]);
-        setEditItem([]);
-        setQuoteItem([]);
-        setRequisitionId(null);
-    }, [isShowDetails]);
-
-    useEffect(() => {
-        if (!isShowEditDetails) setEditId(null);
-    }, [isShowEditDetails]);
-
-    /** feed quotation data on available */
-    useEffect(() => {
-        const quotation = quotationList?.data?.[0]?.quotationItem;
-        if (!quotation) return;
-        // setItemDetails(quotation);
-
-    }, [quotationList, quotationListLoading]);
-
-
-    async function submit(data) {
-        data.items = quoteItem;
-        data.reqNo = details?.requisition_no;
-        data.grandTotal = quoteItem.reduce((grandTotal, item) => grandTotal + Number(item.total), 0);
-
-        console.log(data)
-        // return
-
-        try {
-            const res = await create({ path: "/quotation/create", formData: data });
-            if (res.success) setIsShowDetails(false);
-
-        } catch (error) {
-            console.log(error);
+        const res = await create({ path: "/outward/create", formData: payload });
+        if (res?.success) {
+            setIsShow(false);
+            setIsShowDetails(false);
         }
     }
+
 
     /** set status color */
     function statusColor(status) {
@@ -159,8 +105,7 @@ const ReceiveRequision = () => {
         }
     }
 
-
-    if (quotationListLoading || receiveRequisitionListLoading) return <FullScreenLoader />;
+    if (receiveRequisitionListLoading) return <FullScreenLoader />;
 
     return (
         <div>
@@ -206,17 +151,38 @@ const ReceiveRequision = () => {
                                     </>
                                 ),
                                 itemsCount: item?.items?.length,
+                                notes: item?.notes,
                                 action: (
-                                    <div className='flex items-center justify-center'>
-                                        <CustomeButton
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handelShowDetails(item);
-                                            }}
-                                            className={"self-center"}
+                                    <div className='flex items-center justify-center gap-2'>
+                                        <Tippy
+                                            content="Assign FG Store"
                                         >
-                                            <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
+                                            <button
+                                                onClick={() => {
+                                                    setDetails(item);
+                                                    setIsShow(true);
+                                                }}
+                                            >
+                                                <LuBookmarkPlus
+                                                    className="hover:scale-110 cursor-pointer"
+                                                    strokeWidth={1.5}
+                                                    size={20}
+                                                />
+                                            </button>
+                                        </Tippy>
+
+                                        <Tippy
+                                            content="Preview"
+                                        >
+                                            <button
+                                                onClick={() => {
+                                                    setDetails(item);
+                                                    setIsShowDetails(true);
+                                                }}
+                                            >
+                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                            </button>
+                                        </Tippy>
                                     </div>
                                 )
                             }}
@@ -225,15 +191,21 @@ const ReceiveRequision = () => {
                 </TableBody>
             </div>
 
+
+
             {/* Item Details */}
             <AddModal
                 isShow={isShowDetails}
                 setIsShow={setIsShowDetails}
-                title={"Item Details"}
-                maxWidth='95'
+                title={"Preview Item Details"}
+                maxWidth='80'
             >
                 <div className='panel'>
+
+                    {/* header section */}
                     <div className="">
+
+                        {/* header title and priority */}
                         <div className='flex items-center'>
                             <span>Received Requisition Details of</span>
                             <span className="font-bold uppercase ml-1">{details?.title || "..."}</span>
@@ -252,7 +224,7 @@ const ReceiveRequision = () => {
 
                                 {/* PO details */}
                                 <div className="xl:1/3 lg:w-2/5 sm:w-1/2 text-sm">
-                                    <div className="flex items-center w-full justify-between mb-2">
+                                    <div className="flex w-full items-center justify-between mb-2">
                                         <div className="text-white-dark">RQ Number:</div>
                                         <span className='text-sm'># {details?.requisition_no || "N/A"}</span>
                                     </div>
@@ -277,7 +249,7 @@ const ReceiveRequision = () => {
                                     </div>
                                     <div className="flex items-center w-full justify-between mb-2">
                                         <div className="text-white-dark">Note:</div>
-                                        <span> {details?.note || "N/A"} </span>
+                                        <span className='text-sm'> {details?.notes || "N/A"} </span>
                                     </div>
                                 </div>
 
@@ -285,7 +257,7 @@ const ReceiveRequision = () => {
                                 <div className="xl:1/3 lg:w-2/5 sm:w-1/2 text-sm">
                                     <div className="flex items-center w-full justify-between mb-2">
                                         <div className="text-white-dark">Buyer Name:</div>
-                                        <div className="whitespace-nowrap">{details?.buyer?.name || "N/A"}</div>
+                                        <div className="">{details?.buyer?.name || "N/A"}</div>
                                     </div>
                                     <div className="flex items-center w-full justify-between mb-2">
                                         <div className="text-white-dark">GST No:</div>
@@ -320,11 +292,11 @@ const ReceiveRequision = () => {
                                     <div className="flex items-center w-full justify-between mb-2 gap-5">
                                         <div className="flex items-center w-full justify-between">
                                             <p className="text-white-dark">State:</p>
-                                            <p>{details?.buyer?.nodeDetails?.address?.state || "N/A"}</p>
+                                            <p>{details?.buyer?.nodeDetails?.address?.state?.name || details?.buyer?.nodeDetails?.address?.state || "N/A"}</p>
                                         </div>
                                         <div className="flex items-center w-full justify-between">
                                             <p className="text-white-dark">District:</p>
-                                            <p>{details?.buyer?.nodeDetails?.address?.district || "N/A"}</p>
+                                            <p>{details?.buyer?.nodeDetails?.address?.district?.name || details?.buyer?.nodeDetails?.address?.district || "N/A"}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -333,19 +305,23 @@ const ReceiveRequision = () => {
                         </div>
                     </div>
 
+                    {/* table section */}
                     <div className="mt-5">
-                        <form onSubmit={handleSubmit(submit)}>
-                            <div className="grid grid-cols-1 space-x-4">
+                        <form onSubmit={handleSubmit()}>
+                            <div className="grid grid-cols-1">
 
                                 {/* table side */}
-                                <div className="col-span-2 panel space-y-5">
+                                <div className="">
                                     <div className="overflow-x-auto">
-                                        <TableHeader columns={REQUISITION_CREATE_COLUMN_ACTION} />
-                                        {
-                                            itemDetails?.map((item, idx) => (
+                                        <TableBody
+                                            columns={REQUISITION_CREATE_COLUMN}
+                                            isEmpty={false}
+                                            showPagination={false}
+                                        >
+                                            {details?.items?.map((item, idx) => (
                                                 <TableRow
                                                     key={item?.id}
-                                                    columns={REQUISITION_CREATE_COLUMN_ACTION}
+                                                    columns={REQUISITION_CREATE_COLUMN}
                                                     row={{
                                                         barcode: item?.product?.barcode,
                                                         product: item?.product?.name,
@@ -354,112 +330,81 @@ const ReceiveRequision = () => {
                                                         subCategory: item?.sub_category,
                                                         packSize: `${item?.product?.measure} ${item?.product?.unit_type} ${item?.product?.package_type}`,
                                                         reqQty: item?.qty,
-                                                        priceLimit: item?.priceLimit,
-                                                        action: (
-                                                            <div className='flex items-center justify-center space-x-3'>
-                                                                <CustomeButton
-                                                                    onClick={() => handleEdit(item)}
-                                                                >
-                                                                    <IconPencil className="text-danger hover:scale-110 cursor-pointer" />
-                                                                </CustomeButton>
-                                                            </div>
-                                                        )
                                                     }}
                                                 />
-                                            ))
-                                        }
+                                            ))}
+                                        </TableBody>
                                     </div>
                                 </div>
                             </div>
 
                             {/* buttton */}
-                            <div className="flex items-center mt-5">
+                            {/* <div className="flex items-center mt-1">
                                 <button
                                     type='button'
-                                    className='btn btn-secondary ml-auto mt-5'
-                                    onClick={() => setIsShowPreview(true)}
+                                    className='btn btn-secondary mx-auto'
+                                    onClick={() => setIsShow(true)}
                                 >
-                                    Preview
+                                    Assign to FG Store
                                 </button>
-                                <button
-                                    type='submit'
-                                    className='btn btn-info ml-auto mt-5'
-                                    disabled={quoteItem?.length < 1 ? true : false}
-                                >
-                                    submit
-                                </button>
-                            </div>
+                            </div> */}
                         </form>
                     </div>
                 </div>
             </AddModal >
 
-            {/* Edit Item */}
-            < AddModal
-                isShow={isShowEditDetails}
-                setIsShow={setIsShowEditDetails}
-                title={"Edit Item"}
-                maxWidth='45'
-            >
-                <QuotationForm
-                    editId={editId}
-                    editItem={editItem}
-                    setIsShowEditDetails={setIsShowEditDetails}
-                    quoteItem={quoteItem}
-                    setQuoteItem={setQuoteItem}
-                />
-            </AddModal >
 
-            {/* preview panel */}
+
+            {/* Assign FG Store */}
             <AddModal
-                isShow={isShowPreview}
-                setIsShow={setIsShowPreview}
-                title={"Quotation Preview"}
-                maxWidth='95'
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title="Assign FG Store"
+                maxWidth='50'
             >
                 <div className="panel">
-                    <TableBody
-                        isEmpty={isEmpty}
-                        columns={QUOTATION_RECEIVE_COLUMN}
-                        showPagination={false}
-                    >
-                        {itemDetails?.map((item, j) => {
-                            const barcode = item?.product?.barcode ?? item?.sourceRequisitionItem?.product?.barcode;
-                            const product = item?.product?.name ?? item?.sourceRequisitionItem?.product?.name;
-                            const brand = item?.brand ?? item?.sourceRequisitionItem?.brand;
-                            const category = item?.category ?? item?.sourceRequisitionItem?.category;
-                            const sub_category = item?.sub_category ?? item?.sourceRequisitionItem?.sub_category;
-                            const qty = item?.qty ?? item?.sourceRequisitionItem?.qty;
-                            const priceLimit = item?.priceLimit ?? item?.sourceRequisitionItem?.priceLimit;
-
-                            const quotItem = quoteItem?.find(q => q.barcode === barcode);
-                            const offerPrice = quotItem?.offerPrice ?? item?.offer_price;
-                            const tax = quotItem?.tax ?? item?.tax_percent;
-                            const total = quotItem?.total ?? item?.total_price;
-
-                            return (
-                                <TableRow
-                                    key={j}
-                                    columns={QUOTATION_RECEIVE_COLUMN}
-                                    row={{
-                                        barcode: barcode,
-                                        product: product,
-                                        brand: brand,
-                                        category: category,
-                                        subCategory: sub_category,
-                                        qty: qty,
-                                        priceLimit: priceLimit,
-
-                                        offerPrice: offerPrice,
-                                        tax: tax,
-                                        total: total
+                    <div>
+                        {/* fg_store */}
+                        <Controller
+                            name="fg_store"
+                            control={control}
+                            rules={{
+                                required: "This field is required!!!"
+                            }}
+                            render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
+                                <RHSelect
+                                    ref={(el) => {
+                                        ref({
+                                            focus: () => el?.focus(),
+                                        });
                                     }}
+                                    value={value}
+                                    onChange={onChange}
+
+                                    label="Select FG Store"
+                                    // labelPosition='inline'
+                                    options={storeList?.data}
+                                    required={true}
+                                    objectReturn={true}
+
+                                    addButton={false}
+                                    buttonTitle="Add FG Store"
+                                    buttonOnClick={() => setStore("FIN")}
                                 />
-                            )
-                        })}
-                    </TableBody>
+                            )}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 mt-10">
+                        <Button
+                            className="btn !btn-primary rounded-full"
+                            onClick={assignFgStore}
+                        >
+                            <span>Assign</span>
+                        </Button>
+                    </div>
                 </div>
-            </AddModal> 
+            </AddModal>
         </div >
     )
 }

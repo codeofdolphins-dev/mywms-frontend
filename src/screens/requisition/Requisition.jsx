@@ -172,8 +172,8 @@ const Requisition = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title={"Requisition Items"}
-                maxWidth='75'
+                title={"Preview Requisition Items"}
+                maxWidth='50'
             >
                 <RequisitionDetails
                     setIsShow={setIsShow}

@@ -136,6 +136,7 @@ const OrderDetails = () => {
 
         const payload = {
             sales_order_id: data?.data?.id,
+            type: "external",
             store_id: fgStore?.id,
             priority: data?.data?.priority,
             note: data?.data?.note,
