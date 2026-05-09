@@ -59,7 +59,8 @@ const AddProduct = () => {
             unit_type_id: "",
             package_type_id: "",
             has_expiry: false,
-            shelf_life: ""
+            shelf_life: "",
+            mrp: "",
         }
     });
 
@@ -99,7 +100,6 @@ const AddProduct = () => {
     const submit = async (data) => {
         // console.log(data); return
         try {
-
             if (id) {
                 data.id = id;
                 const fd = RHFToFormData(data);
@@ -155,22 +155,21 @@ const AddProduct = () => {
 
                             {/* 1st row */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Product Name */}
+                                <div>
+                                    <Input
+                                        label={"Product Name"}
+                                        placeholder={"Enter product name..."}
+                                        {...register("name", {
+                                            required: "This field is required!!!"
+                                        })}
+                                        error={errors.name?.message}
+                                        required={true}
+                                        autoFocus={true}
+                                    />
+                                </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {/* Product Name */}
-                                    <div>
-                                        <Input
-                                            label={"Product Name"}
-                                            placeholder={"Enter product name..."}
-                                            {...register("name", {
-                                                required: "This field is required!!!"
-                                            })}
-                                            error={errors.name?.message}
-                                            required={true}
-                                            autoFocus={true}
-                                        />
-                                    </div>
-
                                     {/* product Type */}
                                     <div>
                                         <Controller
@@ -200,33 +199,33 @@ const AddProduct = () => {
                                             )}
                                         />
                                     </div>
-                                </div>
 
-                                {/* brand */}
-                                <div className="">
-                                    <Controller
-                                        name="brand_id"
-                                        control={control}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
+                                    {/* brand */}
+                                    <div className="">
+                                        <Controller
+                                            name="brand_id"
+                                            control={control}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHSelect
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
 
-                                                label="Brand"
-                                                options={brandData?.data}
-                                                error={error?.message}
+                                                    label="Brand"
+                                                    options={brandData?.data}
+                                                    error={error?.message}
 
-                                                addButton={true}
-                                                buttonTitle='brand'
-                                                buttonOnClick={() => setShowBrand(true)}
-                                            />
-                                        )}
-                                    />
+                                                    addButton={true}
+                                                    buttonTitle='brand'
+                                                    buttonOnClick={() => setShowBrand(true)}
+                                                />
+                                            )}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -236,31 +235,34 @@ const AddProduct = () => {
                                 {/* left */}
                                 <div className="grid grid-cols-1 [@media(min-width:860px)]:grid-cols-1 gap-5">
 
-                                    {/* Barcode */}
-                                    <div>
-                                        <Input
-                                            label={"Barcode"}
-                                            placeholder={"Enter Barcode"}
-                                            {...register("barcode", { required: !isRaw && "This field is required!!!" })}
-                                            error={errors.barcode?.message}
-                                            required={!isRaw}
-                                            disabled={(id || isRaw) ? true : false}
-                                        />
-                                    </div>
+                                    {/* Barcode & SKU */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {/* Barcode */}
+                                        <div>
+                                            <Input
+                                                label={"Barcode"}
+                                                placeholder={"Enter Barcode"}
+                                                {...register("barcode", { required: !isRaw && "This field is required!!!" })}
+                                                error={errors.barcode?.message}
+                                                required={!isRaw}
+                                                disabled={(id || isRaw) ? true : false}
+                                            />
+                                        </div>
 
-                                    {/* sku */}
-                                    <div>
-                                        <Input
-                                            label={"SKU"}
-                                            placeholder={"Enter SKU"}
-                                            {...register("sku", { required: "This field is required!!!" })}
-                                            error={errors.sku?.message}
-                                            required={true}
-                                        />
+                                        {/* sku */}
+                                        <div>
+                                            <Input
+                                                label={"SKU"}
+                                                placeholder={"Enter SKU"}
+                                                {...register("sku", { required: "This field is required!!!" })}
+                                                error={errors.sku?.message}
+                                                required={true}
+                                            />
+                                        </div>
                                     </div>
 
                                     {/* hsn + type */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         {/* hsn_id */}
                                         <div className=''>
                                             <Controller
@@ -368,7 +370,7 @@ const AddProduct = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                                 {/* measure + unit */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Measure */}
                                     <div>
                                         <Input
@@ -455,42 +457,64 @@ const AddProduct = () => {
                             </div>
 
                             {/* 4th row */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div>
-                                    <Input
-                                        type={"number"}
-                                        label={"Minimum Stock Level"}
-                                        placeholder={"Enter Reorder Level"}
-                                        {...register("reorder_level")}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-1">
-                                    <Controller
-                                        name="image"
-                                        control={control}
-                                        defaultValue={null}
-                                        render={({ field: { onChange } }) => (
-                                            <FileUpload
-                                                label="Product Image"
-                                                onChange={onChange} // gets File object
-                                            />
-                                        )}
-                                    />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* minimum  */}
+                                    <div>
+                                        <Input
+                                            type={"number"}
+                                            label={"Minimum Stock Level"}
+                                            placeholder={"Enter Reorder Level"}
+                                            {...register("reorder_level")}
+                                        />
+                                    </div>
+
+                                    {/* mrp  */}
+                                    <div>
+                                        <Input
+                                            type={"number"}
+                                            label={"Maximum Retail Price"}
+                                            placeholder={"Enter Maximum Retail Price (MRP)"}
+                                            {...register("mrp", {
+                                                required: "MRP is required!!!",
+                                            })}
+                                            required={true}
+                                            error={errors.mrp?.message}
+                                        />
+                                    </div>
                                 </div>
 
-                                {/* Description */}
-                                <div>
-                                    <TextArea
-                                        label="Description"
-                                        placeholder="Enter Description"
-                                        className="text-sm"
-                                        rows={1}
-                                        {...register("description")}
-                                    />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* product image */}
+                                    <div className="grid grid-cols-1">
+                                        <Controller
+                                            name="image"
+                                            control={control}
+                                            defaultValue={null}
+                                            render={({ field: { onChange } }) => (
+                                                <FileUpload
+                                                    label="Product Image"
+                                                    onChange={onChange} // gets File object
+                                                />
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* Description */}
+                                    <div>
+                                        <TextArea
+                                            label="Description"
+                                            placeholder="Enter Description"
+                                            className="text-sm"
+                                            rows={1}
+                                            {...register("description")}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* 6th row */}
+                            {/* 5th row */}
                             <div className="flex items-center justify-end gap-14 mr-5">
                                 <button
                                     className='btn btn-outline-dark'

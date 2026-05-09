@@ -17,10 +17,11 @@ import ItemTable from '../../../components/ItemTable';
 import ComponentHeader from '../../../components/ComponentHeader';
 import AddModal from '../../../components/Add.modal';
 import RawForm from '../../../components/product/Raw.Form';
+import { currencyFormatter } from '../../../utils/currencyFormatter';
 
 const colName_raw = [
     // { key: "id", label: "#" },
-    // { key: "barcode", label: "Barcode" },
+    { key: "barcode", label: "Barcode" },
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },
     { key: "sku", label: "code / SKU" },
@@ -40,6 +41,7 @@ const colName_finished = [
     { key: "package_type", label: "Package Type" },
     { key: "has_expiry", label: "Has Expiry", render: v => v ? "Yes" : "No" },
     { key: "shelf_life", label: "Shelf Life" },
+    { key: "mrp", label: "MRP", render: v => 'Rs. ' + currencyFormatter(Number(v)) },
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
