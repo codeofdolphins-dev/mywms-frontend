@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import ComponentHeader from '../../../components/ComponentHeader';
-import RMstock from '../rmStore/components/RMStock';
-import TransferOrderList from '../TransferOrderList';
 import FGReceipt from './components/FGReceipt';
 import { useSearchParams } from 'react-router-dom';
+import FGstock from './components/FGStock';
 
 
 const headerLink = [{ title: "FG store" }];
@@ -64,7 +63,7 @@ const FGBrowse = () => {
                 </ul>
             </div>
 
-            {activeTab === 1 && <RMstock />}
+            {activeTab === 1 && <FGstock />}
             {activeTab === 2 && <FGReceipt />}
 
         </div>
