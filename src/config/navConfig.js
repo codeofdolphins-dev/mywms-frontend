@@ -31,8 +31,8 @@ export const NAV_CONFIG = [
             { key: "hsn", label: "HSN", path: "/master/hsncodes" },
             { key: "unit", label: "Unit", path: "/master/unit-types" },
             { key: "package", label: "Package", path: "/master/package-types" },
-            { key: "bom", label: "BOM", path: "/master/bom" },
-            { key: "supplier", label: "Supplier", path: "/master/suppliers" },
+            // { key: "bom", label: "BOM", path: "/master/bom" },
+            // { key: "supplier", label: "Supplier", path: "/master/suppliers" },
         ],
     },
 

@@ -302,7 +302,7 @@ const RFQPreview = ({
                                                                             error={errors?.items?.[idx]?.supplier_product_id?.message || error?.message}
                                                                             required={true}
                                                                             isClearable={true}
-                                                                            disabled={!!details?.items?.[idx]?.vendor_product}
+                                                                            // disabled={!!details?.items?.[idx]?.vendor_product}
                                                                         />
                                                                     )}
                                                                 />
@@ -312,7 +312,7 @@ const RFQPreview = ({
 
                                                     {/* Your Price */}
                                                     <div className={`whitespace-nowrap ${!isEditable ? "w-full" : ""}`}>
-                                                        <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom}</label>
+                                                        <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom} <span className='text-danger'>*</span> </label>
                                                         {isEditable
                                                             ? allowEdit
                                                                 ? <Input
@@ -326,7 +326,9 @@ const RFQPreview = ({
                                                             : <Input
                                                                 placeholder="Enter price"
                                                                 className="!mb-0"
-                                                                {...register(`items.${idx}.offer_price`)}
+                                                                {...register(`items.${idx}.offer_price`, {
+                                                                    required: "Offer price is required!!!"
+                                                                })}
                                                             />
                                                         }
                                                     </div>

@@ -15,6 +15,7 @@ const RequisitionItemFormRaw = ({
 
     const { handleSubmit, control, register, watch, setValue, reset, formState: { errors }, } = useForm({
         defaultValues: {
+            barcode: "",
             name: "",
             sku: "",
             uom: "",
@@ -31,17 +32,34 @@ const RequisitionItemFormRaw = ({
 
 
     const name = watch("name");
-    useEffect(() => {
-        setValue("sku", name?.sku);
-        setValue("uom", name?.unit_type);
+    const barcode = watch("barcode");
 
+    // When dropdown product is selected, update barcode, sku, uom
+    useEffect(() => {
+        setValue("sku", name?.sku || "");
+        setValue("uom", name?.unit_type || "");
+        
+        // Only update barcode if it's different to avoid interrupting typing
+        if (name?.barcode && name.barcode !== barcode) {
+            setValue("barcode", name.barcode);
+        }
     }, [name]);
+
+    // When barcode is scanned/typed, update the selected product
+    useEffect(() => {
+        if (barcode && barcode !== name?.barcode && data?.data) {
+            const product = data.data.find(i => i.barcode === barcode);
+            if (product) {
+                setValue("name", product);
+            }
+        }
+    }, [barcode, data?.data]);
 
 
     function submitForm(data) {
         // console.log(data); return
         setSelectedItems(prev => [
-            ...prev, 
+            ...prev,
             {
                 ...data,
                 id: name?.id,
@@ -62,7 +80,18 @@ const RequisitionItemFormRaw = ({
                 <div className='space-y-5'>
 
                     {/* 1st */}
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-3 gap-5">
+                        {/* Barcode */}
+                        <div>
+                            <Input
+                                label="Barcode"
+                                placeholder="barcode"
+                                {...register("barcode")}
+                                autoFocus={true}
+                            // disabled={true}
+                            />
+                        </div>
+
                         {/* product name */}
                         <div>
                             <Controller
@@ -84,11 +113,10 @@ const RequisitionItemFormRaw = ({
                                         label="Product Name"
                                         options={data?.data}
                                         error={error?.message}
-                                        required={true}
+                                        // required={true}
                                         isLoading={isLoading}
                                         disabled={isLoading}
                                         objectReturn={true}
-                                        autoFocus={true}
                                         hiddenIds={hiddenIds}
                                     />
                                 )}

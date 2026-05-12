@@ -71,14 +71,17 @@ const CreateRequisition = () => {
     const [selectedItems, setSelectedItems] = useState([]);
 
     /** Calculate total amount of items */
-    // useEffect(() => {
-    //     function calculateTotals(items) {
-    //         return items?.reduce((total, item) => total + parseFloat(item?.total), 0)
-    //     }
+    useEffect(() => {
+        const calculateTotals = (items) => {
+            return items?.reduce((total, item) => {
+                const limit = parseFloat(item?.priceLimit) || 0;
+                const qty = parseFloat(item?.reqQty) || 0;
+                return total + (limit * qty);
+            }, 0);
+        };
 
-    //     setIsEmpty(Boolean(!selectedItems?.length));
-    //     setValue("total", calculateTotals(selectedItems));
-    // }, [selectedItems]);
+        setValue("total", calculateTotals(selectedItems));
+    }, [selectedItems, setValue]);
 
 
     /** handle submit */
@@ -275,23 +278,25 @@ const CreateRequisition = () => {
                                 </div>
 
                                 {/* total */}
-                                {/* <div className="">
+                                <div className="">
                                     <Input
                                         label="Total"
                                         labelPosition="inline"
                                         disabled={true}
                                         {...register("total")}
                                     />
-                                </div> */}
+                                </div>
 
                                 {/* note */}
-                                <div className="">
-                                    <TextArea
-                                        label="Note"
-                                        labelPosition="inline"
-                                        {...register("notes")}
-                                    />
-                                </div>
+                                {isManufacture && (
+                                    <div className="">
+                                        <TextArea
+                                            label="Note"
+                                            labelPosition="inline"
+                                            {...register("notes")}
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="mt-10">

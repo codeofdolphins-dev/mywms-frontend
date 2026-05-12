@@ -37,6 +37,7 @@ const AddProduct = () => {
     const [showCategory, setShowCategory] = useState(false);
     const [showUnitType, setShowUnitType] = useState(false);
     const [showPackageType, setShowPackageType] = useState(false);
+    const [isRaw, setIsRaw] = useState(false);
 
     const { data: categoryData, isLoading: cateLoading } = fetchData.TQAllCategoryList({ noLimit: true });
     const { data: brandData, isLoading: brandLoading } = fetchData.TQAllBrandList({ noLimit: true });
@@ -85,7 +86,11 @@ const AddProduct = () => {
     }, [id, product, isLoading]);
 
     const productType = watch("product_type");
-    const isRaw = productType === "raw";
+
+    useEffect(() => {
+        setIsRaw(productType === "raw" || product?.data?.[0]?.product_type === "raw");
+
+    }, [productType, id, product])
 
     const hasExpiry = watch("has_expiry");
 
@@ -103,17 +108,29 @@ const AddProduct = () => {
             if (id) {
                 data.id = id;
                 const fd = RHFToFormData(data);
-                const res = await updateData({ path: "/product/update", formData: fd });
+                const res = await updateData({
+                    // path: isRaw ? "/product/update-raw" : "/product/update-finish",
+                    path: "/product/update",
+                    formData: fd
+                });
                 if (res.success) successAlert(res.message);
                 reset();
-                navigate("/master/products?tab=1");
+
+                if (isRaw) navigate("/master/products?tab=2")
+                else navigate("/master/products?tab=1");
 
             } else {
                 const fd = RHFToFormData(data);
-                const res = await createData({ path: "/product/create-finish", formData: fd });
+                const res = await createData({
+                    // path: isRaw ? "/product/create-raw" : "/product/create-finish",
+                    path: "/product/create-finish",
+                    formData: fd
+                });
                 if (res.success) successAlert(res.message);
                 reset();
-                navigate("/master/products?tab=1");
+
+                if (isRaw) navigate("/master/products?tab=2")
+                else navigate("/master/products?tab=1");
             }
 
         } catch (error) {
@@ -242,10 +259,10 @@ const AddProduct = () => {
                                             <Input
                                                 label={"Barcode"}
                                                 placeholder={"Enter Barcode"}
-                                                {...register("barcode", { required: !isRaw && "This field is required!!!" })}
+                                                {...register("barcode", { required: "This field is required!!!" })}
                                                 error={errors.barcode?.message}
-                                                required={!isRaw}
-                                                disabled={(id || isRaw) ? true : false}
+                                                required={true}
+                                                disabled={id ? true : false}
                                             />
                                         </div>
 
@@ -285,13 +302,11 @@ const AddProduct = () => {
                                                         selectKey='hsn_code'
                                                         options={hsnData?.data}
                                                         error={error?.message}
-                                                        required={!isRaw}
-                                                        disabled={isRaw}
+                                                        isClearable={true}
 
                                                         addButton={true}
                                                         buttonTitle='HSN'
                                                         buttonOnClick={() => setShowHSN(true)}
-                                                        buttonDisabled={isRaw}
                                                     />
                                                 )}
                                             />
@@ -318,13 +333,12 @@ const AddProduct = () => {
                                                         label="Package Type"
                                                         options={packageTypeData?.data}
                                                         error={error?.message}
-                                                        required={!isRaw}
-                                                        disabled={isRaw}
+                                                        required={true}
+                                                        isClearable={true}
 
                                                         addButton={true}
                                                         buttonTitle='type'
                                                         buttonOnClick={() => setShowPackageType(true)}
-                                                        buttonDisabled={isRaw}
                                                     />
                                                 )}
                                             />
@@ -378,7 +392,6 @@ const AddProduct = () => {
                                             label={"Measure"}
                                             placeholder={"Enter Measure"}
                                             {...register("measure")}
-                                            disabled={isRaw}
                                         />
                                     </div>
 
@@ -404,6 +417,7 @@ const AddProduct = () => {
                                                     options={unitTypeData?.data}
                                                     error={error?.message}
                                                     required={true}
+                                                    isClearable={true}
 
                                                     addButton={true}
                                                     buttonTitle='type'
@@ -477,10 +491,14 @@ const AddProduct = () => {
                                             label={"Maximum Retail Price"}
                                             placeholder={"Enter Maximum Retail Price (MRP)"}
                                             {...register("mrp", {
-                                                required: "MRP is required!!!",
+                                                required: {
+                                                    value: !isRaw,
+                                                    message: "MRP is required!!!"
+                                                },
                                             })}
-                                            required={true}
+                                            required={!isRaw}
                                             error={errors.mrp?.message}
+                                            disabled={isRaw ? true : false}
                                         />
                                     </div>
                                 </div>
@@ -514,12 +532,12 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* 5th row */}
+                            {/* button section */}
                             <div className="flex items-center justify-end gap-14 mr-5">
                                 <button
                                     className='btn btn-outline-dark'
                                     type='button'
-                                    onClick={() => navigate(-1)}
+                                    onClick={handelCancel}
                                 >
                                     Cancel
                                 </button>
@@ -532,7 +550,7 @@ const AddProduct = () => {
                         </form>
                     </div>
                 </div>
-            </div>
+            </div >
 
             <AddModal
                 isShow={showBrand}

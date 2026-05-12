@@ -25,8 +25,14 @@ const colName_raw = [
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },
     { key: "sku", label: "code / SKU" },
+    { key: "measure", label: "Measure" },
     { key: "unit_type", label: "Unit of Masure" },
+    { key: "package_type", label: "Package Type" },
+    { key: "has_expiry", label: "Has Expiry", render: v => v ? "Yes" : "No" },
+    { key: "shelf_life", label: "Shelf Life" },
     { key: "reorder_level", label: "Reorder Level" },
+    { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
+    { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
@@ -35,15 +41,17 @@ const colName_finished = [
     { key: "barcode", label: "Barcode" },
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },
-    { key: "sku", label: "SKU" },
+    { key: "sku", label: "SKU Code" },
     { key: "measure", label: "Measure" },
     { key: "unit_type", label: "Unit" },
     { key: "package_type", label: "Package Type" },
     { key: "has_expiry", label: "Has Expiry", render: v => v ? "Yes" : "No" },
     { key: "shelf_life", label: "Shelf Life" },
+    { key: "reorder_level", label: "Reorder Level" },
     { key: "mrp", label: "MRP", render: v => 'Rs. ' + currencyFormatter(Number(v)) },
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
+    { key: "description", label: "Description" },
     { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
 ];
 
@@ -59,7 +67,7 @@ const Product = () => {
 
 
     const [isShow, setIsShow] = useState(false);
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(tabValue ? Number(tabValue) : 1);
     const [editRawProduct, setEditRawProduct] = useState(null);
 
     const [debounceSearch, setDebounceSearch] = useState('');
@@ -73,10 +81,12 @@ const Product = () => {
     }, [tabValue]);
 
     useEffect(() => {
-        setSearchParams(prev => {
-            prev.set("tab", activeTab);
-            return prev;
-        });
+        if (Number(tabValue) !== activeTab) {
+            setSearchParams(prev => {
+                prev.set("tab", activeTab);
+                return prev;
+            }, { replace: true });
+        }
     }, [activeTab]);
 
 
@@ -94,6 +104,8 @@ const Product = () => {
 
 
     function handleEdit(id) {
+        navigate(`edit-product/${id}`);
+        return;
         if (activeTab === 1)
             navigate(`edit-product/${id}`);
         else {
@@ -128,10 +140,10 @@ const Product = () => {
                 className={"mb-5 justify-between"}
 
                 addButton={true}
-                btnTitle='Finished'
+                btnTitle='Add'
                 btnOnClick={() => navigate("add-product")}
 
-                addButton2={true}
+                addButton2={false}
                 btn2Title='Raw'
                 btn2OnClick={() => setIsShow(true)}
             />

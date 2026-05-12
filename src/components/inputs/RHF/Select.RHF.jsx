@@ -147,7 +147,7 @@ function RHSelect({
                         </button>
                     }
                 </div>
-                {error && <span className='text-danger text-[11px] block mt-0.5 whitespace-nowrap'>{error}</span>}
+                {error && <span className='text-danger block mt-0.5 whitespace-nowrap'>{error}</span>}
             </div>
         </div>
     );

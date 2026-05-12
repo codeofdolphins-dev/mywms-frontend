@@ -21,12 +21,19 @@ export function formatCreatedAt(createdAt) {
     const diffMs = now - created; // difference in milliseconds
     const diffHours = diffMs / (1000 * 60 * 60);
 
+    const dateStr = created.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+
     if (diffHours < 24) {
         // Show the time (e.g., 14:35)
-        return created.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timeStr = created.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `${timeStr}, ${dateStr}`;
     } else {
         // Show how many days ago
         const diffDays = Math.floor(diffHours / 24);
-        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago, ${dateStr}`;
     }
 }

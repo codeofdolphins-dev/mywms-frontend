@@ -62,7 +62,7 @@ const CategoryTree = ({
 
             // If already selected → clear everything
             if (checked) {
-                onChange(undefined);
+                onChange([]);
                 return;
             }
 
