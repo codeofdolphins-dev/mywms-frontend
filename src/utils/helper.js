@@ -103,7 +103,7 @@ export const QUOTATION_RECEIVE_RAW_COLUMN = [
     { key: "qty", label: "QTY", textBlur: true },
     { key: "priceLimit", label: "Price Limit", textBlur: true },
     { key: "offerPrice", label: "Offer Price", },
-    { key: "total", label: "Total", },
+    { key: "total", label: "Total", }
 ];
 
 
@@ -139,7 +139,7 @@ export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
 export const PURCHASE_ORDER_BROWSE = [
     {
         key: "no", label: "#",
-        align: "center"
+        align: "center", width: "300px"
     },
     {
         key: "to", label: "To",
@@ -147,31 +147,30 @@ export const PURCHASE_ORDER_BROWSE = [
     },
     {
         key: "date", label: "Date",
-        width: "150px",
         align: "center"
     },
     {
         key: "items", label: "Total Items", align: "center"
     },
-    { key: "price", label: "Total Price" },
-    { key: "status", label: "Status", width: "150px" },
-    { key: "createdBy", label: "Created By" },
+    { key: "price", label: "Total Price", align: "center" },
+    { key: "status", label: "Status", align: "center" },
+    { key: "createdBy", label: "Created By", align: "center" },
 ];
 export const SALES_ORDER_BROWSE = [
     {
-        key: "no", label: "#", align: "center"
+        key: "no", label: "#", align: "center", width: "300px"
     },
     {
         key: "from", label: "From", align: "center"
     },
     {
-        key: "date", label: "Date", width: "150px", align: "center"
+        key: "date", label: "Date", align: "center"
     },
     {
         key: "items", label: "Total Items", align: "center"
     },
-    { key: "price", label: "Total Price" },
-    { key: "status", label: "Status", width: "150px" }
+    { key: "price", label: "Total Price", align: "center" },
+    { key: "status", label: "Status", align: "center" }
 ];
 
 
@@ -198,12 +197,13 @@ export const ORDER_RAW = [
 
 
 export const BPO_COLUMN = [
-    { key: "id", label: "#", align: "center", width: "200px" },
-    { key: "partner", label: "Business Partner", width: "200px" },
+    { key: "slno", label: "SL.NO", align: "center" },
+    { key: "id", label: "#", align: "center" },
+    { key: "createdAt", label: "Creation Date" },
+    { key: "partner", label: "Business Partner" },
     { key: "items", label: "Total Items", align: "center" },
     { key: "status", label: "Status" },
     { key: "valid_until", label: "Validity" },
-    { key: "createdAt", label: "Creation Date" },
     { key: "action", label: "Action", align: "center" },
 ];
 
@@ -287,16 +287,6 @@ export const STORE_LIST_COLUMN = [
     { key: "action", label: "Action" },
 ]
 
-
-export const OUTWARD_COLUMN = [
-    { key: "id", label: "#", align: "center" },
-    { key: "status", label: "Status", align: "center" },
-    { key: "priority", label: "Priority", align: "center" },
-    { key: "note", label: "Notes" },
-    { key: "itemsCount", label: "Total Items", align: "center" },
-    { key: "action", label: "Action", align: "center" },
-];
-
 export const PRODUCT_COLUMN = [
     { key: "barcode", label: "Barcode" },
     { key: "product", label: "Name" },
@@ -316,23 +306,24 @@ export const TRANSFER_ORDER_RAW_PRODUCT_COLUMN = [
 
 
 export const RM_INVENTORY_COLUMN = [
+    { key: "barcode", label: "Barcode" },
     { key: "product", label: "Product" },
     { key: "sku", label: "SKU" },
     { key: "category", label: "Category" },
-    { key: "totalQty", label: "Total Qty", align: "center" },
+    // { key: "totalQty", label: "Total Qty", align: "center" },
     { key: "availableQty", label: "Available", align: "center" },
-    { key: "reservedQty", label: "Reserved", align: "center" },
+    // { key: "reservedQty", label: "Reserved", align: "center" },
     { key: "reorderLevel", label: "Reorder Lvl", align: "center" },
     { key: "stockStatus", label: "Status", align: "center" },
-    { key: "unitPrice", label: "Unit Price", align: "right" },
-    { key: "stockValue", label: "Stock Value", align: "right" },
+    // { key: "unitPrice", label: "Unit Price", align: "right" },
+    // { key: "stockValue", label: "Stock Value", align: "right" },
     { key: "action", label: "", align: "center", width: "60px" },
 ];
 
 export const RM_INVENTORY_BATCH_COLUMN = [
     { key: "batchNo", label: "Batch / Lot #" },
     { key: "qty", label: "Qty", align: "center" },
-    { key: "unitPrice", label: "Unit Price", align: "right" },
+    // { key: "unitPrice", label: "Unit Price", align: "right" },
     { key: "mfgDate", label: "Mfg. Date" },
     { key: "expiryDate", label: "Expiry Date" },
     { key: "daysToExpiry", label: "Days Left", align: "center" },
@@ -350,17 +341,6 @@ export const LOCATION_LIST_COLUMN = [
     { key: "license", label: "License No" },
     { key: "action", label: "Action", align: "center", width: "80px" },
 ];
-
-
-export const INWARD_COLUMN = [
-    { key: "no", label: "#", align: "center", width: "200px", },
-    { key: "po_no", label: "PO No", align: "center", width: "200px", },
-    { key: "date", label: "Receive Date", width: "150px", align: "center" },
-    { key: "items", label: "Total Items", align: "center" },
-    { key: "status", label: "Status", width: "150px" },
-    { key: "createdBy", label: "Created By" },
-];
-
 
 
 export const INVENTORY_COLUMN = [

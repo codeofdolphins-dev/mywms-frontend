@@ -14,7 +14,6 @@ import { MdOutlineInventory2, MdOutlineWarehouse } from 'react-icons/md';
 import { HiOutlineCube } from 'react-icons/hi';
 import Tippy from '@tippyjs/react';
 import StatCard from '../../../../components/inventory/inventoryCard';
-import BulkCreationModal from '../../../../components/inventory/BulkCreation.modal';
 import inventory from '../../../../Backend/business.fetch copy';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -131,7 +130,6 @@ const RMstock = () => {
     const [limit, setLimit] = useState(10);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isShow, setIsShow] = useState(false);
-    const [isBulkShow, setIsBulkShow] = useState(false);
     const [statusFilter, setStatusFilter] = useState('all');
 
     const { data, isLoading } = inventory.TQInventoryList();
@@ -306,6 +304,7 @@ const RMstock = () => {
                                                 : ''
                                     }
                                     row={{
+                                        barcode: item?.barcode,
                                         product: (
                                             <div className="flex items-center gap-3 min-w-0">
                                                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${isOut ? 'bg-danger/10 text-danger' : isLow ? 'bg-warning/10 text-warning' : 'bg-primary/10 text-primary'}`}>
@@ -393,7 +392,7 @@ const RMstock = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
                                 <MiniStat label="Total Qty" value={formatQty(selectedProduct.totalQty)} />
                                 <MiniStat label="Available" value={formatQty(selectedProduct.availableQty)} color="text-success" />
-                                <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" />
+                                {/* <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" /> */}
                                 <MiniStat label="Stock Value" value={currencyFormatter(selectedProduct.stockValue)} color="text-primary" />
                             </div>
 
@@ -407,9 +406,9 @@ const RMstock = () => {
                                 <div className="text-xs text-gray-400">
                                     Total Batches: <span className="text-gray-600 font-semibold">{selectedProduct.batches?.length ?? 0}</span>
                                 </div>
-                                <div className="text-xs text-gray-400">
+                                {/* <div className="text-xs text-gray-400">
                                     Unit Price: <span className="text-gray-600 font-semibold">{formatPriceRange(selectedProduct.minPrice, selectedProduct.maxPrice)}</span>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
@@ -486,19 +485,6 @@ const RMstock = () => {
                         </div>
                     </div>
                 )}
-            </AddModal>
-
-            {/* ─── Bulk creation modal ──────────────────────────────────────── */}
-            <AddModal
-                isShow={isBulkShow}
-                setIsShow={setIsBulkShow}
-                title="Bulk Creation"
-                maxWidth='60'
-                placement='start'
-            >
-                <BulkCreationModal
-                    onCancel={() => setIsBulkShow(false)}
-                />
             </AddModal>
         </>
     );

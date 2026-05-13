@@ -7,11 +7,15 @@ export const utcToLocal = (date) => {
         return null;
     }
 
-    return newDate.toLocaleString("en-Us", {
+    const timeStr = newDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const dateStr = newDate.toLocaleString("en-Us", {
         year: "numeric",
         month: "long",
         day: "numeric",
     });
+
+    return `${timeStr}, ${dateStr}`;
 }
 
 export function formatCreatedAt(createdAt) {

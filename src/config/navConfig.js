@@ -156,7 +156,7 @@ export const NAV_CONFIG = [
         children: [
             { label: "List", path: "/order" },
             { label: "Blanket PO", path: "/order/bpo" },
-            { label: "Indent/Release Order", path: "/order/" },
+            // { label: "Indent/Release Order", path: "/order/" },
         ],
     },
 

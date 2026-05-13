@@ -71,7 +71,7 @@ const BlanketPO = () => {
                     addButton={false}
                     className="w-full"
                     setDebounceSearch={setSearch}
-                    searchPlaceholder='Search BPO # or Vendor...'
+                    searchPlaceholder='Search BPO #'
                 />
 
                 <select
@@ -104,11 +104,13 @@ const BlanketPO = () => {
                                 key={item.id}
                                 columns={BPO_COLUMN}
                                 row={{
+                                    slno: idx + 1,
                                     id: (
                                         <Link to={`/order/bpo/details/${item?.bpo_no}`} className='hover:underline text-primary' >
                                             {item?.bpo_no}
                                         </Link>
                                     ),
+                                    createdAt: utcToLocal(item?.createdAt),
                                     partner: isBuyer ? item?.vendor?.tenantDetails?.companyName : item?.buyer?.tenantDetails?.companyName,
                                     items: item?.blanketOrderItems?.length,
                                     status: (
@@ -119,7 +121,6 @@ const BlanketPO = () => {
                                         </>
                                     ),
                                     valid_until: utcToLocal(item?.valid_until),
-                                    createdAt: utcToLocal(item?.createdAt),
                                     action: (
                                         <div className='flex items-center justify-center space-x-2'>
                                             <CustomeButton

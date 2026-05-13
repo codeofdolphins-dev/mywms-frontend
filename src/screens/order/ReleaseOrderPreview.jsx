@@ -84,7 +84,7 @@ const ReleaseOrderPreview = ({
                 </div>
                 <div className="grid grid-cols-2">
                     {[
-                        { label: "Target store", value: target_store },
+                        { label: "Target store", value: target_store?.name },
                         { label: "Delivery required by", value: required_by },
                         { label: "Dispatch instructions", value: instructions || "—" },
                         { label: "BPO reference", value: bpo_no, mono: true },
@@ -131,7 +131,7 @@ const ReleaseOrderPreview = ({
                                     <td className="px-5 py-3 text-sm">{currencyFormatter(item.unit_price)}</td>
                                     <td className="px-5 py-3">
                                         <span className="inline-flex items-center gap-1 bg-success/10 text-success text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap">
-                                            {item.remaining_qty} {item.product.unit_type}
+                                            {item?.total_qty - item?.release_qty} {item.product.unit_type}
                                         </span>
                                     </td>
                                     <td className="px-5 py-3">

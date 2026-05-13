@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import TableRow from '../../components/table/TableRow';
-import { INWARD_COLUMN } from '../../utils/helper';
 import inward from '../../Backend/inward.fetch';
 import { utcToLocal } from '../../utils/UTCtoLocal';
+import { INWARD_COLUMN } from './helper';
 
 
 

@@ -165,6 +165,7 @@ const FGstock = () => {
     const isEmpty = filteredData.length < 1;
 
     function handleViewBatches(product) {
+        console.log(product)
         setSelectedProduct(product);
         setIsShow(true);
     }
@@ -391,7 +392,7 @@ const FGstock = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
                                 <MiniStat label="Total Qty" value={formatQty(selectedProduct.totalQty)} />
                                 <MiniStat label="Available" value={formatQty(selectedProduct.availableQty)} color="text-success" />
-                                <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" />
+                                {/* <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" /> */}
                                 <MiniStat label="Stock Value" value={currencyFormatter(selectedProduct.stockValue)} color="text-primary" />
                             </div>
 
@@ -406,7 +407,7 @@ const FGstock = () => {
                                     Total Batches: <span className="text-gray-600 font-semibold">{selectedProduct.batches?.length ?? 0}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Unit Price: <span className="text-gray-600 font-semibold">{formatPriceRange(selectedProduct.minPrice, selectedProduct.maxPrice)}</span>
+                                    Unit MRP: <span className="text-gray-600 font-semibold">{ currencyFormatter(selectedProduct.mrp) }</span>
                                 </div>
                             </div>
                         </div>

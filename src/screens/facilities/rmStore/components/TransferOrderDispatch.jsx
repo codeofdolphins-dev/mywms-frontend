@@ -37,7 +37,7 @@ const TransferOrderDispatch = () => {
     const destAddess = data?.sendTo?.address;
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
-    const isPreview = data?.status === "dispatched" || data?.status === "received";
+    const isPreview = data?.status === "dispatched" || data?.status === "received" || data?.status === "returns";
 
     // console.log(data)
     // console.log(isPreview)
@@ -185,6 +185,7 @@ const TransferOrderDispatch = () => {
                                 <th className="px-6 py-4 font-semibold">Product Name</th>
                                 <th className="px-6 py-4 font-semibold">Product SKU / Code</th>
                                 <th className="px-6 py-4 font-semibold">Req. Qty</th>
+                                <th className="px-6 py-4 font-semibold">Wasted Qty</th>
                                 <th className="px-6 py-4 font-semibold">Allocate Batches</th>
                             </tr>
                         </thead>
@@ -204,18 +205,30 @@ const TransferOrderDispatch = () => {
 
                                 const product = item?.transferProduct;
 
+                                const wasterQty = item?.received_qty === null ? 0 : Number(item?.requested_qty) - Number(item?.received_qty)
+
                                 return (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="px-6 py-2">
                                             <div className="font-medium text-slate-700">{product?.name}</div>
                                         </td>
                                         <td className="px-6 py-2 font-medium text-slate-800">{product?.sku}</td>
+                                        {/* req. qty */}
                                         <td className="px-6 py-2">
                                             <div className="flex flex-col">
                                                 <span className="font-bold text-lg text-slate-800">{item.requested_qty}</span>
                                                 <span className="text-slate-400 text-xs font-semibold uppercase">{product?.unit_type}</span>
                                             </div>
                                         </td>
+
+                                        {/* wasted qty */}
+                                        <td className="px-6 py-2">
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-lg text-red-500 text-center">{wasterQty}</span>
+                                                <span className="text-slate-400 text-xs font-semibold uppercase text-center">{product?.unit_type}</span>
+                                            </div>
+                                        </td>
+
                                         <td className="px-6 py-2">
 
                                             {isPreview ? (

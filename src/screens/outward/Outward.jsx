@@ -3,7 +3,7 @@ import ComponentHeader from '../../components/ComponentHeader'
 import { Link, useNavigate } from 'react-router-dom'
 import TableBody from '../../components/table/TableBody';
 import TableRow from '../../components/table/TableRow';
-import { OUTWARD_COLUMN, PRODUCT_COLUMN } from '../../utils/helper';
+import { PRODUCT_COLUMN } from '../../utils/helper';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
 import { MdOutlineDownload } from 'react-icons/md';
@@ -11,6 +11,7 @@ import CustomeButton from "../../components/inputs/Button"
 import fetchData from '../../Backend/fetchData.backend';
 import { currencyFormatter } from '../../utils/currencyFormatter';
 import AddModal from '../../components/Add.modal';
+import { OUTWARD_COLUMN } from './helper';
 
 const headerLink = [
     { title: "outward" },

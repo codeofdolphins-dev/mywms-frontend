@@ -13,6 +13,7 @@ import { TRANSFER_ORDER_RAW_PRODUCT_COLUMN } from '../../utils/helper'
 import { production } from '../../Backend/production.fetch'
 import { FiPlus } from 'react-icons/fi'
 import ItemIssueForm from '../../components/store/production/ItemIssue.form'
+import { utcToLocal } from '../../utils/UTCtoLocal'
 
 
 
@@ -106,7 +107,7 @@ const TransferOrderList = () => {
                                     from_location: item?.from_location?.name,
                                     to_location: item?.to_location?.name,
                                     items: Array.isArray(item.transferOrderItem) ? item.transferOrderItem.length : 0,
-                                    required_date: new Date(item.required_date).toLocaleDateString(),
+                                    required_date: utcToLocal(item.required_date),
                                     status: (
                                         <span className={`badge uppercase rounded-full ${getStatusColor(item.status)}`}>
                                             {item.status}
@@ -181,6 +182,8 @@ const TransferOrderList = () => {
                 isShow={isIssueItemShow}
                 setIsShow={setIsIssueItemShow}
                 title="Raw Material Issue Form"
+            // maxWidth="90"
+
             >
                 <ItemIssueForm
                     setIsShow={setIsIssueItemShow}

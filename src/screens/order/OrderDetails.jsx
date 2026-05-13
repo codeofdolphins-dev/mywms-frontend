@@ -29,6 +29,7 @@ import fetchData from '../../Backend/fetchData.backend';
 
 
 const OrderDetails = () => {
+    const userData = useSelector((state) => state.auth.userData);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const type = searchParams.get("type");
@@ -183,6 +184,14 @@ const OrderDetails = () => {
 
                             <table className="w-full text-[13px] border-collapse">
                                 <tbody>
+                                    <tr className="border-b border-gray-100">
+                                        <td className="px-3.5 py-2 text-gray-400 w-[45%]">{isPurchase ? "Buyer" : "Supplier"}</td>
+                                        <td className="px-3.5 py-2 font-medium text-right">
+                                            <span className="px-3.5 py-2 font-medium text-right">
+                                                {data?.data?.POcreatedBy?.company_name || userData?.company_name || "N/A"}
+                                            </span>
+                                        </td>
+                                    </tr>
                                     <tr className="border-b border-gray-100">
                                         <td className="px-3.5 py-2 text-gray-400 w-[45%]">{isPurchase ? "PO Number" : "SO Number"}</td>
                                         <td className="px-3.5 py-2 font-medium text-right">

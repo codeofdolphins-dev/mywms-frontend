@@ -302,7 +302,7 @@ const RFQPreview = ({
                                                                             error={errors?.items?.[idx]?.supplier_product_id?.message || error?.message}
                                                                             required={true}
                                                                             isClearable={true}
-                                                                            // disabled={!!details?.items?.[idx]?.vendor_product}
+                                                                            disabled={!!details?.items?.[idx]?.vendor_product}
                                                                         />
                                                                     )}
                                                                 />

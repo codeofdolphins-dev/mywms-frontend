@@ -47,6 +47,7 @@ const ProductionInward = () => {
 
     const { data: toDetails, isLoading, isError } = production.TQTransferOrderItem(to_no, Boolean(to_no));
     const status = toDetails?.data?.status;
+    const isPreview = status === "received" || status === "returns";
 
 
     const { handleSubmit, register, formState: { errors }, watch, control, reset, getValues, setValue } = useForm({
@@ -66,15 +67,20 @@ const ProductionInward = () => {
 
         const items = sourceData.map(item => {
 
-            const allocations = item?.alloted_batch?.map(alloc => ({
-                item_alloc_id: alloc.id,
-                batch_no: alloc?.allocatedBatch?.batch_no || "",
-                qty: Number(item?.requested_qty),
-                d_qty: Number(alloc?.demaged_qty) || "",
-                s_qty: Number(alloc?.shortage_qty) || "",
-                r_qty: Number(alloc?.allocated_qty),
-                e_date: alloc?.allocatedBatch?.expiry_date
-            }))
+            const allocations = item?.alloted_batch?.map(alloc => {
+                const allocated = Number(alloc?.allocated_qty) || 0;
+                const d_qty = Number(alloc?.demaged_qty) || 0;
+                const s_qty = Number(alloc?.shortage_qty) || 0;
+                return {
+                    item_alloc_id: alloc.id,
+                    batch_no: alloc?.allocatedBatch?.batch_no || "",
+                    qty: Number(item?.requested_qty),
+                    d_qty: d_qty || "",
+                    s_qty: s_qty || "",
+                    r_qty: allocated - d_qty - s_qty,
+                    e_date: alloc?.allocatedBatch?.expiry_date
+                };
+            })
 
             return {
                 item_id: item.id,
@@ -158,6 +164,7 @@ const ProductionInward = () => {
                                     if (!item) return null;
 
                                     const reqQtyNum = Number(item?.requested_qty);
+                                    const receiveQty = item?.received_qty ? Number(item?.received_qty) : null;
 
                                     return (
                                         <div
@@ -217,14 +224,15 @@ const ProductionInward = () => {
                                             {/* table view mapping over allocations */}
                                             <AnimateHeight duration={300} height={active === `${item?.id}` ? 'auto' : 0}>
                                                 <div className="space-y-4 p-5 text-gray-700 text-[13px] border-t border-[#d3d3d3] bg-white">
-                                                    {field.allocations?.map((alloc, allocIdx) => (
-                                                        <div key={allocIdx} className="grid grid-cols-6 gap-4 items-start border-b border-gray-100 pb-5 mb-2 last:border-0 last:pb-0 last:mb-0">
+                                                    {field.allocations?.map((alloc, allocIdx) => {
+
+                                                        return <div key={allocIdx} className="grid grid-cols-6 gap-4 items-start border-b border-gray-100 pb-5 mb-2 last:border-0 last:pb-0 last:mb-0">
                                                             {/* Batch No */}
                                                             <div className="">
                                                                 <Input
                                                                     label="Batch No:"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.batch_no`)}
-                                                                    disabled={status === "received"}
+                                                                    disabled={isPreview}
                                                                 />
                                                             </div>
 
@@ -244,7 +252,7 @@ const ProductionInward = () => {
                                                                     label="Damage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status === "received"}
+                                                                    disabled={isPreview}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
                                                                         onChange: (e) => {
                                                                             const d_qty = Number(e.target.value) || 0;
@@ -273,7 +281,7 @@ const ProductionInward = () => {
                                                                     label="Shortage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status === "received"}
+                                                                    disabled={isPreview}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
                                                                         onChange: (e) => {
                                                                             const s_qty = Number(e.target.value) || 0;
@@ -301,7 +309,7 @@ const ProductionInward = () => {
                                                                 <Input
                                                                     label="Receive Qty:"
                                                                     placeholder="0"
-                                                                    disabled={status === "received"}
+                                                                    disabled={isPreview}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.r_qty`, {
                                                                         min: {
                                                                             value: 0,
@@ -333,12 +341,12 @@ const ProductionInward = () => {
                                                                 <Input
                                                                     type="date"
                                                                     label="Expiry Date:"
-                                                                    disabled={status === "received"}
+                                                                    disabled={isPreview}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.e_date`)}
                                                                 />
                                                             </div>
                                                         </div>
-                                                    ))}
+                                                    })}
 
                                                     {/* Total Validation Display - loops error check */}
                                                     {field.allocations?.map((alloc, allocIdx) => (
@@ -358,7 +366,7 @@ const ProductionInward = () => {
                         </div>
 
                         {/* button section */}
-                        {status !== "received" && (
+                        {!isPreview && (
                             <div className="flex justify-end">
                                 <Button
                                     type='submit'

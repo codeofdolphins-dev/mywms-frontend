@@ -57,7 +57,8 @@ const BPODetailsPage = () => {
 			items: [],
 			target_store_id: "",
 			required_by: "",
-			instructions: ""
+			instructions: "",
+			target_store: ""
 		}
 	});
 
@@ -109,6 +110,7 @@ const BPODetailsPage = () => {
 		data.grand_total = selectedItems.reduce((acc, item) => {
 			return acc + (parseFloat(item.release_qty) * item.unit_price);
 		}, 0);
+		data.target_store_id = data.target_store?.id;
 
 		// console.log("Form Data: ", data);
 		setFormData(data);
@@ -162,7 +164,7 @@ const BPODetailsPage = () => {
 											<th className="px-6 py-4">Product Info</th>
 											<th className="px-6 py-4">Total Qty / PO Qty</th>
 											<th className="px-6 py-4">Remaining Qty</th>
-											<th className="px-6 py-4">Unsettled Qty</th>
+											<th className="px-6 py-4">Consumed Qty</th>
 											<th className="px-6 py-4 text-[#0052CC]">Release Qty</th>
 											<th className="px-6 py-4">Line Total</th>
 										</tr>
@@ -174,6 +176,8 @@ const BPODetailsPage = () => {
 
 											// 2. Calculate the line total
 											const currentLineTotal = currentQty * item.unit_price;
+											const remainingQty = parseFloat(item?.remaining_qty) - currentQty
+											const consumedQty = parseFloat(bpoData?.blanketOrderItems?.[index]?.consumed_qty) + currentQty
 
 											return (
 												<tr key={item.id} className="hover:bg-blue-50/20 transition-colors">
@@ -190,9 +194,9 @@ const BPODetailsPage = () => {
 													</td>
 													<td className="px-6 py-6 text-gray-600 font-medium">{item?.total_qty} {item?.product?.unit_type}</td>
 													<td className="px-6 py-6">
-														<span className="text-green-600 font-bold">{item?.remaining_qty} {item?.product?.unit_type}</span>
+														<span className="text-green-600 font-bold">{remainingQty} {item?.product?.unit_type}</span>
 													</td>
-													<td className="px-6 py-6 text-danger font-medium">{bpoData?.blanketOrderItems?.[index]?.unsettled_qty} {item?.product?.unit_type}</td>
+													<td className="px-6 py-6 text-danger font-medium">{consumedQty} {item?.product?.unit_type}</td>
 													<td className="px-6 py-6">
 														<input
 															step="any"
@@ -231,7 +235,7 @@ const BPODetailsPage = () => {
 								{/* Target Warehouse Selection */}
 								<div>
 									<Controller
-										name="target_store_id"
+										name="target_store"
 										rules={{
 											required: "This field is required!!!"
 										}}
@@ -252,6 +256,7 @@ const BPODetailsPage = () => {
 
 												required={true}
 												error={error?.message}
+												objectReturn={true}
 
 												addButton={true}
 												buttonTitle="Add"
