@@ -82,12 +82,15 @@ const ProductionOrder = () => {
                                         qty: <span className="font-semibold text-gray-800">{item?.planned_qty}</span>,
 
                                         produced_qty: <span className="font-semibold text-gray-800">{item?.produced_qty ?? "-"}</span>,
+                                        wasted_qty: <span className="font-semibold text-red-500">{item?.wasted_qty ?? "-"}</span>,
 
                                         items: <span className="font-semibold text-gray-800">{item?.productionOrderItem?.length}</span>,
 
                                         date: <span className="font-medium text-gray-700">{utcToLocal(item?.start_date)}</span>,
 
                                         completion_date: <span className="font-medium text-gray-700">{utcToLocal(item?.completion_date)}</span>,
+
+                                        part: <span className="font-medium text-gray-700">{item?.part}</span>,
 
                                         status: <span className={`badge whitespace-nowrap uppercase ${statusColor(item?.status)}`}>{item?.status?.replace("_", " ")}</span>,
                                         createdBy: <span className="font-semibold text-gray-800">{item?.proCreator?.name?.full_name}</span>,

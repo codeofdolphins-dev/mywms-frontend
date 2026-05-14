@@ -24,11 +24,11 @@ const ProductionOrderForm = ({ setIsShow }) => {
 
 
     /**************** form methods *******************/
-    const { register, handleSubmit, formState: { errors }, control, reset, watch, getValues } = useForm({
+    const { register, handleSubmit, formState: { errors }, control, reset, watch, getValues, setValue } = useForm({
         defaultValues: {
             finished_product_id: "",
             planned_qty: "",
-            items: [{ raw_product_id: "", required_qty: "" }]
+            items: [{ barcode: "", raw_product_id: "", required_qty: "" }]
         }
     });
     const { fields, append, remove } = useFieldArray({
@@ -95,7 +95,7 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                             onChange={onChange}
 
                                             label="Select Target Product"
-                                            options={finishedProducts?.data}
+                                            options={finishedProducts?.data?.map(item => ({ ...item, name: `${item.name} (Avl Qty: ${item.total_stock || 0} ${item.unit_type})` }))}
                                             error={error?.message}
                                             required={true}
                                             isLoading={finishedLoading}
@@ -130,7 +130,7 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                     type="button"
                                     variant="light"
                                     size="xs"
-                                    onClick={() => append({ raw_product_id: "", required_qty: "" })}
+                                    onClick={() => append({ barcode: "", raw_product_id: "", required_qty: "" })}
                                 >
                                     + Add Item
                                 </Button>
@@ -147,8 +147,36 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                             </span>
                                         </div>
 
+                                        {/* Barcode input */}
+                                        <div className="col-span-3">
+                                            {(() => {
+                                                const barcodeReg = register(`items.${idx}.barcode`);
+                                                return (
+                                                    <Input
+                                                        // label="barcode"
+                                                        // labelPosition="inline"
+                                                        {...barcodeReg}
+                                                        onChange={(e) => {
+                                                            barcodeReg.onChange(e);
+                                                            const val = e.target.value;
+                                                            if (val) {
+                                                                const foundProduct = rawProducts?.data?.find(p => p.barcode === val);
+                                                                if (foundProduct) {
+                                                                    setValue(`items.${idx}.raw_product_id`, foundProduct.id, { shouldValidate: true });
+                                                                }
+                                                            } else {
+                                                                setValue(`items.${idx}.raw_product_id`, "", { shouldValidate: true });
+                                                            }
+                                                        }}
+                                                        error={errors.items?.[idx]?.barcode?.message}
+                                                        placeholder='Scanning the Barcode...'
+                                                    />
+                                                );
+                                            })()}
+                                        </div>
+
                                         {/* Raw product select */}
-                                        <div className="col-span-5">
+                                        <div className="col-span-4">
                                             <Controller
                                                 name={`items.${idx}.raw_product_id`}
                                                 control={control}
@@ -168,33 +196,42 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                                         value={value}
                                                         onChange={(val) => {
                                                             onChange(val);
+                                                            if (val) {
+                                                                const selectedId = val?.id || val;
+                                                                const foundProduct = rawProducts?.data?.find(p => p.id === selectedId);
+                                                                if (foundProduct?.barcode) {
+                                                                    setValue(`items.${idx}.barcode`, foundProduct.barcode, { shouldValidate: true });
+                                                                }
+                                                            } else {
+                                                                setValue(`items.${idx}.barcode`, "", { shouldValidate: true });
+                                                            }
                                                             if (idx === fields.length - 1 && val) {
                                                                 const qty = getValues(`items.${idx}.required_qty`);
                                                                 if (qty && qty.toString().trim() !== "") {
-                                                                    append({ raw_product_id: "", required_qty: "" }, { shouldFocus: false });
+                                                                    append({ barcode: "", raw_product_id: "", required_qty: "" }, { shouldFocus: false });
                                                                 }
                                                             }
                                                         }}
 
-                                                        label="Raw Material"
-                                                        labelPosition="inline"
-                                                        // labelClassName="whitespace-nowrap"
+                                                        // label="Raw Material"
+                                                        // labelPosition="inline"
 
                                                         selectKey="name"
-                                                        options={rawProducts?.data || []}
+                                                        options={rawProducts?.data?.map(item => ({ ...item, name: `${item.name}(Avl Qty: ${item.total_stock || 0} ${item.unit_type})` })) || []}
                                                         error={error?.message}
                                                         required={idx !== fields.length - 1 || fields.length === 1}
                                                         // objectReturn={true}
                                                         isLoading={rawLoading}
                                                         placeholder="Select raw product..."
                                                         hiddenIds={selectedRawIds}
+                                                        isClearable={true}
                                                     />
                                                 )}
                                             />
                                         </div>
 
                                         {/* Required qty */}
-                                        <div className="col-span-5">
+                                        <div className="col-span-3">
                                             {(() => {
                                                 const qtyReg = register(`items.${idx}.required_qty`, {
                                                     validate: (value) => {
@@ -207,19 +244,19 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                                 });
                                                 return (
                                                     <Input
-                                                        label="Required Qty"
-                                                        labelPosition="inline"
+                                                        // label="Required Qty"
+                                                        // labelPosition="inline"
                                                         // labelClassName="whitespace-nowrap"
                                                         type="number"
                                                         step="0.01"
-                                                        placeholder="0.00"
+                                                        placeholder="required Qty"
                                                         {...qtyReg}
                                                         onChange={(e) => {
                                                             qtyReg.onChange(e);
                                                             if (idx === fields.length - 1 && e.target.value.trim() !== "") {
                                                                 const rawId = getValues(`items.${idx}.raw_product_id`);
                                                                 if (rawId) {
-                                                                    append({ raw_product_id: "", required_qty: "" }, { shouldFocus: false });
+                                                                    append({ barcode: "", raw_product_id: "", required_qty: "" }, { shouldFocus: false });
                                                                 }
                                                             }
                                                         }}
@@ -261,8 +298,8 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                 Preview Request
                             </Button>
                         </div>
-                    </form>
-                </div>
+                    </form >
+                </div >
             ) : (
                 // Production preview section
                 <div className="mb-5 space-y-6">
@@ -289,6 +326,7 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                 <thead className="bg-gray-50 text-gray-600">
                                     <tr>
                                         <th className="px-4 py-2 font-semibold border-b">#</th>
+                                        <th className="px-4 py-2 font-semibold border-b">Barcode</th>
                                         <th className="px-4 py-2 font-semibold border-b">Raw Material</th>
                                         <th className="px-4 py-2 font-semibold border-b text-right">Required Qty</th>
                                     </tr>
@@ -296,10 +334,12 @@ const ProductionOrderForm = ({ setIsShow }) => {
                                 <tbody>
                                     {previewData.items.map((item, idx) => {
                                         const rawId = item.raw_product_id?.id || item.raw_product_id;
-                                        const rawName = rawProducts?.data?.find(p => p.id === rawId)?.name || "Unknown Product";
+                                        const rawProduct = rawProducts?.data?.find(p => p.id === rawId);
+                                        const rawName = rawProduct?.name || "Unknown Product";
                                         return (
                                             <tr key={idx} className="border-b last:border-0 hover:bg-smoky-white">
                                                 <td className="px-4 py-2 text-gray-500">{idx + 1}</td>
+                                                <td className="px-4 py-2 font-medium">{rawProduct?.barcode}</td>
                                                 <td className="px-4 py-2 font-medium">{rawName}</td>
                                                 <td className="px-4 py-2 text-right font-bold">{item.required_qty}</td>
                                             </tr>
@@ -329,7 +369,7 @@ const ProductionOrderForm = ({ setIsShow }) => {
                     </div>
                 </div>
             )}
-        </div>
+        </div >
     )
 }
 

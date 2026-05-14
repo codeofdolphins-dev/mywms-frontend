@@ -278,14 +278,16 @@ const CreateRequisition = () => {
                                 </div>
 
                                 {/* total */}
-                                <div className="">
-                                    <Input
-                                        label="Total"
-                                        labelPosition="inline"
-                                        disabled={true}
-                                        {...register("total")}
-                                    />
-                                </div>
+                                {isManufacture &&
+                                    <div className="">
+                                        <Input
+                                            label="Total"
+                                            labelPosition="inline"
+                                            disabled={true}
+                                            {...register("total")}
+                                        />
+                                    </div>
+                                }
 
                                 {/* note */}
                                 {isManufacture && (

@@ -9,6 +9,7 @@ const Input = React.forwardRef(({
     labelPosition = "",
     labelcolor = "text-gray-600",
     labelClassName = "",
+    labelIcon = false,
     type = 'text',
     fieldColor = '',
     className = '',
@@ -31,7 +32,10 @@ const Input = React.forwardRef(({
                     htmlFor={_id}
                     className={`inline-block mb-1 pl-1 text-sm ${labelcolor} ${labelPosition === "inline" ? "w-1/3" : ""} ${disabled ? "opacity-60" : ""} ${labelClassName}`}
                 >
-                    {label}{required ? <span className='text-danger'>*</span> : ''}
+                    <span className={`${labelIcon ? "flex items-center gap-1" : ""}`}>
+                        {labelIcon && labelIcon}
+                        {label}{required ? <span className='text-danger'>*</span> : ''}
+                    </span>
                 </label>
             }
             <div className="w-full flex flex-col items-start justify-center">

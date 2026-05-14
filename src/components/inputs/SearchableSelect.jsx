@@ -8,6 +8,7 @@ const SearchableSelect = ({
     isSearchable = true,
     disabled = false,
     required = false,
+    isClearable = false,
     error,
     value,
     onChange,
@@ -34,6 +35,7 @@ const SearchableSelect = ({
                     options={options}
                     isSearchable={isSearchable}
                     isDisabled={disabled}
+                    isClearable={isClearable}
                     value={options.find(opt => opt.value === value) || null}
                     onChange={val => {
                         if (!disabled) {

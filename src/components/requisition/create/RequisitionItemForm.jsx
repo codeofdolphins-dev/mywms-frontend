@@ -141,6 +141,7 @@ const RequisitionItemForm = ({
                                 error={errors.barcode?.message}
                                 required={true}
                                 isLoading={isLoading}
+                                autoFocus={true}
                             />
                         </div>
 

@@ -72,7 +72,7 @@ const FgReceiveForm = ({ receipt, setIsShow }) => {
                 </div>
 
                 {/* Details Grid - Read Only Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-4 bg-gray-50 rounded border border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 p-4 bg-gray-50 rounded border border-gray-200">
 
                     {/* Production Order No */}
                     <div>
@@ -126,7 +126,23 @@ const FgReceiveForm = ({ receipt, setIsShow }) => {
                     <div>
                         <label className="block text-xs font-semibold text-gray-500 mb-1">Expiry Date</label>
                         <p className="text-sm font-medium text-red-600">
-                            {utcToLocal(calculateExpiryDate(receipt.mfg_date))}
+                            {utcToLocal(calculateExpiryDate(receipt.mfg_date)) || "-"}
+                        </p>
+                    </div>
+
+                    {/* Batch No */}
+                    <div>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Batch No</label>
+                        <p className="text-sm font-medium text-gray-800">
+                            {receipt?.batch_no || "-"}
+                        </p>
+                    </div>
+
+                    {/* Remarks */}
+                    <div className="md:col-span-2 lg:col-span-1">
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Remarks</label>
+                        <p className="text-sm font-medium text-gray-800">
+                            {receipt?.remarks || "-"}
                         </p>
                     </div>
                 </div>
@@ -136,15 +152,7 @@ const FgReceiveForm = ({ receipt, setIsShow }) => {
                 <div className="border border-gray-200 rounded p-4 bg-white">
                     <h3 className="text-sm font-bold text-gray-700 mb-4">Receive Details</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-
-                        {/* batch no */}
-                        <Input
-                            label="Batch No:"
-                            placeholder="auto-generated"
-                            disabled={status === "accepted"}
-                            {...register("batch_no")}
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
                         {/* Received Qty */}
                         <Input

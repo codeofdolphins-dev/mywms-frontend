@@ -34,21 +34,21 @@ const CreateUser = () => {
 
 
     const { handleSubmit, register, control, setValue, reset, watch, formState: { errors } } = useForm({
+        shouldUnregister: true,
         defaultValues: {
             full_name: "",
             phone_no: "",
             email: "",
             password: "",
             node: null,
-            isNodeAdmin: false,
             image: null,
             store_id: null,
         }
     });
 
 
-    const password = watch("password");
     const node = watch("node") || null;
+    const password = watch("password");
     const isNodeAdmin = watch("isNodeAdmin") || null;
     const storeType = watch("storeType") || null;
     const dept = watch("dept") || null;
@@ -105,12 +105,18 @@ const CreateUser = () => {
         setNodeOptions(options)
     }, [registeredNodeList]);
 
-    // useEffect(() => {
-    //     reset({
-    //         node: node
-    //     })
-    // }, [node])
+    /** hard reset all fields except node when node value changes */
+    const currentNodeRef = React.useRef(null);
+    useEffect(() => {
+        if (!node) return;
+        if (currentNodeRef.current === node?.id) return; // skip if same node
+        currentNodeRef.current = node?.id;
 
+        // setValue("isNodeAdmin", false);
+        // setValue("storeType", null);
+        // setValue("dept", null);
+        setValue("store_id", null);
+    }, [node?.id]);
 
 
     async function submitForm(data) {
@@ -317,7 +323,7 @@ const CreateUser = () => {
                                                         <Controller
                                                             name="isNodeAdmin"
                                                             control={control}
-                                                            defaultValue={"false"}
+                                                            defaultValue={false}
                                                             render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                                                 <RHRadioGroup
                                                                     ref={(el) => {
@@ -325,13 +331,13 @@ const CreateUser = () => {
                                                                             focus: () => el?.focus(),
                                                                         });
                                                                     }}
-                                                                    value={value}
+                                                                    value={value ?? false}
                                                                     onChange={onChange}
                                                                     label="Location Admin"
                                                                     labelPosition={"inline"}
                                                                     options={[
-                                                                        { label: "Yes", value: "true" },
-                                                                        { label: "No", value: "false" },
+                                                                        { label: "Yes", value: true },
+                                                                        { label: "No", value: false },
                                                                     ]}
                                                                 />
                                                             )}

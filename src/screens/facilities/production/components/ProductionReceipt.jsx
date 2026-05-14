@@ -72,6 +72,8 @@ const ProductionReceipt = () => {
 
                                         pro_no: <span>{item?.parentProductionOrder?.production_order_no}</span>,
 
+                                        batch_no: <span className="font-semibold text-gray-800">{item?.batch_no ?? "-"}</span>,
+
                                         barcode: <span className="font-semibold text-gray-800">{item?.receivedProduct?.barcode}</span>,
 
                                         product: <span className="font-semibold text-gray-800">{item?.receivedProduct?.name}</span>,

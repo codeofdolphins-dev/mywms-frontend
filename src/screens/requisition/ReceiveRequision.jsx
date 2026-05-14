@@ -154,22 +154,25 @@ const ReceiveRequision = () => {
                                 notes: item?.notes,
                                 action: (
                                     <div className='flex items-center justify-center gap-2'>
-                                        <Tippy
-                                            content="Assign FG Store"
-                                        >
-                                            <button
-                                                onClick={() => {
-                                                    setDetails(item);
-                                                    setIsShow(true);
-                                                }}
+
+                                        {item?.status !== "assign_fg" &&
+                                            <Tippy
+                                                content="Assign FG Store"
                                             >
-                                                <LuBookmarkPlus
-                                                    className="hover:scale-110 cursor-pointer"
-                                                    strokeWidth={1.5}
-                                                    size={20}
-                                                />
-                                            </button>
-                                        </Tippy>
+                                                <button
+                                                    onClick={() => {
+                                                        setDetails(item);
+                                                        setIsShow(true);
+                                                    }}
+                                                >
+                                                    <LuBookmarkPlus
+                                                        className="hover:scale-110 cursor-pointer"
+                                                        strokeWidth={1.5}
+                                                        size={20}
+                                                    />
+                                                </button>
+                                            </Tippy>
+                                        }
 
                                         <Tippy
                                             content="Preview"

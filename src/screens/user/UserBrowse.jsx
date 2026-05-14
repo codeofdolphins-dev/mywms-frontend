@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import masterData from '@/Backend/master.backend';
-import fetchData from '@/Backend/fetchData.backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import SearchInput from '@/components/inputs/SearchInput';
@@ -16,6 +15,7 @@ import TableBody from '../../components/table/TableBody';
 import { USER_LIST_COLUMN } from '../../utils/helper';
 import { confirmation } from '../../utils/alerts';
 import { headerLink_userBrowse } from './helper';
+import fetchData from '../../Backend/fetchData.backend';
 
 
 
@@ -28,7 +28,7 @@ const UserBrowse = () => {
     const [limit, setLimit] = useState(10);
     const [editId, setEditId] = useState(null);
 
-    const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster();
+    const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["allUserList"]);
 
     const params = {
         ...(debounceSearch && { text: debounceSearch }),
@@ -51,14 +51,12 @@ const UserBrowse = () => {
         navigate(`/admin/user/update/${id}`)
     };
 
-    async function handleDelete(id) {
-        alert("Working!!!"); return;
-        console.log(id)
+    async function handleDelete(email) {
         try {
             const isConfirm = await confirmation();
 
             if (isConfirm) {
-                const res = await deleteData({ path: `/product/delete/${id}` });
+                const res = await deleteData({ path: `auth/delete/${email}` });
                 if (res?.success) successAlert();
             }
 
@@ -122,7 +120,7 @@ const UserBrowse = () => {
 
                                             <CustomeButton onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleDelete(item.id)
+                                                handleDelete(item.email)
                                             }}>
                                                 <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                                             </CustomeButton>

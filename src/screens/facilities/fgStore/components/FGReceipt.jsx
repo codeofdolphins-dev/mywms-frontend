@@ -66,7 +66,10 @@ const FGReceipt = () => {
                                     columns={FG_RECEIPT_COLUMN}
                                     onClick={() => handleGenerateInward(item)}
                                     row={{
-                                        no: <span>{item?.receipt_no}</span>,
+                                        no: <span className='text-xs font-semibold'>{item?.receipt_no}</span>,
+                                        pro_no: <span className="text-xs font-semibold text-gray-800">{item?.parentProductionOrder?.production_order_no}</span>,
+
+                                        batch_no: <span className="font-semibold text-gray-800">{item?.batch_no}</span>,
 
                                         barcode: <span className="font-semibold text-gray-800">{item?.receivedProduct?.barcode}</span>,
 

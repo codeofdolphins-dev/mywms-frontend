@@ -31,8 +31,8 @@ const ProductionOrderDetails = () => {
             <div className="panel mt-4 space-y-6">
 
                 {/* Order Details Header */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-5 bg-white rounded shadow-sm border border-gray-100">
-                    <div className=''>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 p-5 bg-white rounded shadow-sm border border-gray-100">
+                    <div className='col-span-2 md:col-span-1'>
                         <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Order No.</p>
                         <p className="font-semibold text-gray-800"># {order?.production_order_no}</p>
                     </div>
@@ -40,22 +40,47 @@ const ProductionOrderDetails = () => {
                         <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Target Product</p>
                         <p className="font-semibold text-gray-800">{order?.targetProduct?.name}</p>
                     </div>
-                    <div>
+                    {/* <div>
                         <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Barcode</p>
                         <p className="font-semibold text-gray-800">{order?.targetProduct?.barcode}</p>
-                    </div>
-                    <div>
-                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">SKU</p>
-                        <p className="font-semibold text-gray-800">{order?.targetProduct?.sku}</p>
-                    </div>
+                    </div> */}
                     <div>
                         <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Planned Qty</p>
                         <p className="font-semibold text-gray-800">{order?.planned_qty}</p>
                     </div>
                     <div>
+                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Produced Qty</p>
+                        <p className="font-semibold text-gray-800">{order?.produced_qty ?? "-"}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Wasted Qty</p>
+                        <p className="font-semibold text-red-500">{order?.wasted_qty ?? "-"}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Part</p>
+                        <p className="font-semibold text-gray-800">{order?.part ?? 0}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Created By</p>
+                        <p className="font-semibold text-gray-800">{order?.proCreator?.name?.full_name}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Start Date</p>
+                        <p className="font-semibold text-gray-800">{order?.start_date ? new Date(order.start_date).toLocaleDateString('en-GB') : "-"}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Completion</p>
+                        <p className="font-semibold text-gray-800">{order?.completion_date ? new Date(order.completion_date).toLocaleDateString('en-GB') : "-"}</p>
+                    </div>
+                    <div>
                         <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Status</p>
-                        <span className="px-2.5 py-1 text-xs font-semibold rounded bg-blue-50 text-blue-600 uppercase border border-blue-100">
-                            {order?.status.replace('_', ' ')}
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded uppercase border whitespace-nowrap ${
+                                order?.status === 'completed' ? 'bg-green-50 text-green-600 border-green-100' :
+                                order?.status === 'in_progress' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                                order?.status === 'cancelled' ? 'bg-red-50 text-red-600 border-red-100' :
+                                'bg-gray-50 text-gray-600 border-gray-100'
+                            }`}>
+                            {order?.status?.replace('_', ' ')}
                         </span>
                     </div>
                 </div>
