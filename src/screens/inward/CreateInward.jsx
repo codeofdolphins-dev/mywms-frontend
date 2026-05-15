@@ -184,15 +184,17 @@ const CreateInward = () => {
                                                     </span>
                                                 </td>
                                             </tr>
-                                            <tr className="border-b border-gray-100">
-                                                <td className="px-3.5 py-2 text-gray-400 w-[45%]">Reference (PO)</td>
-                                                <td className="px-3.5 py-2 font-medium text-right">
-                                                    #
-                                                    <span className="ml-1 font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
-                                                        {inwardData?.data?.purchase_order || "N/A"}
-                                                    </span>
-                                                </td>
-                                            </tr>
+                                            {inwardData?.data?.grn_type === 'transfer' ? <></> :
+                                                <tr className="border-b border-gray-100">
+                                                    <td className="px-3.5 py-2 text-gray-400 w-[45%]">Reference (PO)</td>
+                                                    <td className="px-3.5 py-2 font-medium text-right">
+                                                        #
+                                                        <span className="ml-1 font-mono text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded">
+                                                            {inwardData?.data?.purchase_order || "N/A"}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
                                             <tr className="border-b border-gray-100">
                                                 <td className="px-3.5 py-2 text-gray-400">Issue Date</td>
                                                 <td className="px-3.5 py-2 font-medium text-right">{utcToLocal(inwardData?.data?.createdAt)}</td>
@@ -257,7 +259,7 @@ const CreateInward = () => {
                                                 <td className="px-3.5 py-2 text-gray-400">Email</td>
                                                 <td className="px-3.5 py-2 text-right">
                                                     <span className="font-mono text-xs bg-violet-50 text-violet-600 px-2 py-0.5 rounded">
-                                                        {vendor?.nodeDetails?.gst_no || vendor?.contact_email || "N/A"}
+                                                        {vendor?.email || vendor?.contact_email || "N/A"}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -320,13 +322,13 @@ const CreateInward = () => {
                                                         <div className="px-3.5 py-1 border-r border-gray-100 flex gap-5">
                                                             <div className=" text-gray-400 mb-0.5">State</div>
                                                             <div className="font-medium">
-                                                                {vendor?.nodeDetails?.address?.state || vendor?.address?.state || "N/A"}
+                                                                {vendor?.nodeDetails?.address?.state?.name || (typeof vendor?.nodeDetails?.address?.state === 'string' ? vendor?.nodeDetails?.address?.state : undefined) || vendor?.address?.state?.name || (typeof vendor?.address?.state === 'string' ? vendor?.address?.state : undefined) || "N/A"}
                                                             </div>
                                                         </div>
                                                         <div className="px-3.5 flex gap-5">
                                                             <div className=" text-gray-400 mb-0.5">District</div>
                                                             <div className="font-medium ">
-                                                                {vendor?.nodeDetails?.address?.district || vendor?.address?.district || "N/A"}
+                                                                {vendor?.nodeDetails?.address?.district?.name || (typeof vendor?.nodeDetails?.address?.district === 'string' ? vendor?.nodeDetails?.address?.district : undefined) || vendor?.address?.district?.name || (typeof vendor?.address?.district === 'string' ? vendor?.address?.district : undefined) || "N/A"}
                                                             </div>
                                                         </div>
                                                     </div>

@@ -28,7 +28,7 @@ const OutwardDetails = () => {
 
     const data = outwardDetails?.data;
     const items = data?.outwardItemList;
-    const destAddess = data?.buyer?.meta?.address;
+    const destAddess = data?.buyer?.meta?.address || data?.buyer?.nodeDetails?.address;
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
     const isPreview = data?.status === "dispatched";
@@ -120,25 +120,25 @@ const OutwardDetails = () => {
                         {/* Name */}
                         <div className="flex items-center justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.name}</p>
+                            <p className=" font-medium text-slate-900">{data?.buyer?.nodeDetails?.name ?? data?.buyer?.name}</p>
                         </div>
 
                         {/* Warehouse */}
                         <div className="flex items-center justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Warehouse</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.meta?.parentBusinessNode?.name}</p>
+                            <p className=" font-medium text-slate-900">{data?.buyer?.meta?.parentBusinessNode?.name || data?.buyer?.name || "N/A"}</p>
                         </div>
 
                         {/* Email */}
                         <div className="flex items-center justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email address</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.contact_email}</p>
+                            <p className=" font-medium text-slate-900">{data?.buyer?.contact_email || data?.buyer?.email || "N/A"}</p>
                         </div>
 
                         {/* Phone */}
                         <div className="flex items-center justify-between gap-1">
                             <label className="mb-0 text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone number</label>
-                            <p className=" font-medium text-slate-900">{data?.buyer?.contact_phone}</p>
+                            <p className=" font-medium text-slate-900">{data?.buyer?.contact_phone || data?.buyer?.phone_no}</p>
                         </div>
 
                         {/* Address - Full Width */}

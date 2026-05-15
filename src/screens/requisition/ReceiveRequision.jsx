@@ -74,6 +74,7 @@ const ReceiveRequision = () => {
             priority: details?.priority,
             note: details?.notes,
             required_by_date: details?.required_by_date,
+            req_no: details?.requisition_no,
             items: item
         }
 
@@ -146,7 +147,8 @@ const ReceiveRequision = () => {
                                 status: (
                                     <>
                                         <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
-                                            {item?.status === "sent" ? "Received" : item?.status}
+                                            {/* {item?.status === "sent" ? "Received" : item?.status} */}
+                                            {item?.status}
                                         </span>
                                     </>
                                 ),
@@ -342,15 +344,17 @@ const ReceiveRequision = () => {
                             </div>
 
                             {/* buttton */}
-                            {/* <div className="flex items-center mt-1">
-                                <button
-                                    type='button'
-                                    className='btn btn-secondary mx-auto'
-                                    onClick={() => setIsShow(true)}
-                                >
-                                    Assign to FG Store
-                                </button>
-                            </div> */}
+                            {details?.status !== "assign_fg" &&
+                                <div className="flex items-center mt-1">
+                                    <button
+                                        type='button'
+                                        className='btn btn-secondary mx-auto'
+                                        onClick={() => setIsShow(true)}
+                                    >
+                                        Assign to FG Store
+                                    </button>
+                                </div>
+                            }
                         </form>
                     </div>
                 </div>

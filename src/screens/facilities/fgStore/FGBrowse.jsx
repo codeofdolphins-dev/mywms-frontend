@@ -3,13 +3,15 @@ import ComponentHeader from '../../../components/ComponentHeader';
 import FGReceipt from './components/FGReceipt';
 import { useSearchParams } from 'react-router-dom';
 import FGstock from './components/FGStock';
+import DirectTransfer from './components/DirectTransfer';
 
 
 const headerLink = [{ title: "FG store" }];
 
 const tabList = [
     { id: 1, title: "Stock" },
-    { id: 2, title: "Production Receipt" }
+    { id: 2, title: "Production Receipt" },
+    { id: 3, title: "Direct Transfer" },
 ]
 
 const FGBrowse = () => {
@@ -65,6 +67,7 @@ const FGBrowse = () => {
 
             {activeTab === 1 && <FGstock />}
             {activeTab === 2 && <FGReceipt />}
+            {activeTab === 3 && <DirectTransfer />}
 
         </div>
     )
