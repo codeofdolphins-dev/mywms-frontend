@@ -60,8 +60,6 @@ const ProfileForm = ({ isLoading = false, setIsProfileShow }) => {
                 desc: data.desc
             };
 
-            console.log(payload);
-
             const res = await updateDetails({ path: "/admin/update-details", formData: payload })
             if (res.success) {
                 reset();

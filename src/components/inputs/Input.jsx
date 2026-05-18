@@ -49,6 +49,7 @@ const Input = React.forwardRef(({
                             ${error ? "border-red-500" : ""} 
                             ${disabled ? "bg-gray-100 text-gray-500 opacity-60" : "bg-white text-black"}
                             ${Icon ? "ps-10" : ""}
+                            ${props.unit ? "pe-11" : ""}
                             ${className}
                         `}
                         disabled={disabled}
@@ -81,6 +82,11 @@ const Input = React.forwardRef(({
                             <AiOutlineLoading3Quarters
                                 className='animate-spin'
                             />
+                        </span>
+                    }
+                    {props.unit &&
+                        <span className="absolute end-1 rounded-r-md top-1/2 -translate-y-1/2 text-green-500 bg-green-100 px-2 py-1">
+                            {props.unit}
                         </span>
                     }
                 </div>

@@ -2,7 +2,7 @@ import { HiDatabase, HiUserGroup } from "react-icons/hi";
 import { RiAdminFill } from "react-icons/ri";
 import { MdAdminPanelSettings, MdOutlineReceiptLong } from "react-icons/md";
 import { FaClipboardList } from "react-icons/fa";
-import { FaQuoteLeft } from "react-icons/fa6";
+import { FaArrowRightArrowLeft, FaQuoteLeft } from "react-icons/fa6";
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
 import { BiSolidFactory } from "react-icons/bi";
 
@@ -175,6 +175,15 @@ export const NAV_CONFIG = [
         label: "Outward",
         icon: BsBoxArrowUp,
         path: "/outward",
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse"],
+    },
+    
+    // ─── Direct Transfer ───
+    {
+        key: "transfer",
+        label: "Direct Transfer",
+        icon: FaArrowRightArrowLeft,
+        path: "/direct-transfer",
         allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse"],
     },
 ];

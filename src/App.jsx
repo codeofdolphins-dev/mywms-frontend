@@ -51,6 +51,7 @@ import TransferOrderDispatch from './screens/facilities/rmStore/components/Trans
 import ProductionInward from './screens/facilities/production/components/ProductionInward';
 import ProductionOrderDetails from './screens/facilities/production/components/ProductionOrderDetails';
 import FGBrowse from './screens/facilities/fgStore/FGBrowse';
+import DirectTransfer from './screens/directTransfer/DirectTransfer';
 
 
 function App() {
@@ -186,14 +187,16 @@ function App() {
                         <Route path="create/:grn_no" element={<CreateInward />} />
                     </Route>
 
-
-
-
-
                     {/* outward */}
                     <Route path="outward" >
                         <Route index element={<Outward />} />
                         <Route path=':out_no' element={<OutwardDetails />} />
+                    </Route>
+
+                    {/* direct transfer */}
+                    <Route path="direct-transfer" >
+                        <Route index element={<DirectTransfer />} />
+                        {/* <Route path=':out_no' element={<OutwardDetails />} /> */}
                     </Route>
                 </Route>
 

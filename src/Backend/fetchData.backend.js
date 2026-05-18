@@ -403,6 +403,26 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+
+
+
+    TQBatchListByProduct(product_id, isEnabled = true) {
+        return useQuery({
+            queryKey: ["batchListByProduct", product_id],
+            queryFn: async () => {
+                try {
+                    const res = await API.get(`/batch/get-by-product/${product_id}`);
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const fetchData = new FetchData;
