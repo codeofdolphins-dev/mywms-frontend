@@ -34,10 +34,11 @@ const SO = ({ debounceSearch }) => {
             case "picking_in_progress": return "bg-primary";
             case "closed": return "bg-dark";
             case "cancelled": return "bg-danger";
+            case "assign_fg": return "bg-pink-100 text-pink-500";
             default: return "bg-warning";
         }
     }
-    
+
     return (
         <div className="panel min-h-64 z-0 relative">
             <TableBody

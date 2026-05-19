@@ -39,10 +39,10 @@ function enrichProduct(product) {
     const minPrice = prices.length ? Math.min(...prices) : 0;
     const maxPrice = prices.length ? Math.max(...prices) : 0;
 
-    // Weighted stock value = sum of each batch's (qty × unit_price)
+    // Weighted stock value = sum of each batch's (qty × product.mrp)
     const stockValue = batches.reduce((sum, b) => {
         const batchQty = parseFloat(b.available_qty ?? 0) + parseFloat(b.reserved_qty ?? 0);
-        return sum + batchQty * parseFloat(b.unit_price ?? 0);
+        return sum + batchQty * parseFloat(product.mrp ?? 0);
     }, 0);
 
     return { ...product, totalQty, availableQty, reservedQty, minPrice, maxPrice, stockValue };

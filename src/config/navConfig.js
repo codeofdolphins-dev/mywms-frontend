@@ -184,6 +184,6 @@ export const NAV_CONFIG = [
         label: "Direct Transfer",
         icon: FaArrowRightArrowLeft,
         path: "/direct-transfer",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
     },
 ];
