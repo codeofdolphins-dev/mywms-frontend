@@ -5,6 +5,7 @@ import AddModal from '../../components/Add.modal';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import ComponentHeader from '../../components/ComponentHeader';
 import DirectTransferForm from '../../components/directTransfer/DirectTransfer.form';
+import fetchData from '../../Backend/fetchData.backend';
 
 
 
@@ -18,6 +19,9 @@ const DirectTransfer = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [isShow, setIsShow] = useState(false);
   const [search, setSearch] = useState("");
+
+
+  const { data : directTransferList, isLoading } = fetchData.TQDirectTransferList()
 
 
   const receiptList = []

@@ -6,7 +6,7 @@ import { Pagination } from "@mantine/core";
 const limitOption = [10, 20, 50];
 
 const BasicPagination = ({
-    totalPage = 5,
+    totalPage = 1,
     currentPage,
     setCurrentPage,
     limit,

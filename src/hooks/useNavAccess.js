@@ -10,11 +10,6 @@ export const useNavAccess = () => {
 
         for (const item of navConfig) {
 
-            if (item.key === "rm") {
-                console.log(item)
-            }
-
-
             const hasRoleAccess = item.allowedRoles && item.allowedRoles.some(role => roles.includes(role));
 
             const hasPermissionAccess = item.key === "open-forum" ? true : permissions.includes(item.key);

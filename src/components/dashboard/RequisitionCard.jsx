@@ -12,6 +12,7 @@ import { FiMapPin, FiClock, FiFileText, FiTag, FiHash, FiPackage } from 'react-i
 import { MdOutlineAttachMoney } from 'react-icons/md';
 import secureLocalStorage from 'react-secure-storage';
 import { useSelector } from 'react-redux';
+import fetchData from '../../Backend/fetchData.backend';
 
 const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
     const isLogin = useSelector(state => state.auth.status);
@@ -25,7 +26,8 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
 
     // const [editItemData, setEditItemData] = useState(null);
 
-    // console.log(rfqItemData);
+    const { data: appliedRfqList, isLoading: appliedRfqListLoading } = fetchData.TQAppliedRfqList(isLogin);
+    const isSubmited = appliedRfqList?.data?.find((rfq_id) => rfq_id === details?.id);
 
     // extract selected item data for edit
     function selectEditItem(id) {
@@ -50,7 +52,6 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
     }
 
     // console.log(details)
-    // console.log(buyerTenant)
 
     return (
         <div className="panel p-0 overflow-hidden relative">
@@ -219,9 +220,10 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                         <button
                             type="button"
                             onClick={previewCumSubmit}
-                            className="btn btn-primary btn-sm"
+                            className={`btn ${isSubmited ? 'btn-success' : 'btn-primary'} btn-sm`}
+                            disabled={isSubmited}
                         >
-                            Preview
+                            {isSubmited ? "Submited" : "Preview"}
                         </button>
                     )}
                 </div>

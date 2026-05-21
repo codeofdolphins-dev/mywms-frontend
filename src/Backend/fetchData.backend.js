@@ -290,12 +290,14 @@ class FetchData {
         });
     };
 
-    TQRfqList(isEnabled = true) {
+    TQRfqList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["rfqList"],
+            queryKey: ["rfqList", params],
             queryFn: async () => {
                 try {
-                    const res = await API.get("/rfq/list");
+                    const res = await API.get("/rfq/list", {
+                        params
+                    });
                     return res.data;
                 } catch (error) {
                     if (error.response?.data?.code === 403) {
@@ -412,6 +414,24 @@ class FetchData {
             queryFn: async () => {
                 try {
                     const res = await API.get(`/batch/get-by-product/${product_id}`);
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
+    
+    TQDirectTransferList(params, isEnabled = true) {
+        return useQuery({
+            queryKey: ["directTransferList", params],
+            queryFn: async () => {
+                try {
+                    const res = await API.get(`/direct-transfer/list`,{params});
                     return res.data;
                 } catch (error) {
                     if (error.response?.data?.code === 403) {
