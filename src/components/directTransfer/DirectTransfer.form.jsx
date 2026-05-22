@@ -14,7 +14,7 @@ import business from '../../Backend/business.fetch';
 
 
 // ─── Allocation row sub-component ─────────────────────────────────────────────
-const AllocationRow = ({ itemIndex, allocIndex, control, register, errors, batchOptions, batchLoading, selectedBatchIds, remove, item }) => {
+const AllocationRow = ({ itemIndex, allocIndex, control, register, errors, batchOptions, batchLoading, selectedBatchIds, remove, item, isExisting }) => {
 
     return (
         <div className="grid grid-cols-12 gap-3 items-end bg-white rounded-lg p-2 border border-gray-100 shadow-sm">
@@ -51,6 +51,7 @@ const AllocationRow = ({ itemIndex, allocIndex, control, register, errors, batch
                             placeholder="Select batch..."
                             hiddenIds={selectedBatchIds.filter((_, i) => i !== allocIndex)}
                             isClearable
+                            disabled={isExisting}
                         />
                     }}
                 />
@@ -70,20 +71,23 @@ const AllocationRow = ({ itemIndex, allocIndex, control, register, errors, batch
                     error={errors?.items?.[itemIndex]?.allocations?.[allocIndex]?.send_qty?.message}
                     required={true}
                     unit={item?.unit}
+                    disabled={isExisting}
                 />
             </div>
 
             {/* Delete alloc */}
             <div className="col-span-1 flex items-center justify-center pb-1">
-                <Tippy content="Remove allocation">
-                    <button
-                        type="button"
-                        onClick={remove}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors text-danger"
-                    >
-                        <IconTrashLines className="w-4 h-4" />
-                    </button>
-                </Tippy>
+                {!isExisting && (
+                    <Tippy content="Remove allocation">
+                        <button
+                            type="button"
+                            onClick={remove}
+                            className="p-2 hover:bg-red-50 rounded-lg transition-colors text-danger"
+                        >
+                            <IconTrashLines className="w-4 h-4" />
+                        </button>
+                    </Tippy>
+                )}
             </div>
         </div>
     );
@@ -124,6 +128,7 @@ const ProductItemCard = ({ itemIndex, control, register, errors, watch, setValue
                         <Input
                             label="Barcode"
                             placeholder="Scan or type barcode..."
+                            disabled={item?.isExisting}
                             {...barcodeReg}
                             onChange={(e) => {
                                 barcodeReg.onChange(e);
@@ -169,21 +174,24 @@ const ProductItemCard = ({ itemIndex, control, register, errors, watch, setValue
                                     placeholder="Select product..."
                                     hiddenIds={selectedProductIds.filter((_, i) => i !== itemIndex)}
                                     isClearable
+                                    disabled={item?.isExisting}
                                 />
                             )}
                         />
                     </div>
 
                     {/* Remove button */}
-                    <Tippy content="Remove product">
-                        <button
-                            type="button"
-                            onClick={removeItem}
-                            className="p-2 hover:bg-red-50 rounded-lg transition-colors text-danger mt-6"
-                        >
-                            <IconTrashLines className="w-4 h-4" />
-                        </button>
-                    </Tippy>
+                    {!item?.isExisting && (
+                        <Tippy content="Remove product">
+                            <button
+                                type="button"
+                                onClick={removeItem}
+                                className="p-2 hover:bg-red-50 rounded-lg transition-colors text-danger mt-6"
+                            >
+                                <IconTrashLines className="w-4 h-4" />
+                            </button>
+                        </Tippy>
+                    )}
                 </div>
             </div>
 
@@ -230,6 +238,7 @@ const ProductItemCard = ({ itemIndex, control, register, errors, watch, setValue
                             selectedBatchIds={selectedBatchIds}
                             item={item}
                             remove={() => removeAlloc(allocIdx)}
+                            isExisting={allocField.isExisting}
                         />
                     ))}
                 </div>
@@ -240,10 +249,11 @@ const ProductItemCard = ({ itemIndex, control, register, errors, watch, setValue
 
 
 // ─── Main Form ────────────────────────────────────────────────────────────────
-const DirectTransferForm = ({ setIsShow }) => {
+const DirectTransferForm = ({ setIsShow, editData }) => {
 
     /*** mutations ***/
     const { mutateAsync: createTransfer, isPending: createPending } = masterData.TQCreateMaster(['directTransferList']);
+    const { mutateAsync: updateTransfer, isPending: updatePending } = masterData.TQUpdateMaster(['directTransferList']);
 
     /*** data fetching ***/
     // fetch finished product list
@@ -270,15 +280,55 @@ const DirectTransferForm = ({ setIsShow }) => {
     const watchedItems = watch('items');
     const selectedProductIds = watchedItems?.map(i => i.product_id).filter(Boolean) ?? [];
 
+    // Reset form when editData changes
+    React.useEffect(() => {
+        if (editData) {
+            reset({
+                target_location_id: editData.target_location_id || '',
+                items: editData.transferItems?.map(item => ({
+                    product_id: item.product_id || '',
+                    barcode: item.transferItemProduct?.barcode || '',
+                    unit: item.transferItemProduct?.unit_type || '',
+                    isExisting: true,
+                    allocations: item.allocations?.map(alloc => ({
+                        batch_id: alloc.batch_id || '',
+                        send_qty: alloc.send_qty || '',
+                        isExisting: true
+                    })) || [{ batch_id: '', send_qty: '' }]
+                })) || [
+                    { product_id: '', barcode: "", unit: "", allocations: [{ batch_id: '', send_qty: '' }] }
+                ]
+            });
+        } else {
+            reset({
+                target_location_id: '',
+                items: [
+                    { product_id: '', barcode: "", unit: "", allocations: [{ batch_id: '', send_qty: '' }] }
+                ]
+            });
+        }
+    }, [editData, reset]);
+
     /*** submit ***/
     async function submitForm(data) {
         try {
             console.log("data", data)
 
-            const res = await createTransfer({ path: '/direct-transfer/create', formData: data });
-            if (res?.success) {
-                reset();
-                setIsShow?.(false);
+            if (editData) {
+                const res = await updateTransfer({
+                    path: '/direct-transfer/update',
+                    formData: { ...data, id: editData.id }
+                });
+                if (res?.success) {
+                    reset();
+                    setIsShow?.(false);
+                }
+            } else {
+                const res = await createTransfer({ path: '/direct-transfer/create', formData: data });
+                if (res?.success) {
+                    reset();
+                    setIsShow?.(false);
+                }
             }
         } catch (error) {
             console.error(error);
@@ -308,6 +358,7 @@ const DirectTransferForm = ({ setIsShow }) => {
                                 isLoading={registeredNodeListLoading}
                                 placeholder="Select target location..."
                                 isClearable
+                                disabled={!!editData}
                             />
                         )}
                     />
@@ -368,10 +419,10 @@ const DirectTransferForm = ({ setIsShow }) => {
                     <Button
                         type="submit"
                         className="btn btn-primary"
-                        loading={createPending}
+                        loading={editData ? updatePending : createPending}
                         disabled={itemFields.length === 0}
                     >
-                        Submit Transfer
+                        {editData ? "Update Transfer" : "Submit Transfer"}
                     </Button>
                 </div>
 

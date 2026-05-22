@@ -77,13 +77,24 @@ const RegisterLocation = () => {
         const formData = RHFToFormData(data);
 
         try {
-            const res = await registerWarehouse({ path: "/admin/register-node", formData });
+            if (id) {
+                const res = await updateLocation({ path: `/admin/update-node/${id}`, formData });
 
-            if (res.success) {
-                if (mfg) navigate(-1);
+                if (res.success) {
+                    if (mfg) navigate(-1);
 
-                reset({ node: null });
-                navigate("/admin/location")
+                    reset({ node: null });
+                    navigate("/admin/location");
+                }
+            } else {
+                const res = await registerWarehouse({ path: "/admin/register-node", formData });
+
+                if (res.success) {
+                    if (mfg) navigate(-1);
+
+                    reset({ node: null });
+                    navigate("/admin/location")
+                }
             }
         } catch (error) {
             console.log(error)

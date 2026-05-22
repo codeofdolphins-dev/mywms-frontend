@@ -53,6 +53,7 @@ const RoleForm = ({ setIsShow, editData = null, setEditData }) => {
                             {...register("newRole", { required: "This field is required!!!" })}
                             error={errors.newRole?.message}
                             required={true}
+                            autoFocus={true}
                         />
 
                         <BooleanSwitch
