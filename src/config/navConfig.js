@@ -5,6 +5,7 @@ import { FaClipboardList } from "react-icons/fa";
 import { FaArrowRightArrowLeft, FaQuoteLeft } from "react-icons/fa6";
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
 import { BiSolidFactory } from "react-icons/bi";
+import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
 
 
 export const NAV_CONFIG = [
@@ -184,6 +185,13 @@ export const NAV_CONFIG = [
         label: "Direct Transfer",
         icon: FaArrowRightArrowLeft,
         path: "/direct-transfer",
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
+    },
+    {
+        key: "expense",
+        label: "Expenses",
+        icon: HiOutlineDocumentCurrencyRupee,
+        path: "/expense",
         allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
     },
 ];

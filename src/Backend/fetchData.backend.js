@@ -425,13 +425,13 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-    
+
     TQDirectTransferList(params, isEnabled = true) {
         return useQuery({
             queryKey: ["directTransferList", params],
             queryFn: async () => {
                 try {
-                    const res = await API.get(`/direct-transfer/list`,{params});
+                    const res = await API.get(`/direct-transfer/list`, { params });
                     return res.data;
                 } catch (error) {
                     if (error.response?.data?.code === 403) {
@@ -441,6 +441,34 @@ class FetchData {
                 }
             },
             enabled: isEnabled,
+        });
+    };
+
+
+    TQCostHeadList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["costHeadList", params],
+            queryFn: async () => {
+                try {
+                    const res = await API.get("/cost-head/list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+            onSuccess: (data) => {
+                console.log(data);
+            },
+            onError: (error) => {
+                console.log("error", error);
+            },
+            select: (data) => data.data
         });
     };
 }

@@ -52,6 +52,8 @@ import ProductionInward from './screens/facilities/production/components/Product
 import ProductionOrderDetails from './screens/facilities/production/components/ProductionOrderDetails';
 import FGBrowse from './screens/facilities/fgStore/FGBrowse';
 import DirectTransfer from './screens/directTransfer/DirectTransfer';
+import CostHead from './screens/master/costHead/CostHead';
+import Expense from './screens/expences/Expense';
 
 
 function App() {
@@ -120,6 +122,7 @@ function App() {
                         <Route path="unit-types" element={<UnitType />} />
                         <Route path="package-types" element={<PackageType />} />
                         <Route path="bom" element={<BOMPage />} />
+                        <Route path="cost-heads" element={<CostHead />} />
                     </Route>
 
                     {/* access */}
@@ -196,6 +199,12 @@ function App() {
                     {/* direct transfer */}
                     <Route path="direct-transfer" >
                         <Route index element={<DirectTransfer />} />
+                        {/* <Route path=':out_no' element={<OutwardDetails />} /> */}
+                    </Route>
+
+                    {/* expense */}
+                    <Route path="expense" >
+                        <Route index element={<Expense />} />
                         {/* <Route path=':out_no' element={<OutwardDetails />} /> */}
                     </Route>
                 </Route>

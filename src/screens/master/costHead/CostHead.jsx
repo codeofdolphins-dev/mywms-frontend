@@ -12,26 +12,26 @@ import Input from '@/components/inputs/Input';
 import ButtonBoolean from '@/components/inputs/ButtonBoolean';
 import { FaPlus } from "react-icons/fa6";
 import AddModal from '@/components/Add.modal';
-import CategoryForm from '@/components/category/CategoryForm';
 import FullScreenLoader from '@/components/loader/FullScreenLoader';
 import { utcToLocal } from '@/utils/UTCtoLocal';
 import masterData from '@/Backend/master.backend';
 import { confirmation } from '@/utils/alerts';
 import ComponentHeader from '@/components/ComponentHeader';
 import fetchData from '../../../Backend/fetchData.backend';
+import CostHeadForm from '../../../components/costHead/CostHeadForm';
 
 
 const headerLink = [
     { title: "master", link: "/master" },
-    { title: "category" },
+    { title: "cost-heads" },
 ]
 
 const CostHead = () => {
     const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
 
-    const { data, isLoading } = fetchData.TQAllCategoryList({ noLimit: true });
-    const { mutate: deleteData, isPending } = masterData.TQDeleteMaster(["category-all-list"]);
+    const { data, isLoading } = fetchData.TQCostHeadList({ noLimit: true });
+    const { mutate: deleteData, isPending } = masterData.TQDeleteMaster(["costHeadList"]);
 
 
     const [active, setActive] = useState('1');
@@ -58,10 +58,9 @@ const CostHead = () => {
         // console.log(id);
         const isSuccess = await confirmation();
         if (isSuccess) {
-            deleteData({ path: `/category/delete/${id}` });
+            deleteData({ path: `/cost-head/delete/${id}` });
         }
     }
-
 
     if (isLoading) return <FullScreenLoader />;
 
@@ -70,11 +69,9 @@ const CostHead = () => {
             {/* Header Section */}
             <ComponentHeader
                 headerLink={headerLink}
-                primaryText='Categories'
-                secondaryText='Manage and view all categories'
                 btnOnClick={() => setIsShow(p => !p)}
                 searchPlaceholder='Search by name...'
-                btnTitle='Add Category'
+                btnTitle='Cost Head'
                 setDebounceSearch={setDebounceSearch}
             />
 
@@ -98,7 +95,7 @@ const CostHead = () => {
 
                                 {/* Table Rows */}
                                 {data?.map((item, i) => {
-                                    const isSubCate = item.subcategories.length > 0;
+                                    const isSubCate = item?.subCostCategories?.length > 0;
 
                                     return <div key={i} className="border border-[#d3d3d3] rounded">
                                         <button
@@ -158,7 +155,7 @@ const CostHead = () => {
                                                 ? <div>
                                                     <AnimateHeight duration={300} height={active === `${i + 1}` ? 'auto' : 0}>
                                                         <div className="py-2 text-white-dark text-[13px] border-t border-[#d3d3d3]">
-                                                            {item?.subcategories?.map((data) => {
+                                                            {item?.subCostCategories?.map((data) => {
                                                                 return (
                                                                     <div
                                                                         key={data.id}
@@ -260,10 +257,10 @@ const CostHead = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title={"Add New Category"}
+                title={"Add New Cost Head"}
                 maxWidth='60'
             >
-                <CategoryForm
+                <CostHeadForm
                     setIsShow={setIsShow}
                     data={data}
                     editId={editId}

@@ -59,6 +59,13 @@ const items: Record<string, string>[] = [
         color: "bg-orange-500",
         link: "package-types",
     },
+    {
+        title: "Cost Heads",
+        description: "Define and manage different Cost Heads.",
+        icon: "costHead",
+        color: "bg-yellow-500",
+        link: "cost-heads",
+    },
     // {
     //     title: "BOM",
     //     description: "Manage Bill of Materials for production.",

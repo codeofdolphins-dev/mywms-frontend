@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { GiWeight } from "react-icons/gi";
 import { FaBoxArchive } from "react-icons/fa6";
 import { FaSitemap } from 'react-icons/fa';
+import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
 
 
 const icons: Record<string, any> = {
@@ -21,7 +22,8 @@ const icons: Record<string, any> = {
     supplier: FaTruckRampBox,
     unit: GiWeight,
     packageType: FaBoxArchive,
-    bom: FaSitemap
+    bom: FaSitemap,
+    costHead: HiOutlineDocumentCurrencyRupee
 };
 
 type MasterCardProps = {
