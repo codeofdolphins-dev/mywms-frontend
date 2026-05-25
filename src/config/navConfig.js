@@ -178,7 +178,7 @@ export const NAV_CONFIG = [
         path: "/outward",
         allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse"],
     },
-    
+
     // ─── Direct Transfer ───
     {
         key: "transfer",
@@ -192,6 +192,6 @@ export const NAV_CONFIG = [
         label: "Expenses",
         icon: HiOutlineDocumentCurrencyRupee,
         path: "/expense",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "store_wip", "store_fg", "warehouse"],
     },
 ];

@@ -53,7 +53,7 @@ import ProductionOrderDetails from './screens/facilities/production/components/P
 import FGBrowse from './screens/facilities/fgStore/FGBrowse';
 import DirectTransfer from './screens/directTransfer/DirectTransfer';
 import CostHead from './screens/master/costHead/CostHead';
-import Expense from './screens/expences/Expense';
+import Expense from './screens/expenses/Expense';
 
 
 function App() {

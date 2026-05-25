@@ -1,50 +1,50 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import IconSettings from '@/components/Icon/IconSettings';
 import IconPencil from '@/components/Icon/IconPencil';
 import IconTrashLines from '@/components/Icon/IconTrashLines';
-import AnimateHeight from 'react-animate-height';
-import IconCode from '@/components/Icon/IconCode';
-import IconCaretDown from '@/components/Icon/IconCaretDown';
-import Tippy from '@tippyjs/react';
-import Input from '@/components/inputs/Input';
-import ButtonBoolean from '@/components/inputs/ButtonBoolean';
-import ItemTable from '@/components/ItemTable';
-import fetchData from '@/Backend/fetchData.backend';
 import masterData from '@/Backend/master.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
-import TableHeader from '@/components/table/TableHeader';
 import CustomeButton from "@/components/inputs/Button";
-import { BsBoxSeam } from 'react-icons/bs';
 import Loader from '@/components/loader/Loader';
-import BasicPagination from '@/components/BasicPagination';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';
 import TableRow from '../../components/table/TableRow';
 import AddModal from '../../components/Add.modal';
 import { EXPENSE_COLUMN } from './helper';
+import costFetch from '../../Backend/cost.fetch';
+import ExpenseForm from '../../components/expense/ExpenseForm';
+import { currencyFormatter } from '../../utils/currencyFormatter';
+import { utcToLocal } from '../../utils/UTCtoLocal';
+import BasicFilterSelect from '../../components/inputs/BasicFilterSelect';
 
 
-const headerLink = [
+const HEADER_LINK = [
     { title: "expense" },
 ]
 
+const FILTER_OPTIONS = [
+    { label: "Cost Type: All", value: "all" },
+    { label: "Cost Type: Onetime", value: "onetime" },
+    { label: "Cost Type: Monthly", value: "monthly" },
+    { label: "Cost Type: Yearly", value: "yearly" }
+]
+
 const Expense = () => {
-    const imageUrl = import.meta.env.VITE_IMAGE_URL;
-    const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster();
+    const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster(["costCenterList"]);
 
     const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [editId, setEditId] = useState(null);
+    const [type, setType] = useState(null);
 
     const params = {
-        ...(debounceSearch && { text: debounceSearch }),
+        ...(debounceSearch && { search: debounceSearch }),
+        ...(type && { type }),
         page: currentPage || null,
         limit: limit || null
     };
-    const { data, isLoading, isError } = fetchData.TQAllBrandList(params);
+    const { data, isLoading, isError } = costFetch.TQCostCenterList(params);
     const isEmpty = data?.data?.length === 0 || isError;
 
     useEffect(() => {
@@ -66,7 +66,7 @@ const Expense = () => {
             const isSuccess = await confirmation();
             if (!isSuccess) return;
 
-            const res = await deleteData({ path: `/brand/delete/${id}` });
+            const res = await deleteData({ path: `/cost-center/delete/${id}` });
             if (res.success) successAlert(res.message);
         } catch (error) {
             console.log(error);
@@ -76,13 +76,23 @@ const Expense = () => {
     return (
         <div>
             {/* Header Section */}
-            <ComponentHeader
-                headerLink={headerLink}
-                searchPlaceholder='Search by brand name, slug...'
-                setDebounceSearch={setDebounceSearch}
-                btnTitle='Expense'
-                btnOnClick={() => setIsShow(p => !p)}
-            />
+            <div className="flex items-center gap-5">
+                <ComponentHeader
+                    headerLink={HEADER_LINK}
+                    searchPlaceholder='Search by cost no, cost head or subhead...'
+                    setDebounceSearch={setDebounceSearch}
+                    btnTitle='Expense'
+                    btnOnClick={() => setIsShow(p => !p)}
+                />
+
+                <div className="">
+                    <BasicFilterSelect
+                        value={type}
+                        onChange={(e) => setType(e.target.value === "all" ? null : e.target.value)}
+                        options={FILTER_OPTIONS}
+                    />
+                </div>
+            </div>
 
             {/* display table */}
             <div className={`panel mt-5 min-h-64 relative`}>
@@ -100,17 +110,21 @@ const Expense = () => {
                                 setCurrentPage={setCurrentPage}
                                 limit={limit}
                                 setLimit={setLimit}
-                                totalPage={data?.meta?.totalPages}
+                                totalPage={data?.pagination?.totalPages}
                             >
                                 {data?.data?.map((item, idx) => (
                                     <TableRow
                                         key={idx}
                                         columns={EXPENSE_COLUMN}
                                         row={{
-                                            id: item?.id,
-                                            name: item?.name,
-                                            slug: item?.slug,
-                                            is_active: item?.isActive ? "Active" : "Inactive",
+                                            no: item?.cost_no || "—",
+                                            head: item?.costHead?.name,
+                                            shead: item?.costSubHead?.name || "—",
+                                            type: item?.type ? (item.type.charAt(0).toUpperCase() + item.type.slice(1)) : "—",
+                                            date: utcToLocal(item?.cost_date),
+                                            amount: currencyFormatter(item?.amount),
+                                            remarks: item?.remarks || "—",
+                                            creator: item?.costCreator?.name?.full_name?.toUpperCase() || "—",
                                             action: (
                                                 <div className="flex space-x-3">
                                                     <CustomeButton onClick={() => handleEdit(item.id)}>
@@ -135,9 +149,13 @@ const Expense = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Add New Expense"
+                title={editId ? "Edit Expense" : "Add New Expense"}
                 maxWidth='55'
             >
+                <ExpenseForm
+                    setIsShow={setIsShow}
+                    editId={editId}
+                />
             </AddModal>
 
         </div >

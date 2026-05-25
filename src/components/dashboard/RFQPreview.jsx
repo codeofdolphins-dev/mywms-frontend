@@ -142,7 +142,7 @@ const RFQPreview = ({
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 flex-wrap mb-2">
                                     <h2 className="text-xl font-bold leading-tight text-gray-800">
-                                        {details?.name ? `${details?.name}` : details?.buyer_name}
+                                        {details?.name ? `${details?.name} - ${details?.location}` : details?.buyer_name}
                                     </h2>
                                     {details?.priority && (
                                         <span

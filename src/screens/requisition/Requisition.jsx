@@ -3,7 +3,6 @@ import ItemTable from '../../components/ItemTable'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiPlus } from 'react-icons/fi';
 import TableHeader from '../../components/table/TableHeader';
-import { REQUISITION_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconNotes from '../../components/Icon/IconNotes';
@@ -20,8 +19,10 @@ import masterData from '../../Backend/master.backend';
 import { MdOutlineDownload } from 'react-icons/md';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
 import { currencyFormatter } from '../../utils/currencyFormatter';
+import { REQUISITION_COLUMN } from './helper';
+import { utcToLocal } from '../../utils/UTCtoLocal';
 
-const headerLink = [
+const HEADER_LINKS = [
     { title: "requisition" },
 ];
 
@@ -90,7 +91,7 @@ const Requisition = () => {
         <div>
             {/* Header Section */}
             <ComponentHeader
-                headerLink={headerLink}
+                headerLink={HEADER_LINKS}
                 searchPlaceholder='Search by name or description...'
                 setDebounceSearch={setDebounceSearch}
                 btnTitle='Add Requisition'
@@ -118,28 +119,28 @@ const Requisition = () => {
                             row={{
                                 id: (
                                     <Link
-                                        to={reqType === "internal" ? "/inward" : `/quotation/received-quotation?s=${item.requisition_no}`} className='hover:underline text-primary'
+                                        to={reqType === "internal" ? "/inward" : `/quotation/received-quotation?s=${item.requisition_no}`}
+                                        className={`whitespace-nowrap ${item?.isAnyQuotation ? "text-blue-600 hover:underline" : "pointer-events-none"}`}
                                     >
                                         {item?.requisition_no}
                                     </Link>
                                 ),
                                 title: item?.title,
+                                item: item?.items?.[0]?.product?.name,  // restrict to one item in RFQ
                                 status: (
-                                    <>
-                                        <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
-                                            {item?.status === "po_created" ? "po. created" : item?.status}
-                                        </span>
-                                    </>
+                                    <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
+                                        {item?.status === "po_created" ? "po. created" : item?.status}
+                                    </span>
                                 ),
+                                quotationReceived: item?.receiveQuotationCount,
                                 priority: (
-                                    <>
-                                        <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
-                                            {item?.priority}
-                                        </span>
-                                    </>
+                                    <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
+                                        {item?.priority}
+                                    </span>
                                 ),
                                 notes: item?.notes,
-                                grandTotal: currencyFormatter(item?.grandTotal),
+                                deadline: <p className='whitespace-nowrap'>{utcToLocal(item?.required_by_date)}</p>,
+                                // grandTotal: <p className='whitespace-nowrap'>{currencyFormatter(item?.grandTotal)}</p>,
                                 action: (
                                     <div className='flex items-center justify-center space-x-2'>
                                         <CustomeButton
@@ -148,9 +149,9 @@ const Requisition = () => {
                                             <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                                         </CustomeButton>
 
-                                        <CustomeButton onClick={() => handelShow(item.items)} >
+                                        {/* <CustomeButton onClick={() => handelShow(item.items)} >
                                             <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                        </CustomeButton>
+                                        </CustomeButton> */}
 
                                         <CustomeButton onClick={() => handelDownload(item?.requisition_no)} >
                                             {requisitionPdf_pending && (downloadReqNo === item?.requisition_no)

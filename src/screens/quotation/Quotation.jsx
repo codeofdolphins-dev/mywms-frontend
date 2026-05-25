@@ -171,7 +171,7 @@ const Quotation = () => {
                     totalPage={
                         activeTab === 1
                             ? quotationList?.meta?.totalPages || 1
-                            : rfqQuotationList?.meta?.totalPages || 1
+                            : rfqQuotationList?.pagination?.totalPages || 1
                     }
                     isEmpty={isEmpty}
                 >

@@ -443,34 +443,6 @@ class FetchData {
             enabled: isEnabled,
         });
     };
-
-
-    TQCostHeadList(params = {}, isEnabled = true) {
-        return useQuery({
-            queryKey: ["costHeadList", params],
-            queryFn: async () => {
-                try {
-                    const res = await API.get("/cost-head/list", {
-                        params
-                    });
-                    return res.data;
-                } catch (error) {
-                    if (error.response?.data?.code === 403) {
-                        errorToastAlert(error.response?.data?.message)
-                    }
-                    throw error;
-                }
-            },
-            enabled: isEnabled,
-            onSuccess: (data) => {
-                console.log(data);
-            },
-            onError: (error) => {
-                console.log("error", error);
-            },
-            select: (data) => data.data
-        });
-    };
 }
 
 const fetchData = new FetchData;

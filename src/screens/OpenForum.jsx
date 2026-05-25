@@ -13,6 +13,8 @@ import ComponentHeader from "../components/ComponentHeader";
 import SearchableSelect from "../components/inputs/SearchableSelect";
 import BasicPagination from "../components/BasicPagination";
 import { BsBoxSeam } from "react-icons/bs";
+import { remainingDays } from "../utils/remainingDays";
+import { utcToLocal } from "../utils/UTCtoLocal";
 
 const Dashboard = () => {
     const isLogin = useSelector(state => state.auth.status);
@@ -46,6 +48,18 @@ const Dashboard = () => {
 
     // console.log(rfqList?.data)
     // console.log(appliedRfqList?.data);
+
+    /** status color */
+    const statusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case "open":
+                return "bg-green-500"
+            case "closed":
+                return "bg-red-500"
+            default:
+                return "bg-gray-500"
+        }
+    }
 
 
     return (
@@ -97,70 +111,83 @@ const Dashboard = () => {
                         <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
                     </div>
                     : <>
-                        {rfqList?.data?.map((item) => {
-                            // if (appliedRfqList?.data?.find((rfq_id) => rfq_id === item.id)) {
-                            //     return null; // Skip this item if it's in the appliedRfqList
-                            // }
-
-                            return (
-                                <div key={item.id} className="panel">
-                                    <table className="w-full text-sm">
-                                        <thead>
-                                            <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
-                                                <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requisition</th>
-                                                <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Priority</th>
-                                                <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">RFQ. Deadline</th>
-                                                <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Total Amount</th>
-                                                <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requested By</th>
-                                                <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Location</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr
-                                                className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] last:border-0 hover:bg-[#f5f5f5] dark:hover:bg-[#1b2e4b]/40 cursor-pointer transition-colors"
-                                                onClick={() => {
-                                                    setIsShow(true);
-                                                    setSelectedItem(item);
-                                                }}
-                                            >
-                                                <td className="px-3 py-3">
-                                                    <p className="font-semibold truncate max-w-[200px]">{item?.title || "Untitled Requisition"}</p>
-                                                    <p className="text-xs text-white-dark font-mono mt-0.5"># {item?.rfq_no}</p>
-                                                </td>
-                                                <td className="px-3 py-3">
-                                                    <span
-                                                        className={`badge rounded-full capitalize text-xs ${item?.priority?.toLowerCase() === "high"
-                                                            ? "badge-outline-danger"
-                                                            : item?.priority?.toLowerCase() === "normal"
-                                                                ? "badge-outline-primary"
-                                                                : "badge-outline-secondary"
-                                                            }`}
-                                                    >
-                                                        {item?.priority || "N/A"}
-                                                    </span>
-                                                </td>
-                                                <td className="px-3 py-3 whitespace-nowrap">{item?.submission_deadline}</td>
-                                                <td className="px-3 py-3 font-semibold whitespace-nowrap">{currencyFormatter(item?.grand_total)}</td>
-                                                <td className="px-3 py-3">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                                                            <FiUser size={12} />
-                                                        </div>
-                                                        <span className="truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
+                        <div className="panel overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requisition</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Company</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Location</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Total Amount</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Priority</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Status</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">RFQ. Deadline</th>
+                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Remaining Day(s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {rfqList?.data?.map((item) =>
+                                        <tr
+                                            key={item.id}
+                                            className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] last:border-0 hover:bg-[#f5f5f5] dark:hover:bg-[#1b2e4b]/40 cursor-pointer transition-colors"
+                                            onClick={() => {
+                                                setIsShow(true);
+                                                setSelectedItem(item);
+                                            }}
+                                        >
+                                            {/* rfq no */}
+                                            <td className="px-3 py-3">
+                                                <p className="font-semibold tracking-wide max-w-[200px]">{item?.title || "Untitled Requisition"}</p>
+                                                <p className="text-xs text-white-dark whitespace-nowrap font-mono mt-0.5"># {item?.rfq_no}</p>
+                                            </td>
+                                            {/* company */}
+                                            <td className="px-3 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                                                        <FiUser size={12} />
                                                     </div>
-                                                </td>
-                                                <td className="px-3 py-3">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <FiMapPin size={13} className="text-danger shrink-0" />
-                                                        <span className="text-xs truncate max-w-[130px]">{item?.meta?.nodeDetails?.location || "N/A"}</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            );
-                        })}
+                                                    <span className="truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
+                                                </div>
+                                            </td>
+                                            {/* location */}
+                                            <td className="px-3 py-3">
+                                                <div className="flex items-center gap-1.5">
+                                                    <FiMapPin size={13} className="text-danger shrink-0" />
+                                                    <span className="text-xs truncate max-w-[130px]">{item?.meta?.nodeDetails?.location || "N/A"}</span>
+                                                </div>
+                                            </td>
+                                            {/* amount */}
+                                            <td className="px-3 py-3 font-semibold whitespace-nowrap">{currencyFormatter(item?.grand_total)}</td>
+                                            {/* priority */}
+                                            <td className="px-3 py-3">
+                                                <span
+                                                    className={`badge rounded-full capitalize text-xs ${item?.priority?.toLowerCase() === "high"
+                                                        ? "badge-outline-danger"
+                                                        : item?.priority?.toLowerCase() === "normal"
+                                                            ? "badge-outline-primary"
+                                                            : "badge-outline-secondary"
+                                                        }`}
+                                                >
+                                                    {item?.priority || "N/A"}
+                                                </span>
+                                            </td>
+                                            {/* status */}
+                                            <td className="px-3 py-3">
+                                                <span
+                                                    className={`badge rounded-full capitalize text-xs ${statusColor(item?.status)}`}
+                                                >
+                                                    {item?.status || "N/A"}
+                                                </span>
+                                            </td>
+                                            {/* deadline */}
+                                            <td className="px-3 py-3 whitespace-nowrap">{utcToLocal(item?.submission_deadline)}</td>
+                                            {/* remaining days */}
+                                            <td className="px-3 py-3 whitespace-nowrap text-center">{remainingDays(item?.submission_deadline)}</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                         < BasicPagination
                             totalPage={rfqList?.totalPage}
                             currentPage={currentPage}

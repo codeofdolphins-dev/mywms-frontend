@@ -17,8 +17,8 @@ import { utcToLocal } from '@/utils/UTCtoLocal';
 import masterData from '@/Backend/master.backend';
 import { confirmation } from '@/utils/alerts';
 import ComponentHeader from '@/components/ComponentHeader';
-import fetchData from '../../../Backend/fetchData.backend';
 import CostHeadForm from '../../../components/costHead/CostHeadForm';
+import costFetch from '../../../Backend/cost.fetch';
 
 
 const headerLink = [
@@ -30,7 +30,7 @@ const CostHead = () => {
     const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);
 
-    const { data, isLoading } = fetchData.TQCostHeadList({ noLimit: true });
+    const { data, isLoading } = costFetch.TQCostHeadList({ noLimit: true, isAdmin: true });
     const { mutate: deleteData, isPending } = masterData.TQDeleteMaster(["costHeadList"]);
 
 

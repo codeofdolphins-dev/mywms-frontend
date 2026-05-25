@@ -27,7 +27,7 @@ const ComponentHeader = ({
     className = "justify-between",
 }) => {
     return (
-        <div className={`flex flex-col sm:flex-row items-center justify-between gap-5 ${className}`}>
+        <div className={`w-full flex flex-col sm:flex-row items-center justify-between gap-5 ${className}`}>
             {headerLink.length > 0 &&
                 <Breadcrumb
                     options={headerLink}

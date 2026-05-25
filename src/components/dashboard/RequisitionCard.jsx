@@ -40,7 +40,7 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
     function previewCumSubmit() {
         setData({
             name: details?.meta?.name,
-            location: details?.meta?.location,
+            location: details?.meta?.nodeDetails?.location,
             priority: details?.priority,
             rfq_no: details?.rfq_no,
             note: details?.note,
@@ -137,7 +137,7 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                     </div>
                     <div className="min-w-0">
                         <p className="text-[10px] uppercase tracking-widest font-bold text-white-dark">Location</p>
-                        <p className="text-sm font-semibold truncate">{details?.meta?.location}</p>
+                        <p className="text-sm font-semibold truncate">{details?.meta?.nodeDetails?.location}</p>
                     </div>
                 </div>
             </div>

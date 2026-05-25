@@ -46,16 +46,6 @@ export const REQUISITION_CREATE_RAW_COLUMN_ACTION = [
     { key: "action", label: "Action", align: "center" }
 ];
 
-export const REQUISITION_COLUMN = [
-    { key: "id", label: "#", align: "center" },
-    { key: "title", label: "Title" },
-    { key: "status", label: "Status", align: "center" },
-    { key: "priority", label: "Priority", align: "center" },
-    { key: "notes", label: "Notes" },
-    // { key: "grandTotal", label: "Total" },
-    { key: "action", label: "Action", align: "center" },
-];
-
 export const REQUISITION_ITEMS_COLUMN = [
     { key: "id", label: "#", width: "0.3fr" },
     { key: "barcode", label: "Barcode" },

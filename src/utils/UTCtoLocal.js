@@ -1,4 +1,4 @@
-export const utcToLocal = (date) => {
+export const utcToLocal = (date, isTime = false) => {
     if (!date) return "-";
     const newDate = new Date(date);
 
@@ -15,7 +15,7 @@ export const utcToLocal = (date) => {
         day: "numeric",
     });
 
-    return `${timeStr}, ${dateStr}`;
+    return isTime ? `${timeStr}, ${dateStr}` : dateStr;
 }
 
 export function formatCreatedAt(createdAt) {
