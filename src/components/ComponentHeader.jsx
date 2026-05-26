@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchInput from './inputs/SearchInput';
+import DebounceSearch from './inputs/DebounceSearch';
 import Breadcrumb from './Breadcrumb';
 
 const ComponentHeader = ({
@@ -35,7 +35,7 @@ const ComponentHeader = ({
                 />
             }
             {showSearch &&
-                <SearchInput
+                <DebounceSearch
                     type="text"
                     placeholder={searchPlaceholder}
                     className={searchClassName}

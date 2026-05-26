@@ -4,6 +4,7 @@ export const REQUISITION_COLUMN = [
     { key: "item", label: "Item" },
     { key: "status", label: "Status", align: "center" },
     { key: "quotationReceived", label: "Quo. Received", align: "center" },
+    { key: "limitType", label: "Price Limit" },
     { key: "priority", label: "Priority", align: "center" },
     { key: "notes", label: "Notes" },
     { key: "deadline", label: "Deadline" },

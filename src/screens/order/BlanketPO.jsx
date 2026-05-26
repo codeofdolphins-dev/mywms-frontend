@@ -39,7 +39,7 @@ const BlanketPO = () => {
     // console.log(bpoList)
 
 
-    async function handelDownload(params) { };
+    async function handelDownload(params) { alert("Working!!!") };
     function handelShow(items) { };
     async function handleDelete(id) { };
 
@@ -92,13 +92,17 @@ const BlanketPO = () => {
                     setCurrentPage={setCurrentPage}
                     limit={limit}
                     setLimit={setLimit}
-                    totalPage={bpoList?.meta?.totalPages || 1}
+                    totalPage={bpoList?.pagenation?.totalPages || 1}
                     isEmpty={isEmpty}
                     isLoading={bpoListLoading}
                 >
                     {
                         bpoList?.data?.map((item, idx) => {
                             const isBuyer = item?.buyer_tenant === TENANT ? true : false;
+                            const product = {
+                                name: isBuyer ? item?.blanketOrderItems?.[0]?.buyer_product?.name : item?.blanketOrderItems?.[0]?.vendor_product?.name,
+                                remQty: item?.blanketOrderItems?.[0]?.remain_contracted_qty
+                            }
 
                             return (<TableRow
                                 key={item.id}
@@ -112,7 +116,8 @@ const BlanketPO = () => {
                                     ),
                                     createdAt: utcToLocal(item?.createdAt),
                                     partner: isBuyer ? item?.vendor?.tenantDetails?.companyName : item?.buyer?.tenantDetails?.companyName,
-                                    items: item?.blanketOrderItems?.length,
+                                    name: product?.name,
+                                    remQty: product?.remQty,
                                     status: (
                                         <>
                                             <span className={`badge uppercase rounded-full ${item?.status === "active" ? "badge-outline-success" : "badge-outline-primary"}`}>
@@ -123,15 +128,15 @@ const BlanketPO = () => {
                                     valid_until: utcToLocal(item?.valid_until),
                                     action: (
                                         <div className='flex items-center justify-center space-x-2'>
-                                            <CustomeButton
+                                            {/* <CustomeButton
                                                 onClick={() => handleDelete(item.id)}
                                             >
                                                 <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
+                                            </CustomeButton> */}
 
-                                            <CustomeButton onClick={() => handelShow(item.items)} >
+                                            {/* <CustomeButton onClick={() => handelShow(item.items)} >
                                                 <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                            </CustomeButton>
+                                            </CustomeButton> */}
 
                                             <CustomeButton onClick={() => handelDownload(item?.requisition_no)} >
                                                 {false && (downloadReqNo === item?.requisition_no)

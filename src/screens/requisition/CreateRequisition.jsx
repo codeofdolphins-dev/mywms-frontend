@@ -25,6 +25,7 @@ import RequisitionItemFormRaw from '../../components/requisition/create/Requisit
 import RequisitionCategoryForm from '../../components/requisition/create/RequisitionCategoryForm';
 import requisition from '../../Backend/requisition.backend';
 import TextArea from '../../components/inputs/TextArea';
+import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
 
 
 const PRIORITY = [
@@ -170,7 +171,7 @@ const CreateRequisition = () => {
                                 {isManufacture ? (
                                     // vendor
                                     <>
-                                        <div>
+                                        {/* <div>
                                             <Controller
                                                 name="requisition_category_id"
                                                 control={control}
@@ -189,7 +190,7 @@ const CreateRequisition = () => {
                                                     />
                                                 )}
                                             />
-                                        </div>
+                                        </div> */}
                                     </>
                                 ) : (
                                     // supplier
@@ -288,6 +289,34 @@ const CreateRequisition = () => {
                                         />
                                     </div>
                                 }
+
+                                {/* price limit */}
+                                <div className="">
+                                    <Controller
+                                        name="limit_type"
+                                        control={control}
+                                        // rules={{ required: "Price Limit is required!!!" }}
+                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                            <RHRadioGroup
+                                                ref={(el) => {
+                                                    ref({
+                                                        focus: () => el?.focus(),
+                                                    });
+                                                }}
+                                                value={value}
+                                                onChange={onChange}
+                                                label="Price Limit"
+                                                labelPosition="inline"
+                                                options={[
+                                                    { label: "Upper Limit", value: "upper_limit", title: "High amount is not allowed" },
+                                                    { label: "Lower Limit", value: "lower_limit", title: "Low amount is not allowed" },
+                                                ]}
+                                            // error={error?.message}
+                                            // required={true}
+                                            />
+                                        )}
+                                    />
+                                </div>
 
                                 {/* note */}
                                 {isManufacture && (

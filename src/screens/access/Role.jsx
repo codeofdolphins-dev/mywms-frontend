@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import fetchData from '../../Backend/fetchData.backend';
 import ButtonBoolean from '../../components/inputs/ButtonBoolean';
-import SearchInput from '../../components/inputs/SearchInput';
 import ItemTable from '../../components/ItemTable';
 import TableHeader from '../../components/table/TableHeader';
 import TableRow from '../../components/table/TableRow';

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
-import SearchInput from '../../components/inputs/SearchInput'
 import { Link, useSearchParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'

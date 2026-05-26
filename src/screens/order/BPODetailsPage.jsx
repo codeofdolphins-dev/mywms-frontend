@@ -24,7 +24,7 @@ import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import RealseOrderPreview from './ReleaseOrderPreview';
 
 
-const headerLink = [
+const HEADER_LINK = [
 	{ title: "Blanket PO", link: "/order/bpo" },
 	{ title: "Details" },
 ]
@@ -45,12 +45,12 @@ const BPODetailsPage = () => {
 	const [formData, setFormData] = useState(null);
 
 	const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem(id, Boolean(id));
-	const isEmpty = bpoList?.data?.length > 0 ? false : true;
+	const bpoData = bpoList?.data;
+
+	const isEmpty = bpoData?.length > 0 ? false : true;
+	const isClosed = bpoData?.status === "closed";
 
 	const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "rm_store", isAdmin: true }, Boolean(id));
-
-	const bpoData = bpoList?.data;
-	// console.log(bpoData)
 
 	const { handleSubmit, reset, register, formState: { errors }, setValue, control, watch } = useForm({
 		defaultValues: {
@@ -127,7 +127,7 @@ const BPODetailsPage = () => {
 				<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
 					<div>
 						<ComponentHeader
-							headerLink={headerLink}
+							headerLink={HEADER_LINK}
 							showSearch={false}
 						/>
 						<h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
@@ -136,20 +136,31 @@ const BPODetailsPage = () => {
 					</div>
 
 					<div className="flex gap-3">
-						<button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all font-medium">
+						<button
+							type='button'
+							className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all font-medium"
+							onClick={() => alert("working!!!")}
+						>
 							<FaFileDownload className="text-gray-400" size={25} />
 							Download Contract
 						</button>
-						<button className="flex items-center gap-2 px-6 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all font-semibold">
-							<FaCheckCircle size={25} />
-							Confirm Release Order Preview
-						</button>
+
+						{!isClosed &&
+							<button
+								type='submit'
+								className="flex items-center gap-2 px-6 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all font-semibold"
+							>
+								<FaCheckCircle size={25} />
+								Confirm Release Order Preview
+							</button>
+						}
 					</div>
 				</div>
 
+				{/* body section */}
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					{/* Left Column: Contract Info & Item Selection */}
-					<div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+					<div className={`space-y-6 order-2 lg:order-1 ${isClosed ? "lg:col-span-3" : "lg:col-span-2"} `}>
 
 						{/* Item List / Selection Table */}
 						<div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -200,6 +211,7 @@ const BPODetailsPage = () => {
 													<td className="px-6 py-6">
 														<input
 															step="any"
+															disabled={isClosed}
 															{...register(`items.${index}.release_qty`, {
 																min: { value: 0, message: "Minimum is 0" },
 																max: { value: item?.remaining_qty, message: `Maximum is ${item?.remaining_qty}` },
@@ -225,101 +237,103 @@ const BPODetailsPage = () => {
 					</div>
 
 					{/* Right Column: Release Context & Store Selection */}
-					<div className="space-y-6 order-1 lg:order-2">
-						<div className="bg-white px-8 py-4 rounded-2xl shadow-xl border border-gray-100 sticky top-8">
-							<h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-								Release Order Settings
-							</h3>
+					{!isClosed &&
+						<div className="space-y-6 order-1 lg:order-2">
+							<div className="bg-white px-8 py-4 rounded-2xl shadow-xl border border-gray-100 sticky top-8">
+								<h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+									Release Order Settings
+								</h3>
 
-							<div className="space-y-4">
-								{/* Target Warehouse Selection */}
-								<div>
-									<Controller
-										name="target_store"
-										rules={{
-											required: "This field is required!!!"
-										}}
-										control={control}
-										render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-											<RHSelect
-												ref={(el) => {
-													ref({
-														focus: () => el?.focus(),
-													});
-												}}
-												value={value}
-												onChange={onChange}
-												isSearchable={false}
+								<div className="space-y-4">
+									{/* Target Warehouse Selection */}
+									<div>
+										<Controller
+											name="target_store"
+											rules={{
+												required: "This field is required!!!"
+											}}
+											control={control}
+											render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+												<RHSelect
+													ref={(el) => {
+														ref({
+															focus: () => el?.focus(),
+														});
+													}}
+													value={value}
+													onChange={onChange}
+													isSearchable={false}
 
-												label="Target Store (Buyer Side)"
-												options={storeList?.data}
+													label="Target Store (Buyer Side)"
+													options={storeList?.data}
 
-												required={true}
-												error={error?.message}
-												objectReturn={true}
+													required={true}
+													error={error?.message}
+													objectReturn={true}
 
-												addButton={true}
-												buttonTitle="Add"
-												buttonOnClick={() => setStore("RAW")}
-											/>
-										)}
-									/>
-								</div>
-
-								{/* required date */}
-								<div>
-									<Input
-										type="date"
-										label="Delivery Required By"
-										// labelPosition="inline"
-										{...register("required_by")}
-									/>
-								</div>
-
-								{/* Target Warehouse Selection */}
-								<div>
-									<Controller
-										name="priority"
-										control={control}
-										render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-											<SearchableSelect
-												ref={(el) => {
-													ref({
-														focus: () => el?.focus(),
-													});
-												}}
-												value={value}
-												onChange={onChange}
-												isSearchable={false}
-
-												label="Priority"
-												options={PRIORITY}
-											/>
-										)}
-									/>
-								</div>
-
-								{/* Priority / Shipping Note */}
-								<div className="">
-									<TextArea
-										label="Dispatch Instructions (Optional)"
-										placeholder="e.g. Fragile items, pack in wooden crates..."
-										{...register("instructions")}
-									/>
-								</div>
-
-								<div className="border-t border-gray-100">
-									<div className="flex justify-between items-center mb-2">
-										<span className="text-gray-500 text-sm">Release Order Total (Approx)</span>
-										<span className="text-xl font-bold text-gray-900">{currencyFormatter(totalAmount)}</span>
+													addButton={true}
+													buttonTitle="Add"
+													buttonOnClick={() => setStore("RAW")}
+												/>
+											)}
+										/>
 									</div>
-									<p className="text-[10px] text-gray-400 leading-tight">
-										By confirming, you are issuing a legally binding Release Order against BPO {bpoData?.bpo_no}.
-									</p>
+
+									{/* required date */}
+									<div>
+										<Input
+											type="date"
+											label="Delivery Required By"
+											// labelPosition="inline"
+											{...register("required_by")}
+										/>
+									</div>
+
+									{/* Target Warehouse Selection */}
+									<div>
+										<Controller
+											name="priority"
+											control={control}
+											render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+												<SearchableSelect
+													ref={(el) => {
+														ref({
+															focus: () => el?.focus(),
+														});
+													}}
+													value={value}
+													onChange={onChange}
+													isSearchable={false}
+
+													label="Priority"
+													options={PRIORITY}
+												/>
+											)}
+										/>
+									</div>
+
+									{/* Priority / Shipping Note */}
+									<div className="">
+										<TextArea
+											label="Dispatch Instructions (Optional)"
+											placeholder="e.g. Fragile items, pack in wooden crates..."
+											{...register("instructions")}
+										/>
+									</div>
+
+									<div className="border-t border-gray-100">
+										<div className="flex justify-between items-center mb-2">
+											<span className="text-gray-500 text-sm">Release Order Total (Approx)</span>
+											<span className="text-xl font-bold text-gray-900">{currencyFormatter(totalAmount)}</span>
+										</div>
+										<p className="text-[10px] text-gray-400 leading-tight">
+											By confirming, you are issuing a legally binding Release Order against BPO {bpoData?.bpo_no}.
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					}
 				</div>
 			</form>
 

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FiPlus } from 'react-icons/fi';
-import SearchInput from '../../components/inputs/SearchInput';
 import TableHeader from '../../components/table/TableHeader';
-import { PURCHASE_ORDER_BROWSE } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import ComponentHeader from '../../components/ComponentHeader';
 import TableBody from '../../components/table/TableBody';

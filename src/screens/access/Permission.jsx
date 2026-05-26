@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ButtonBoolean from '../../components/inputs/ButtonBoolean'
-import SearchInput from '../../components/inputs/SearchInput'
 import ItemTable from '../../components/ItemTable'
 import fetchData from '../../Backend/fetchData.backend'
 import { PERMISSION_COL } from '../../utils/helper'

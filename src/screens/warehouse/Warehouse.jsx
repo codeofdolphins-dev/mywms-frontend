@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import SearchInput from '../../components/inputs/SearchInput'
+// import SearchInput from '../../components/inputs/SearchInput'
 import IconSettings from '../../components/Icon/IconSettings';
 import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
@@ -113,11 +113,11 @@ const Warehouse = () => {
             {/* Search and Add Button */}
             <div className="grid grid-cols-1 my-4">
                 <div className='col-span-2'>
-                    <SearchInput
+                    {/* <SearchInput
                         type="text"
                         placeholder="Search by name or description..."
                         setValue={setDebounceSearch}
-                    />
+                    /> */}
                 </div>
             </div>
 

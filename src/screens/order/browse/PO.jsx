@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import TableRow from '../../../components/table/TableRow';
 import TableBody from '../../../components/table/TableBody';
-import { PURCHASE_ORDER_BROWSE } from '../../../utils/helper';
 import { Link, useNavigate } from 'react-router-dom';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
 import { utcToLocal } from '../../../utils/UTCtoLocal';
 import { order } from '../../../Backend/order.fetch';
 import { extractString } from '../../../helper/support';
+import { PURCHASE_ORDER_BROWSE } from './helper';
 
 const PO = ({ debounceSearch }) => {
     const navigate = useNavigate();
@@ -57,13 +57,15 @@ const PO = ({ debounceSearch }) => {
                             row={{
                                 no: (<Link
                                     to={`/order/${item?.po_no}?type=purchase`}
-                                    className="text-primary hover:underline"
+                                    className="text-primary hover:underline whitespace-nowrap"
                                 >
                                     {item?.po_no}
                                 </Link>),
-                                to: item?.poToBusinessNode?.nodeDetails?.name ?? item?.poVendor?.name,
+                                to: <p className='whitespace-nowrap'>
+                                    {item?.poToBusinessNode?.nodeDetails?.name ?? item?.poVendor?.name}
+                                </p>,
                                 date: utcToLocal(item?.createdAt),
-                                items: item?.purchasOrderItems?.length,
+                                name: item?.purchasOrderItems?.length == 1 ? item?.purchasOrderItems?.[0]?.poi_product?.name : "--",
                                 price: currencyFormatter(item?.grand_total),
                                 status: (
                                     <div>

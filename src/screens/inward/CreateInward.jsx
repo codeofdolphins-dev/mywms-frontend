@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { FiHome, FiPlus } from 'react-icons/fi'
-import SearchInput from '../../components/inputs/SearchInput'
 import { useNavigate, useParams } from 'react-router-dom'
 import Accordian from '../../components/Accordian'
 import TableHeader from '../../components/table/TableHeader'

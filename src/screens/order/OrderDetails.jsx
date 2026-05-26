@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FiHome, FiPlus } from 'react-icons/fi';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import SearchInput from '../../components/inputs/SearchInput';
 import TableHeader from '../../components/table/TableHeader';
 import { ORDER, ORDER_RAW } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';

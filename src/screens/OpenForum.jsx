@@ -15,22 +15,26 @@ import BasicPagination from "../components/BasicPagination";
 import { BsBoxSeam } from "react-icons/bs";
 import { remainingDays } from "../utils/remainingDays";
 import { utcToLocal } from "../utils/UTCtoLocal";
+import MultiAttributeSearch from "../components/inputs/MultiAttributeSearch";
 
 const Dashboard = () => {
     const isLogin = useSelector(state => state.auth.status);
 
     const [isShow, setIsShow] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [search, setSearch] = useState("");
     const [status, setStatus] = useState("open");
     const [priority, setPriority] = useState("all");
+
+    const [search, setSearch] = useState(null);
 
     /** pagination states */
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
     const params = {
-        ...(search && { search }),
+        ...(search && Object.fromEntries(
+            Object.entries(search).filter(([_, value]) => value && String(value).trim() !== "")
+        )),
         status,
         priority,
         limit,
@@ -38,6 +42,18 @@ const Dashboard = () => {
     }
     const { data: rfqList, isLoading: rfqListLoading } = fetchData.TQRfqList(params);
     const isEmpty = rfqList?.data?.length === 0;
+
+    useEffect(() => {
+        if (search && Object.values(search).some(val => val && String(val).trim() !== "")) {
+            setStatus("open");
+            setPriority("all");
+        }
+        setCurrentPage(1);
+    }, [search]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [status, priority]);
 
     // const dispatch = useDispatch();
     // useEffect(() => {
@@ -64,15 +80,12 @@ const Dashboard = () => {
 
     return (
         <div>
+            <MultiAttributeSearch
+                setSearchObject={setSearch}
+            />
+
             {/* search bar with filter */}
             <div className="flex items-center gap-4 mb-5 mt-2">
-                <div className="w-full">
-                    <ComponentHeader
-                        addButton={false}
-                        searchPlaceholder="Search by RFQ no..."
-                        setDebounceSearch={setSearch}
-                    />
-                </div>
 
                 {/* status */}
                 <div className="">

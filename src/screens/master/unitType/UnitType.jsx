@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import SearchInput from '@/components/inputs/SearchInput'
 import Tippy from '@tippyjs/react';
 import { useForm } from 'react-hook-form';
 import Input from '@/components/inputs/Input';

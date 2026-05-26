@@ -126,44 +126,6 @@ export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
 ];
 
 
-export const PURCHASE_ORDER_BROWSE = [
-    {
-        key: "no", label: "#",
-        align: "center", width: "300px"
-    },
-    {
-        key: "to", label: "To",
-        align: "center"
-    },
-    {
-        key: "date", label: "Date",
-        align: "center"
-    },
-    {
-        key: "items", label: "Total Items", align: "center"
-    },
-    { key: "price", label: "Total Price", align: "center" },
-    { key: "status", label: "Status", align: "center" },
-    { key: "createdBy", label: "Created By", align: "center" },
-];
-export const SALES_ORDER_BROWSE = [
-    {
-        key: "no", label: "#", align: "center", width: "300px"
-    },
-    {
-        key: "from", label: "From", align: "center"
-    },
-    {
-        key: "date", label: "Date", align: "center"
-    },
-    {
-        key: "items", label: "Total Items", align: "center"
-    },
-    { key: "price", label: "Total Price", align: "center" },
-    { key: "status", label: "Status", align: "center" }
-];
-
-
 export const ORDER = [
     { key: "barcode", label: "Barcode", width: "150px" },
     { key: "product", label: "Product" },
@@ -191,7 +153,8 @@ export const BPO_COLUMN = [
     { key: "id", label: "#", align: "center" },
     { key: "createdAt", label: "Creation Date" },
     { key: "partner", label: "Business Partner" },
-    { key: "items", label: "Total Items", align: "center" },
+    { key: "name", label: "Item Name" },
+    { key: "remQty", label: "Remaining Qty.", align: "center" },
     { key: "status", label: "Status" },
     { key: "valid_until", label: "Validity" },
     { key: "action", label: "Action", align: "center" },

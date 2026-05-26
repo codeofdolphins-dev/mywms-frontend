@@ -133,6 +133,11 @@ const Requisition = () => {
                                     </span>
                                 ),
                                 quotationReceived: item?.receiveQuotationCount,
+                                limitType: <p
+                                    className='uppercase whitespace-nowrap'
+                                >
+                                    {item?.price_limit_type?.split("_")?.join(" ") ?? "—"}
+                                </p>,
                                 priority: (
                                     <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
                                         {item?.priority}

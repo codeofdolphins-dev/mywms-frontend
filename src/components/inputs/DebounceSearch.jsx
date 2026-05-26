@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useId, useState } from 'react'
 import { FaRegTimesCircle } from "react-icons/fa";
 import { FiPlus } from 'react-icons/fi';
 
-const SearchInput = ({
+const DebounceSearch = ({
     label = '',
     type = 'text',
     className = '',
@@ -95,4 +95,4 @@ const SearchInput = ({
     )
 }
 
-export default SearchInput;
+export default DebounceSearch;

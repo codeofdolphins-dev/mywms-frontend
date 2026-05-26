@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import TableRow from '../../../components/table/TableRow';
 import TableBody from '../../../components/table/TableBody';
-import { PURCHASE_ORDER_BROWSE, SALES_ORDER_BROWSE } from '../../../utils/helper';
 import { useNavigate } from 'react-router-dom';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
 import { utcToLocal } from '../../../utils/UTCtoLocal';
 import { order } from '../../../Backend/order.fetch';
 import { extractString } from '../../../helper/support';
+import { SALES_ORDER_BROWSE } from './helper';
 
 const SO = ({ debounceSearch }) => {
     const navigate = useNavigate();
@@ -57,11 +57,21 @@ const SO = ({ debounceSearch }) => {
                             columns={SALES_ORDER_BROWSE}
                             onClick={() => navigate(`/order/${item?.so_no}?type=sales`)}
                             row={{
-                                no: item?.so_no,
-                                from: item?.poBuyer?.name,
-                                date: utcToLocal(item?.createdAt),
-                                items: item?.salesOrderItems?.length,
-                                price: currencyFormatter(item?.grand_total),
+                                no: <p className='whitespace-nowrap'>
+                                    {item?.so_no}
+                                </p>,
+                                from: <p className='whitespace-nowrap'>
+                                    {item?.poBuyer?.name}
+                                </p>,
+                                date: <p className='whitespace-nowrap'>
+                                    {utcToLocal(item?.createdAt)}
+                                </p>,
+                                name: <p className='whitespace-nowrap'>
+                                    {item?.salesOrderItems?.length == 1 ? item?.salesOrderItems?.[0]?.soi_product?.name : "--"}
+                                </p>,
+                                price: <p className='whitespace-nowrap'>
+                                    {currencyFormatter(item?.grand_total)}
+                                </p>,
                                 status: (
                                     <div>
                                         <span className={`badge whitespace-nowrap ${statusColor(item?.status)}`}>{extractString(item?.status)}</span>

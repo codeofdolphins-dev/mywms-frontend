@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
-import SearchInput from '../../components/inputs/SearchInput'
 import { Link, useNavigate } from 'react-router-dom';
 import BasicPagination from '../../components/BasicPagination';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';

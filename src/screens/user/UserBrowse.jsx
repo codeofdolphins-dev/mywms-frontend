@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import masterData from '@/Backend/master.backend';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
-import SearchInput from '@/components/inputs/SearchInput';
 import TableHeader from '@/components/table/TableHeader';
 import TableRow from '@/components/table/TableRow';
 import CustomeButton from "@/components/inputs/Button"
