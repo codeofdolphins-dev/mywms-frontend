@@ -115,9 +115,10 @@ const ProductionOrder = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Create Production Order"
-            // placement='start'
             >
-                <ProductionOrderForm setIsShow={setIsShow} />
+                <ProductionOrderForm
+                    setIsShow={setIsShow}
+                />
             </AddModal>
 
             <AddModal

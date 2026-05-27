@@ -26,6 +26,7 @@ import RequisitionCategoryForm from '../../components/requisition/create/Requisi
 import requisition from '../../Backend/requisition.backend';
 import TextArea from '../../components/inputs/TextArea';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
+import { Helmet } from 'react-helmet-async';
 
 
 const PRIORITY = [
@@ -122,6 +123,7 @@ const CreateRequisition = () => {
 
     return (
         <div>
+            <Helmet><title>Create Requisition | MYWMS</title></Helmet>
             {/* breadcrumb */}
             <div className="flex items-center gap-5 ">
                 <ul className=" flex space-x-2 ">
@@ -278,8 +280,8 @@ const CreateRequisition = () => {
                                     />
                                 </div>
 
-                                {/* total */}
-                                {isManufacture &&
+                                {isManufacture && <>
+                                    {/* total */}
                                     <div className="">
                                         <Input
                                             label="Total"
@@ -288,35 +290,36 @@ const CreateRequisition = () => {
                                             {...register("total")}
                                         />
                                     </div>
-                                }
 
-                                {/* price limit */}
-                                <div className="">
-                                    <Controller
-                                        name="limit_type"
-                                        control={control}
-                                        // rules={{ required: "Price Limit is required!!!" }}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHRadioGroup
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-                                                label="Price Limit"
-                                                labelPosition="inline"
-                                                options={[
-                                                    { label: "Upper Limit", value: "upper_limit", title: "High amount is not allowed" },
-                                                    { label: "Lower Limit", value: "lower_limit", title: "Low amount is not allowed" },
-                                                ]}
-                                            // error={error?.message}
-                                            // required={true}
-                                            />
-                                        )}
-                                    />
-                                </div>
+                                    {/* price limit */}
+                                    <div className="">
+                                        <Controller
+                                            name="limit_type"
+                                            control={control}
+                                            // rules={{ required: "Price Limit is required!!!" }}
+                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                <RHRadioGroup
+                                                    ref={(el) => {
+                                                        ref({
+                                                            focus: () => el?.focus(),
+                                                        });
+                                                    }}
+                                                    value={value}
+                                                    onChange={onChange}
+                                                    label="Price Limit"
+                                                    labelPosition="inline"
+                                                    options={[
+                                                        { label: "Upper Limit", value: "upper_limit", title: "High amount is not allowed" },
+                                                        { label: "Lower Limit", value: "lower_limit", title: "Low amount is not allowed" },
+                                                    ]}
+                                                // error={error?.message}
+                                                // required={true}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </>
+                                }
 
                                 {/* note */}
                                 {isManufacture && (

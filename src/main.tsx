@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import App from './App';
+import { HelmetProvider } from "react-helmet-async"
 
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -23,11 +24,13 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <Provider store={ store }>
-      <QueryClientProvider client={queryClient} >
-        <App />
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-      </QueryClientProvider>
+    <Provider store={store}>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient} >
+          <App />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        </QueryClientProvider>
+      </HelmetProvider>
     </Provider>
   </StrictMode>,
 )

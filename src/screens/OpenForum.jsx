@@ -16,6 +16,7 @@ import { BsBoxSeam } from "react-icons/bs";
 import { remainingDays } from "../utils/remainingDays";
 import { utcToLocal } from "../utils/UTCtoLocal";
 import MultiAttributeSearch from "../components/inputs/MultiAttributeSearch";
+import { Helmet } from "react-helmet-async";
 
 const Dashboard = () => {
     const isLogin = useSelector(state => state.auth.status);
@@ -55,13 +56,6 @@ const Dashboard = () => {
         setCurrentPage(1);
     }, [status, priority]);
 
-    // const dispatch = useDispatch();
-    // useEffect(() => {
-    //     dispatch(setPageTitle('Sales Admin'));
-    // });
-    // const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
-    // const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-
     // console.log(rfqList?.data)
     // console.log(appliedRfqList?.data);
 
@@ -80,51 +74,51 @@ const Dashboard = () => {
 
     return (
         <div>
+            <Helmet><title>Open Forum | MYWMS</title></Helmet>
+
             <MultiAttributeSearch
                 setSearchObject={setSearch}
             />
 
-            {/* search bar with filter */}
-            <div className="flex items-center gap-4 mb-5 mt-2">
-
-                {/* status */}
-                <div className="">
-                    <select
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value)}
-                        className="border-gray-200 rounded-lg p-2 border"
-                    >
-                        <option value="open">Status: Open</option>
-                        <option value="closed">Status: Closed</option>
-                    </select>
-                </div>
-
-                {/* priority */}
-                <div className="">
-                    <select
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
-                        className="border-gray-200 rounded-lg p-2 border"
-                    >
-                        <option value="all">Priority: All</option>
-                        <option value="high">Priority: High</option>
-                        <option value="normal">Priority: Normal</option>
-                        <option value="low">Priority: Low</option>
-                    </select>
-                </div>
-            </div>
-
 
             {/* main component */}
-            <div className="w-full overflow-hidden space-y-5">
+            <div className="w-full overflow-hidden space-y-5 mt-5">
+                <div className="panel overflow-x-auto">
+                    {/*filter */}
+                    <div className="flex items-center justify-end mb-2 gap-4">
+                        {/* status */}
+                        <div className="">
+                            <select
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                className="border-gray-200 rounded-lg p-1 border text-sm"
+                            >
+                                <option value="open">Status: Open</option>
+                                <option value="closed">Status: Closed</option>
+                            </select>
+                        </div>
 
-                {isEmpty ?
-                    <div className="flex flex-col items-center justify-center gap-4 min-h-64">
-                        <BsBoxSeam fontSize={40} color='grey' />
-                        <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
+                        {/* priority */}
+                        <div className="">
+                            <select
+                                value={priority}
+                                onChange={(e) => setPriority(e.target.value)}
+                                className="border-gray-200 rounded-lg p-1 border text-sm"
+                            >
+                                <option value="all">Priority: All</option>
+                                <option value="high">Priority: High</option>
+                                <option value="normal">Priority: Normal</option>
+                                <option value="low">Priority: Low</option>
+                            </select>
+                        </div>
                     </div>
-                    : <>
-                        <div className="panel overflow-x-auto">
+
+                    {isEmpty ?
+                        <div className="flex flex-col items-center justify-center gap-4 min-h-64">
+                            <BsBoxSeam fontSize={40} color='grey' />
+                            <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
+                        </div>
+                        : <>
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
@@ -200,16 +194,16 @@ const Dashboard = () => {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
-                        < BasicPagination
-                            totalPage={rfqList?.totalPage}
-                            currentPage={currentPage}
-                            setCurrentPage={setCurrentPage}
-                            limit={limit}
-                            setLimit={setLimit}
-                        />
-                    </>
-                }
+                            < BasicPagination
+                                totalPage={rfqList?.totalPage}
+                                currentPage={currentPage}
+                                setCurrentPage={setCurrentPage}
+                                limit={limit}
+                                setLimit={setLimit}
+                            />
+                        </>
+                    }
+                </div>
             </div>
 
             <AddModal
@@ -217,7 +211,6 @@ const Dashboard = () => {
                 setIsShow={setIsShow}
                 maxWidth="55"
                 placement="start"
-            // blur={false}
             >
                 <RequisitionCard
                     details={selectedItem}

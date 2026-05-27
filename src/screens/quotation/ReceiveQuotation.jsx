@@ -19,6 +19,7 @@ import { rfqQuotation } from '../../Backend/rfqQuotation.fetch'
 import AddModal from '../../components/Add.modal'
 import BlanketPOPreview from '../../components/blanketPO/BlanketPO.preview'
 import { inputAlert } from '../../utils/alerts'
+import { Helmet } from 'react-helmet-async'
 
 
 const headerLink = [
@@ -149,6 +150,7 @@ const ReceiveQuotation = () => {
 
     return (
         <div>
+            <Helmet><title>Receive Quotation | MYWMS</title></Helmet>
             <ComponentHeader
                 headerLink={headerLink}
                 searchPlaceholder='Search by name or description...'

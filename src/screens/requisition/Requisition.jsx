@@ -19,8 +19,10 @@ import masterData from '../../Backend/master.backend';
 import { MdOutlineDownload } from 'react-icons/md';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
 import { currencyFormatter } from '../../utils/currencyFormatter';
-import { REQUISITION_COLUMN } from './helper';
 import { utcToLocal } from '../../utils/UTCtoLocal';
+import { Helmet } from 'react-helmet-async';
+import { useSelector } from 'react-redux';
+import { REQUISITION_COLUMN_MANUFACTURING, REQUISITION_COLUMN_NON_MANUFACTURING } from './helper';
 
 const HEADER_LINKS = [
     { title: "requisition" },
@@ -28,12 +30,17 @@ const HEADER_LINKS = [
 
 const Requisition = () => {
     const navigate = useNavigate();
+    const user = useSelector(state => state.auth.userData);
+
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [isShow, setIsShow] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
     const [downloadReqNo, setDownloadReqNo] = useState(null);
+
+    /**************** global variable *******************/
+    const isManufacture = user?.activeNode?.NodeUser?.department !== null ? true : false;
 
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["requisitionList"]);
 
@@ -89,6 +96,8 @@ const Requisition = () => {
 
     return (
         <div>
+            <Helmet><title>Requisition | MYWMS</title></Helmet>
+
             {/* Header Section */}
             <ComponentHeader
                 headerLink={HEADER_LINKS}
@@ -101,7 +110,7 @@ const Requisition = () => {
             {/* table */}
             <div className="panel mt-5 z-0 min-h-64">
                 <TableBody
-                    columns={REQUISITION_COLUMN}
+                    columns={isManufacture ? REQUISITION_COLUMN_MANUFACTURING : REQUISITION_COLUMN_NON_MANUFACTURING}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     limit={limit}
@@ -115,7 +124,7 @@ const Requisition = () => {
 
                         return <TableRow
                             key={item.id}
-                            columns={REQUISITION_COLUMN}
+                            columns={isManufacture ? REQUISITION_COLUMN_MANUFACTURING : REQUISITION_COLUMN_NON_MANUFACTURING}
                             row={{
                                 id: (
                                     <Link
@@ -126,18 +135,11 @@ const Requisition = () => {
                                     </Link>
                                 ),
                                 title: item?.title,
-                                item: item?.items?.[0]?.product?.name,  // restrict to one item in RFQ
                                 status: (
                                     <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
                                         {item?.status === "po_created" ? "po. created" : item?.status}
                                     </span>
                                 ),
-                                quotationReceived: item?.receiveQuotationCount,
-                                limitType: <p
-                                    className='uppercase whitespace-nowrap'
-                                >
-                                    {item?.price_limit_type?.split("_")?.join(" ") ?? "—"}
-                                </p>,
                                 priority: (
                                     <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
                                         {item?.priority}
@@ -154,9 +156,11 @@ const Requisition = () => {
                                             <IconTrashLines className="text-danger hover:scale-110 cursor-pointer" />
                                         </CustomeButton>
 
-                                        {/* <CustomeButton onClick={() => handelShow(item.items)} >
-                                            <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                        </CustomeButton> */}
+                                        {!isManufacture &&
+                                            <CustomeButton onClick={() => handelShow(item.items)} >
+                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                            </CustomeButton>
+                                        }
 
                                         <CustomeButton onClick={() => handelDownload(item?.requisition_no)} >
                                             {requisitionPdf_pending && (downloadReqNo === item?.requisition_no)
@@ -170,7 +174,20 @@ const Requisition = () => {
                                             }
                                         </CustomeButton>
                                     </div>
-                                )
+                                ),
+
+                                // for manufacturinf
+                                name: item?.items?.[0]?.product?.name,  // restrict to one item in RFQ
+                                quotationReceived: item?.receiveQuotationCount,
+                                limitType: <p
+                                    className='uppercase whitespace-nowrap'
+                                >
+                                    {item?.price_limit_type?.split("_")?.join(" ") ?? "—"}
+                                </p>,
+
+                                // for non manufacturing
+                                items: item?.items?.length,
+
                             }}
                         />
                     })}

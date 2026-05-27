@@ -18,6 +18,7 @@ const Input = React.forwardRef(({
     disabled = false,
     isLoading = false,
     Icon = false,
+    errorAbsolute = false,
     ...props
 }, ref) => {
 
@@ -89,8 +90,15 @@ const Input = React.forwardRef(({
                             {props.unit}
                         </span>
                     }
+                    {
+                        errorAbsolute && error && (
+                            <span className="absolute end-1 top-full text-sm mt-1 text-danger whitespace-nowrap z-10 bg-white px-1.5 py-0.5 shadow-sm rounded border border-red-200">
+                                {error}
+                            </span>
+                        )
+                    }
                 </div>
-                {error && <span className='text-danger text-sm whitespace-nowrap'>{error}</span>}
+                {!errorAbsolute && error && <span className='text-danger text-sm whitespace-nowrap'>{error}</span>}
             </div>
         </div>
     )

@@ -13,6 +13,7 @@ import { currencyFormatter } from '../../utils/currencyFormatter';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import PO from './browse/PO';
 import SO from './browse/SO';
+import { Helmet } from 'react-helmet-async';
 
 
 const headerLink = [
@@ -48,6 +49,7 @@ const OrderBrowse = () => {
 
     return (
         <div>
+            <Helmet><title>Order | MYWMS</title></Helmet>
             {/*header section */}
             <ComponentHeader
                 headerLink={headerLink}

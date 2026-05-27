@@ -125,7 +125,7 @@ export const NAV_CONFIG = [
         label: "Requisition",
         icon: FaClipboardList,
         basePath: "/requisition",
-        allowedRoles: ["system", "owner", "company", "admin", "purchase", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "purchase", "warehouse", "partner"],
         children: [
             { label: "All List", path: "/requisition" },
             { label: "Create", path: "/requisition/create" },
@@ -140,7 +140,7 @@ export const NAV_CONFIG = [
         label: "Quotation",
         icon: FaQuoteLeft,
         basePath: "/quotation",
-        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales"],
         children: [
             { label: "All List", path: "/quotation" },
             { label: "Receive Quotation", path: "/quotation/received-quotation" },
@@ -153,7 +153,7 @@ export const NAV_CONFIG = [
         label: "Orders",
         icon: MdOutlineReceiptLong,
         basePath: "/order",
-        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales", "warehouse", 'partner'],
         children: [
             { label: "List", path: "/order" },
             { label: "Blanket PO", path: "/order/bpo" },
@@ -167,7 +167,7 @@ export const NAV_CONFIG = [
         label: "Inward",
         icon: BsBoxArrowInDown,
         path: "/inward",
-        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "warehouse", "partner"],
     },
 
     // ─── Outward ───
@@ -176,7 +176,7 @@ export const NAV_CONFIG = [
         label: "Outward",
         icon: BsBoxArrowUp,
         path: "/outward",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse", "partner"],
     },
 
     // ─── Direct Transfer ───
@@ -185,13 +185,13 @@ export const NAV_CONFIG = [
         label: "Direct Transfer",
         icon: FaArrowRightArrowLeft,
         path: "/direct-transfer",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "partner"],
     },
     {
         key: "expense",
         label: "Expenses",
         icon: HiOutlineDocumentCurrencyRupee,
         path: "/expense",
-        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "store_wip", "store_fg", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "store_wip", "store_fg", "warehouse", "partner"],
     },
 ];

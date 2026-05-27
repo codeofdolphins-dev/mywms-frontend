@@ -25,6 +25,8 @@ const RFQPreview = ({
 
     const [allowEdit, setAllowEdit] = useState(false);
 
+    console.log(details)
+
 
     const { handleSubmit, register, setValue, reset, control, watch, formState: { errors } } = useForm({
         defaultValues: {
@@ -52,6 +54,7 @@ const RFQPreview = ({
                 product_name: item?.product_name,
                 uom: item?.uom,
                 price_limit: item?.price_limit,
+                price_limit_type: item?.price_limit_type,
                 offer_price: item?.offer_price ?? "",
                 supplier_product_id: item?.vendor_product?.id ?? null,
                 // vendor_product: item?.vendor_product
@@ -66,6 +69,7 @@ const RFQPreview = ({
                 product_name: item?.sourceRfqItem?.product_name,
                 uom: item?.sourceRfqItem?.uom,
                 price_limit: item?.sourceRfqItem?.price_limit,
+                price_limit_type: item?.sourceRfqItem?.price_limit_type,
                 offer_price: item?.offer_price ?? "",
             }));
             reset({ items });
@@ -242,7 +246,7 @@ const RFQPreview = ({
                             )}
                         </div>
 
-                        <div className="max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="max-h-[290px] pr-2 custom-scrollbar">
                             <div className="space-y-3 mt-3">
                                 {fields?.map((field, idx) => {
                                     return (
@@ -265,6 +269,11 @@ const RFQPreview = ({
                                                             <div className="flex items-center text-gray-600">
                                                                 <span className="text-gray-400 mr-1 font-medium uppercase tracking-wider text-[10px]">Limit:</span>
                                                                 <span className="font-medium">{currencyFormatter(field?.price_limit)}</span>
+                                                                {field?.price_limit_type !== null && (
+                                                                    <span className="ml-1.5 text-[9px] font-bold uppercase bg-red-50 text-red-600 px-1 py-0.5 rounded border border-red-100/50">
+                                                                        {field?.price_limit_type?.split("_")?.join(" ")?.toUpperCase()}
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -313,12 +322,32 @@ const RFQPreview = ({
                                                     {/* Your Price */}
                                                     <div className={`whitespace-nowrap ${!isEditable ? "w-full" : ""}`}>
                                                         <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Your Price / {field?.uom} <span className='text-danger'>*</span> </label>
+                                                        {field?.price_limit_type === 'upper_limit' && (
+                                                            <span className="text-[10px] text-amber-600 font-semibold block mb-1">
+                                                                Max: {currencyFormatter(field?.price_limit)}
+                                                            </span>
+                                                        )}
+                                                        {field?.price_limit_type === 'lower_limit' && (
+                                                            <span className="text-[10px] text-amber-600 font-semibold block mb-1">
+                                                                Min: {currencyFormatter(field?.price_limit)}
+                                                            </span>
+                                                        )}
                                                         {isEditable
                                                             ? allowEdit
                                                                 ? <Input
                                                                     placeholder="Enter price"
                                                                     className="!mb-0"
-                                                                    {...register(`items.${idx}.offer_price`)}
+                                                                    error={errors?.items?.[idx]?.offer_price?.message}
+                                                                    errorAbsolute={true}
+                                                                    {...register(`items.${idx}.offer_price`, {
+                                                                        validate: (value) => {
+                                                                            if (!value) return true;
+                                                                            if (field?.price_limit_type === 'upper_limit' && Number(value) > Number(field?.price_limit)) {
+                                                                                return `Price cannot exceed limit of ${currencyFormatter(field?.price_limit)}`;
+                                                                            }
+                                                                            return true;
+                                                                        }
+                                                                    })}
                                                                 />
                                                                 : <div className="w-36 font-bold text-lg text-gray-800 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
                                                                     {currencyFormatter(field?.offer_price)}
@@ -326,8 +355,20 @@ const RFQPreview = ({
                                                             : <Input
                                                                 placeholder="Enter price"
                                                                 className="!mb-0"
+                                                                error={errors?.items?.[idx]?.offer_price?.message}
+                                                                errorAbsolute={true}
                                                                 {...register(`items.${idx}.offer_price`, {
-                                                                    required: "Offer price is required!!!"
+                                                                    required: "Offer price is required!!!",
+                                                                    validate: (value) => {
+                                                                        if (!value) return true;
+                                                                        if (field?.price_limit_type === 'upper_limit' && Number(value) > Number(field?.price_limit)) {
+                                                                            return `Price cannot exceed ${currencyFormatter(field?.price_limit)}`;
+                                                                        }
+                                                                        if (field?.price_limit_type === 'lower_limit' && Number(value) < Number(field?.price_limit)) {
+                                                                            return `Price cannot be lower than ${currencyFormatter(field?.price_limit)}`;
+                                                                        }
+                                                                        return true;
+                                                                    }
                                                                 })}
                                                             />
                                                         }

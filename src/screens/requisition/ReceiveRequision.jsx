@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { REQUISITION_CREATE_COLUMN, REQUISITION_RECEIVE_COLUMN } from '../../utils/helper';
+import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
 import AddModal from '../../components/Add.modal';
@@ -17,6 +17,9 @@ import Tippy from '@tippyjs/react';
 import { LuBookmarkPlus } from 'react-icons/lu';
 import Button from '../../components/inputs/Button';
 import RHSelect from "../../components/inputs/RHF/Select.RHF"
+import { Helmet } from 'react-helmet-async';
+import { REQUISITION_RECEIVE_COLUMN } from './helper';
+import { FaBolt } from 'react-icons/fa6';
 
 
 const headerLink = [
@@ -29,6 +32,10 @@ const ReceiveRequision = () => {
     const nodeId = userData?.userBusinessNode?.id;
     const navigate = useNavigate();
     const { handleSubmit, register, watch, formState: { errors }, reset, setValue, control } = useForm();
+
+
+    /**************** global variable *******************/
+    const isManufacture = userData?.activeNode?.NodeUser?.department !== null ? true : false;
 
 
     /**************** pagination state *******************/
@@ -88,6 +95,29 @@ const ReceiveRequision = () => {
         }
     }
 
+    async function createOutward(item) {
+        // console.log("item", item)
+
+        const items = item.items?.map(it => ({
+            vendor_product_id: it.product_id,
+            requested_qty: it.qty
+        }))
+
+        const payload = {
+            buyer_business_node_id: item.buyer_business_node_id,
+            required_by_date: item.required_by_date,
+            req_no: item.requisition_no,
+            priority: item.priority,
+            notes: item.notes,
+            type: item.type,
+            items
+        };
+        console.log("payload", payload);
+
+        const res = await create({ path: "/outward/create", formData: payload });
+        if (res?.success) { }
+
+    }
 
     /** set status color */
     function statusColor(status) {
@@ -110,6 +140,8 @@ const ReceiveRequision = () => {
 
     return (
         <div>
+            <Helmet><title>Receive Requisition | MYWMS</title></Helmet>
+
             {/* Header Section */}
             <ComponentHeader
                 headerLink={headerLink}
@@ -137,26 +169,22 @@ const ReceiveRequision = () => {
                                 id: item?.requisition_no,
                                 title: item?.title,
                                 sender: item?.buyer?.nodeDetails?.name,
+                                location: item?.buyer?.nodeDetails?.location,
                                 priority: (
-                                    <>
-                                        <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
-                                            {item?.priority}
-                                        </span>
-                                    </>
+                                    <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
+                                        {item?.priority}
+                                    </span>
                                 ),
                                 status: (
-                                    <>
-                                        <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
-                                            {/* {item?.status === "sent" ? "Received" : item?.status} */}
-                                            {item?.status}
-                                        </span>
-                                    </>
+                                    <span className={`badge uppercase rounded-full whitespace-nowrap ${statusColor(item?.status)}`}>
+                                        {/* {item?.status === "sent" ? "Received" : item?.status} */}
+                                        {item?.status?.split("_").join(" ")}
+                                    </span>
                                 ),
                                 itemsCount: item?.items?.length,
                                 notes: item?.notes,
-                                action: (
-                                    <div className='flex items-center justify-center gap-2'>
-
+                                action: isManufacture
+                                    ? <div className='flex items-center justify-center gap-2'>
                                         {item?.status !== "assign_fg" &&
                                             <Tippy
                                                 content="Assign FG Store"
@@ -167,7 +195,7 @@ const ReceiveRequision = () => {
                                                         setIsShow(true);
                                                     }}
                                                 >
-                                                    <LuBookmarkPlus
+                                                    <FaBolt
                                                         className="hover:scale-110 cursor-pointer"
                                                         strokeWidth={1.5}
                                                         size={20}
@@ -189,7 +217,35 @@ const ReceiveRequision = () => {
                                             </button>
                                         </Tippy>
                                     </div>
-                                )
+                                    : <div className="flex items-center gap-2">
+                                        <Tippy
+                                            content="Preview"
+                                        >
+                                            <button
+                                                onClick={() => {
+                                                    setDetails(item);
+                                                    setIsShowDetails(true);
+                                                }}
+                                            >
+                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                            </button>
+                                        </Tippy>
+                                        <Tippy
+                                            content="Create Outward"
+                                        >
+                                            <button
+                                                onClick={() => {
+                                                    createOutward(item)
+                                                }}
+                                            >
+                                                <FaBolt
+                                                    className="hover:scale-110 cursor-pointer"
+                                                    strokeWidth={1.5}
+                                                    size={20}
+                                                />
+                                            </button>
+                                        </Tippy>
+                                    </div>
                             }}
                         />
                     ))}
@@ -272,16 +328,19 @@ const ReceiveRequision = () => {
                                         <div className="text-white-dark">Location:</div>
                                         <div>{details?.buyer?.nodeDetails?.location || "N/A"}</div>
                                     </div>
-                                    <div className="flex items-center w-full justify-between mb-2 gap-5">
-                                        <div className="flex items-center w-full justify-between">
-                                            <div className="text-white-dark">Lat:</div>
-                                            <div>{details?.buyer?.nodeDetails?.address?.lat || "N/A"}</div>
+
+                                    {isManufacture &&
+                                        <div className="flex items-center w-full justify-between mb-2 gap-5">
+                                            <div className="flex items-center w-full justify-between">
+                                                <div className="text-white-dark">Lat:</div>
+                                                <div>{details?.buyer?.nodeDetails?.address?.lat || "N/A"}</div>
+                                            </div>
+                                            <div className="flex items-center w-full justify-between">
+                                                <div className="text-white-dark">Long:</div>
+                                                <div>{details?.buyer?.nodeDetails?.address?.long || "N/A"}</div>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center w-full justify-between">
-                                            <div className="text-white-dark">Long:</div>
-                                            <div>{details?.buyer?.nodeDetails?.address?.long || "N/A"}</div>
-                                        </div>
-                                    </div>
+                                    }
 
                                     <div className="flex items-center w-full justify-between mb-2 gap-5">
                                         <div className="flex items-center w-full justify-between">
@@ -344,7 +403,9 @@ const ReceiveRequision = () => {
                             </div>
 
                             {/* buttton */}
-                            {details?.status !== "assign_fg" &&
+
+                            {isManufacture ?
+                                details?.status !== "assign_fg" &&
                                 <div className="flex items-center mt-1">
                                     <button
                                         type='button'
@@ -352,6 +413,11 @@ const ReceiveRequision = () => {
                                         onClick={() => setIsShow(true)}
                                     >
                                         Assign to FG Store
+                                    </button>
+                                </div>
+                                : <div className="flex items-center justify-center mt-5">
+                                    <button type="submit" className="btn btn-primary">
+                                        Create Outward
                                     </button>
                                 </div>
                             }

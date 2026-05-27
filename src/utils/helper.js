@@ -97,19 +97,6 @@ export const QUOTATION_RECEIVE_RAW_COLUMN = [
 ];
 
 
-
-
-export const REQUISITION_RECEIVE_COLUMN = [
-    { key: "id", label: "#", align: "center" },
-    { key: "title", label: "Title" },
-    { key: "sender", label: "Sender" },
-    { key: "priority", label: "Priority", align: "center" },
-    { key: "status", label: "Status", align: "center" },
-    { key: "itemsCount", label: "Total Items", align: "center" },
-    { key: "notes", label: "Notes" },
-    { key: "action", label: "Action", align: "center" },
-];
-
 export const REQUISITION_RECEIVE_DETAILS_COLUMN = [
     { key: "barcode", label: "Barcode" },
     { key: "product", label: "Name" },

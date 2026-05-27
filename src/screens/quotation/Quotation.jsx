@@ -20,6 +20,7 @@ import RFQPreview from '../../components/dashboard/RFQPreview';
 import { currencyFormatter } from '../../utils/currencyFormatter';
 import masterData from '../../Backend/master.backend';
 import { confirmation } from '../../utils/alerts';
+import { Helmet } from 'react-helmet-async';
 
 
 const headerLink = [
@@ -123,6 +124,7 @@ const Quotation = () => {
 
     return (
         <div>
+            <Helmet><title>Quotation | MYWMS</title></Helmet>
             {/*header section */}
             <ComponentHeader
                 headerLink={headerLink}

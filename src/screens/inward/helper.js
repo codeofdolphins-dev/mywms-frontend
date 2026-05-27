@@ -4,5 +4,5 @@ export const INWARD_COLUMN = [
     { key: "date", label: "Receive Date" },
     { key: "items", label: "Total Items" },
     { key: "status", label: "Status" },
-    { key: "createdBy", label: "Created By" },
+    { key: "createdBy", label: "Received By" },
 ];

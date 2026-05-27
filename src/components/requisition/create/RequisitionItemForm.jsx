@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '../../inputs/Input';
 import { Controller, useForm } from 'react-hook-form';
-import { debounce } from 'lodash';
 import fetchData from '../../../Backend/fetchData.backend';
 import { Button } from '@mantine/core';
+import RHSelect from '../../inputs/RHF/Select.RHF';
 
 const RequisitionItemForm = ({
     setIsShow,
@@ -12,100 +12,29 @@ const RequisitionItemForm = ({
 }) => {
     const hiddenIds = selectedItems?.map(i => i.id) ?? [];
 
-    const { handleSubmit, control, register, watch, setValue, resetField, reset, formState: { errors }, setError, clearErrors } = useForm({
+    const { handleSubmit, control, register, watch, setValue, reset, formState: { errors }, setError, clearErrors } = useForm({
         defaultValues: {
+            productId: "",
             barcode: "",
             category: "",
             subCategory: "",
             brand: "",
             productName: "",
             packSize: "",
+            mrp: "",
             packageType: "",
             reqQty: "",
         }
     });
 
-    const barcode = watch("barcode");
-
-    const [searchText, setSearchText] = useState("");
-    const [availCategory, setAvailCategory] = useState(null);
-
-    const { data, isLoading, error, isError } = fetchData.TQProductList({ barcode: searchText, type: "finished", noLimit: true }, !!searchText);
-
-    // debounce function
-    const deBounceFn = useMemo(() =>
-        debounce((value) => {
-            setSearchText(value);
-        }, 500),
-        []
-    );
-    useEffect(() => {
-        return () => deBounceFn.cancel();
-    }, []);
-
-    const product = data?.data[0] ?? null;
-
-
-    /** check product is available or not  */
-    useEffect(() => {
-        if (!barcode?.length) return;
-
-        if (!product) {
-            setError("barcode", { message: "Product not found!!!" })
-        } else {
-            clearErrors("barcode");
-        }
-
-    }, [product, barcode]);
-
-
-    /** check entered product already selected or not */
-    const isAlreadySelected = hiddenIds?.includes(product?.id);
-    useEffect(() => {
-        if (isAlreadySelected) {
-            setError("barcode", {
-                message: "product already selected!!!"
-            })
-        } else {
-            clearErrors("barcode");
-        }
-
-    }, [isAlreadySelected]);
-
-
-    // auto fill values on fields
-    useEffect(() => {
-        if (!barcode?.length) return;
-
-        if (product) {
-            setValue("productName", product?.name ?? "");
-            setValue("packSize", `${product?.measure} ${product?.unit_type}`);
-            setValue("packageType", product?.package_type ?? "");
-            setValue("brand", product?.productBrands?.[0]?.name ?? "");
-            setValue("category", product?.productCategories?.[0]?.name ?? "");
-            setValue("subCategory", product?.productCategories?.[0]?.subcategories?.[0]?.name ?? "");
-
-        } else {
-            resetField("productName");
-            resetField("packSize");
-            resetField("packageType");
-            resetField("brand");
-            resetField("ReqQty");
-            resetField("category");
-            resetField("subCategory");
-        }
-    }, [barcode, data]);
-
+    const { data: finishedProducts, isLoading: productsLoading } = fetchData.TQProductList({ type: "finished", noLimit: true });
 
     function submitForm(data) {
-
-        // console.log(data); return
-
         setSelectedItems(prev => [
             ...prev,
             {
                 ...data,
-                id: product?.id,
+                id: data.productId,
             }
         ]);
 
@@ -115,7 +44,6 @@ const RequisitionItemForm = ({
 
     return (
         <div className="panel" id="forms_grid">
-
             <form onSubmit={handleSubmit(submitForm)}>
                 {/* form */}
                 <div className='space-y-5'>
@@ -127,34 +55,117 @@ const RequisitionItemForm = ({
                             <Input
                                 type="number"
                                 label="Barcode"
-                                placeholder="Enter barcode number"
-                                {...register("barcode", {
-                                    required: {
-                                        message: "Barcode required",
-                                        value: true
-                                    }
-                                })}
+                                placeholder="Enter or scan barcode"
+                                {...register("barcode")}
                                 onChange={(e) => {
                                     register("barcode").onChange(e);
-                                    deBounceFn(e.target.value);
+                                    const val = e.target.value;
+                                    if (val) {
+                                        const foundProduct = finishedProducts?.data?.find(p => p.barcode === val);
+                                        if (foundProduct) {
+                                            if (hiddenIds?.includes(foundProduct.id)) {
+                                                setError("barcode", { message: "product already selected!!!" });
+                                                setValue("productId", "");
+                                                setValue("productName", "");
+                                                setValue("packSize", "");
+                                                setValue("mrp", "");
+                                                setValue("packageType", "");
+                                                setValue("brand", "");
+                                                setValue("category", "");
+                                                setValue("subCategory", "");
+                                            } else {
+                                                setValue("productId", foundProduct.id, { shouldValidate: true });
+                                                setValue("productName", foundProduct.name, { shouldValidate: true });
+                                                setValue("packSize", `${foundProduct.measure} ${foundProduct.unit_type}`);
+                                                setValue("mrp", `${foundProduct.mrp}`);
+                                                setValue("packageType", foundProduct.package_type ?? "");
+                                                setValue("brand", foundProduct.productBrands?.[0]?.name ?? "");
+                                                setValue("category", foundProduct.productCategories?.[0]?.name ?? "");
+                                                setValue("subCategory", foundProduct.productCategories?.[0]?.subcategories?.[0]?.name ?? "");
+                                                clearErrors("barcode");
+                                            }
+                                        } else {
+                                            setValue("productId", "");
+                                            setValue("productName", "");
+                                            setValue("packSize", "");
+                                            setValue("mrp", "");
+                                            setValue("packageType", "");
+                                            setValue("brand", "");
+                                            setValue("category", "");
+                                            setValue("subCategory", "");
+                                            setError("barcode", { message: "Product not found!!!" });
+                                        }
+                                    } else {
+                                        setValue("productId", "");
+                                        setValue("productName", "");
+                                        setValue("packSize", "");
+                                        setValue("mrp", "");
+                                        setValue("packageType", "");
+                                        setValue("brand", "");
+                                        setValue("category", "");
+                                        setValue("subCategory", "");
+                                        clearErrors("barcode");
+                                    }
                                 }}
                                 error={errors.barcode?.message}
-                                required={true}
-                                isLoading={isLoading}
+                                isLoading={productsLoading}
                                 autoFocus={true}
                             />
                         </div>
 
-                        {/* product name */}
+                        {/* product name select */}
                         <div>
-                            <Input
-                                label="Product Name"
-                                placeholder="Enter product name"
-                                {...register("productName")}
-                                disabled={true}
+                            <Controller
+                                name="productId"
+                                control={control}
+                                rules={{ required: "Product Name is required!!!" }}
+                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                    <RHSelect
+                                        ref={(el) => {
+                                            ref({
+                                                focus: () => el?.focus(),
+                                            });
+                                        }}
+                                        value={value}
+                                        onChange={(val) => {
+                                            onChange(val);
+                                            if (val) {
+                                                const selectedId = val?.id || val;
+                                                const foundProduct = finishedProducts?.data?.find(p => p.id === selectedId);
+                                                if (foundProduct) {
+                                                    setValue("barcode", foundProduct.barcode ?? "", { shouldValidate: true });
+                                                    setValue("productName", foundProduct.name ?? "", { shouldValidate: true });
+                                                    setValue("packSize", `${foundProduct.measure} ${foundProduct.unit_type}`);
+                                                    setValue("mrp", `${foundProduct.mrp}`);
+                                                    setValue("packageType", foundProduct.package_type ?? "");
+                                                    setValue("brand", foundProduct.productBrands?.[0]?.name ?? "");
+                                                    setValue("category", foundProduct.productCategories?.[0]?.name ?? "");
+                                                    setValue("subCategory", foundProduct.productCategories?.[0]?.subcategories?.[0]?.name ?? "");
+                                                    clearErrors("barcode");
+                                                }
+                                            } else {
+                                                setValue("barcode", "", { shouldValidate: true });
+                                                setValue("productName", "", { shouldValidate: true });
+                                                setValue("packSize", "");
+                                                setValue("mrp", "");
+                                                setValue("packageType", "");
+                                                setValue("brand", "");
+                                                setValue("category", "");
+                                                setValue("subCategory", "");
+                                            }
+                                        }}
+                                        label="Product Name"
+                                        options={finishedProducts?.data}
+                                        error={error?.message}
+                                        required={true}
+                                        isLoading={productsLoading}
+                                        placeholder="Select product..."
+                                        hiddenIds={hiddenIds}
+                                        isClearable={true}
+                                    />
+                                )}
                             />
                         </div>
-
                     </div>
 
                     {/* 2nd */}
@@ -163,9 +174,8 @@ const RequisitionItemForm = ({
                         <div>
                             <Input
                                 label="Category"
-                                placeholder="Enter Category"
+                                // placeholder="Category"
                                 {...register("category")}
-                                required={true}
                                 disabled={true}
                             />
                         </div>
@@ -174,9 +184,8 @@ const RequisitionItemForm = ({
                         <div>
                             <Input
                                 label="Sub Category"
-                                placeholder="Enter Sub-Category"
+                                // placeholder="Sub-Category"
                                 {...register("subCategory")}
-                                required={true}
                                 disabled={true}
                             />
                         </div>
@@ -188,9 +197,8 @@ const RequisitionItemForm = ({
                         <div>
                             <Input
                                 label="Brand"
-                                placeholder="Enter Brand Name"
+                                // placeholder="Brand Name"
                                 {...register("brand")}
-                                required={true}
                                 disabled={true}
                             />
                         </div>
@@ -199,7 +207,7 @@ const RequisitionItemForm = ({
                         <div>
                             <Input
                                 label="Package Type"
-                                placeholder="Enter unit type"
+                                // placeholder="Package type"
                                 {...register("packageType")}
                                 disabled={true}
                             />
@@ -207,17 +215,26 @@ const RequisitionItemForm = ({
                     </div>
 
                     {/* 4th */}
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-3 gap-5">
                         {/* pack size */}
                         <div>
                             <Input
                                 label="Pack Size"
-                                placeholder="Enter pack size"
+                                // placeholder="Pack size"
                                 {...register("packSize")}
                                 disabled={true}
                             />
                         </div>
 
+                        {/* mrp */}
+                        <div>
+                            <Input
+                                label="MRP"
+                                // placeholder="mrp"
+                                {...register("mrp")}
+                                disabled={true}
+                            />
+                        </div>
 
                         {/* Req Qty */}
                         <div>
@@ -230,29 +247,10 @@ const RequisitionItemForm = ({
                                         value: true
                                     }
                                 })}
-                                error={errors.ReqQty?.message}
+                                error={errors.reqQty?.message}
                                 required={true}
                             />
                         </div>
-                    </div>
-
-                    {/* 5th */}
-                    <div className="grid grid-cols-2 gap-5">
-                        {/* Price Limit */}
-                        {/* <div>
-                            <Input
-                                label="Price Limit"
-                                placeholder="Enter limit"
-                                {...register("priceLimit", {
-                                    required: {
-                                        message: "price limit required!!!",
-                                        value: true
-                                    }
-                                })}
-                                error={errors.priceLimit?.message}
-                                required={true}
-                            />
-                        </div> */}
                     </div>
 
                     {/* button section */}
@@ -265,8 +263,8 @@ const RequisitionItemForm = ({
                         <Button
                             type="submit"
                             className="btn btn-primary"
-                            disabled={isAlreadySelected || !product}
-                            loading={isLoading}
+                            disabled={!watch("productId")}
+                            loading={productsLoading}
                         >
                             Add Item
                         </Button>

@@ -12,6 +12,7 @@ import TableBody from '../../components/table/TableBody';
 import TableRow from '../../components/table/TableRow';
 import secureLocalStorage from 'react-secure-storage';
 import { utcToLocal } from '../../utils/UTCtoLocal';
+import { Helmet } from 'react-helmet-async';
 
 
 
@@ -65,6 +66,7 @@ const BlanketPO = () => {
 
     return (
         <div>
+            <Helmet><title>Blanket PO | MYWMS</title></Helmet>
             <div className="flex items-center justify-between gap-5">
                 <ComponentHeader
                     headerLink={headerLink}

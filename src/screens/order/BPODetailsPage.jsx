@@ -22,6 +22,7 @@ import masterData from '../../Backend/master.backend';
 import AddModal from '../../components/Add.modal';
 import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import RealseOrderPreview from './ReleaseOrderPreview';
+import { Helmet } from 'react-helmet-async';
 
 
 const HEADER_LINK = [
@@ -122,6 +123,7 @@ const BPODetailsPage = () => {
 
 	return (
 		<>
+			<Helmet><title>BPO Details | MYWMS</title></Helmet>
 			<form onSubmit={handleSubmit(submitData)} className=" font-sans">
 				{/* Header Section */}
 				<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
