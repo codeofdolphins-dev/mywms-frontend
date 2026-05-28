@@ -99,11 +99,11 @@ function App() {
                             <Route path="update/:id" element={<CreateUser />} />
                             <Route path="profile/:id" element={<UserProfile />} />
                         </Route>
+                    </Route>
 
-                        {/* inventory */}
-                        <Route path="inventory" >
-                            <Route index element={<Inventory />} />
-                        </Route>
+                    {/* inventory */}
+                    <Route path="inventory" >
+                        <Route index element={<Inventory />} />
                     </Route>
 
 

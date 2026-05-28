@@ -4,7 +4,7 @@ import { MdAdminPanelSettings, MdOutlineReceiptLong } from "react-icons/md";
 import { FaClipboardList } from "react-icons/fa";
 import { FaArrowRightArrowLeft, FaQuoteLeft } from "react-icons/fa6";
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
-import { BiSolidFactory } from "react-icons/bi";
+import { BiSolidFactory, BiSolidStore } from "react-icons/bi";
 import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
 
 
@@ -24,7 +24,7 @@ export const NAV_CONFIG = [
         label: "Master",
         icon: HiDatabase,
         path: "/master",
-        allowedRoles: ["system", "owner", "company", "admin", "warehouse"],
+        allowedRoles: ["system", "owner", "company", "admin"],
         children: [
             { key: "category", label: "Category", path: "/master/categories" },
             { key: "brand", label: "Brand", path: "/master/brands" },
@@ -32,9 +32,20 @@ export const NAV_CONFIG = [
             { key: "hsn", label: "HSN", path: "/master/hsncodes" },
             { key: "unit", label: "Unit", path: "/master/unit-types" },
             { key: "package", label: "Package", path: "/master/package-types" },
+            { key: "cost-heads", label: "Cost-heads", path: "/master/cost-heads" },
             // { key: "bom", label: "BOM", path: "/master/bom" },
             // { key: "supplier", label: "Supplier", path: "/master/suppliers" },
         ],
+    },
+
+
+    // ─── Inventory ───
+    {
+        key: "inventory",
+        label: "Inventory",
+        icon: BiSolidStore,
+        path: "/inventory",
+        allowedRoles: ["system", "owner", "company", "admin", "warehouse", "partner"],
     },
 
     // ─── Super Admin ───
@@ -78,10 +89,10 @@ export const NAV_CONFIG = [
                     { label: "Register User", path: "/admin/user/register" },
                 ],
             },
-            {
-                label: "Inventory",
-                path: "/admin/inventory",
-            },
+            // {
+            //     label: "Inventory",
+            //     path: "/inventory",
+            // },
         ],
     },
 
@@ -185,7 +196,7 @@ export const NAV_CONFIG = [
         label: "Direct Transfer",
         icon: FaArrowRightArrowLeft,
         path: "/direct-transfer",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "partner"],
+        allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
     },
     {
         key: "expense",

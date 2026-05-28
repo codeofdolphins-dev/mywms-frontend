@@ -4,9 +4,9 @@ import Input from '../inputs/Input';
 import TextArea from '../inputs/TextArea';
 import { Button } from '@mantine/core';
 import RHSelect from "../inputs/RHF/Select.RHF"
-import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import FullScreenLoader from '../loader/FullScreenLoader';
+import costFetch from '../../Backend/cost.fetch';
 
 
 const CostHeadForm = ({ setIsShow, data = [], editId }) => {
@@ -14,7 +14,8 @@ const CostHeadForm = ({ setIsShow, data = [], editId }) => {
     const { mutateAsync: create, isPending: isCreatePending } = masterData.TQCreateMaster(["costHeadList"]);
     const { mutateAsync: update, isPending: isUpdatePending } = masterData.TQUpdateMaster(["costHeadList"]);
 
-    const { data: value, isLoading } = fetchData.TQCostHeadList({ id: editId }, !!editId);
+    const { data: value, isLoading } = costFetch.TQCostHeadList({ id: editId }, !!editId);
+
 
     const {
         register,

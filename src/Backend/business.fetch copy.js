@@ -2,11 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import API from ".";
 
 class Inventory {
-    TQInventoryList(params = {}, isEnabled = true) {
+    TQInventoryScopeList(params = {}, isEnabled = true) {
         return useQuery({
-            queryKey: ["inventoryList", params],
+            queryKey: ["inventoryScopeList", params],
             queryFn: async () => {
-                const res = await API.get("/inventory/list", { params });
+                const res = await API.get("/inventory/scope_list", { params });
+                return res.data;
+            },
+            enabled: isEnabled
+        });
+    };
+    TQInventoryFullList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["inventoryFullList", params],
+            queryFn: async () => {
+                const res = await API.get("/inventory/full_list", { params });
                 return res.data;
             },
             enabled: isEnabled

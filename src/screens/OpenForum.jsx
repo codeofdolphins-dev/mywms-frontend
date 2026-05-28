@@ -26,7 +26,7 @@ const Dashboard = () => {
     const [status, setStatus] = useState("open");
     const [priority, setPriority] = useState("all");
 
-    const [search, setSearch] = useState(null);
+    const [search, setSearch] = useState({});
 
     /** pagination states */
     const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +36,7 @@ const Dashboard = () => {
         ...(search && Object.fromEntries(
             Object.entries(search).filter(([_, value]) => value && String(value).trim() !== "")
         )),
-        status,
+        ...(status !== "all" && { status }),
         priority,
         limit,
         page: currentPage
@@ -45,7 +45,13 @@ const Dashboard = () => {
     const isEmpty = rfqList?.data?.length === 0;
 
     useEffect(() => {
+        console.log(search)
+
         if (search && Object.values(search).some(val => val && String(val).trim() !== "")) {
+            setStatus("all");
+            setPriority("all");
+        }
+        if (Object.keys(search)?.length === 0) {
             setStatus("open");
             setPriority("all");
         }
@@ -93,6 +99,7 @@ const Dashboard = () => {
                                 onChange={(e) => setStatus(e.target.value)}
                                 className="border-gray-200 rounded-lg p-1 border text-sm"
                             >
+                                <option value="all">Status: all</option>
                                 <option value="open">Status: Open</option>
                                 <option value="closed">Status: Closed</option>
                             </select>

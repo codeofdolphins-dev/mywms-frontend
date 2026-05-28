@@ -19,8 +19,9 @@ class PDF {
             onSuccess: (res) => {
                 successAlert("PDF generated successfully");
 
-                if (key.length > 0) {
-                    QueryClient.invalidateQueries({ queryKey: key });
+                if (key.length < 1) return;
+                if (res.success) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
                 }
 
 
@@ -63,8 +64,9 @@ class PDF {
             onSuccess: (res) => {
                 successAlert("PDF generated successfully");
 
-                if (key.length > 0) {
-                    QueryClient.invalidateQueries({ queryKey: key });
+                if (key.length < 1) return;
+                if (res.success) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
                 }
 
 

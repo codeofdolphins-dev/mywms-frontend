@@ -14,6 +14,7 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
         try {
             // format data
             const formData = {
+                rfq_id: data.rfq_id,
                 pr_reference_code: data.requisition.pr_reference_code,
                 rfq_quotation_revision_id: data.activeRevision.id,
                 buyer_tenant: data.requisition.buyer_tenant,

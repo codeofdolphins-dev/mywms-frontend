@@ -10,7 +10,6 @@ import fetchData from '../../Backend/fetchData.backend';
 import { Controller, useForm } from 'react-hook-form';
 import masterData from '../../Backend/master.backend';
 import { useSelector } from 'react-redux';
-import FullScreenLoader from '../../components/loader/FullScreenLoader';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import { MdCurrencyRupee } from 'react-icons/md';
 import Tippy from '@tippyjs/react';
@@ -59,7 +58,7 @@ const ReceiveRequision = () => {
 
     /**************** data fetching GET *******************/
     const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
-    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true });
+    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, isManufacture);
 
     const isEmpty = receiveRequisitionList?.data?.length === 0;
 
@@ -136,8 +135,6 @@ const ReceiveRequision = () => {
         }
     }
 
-    if (receiveRequisitionListLoading) return <FullScreenLoader />;
-
     return (
         <div>
             <Helmet><title>Receive Requisition | MYWMS</title></Helmet>
@@ -158,7 +155,7 @@ const ReceiveRequision = () => {
                     setCurrentPage={setCurrentPage}
                     limit={limit}
                     setLimit={setLimit}
-                    totalPage={1}
+                    totalPage={receiveRequisitionList?.pagination?.totalPages}
                     isEmpty={isEmpty}
                 >
                     {receiveRequisitionList?.data?.map((item, idx) => (

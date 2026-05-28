@@ -1,10 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import ComponentHeader from '../../../../components/ComponentHeader';
-import TableBody from '../../../../components/table/TableBody';
-import TableRow from '../../../../components/table/TableRow';
-import AddModal from '../../../../components/Add.modal';
-import { RM_INVENTORY_BATCH_COLUMN } from '../../../../utils/helper';
-import { currencyFormatter } from '../../../../utils/currencyFormatter';
 import {
     FiPackage, FiAlertTriangle, FiTrendingUp, FiTrendingDown,
     FiCalendar, FiLayers, FiEye, FiFilter, FiSearch
@@ -13,10 +7,14 @@ import { BsExclamationTriangle } from 'react-icons/bs';
 import { MdOutlineInventory2, MdOutlineWarehouse } from 'react-icons/md';
 import { HiOutlineCube } from 'react-icons/hi';
 import Tippy from '@tippyjs/react';
-import StatCard from '../../../../components/inventory/inventoryCard';
-import BulkCreationModal from '../../../../components/inventory/BulkCreation.modal';
-import inventory from '../../../../Backend/business.fetch copy';
-import { FG_INVENTORY_COLUMN } from '../helper';
+import TableBody from '../../../components/table/TableBody';
+import TableRow from '../../../components/table/TableRow';
+import AddModal from '../../../components/Add.modal';
+import { currencyFormatter } from '../../../utils/currencyFormatter';
+import StatCard from '../../../components/inventory/inventoryCard';
+import inventory from '../../../Backend/business.fetch copy';
+import { FG_INVENTORY_COLUMN } from '../../facilities/fgStore/helper';
+import { RM_INVENTORY_BATCH_COLUMN } from '../../../utils/helper';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 /**
@@ -122,7 +120,7 @@ function computeStats(items) {
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
-const FGstock = () => {
+const NonAdminInventory = () => {
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -131,7 +129,7 @@ const FGstock = () => {
     const [isBulkShow, setIsBulkShow] = useState(false);
     const [statusFilter, setStatusFilter] = useState('all');
 
-    const { data, isLoading } = inventory.TQInventoryList();
+    const { data, isLoading } = inventory.TQInventoryScopeList();
 
     // Enrich each product by aggregating qty/price from its batches[]
     const inventoryData = useMemo(() => {
@@ -164,7 +162,6 @@ const FGstock = () => {
     const isEmpty = filteredData.length < 1;
 
     function handleViewBatches(product) {
-        console.log(product)
         setSelectedProduct(product);
         setIsShow(true);
     }
@@ -316,7 +313,7 @@ const FGstock = () => {
                                             </div>
                                         ),
                                         sku: (
-                                            <span className="font-mono text-xs bg-gray-50 px-2 py-1 rounded text-gray-600">{item?.sku}</span>
+                                            <span className="font-mono text-xs bg-gray-50 px-2 py-1 rounded text-gray-600 whitespace-nowrap">{item?.sku}</span>
                                         ),
                                         category: (
                                             <span className="text-xs bg-primary/5 text-primary font-semibold px-2 py-1 rounded-full capitalize">
@@ -444,7 +441,7 @@ const FGstock = () => {
                                             }
                                             row={{
                                                 batchNo: (
-                                                    <span className="font-mono text-xs font-semibold text-gray-700">{batch.batch_no}</span>
+                                                    <span className="font-mono text-xs font-semibold text-gray-700 whitespace-nowrap">{batch.batch_no}</span>
                                                 ),
                                                 qty: (
                                                     <span className="font-bold text-sm">
@@ -485,24 +482,11 @@ const FGstock = () => {
                     </div>
                 )}
             </AddModal>
-
-            {/* ─── Bulk creation modal ──────────────────────────────────────── */}
-            <AddModal
-                isShow={isBulkShow}
-                setIsShow={setIsBulkShow}
-                title="Bulk Creation"
-                maxWidth='60'
-                placement='start'
-            >
-                <BulkCreationModal
-                    onCancel={() => setIsBulkShow(false)}
-                />
-            </AddModal>
         </>
     );
 };
 
-export default FGstock;
+export default NonAdminInventory;
 
 
 // ─── Sub-components ─────────────────────────────────────────────────────────────

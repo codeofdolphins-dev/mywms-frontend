@@ -5,5 +5,5 @@ export const remainingDays = (date) => {
     const deadLineDate = new Date(date);
 
     const diffTime = deadLineDate - currentDate;
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffTime > 0 ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : 0;
 }

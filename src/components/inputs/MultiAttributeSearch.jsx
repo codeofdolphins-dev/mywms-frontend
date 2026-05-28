@@ -31,7 +31,6 @@ const MultiAttributeSearch = ({
     const { handleSubmit, register, reset } = useForm();
 
     const onSubmit = (data) => {
-        console.log(data);
         setSearchObject(data);
     }
 

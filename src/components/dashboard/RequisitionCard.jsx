@@ -216,7 +216,7 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                             <span>Deadline: {new Date(details?.submission_deadline).toLocaleDateString()}</span>
                         </div>
                     )}
-                    {(isLogin && buyerTenant !== details?.buyer_tenant) && (
+                    {details.status == 'open' && (isLogin && buyerTenant !== details?.buyer_tenant) && (
                         <button
                             type="button"
                             onClick={previewCumSubmit}

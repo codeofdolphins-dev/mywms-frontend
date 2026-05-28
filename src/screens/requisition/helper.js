@@ -16,6 +16,7 @@ export const REQUISITION_COLUMN_MANUFACTURING = [
     { key: "name", label: "Product" },
     { key: "status", label: "Status", align: "center" },
     { key: "quotationReceived", label: "Quo. Received", align: "center" },
+    { key: "price", label: "Price" },
     { key: "limitType", label: "Price Limit" },
     { key: "priority", label: "Priority", align: "center" },
     { key: "notes", label: "Notes" },

@@ -1,128 +1,103 @@
 import React, { useState, useMemo } from 'react';
-import ComponentHeader from '../../../../components/ComponentHeader';
-import TableBody from '../../../../components/table/TableBody';
-import TableRow from '../../../../components/table/TableRow';
-import AddModal from '../../../../components/Add.modal';
-import { RM_INVENTORY_BATCH_COLUMN } from '../../../../utils/helper';
-import { currencyFormatter } from '../../../../utils/currencyFormatter';
+import TableBody from '../../../components/table/TableBody';
+import TableRow from '../../../components/table/TableRow';
+import AddModal from '../../../components/Add.modal';
+import { INVENTORY_COLUMN, INVENTORY_BATCH_COLUMN } from '../../../utils/helper';
+import { currencyFormatter } from '../../../utils/currencyFormatter';
 import {
     FiPackage, FiAlertTriangle, FiTrendingUp, FiTrendingDown,
-    FiCalendar, FiLayers, FiEye, FiFilter, FiSearch
+    FiBox, FiCalendar, FiLayers, FiEye, FiFilter,
+    FiChevronDown, FiSearch
 } from 'react-icons/fi';
-import { BsExclamationTriangle } from 'react-icons/bs';
+import { BsBoxSeam, BsExclamationTriangle } from 'react-icons/bs';
 import { MdOutlineInventory2, MdOutlineWarehouse } from 'react-icons/md';
 import { HiOutlineCube } from 'react-icons/hi';
 import Tippy from '@tippyjs/react';
-import StatCard from '../../../../components/inventory/inventoryCard';
-import BulkCreationModal from '../../../../components/inventory/BulkCreation.modal';
-import inventory from '../../../../Backend/business.fetch copy';
-import { FG_INVENTORY_COLUMN } from '../helper';
+import ComponentHeader from '../../../components/ComponentHeader';
+import StatCard from '../../../components/inventory/inventoryCard';
+import BulkCreationModal from '../../../components/inventory/BulkCreation.modal';
+import inventory from '../../../Backend/business.fetch copy';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
-/**
- * The API returns products with nested batches[].
- * Aggregate qty/price fields so the rest of the component works uniformly.
- * When batches have different unit prices, we store both min and max
- * so the UI can display a price range.
- */
-function enrichProduct(product) {
-    const batches = product?.batches ?? [];
-    const totalQty = batches.reduce(
-        (sum, b) => sum + parseFloat(b.available_qty ?? 0) + parseFloat(b.reserved_qty ?? 0), 0
-    );
-    const availableQty = batches.reduce((sum, b) => sum + parseFloat(b.available_qty ?? 0), 0);
-    const reservedQty = batches.reduce((sum, b) => sum + parseFloat(b.reserved_qty ?? 0), 0);
-
-    // Price range — min & max across batches
-    const prices = batches.map(b => parseFloat(b.unit_price ?? 0)).filter(p => p > 0);
-    const minPrice = prices.length ? Math.min(...prices) : 0;
-    const maxPrice = prices.length ? Math.max(...prices) : 0;
-
-    // Weighted stock value = sum of each batch's (qty × product.mrp)
-    const stockValue = batches.reduce((sum, b) => {
-        const batchQty = parseFloat(b.available_qty ?? 0) + parseFloat(b.reserved_qty ?? 0);
-        return sum + batchQty * parseFloat(product.mrp ?? 0);
-    }, 0);
-
-    return { ...product, totalQty, availableQty, reservedQty, minPrice, maxPrice, stockValue };
-}
-
-/** Format unit price — shows a range when min ≠ max */
-function formatPriceRange(minPrice, maxPrice) {
-    if (minPrice === maxPrice) return currencyFormatter(maxPrice);
-    return `${currencyFormatter(minPrice)} – ${currencyFormatter(maxPrice)}`;
-}
-
 function getStockStatus(item) {
-    if (item.totalQty === 0) return 'out_of_stock';
-    if (item.totalQty <= item.reorder_level * 0.5) return 'critical';
-    if (item.totalQty <= item.reorder_level) return 'low_stock';
-    return 'in_stock';
+    if (item.totalQty === 0) return "out_of_stock";
+    if (item.totalQty <= item.reorderLevel * 0.5) return "critical";
+    if (item.totalQty <= item.reorderLevel) return "low_stock";
+    return "in_stock";
 }
 
 function getStatusBadge(status) {
     const map = {
-        in_stock: { label: 'In Stock', cls: 'bg-success' },
-        low_stock: { label: 'Low Stock', cls: 'bg-warning' },
-        critical: { label: 'Critical', cls: 'bg-danger' },
-        out_of_stock: { label: 'Out of Stock', cls: 'bg-dark' },
+        in_stock: { label: "In Stock", cls: "bg-success" },
+        low_stock: { label: "Low Stock", cls: "bg-warning" },
+        critical: { label: "Critical", cls: "bg-danger" },
+        out_of_stock: { label: "Out of Stock", cls: "bg-dark" },
     };
     const s = map[status] || map.in_stock;
-    return <span className={`badge uppercase text-nowrap rounded-full text-[10px] tracking-wide ${s.cls}`}>{s.label}</span>;
+    return <span className={`badge uppercase rounded-full text-[10px] tracking-wide whitespace-nowrap text-nowrap ${s.cls}`}>{s.label}</span>;
 }
 
 function getDaysToExpiry(expiryDate) {
-    if (!expiryDate || expiryDate === 'N/A') return null;
+    if (!expiryDate || expiryDate === "N/A") return null;
     const now = new Date();
     const exp = new Date(expiryDate);
-    return Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
+    const diffMs = exp - now;
+    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 }
 
 function getBatchStatus(expiryDate) {
     const days = getDaysToExpiry(expiryDate);
-    if (days === null) return <span className="badge bg-secondary rounded-full text-[10px] text-nowrap">No Expiry</span>;
-    if (days <= 0) return <span className="badge bg-dark rounded-full text-[10px] text-nowrap">Expired</span>;
-    if (days <= 90) return <span className="badge bg-danger rounded-full text-[10px] text-nowrap">Expiring Soon</span>;
-    if (days <= 180) return <span className="badge bg-warning rounded-full text-[10px] text-nowrap">Monitor</span>;
-    return <span className="badge bg-success rounded-full text-[10px] text-nowrap">Good</span>;
+    if (days === null) return <span className="badge bg-secondary rounded-full text-[10px]">No Expiry</span>;
+    if (days <= 0) return <span className="badge bg-dark rounded-full text-[10px]">Expired</span>;
+    if (days <= 90) return <span className="badge bg-danger rounded-full text-[10px]">Expiring Soon</span>;
+    if (days <= 180) return <span className="badge bg-warning rounded-full text-[10px]">Monitor</span>;
+    return <span className="badge bg-success rounded-full text-[10px]">Good</span>;
 }
 
 function formatDate(dateStr) {
-    if (!dateStr || dateStr === 'N/A') return '—';
-    return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    if (!dateStr || dateStr === "N/A") return "N/A";
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric'
+    });
 }
 
 function formatQty(qty) {
-    if (qty === undefined || qty === null) return '0';
-    return Number(qty).toLocaleString('en-IN');
+    return qty?.toLocaleString('en-IN') ?? '0';
 }
 
 // ─── Dashboard Stats ────────────────────────────────────────────────────────────
+
 function computeStats(items) {
-    let totalProducts = items?.length ?? 0;
+    let totalProducts = items.length;
+    let totalSKUs = new Set(items.map(i => i.sku)).size;
     let totalStockValue = 0;
     let lowStockCount = 0;
     let outOfStockCount = 0;
     let expiringCount = 0;
     let totalQty = 0;
 
-    items?.forEach(item => {
-        totalStockValue += item?.stockValue ?? 0;
-        totalQty += item?.totalQty ?? 0;
+    items.forEach(item => {
+        const val = item.totalQty * item.unitPrice;
+        totalStockValue += val;
+        totalQty += item.totalQty;
         const status = getStockStatus(item);
-        if (status === 'low_stock' || status === 'critical') lowStockCount++;
-        if (status === 'out_of_stock') outOfStockCount++;
+        if (status === "low_stock" || status === "critical") lowStockCount++;
+        if (status === "out_of_stock") outOfStockCount++;
+        // count batches expiring in < 90 days
         item.batches?.forEach(b => {
-            const d = getDaysToExpiry(b.expiry_date);
+            const d = getDaysToExpiry(b.expiryDate);
             if (d !== null && d > 0 && d <= 90) expiringCount++;
         });
     });
 
-    return { totalProducts, totalStockValue, lowStockCount, outOfStockCount, expiringCount, totalQty };
+    return { totalProducts, totalSKUs, totalStockValue, lowStockCount, outOfStockCount, expiringCount, totalQty };
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
-const FGstock = () => {
+
+const headerLink = [{ title: "inventory" }];
+
+const AdminInventory = () => {
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -130,47 +105,73 @@ const FGstock = () => {
     const [isShow, setIsShow] = useState(false);
     const [isBulkShow, setIsBulkShow] = useState(false);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [productTypeFilter, setProductTypeFilter] = useState('all');
 
-    const { data, isLoading } = inventory.TQInventoryList();
+    const { data, isLoading } = inventory.TQInventoryFullList();
+    const inventoryData = useMemo(() => data?.data ?? [], [data]);
 
-    // Enrich each product by aggregating qty/price from its batches[]
-    const inventoryData = useMemo(() => {
-        return data?.data?.map(enrichProduct) ?? [];
-    }, [data]);
+    // Compute all unique categories for filter
+    const categories = useMemo(() => {
+        const cats = [...new Set(inventoryData.map(i => i.category))];
+        return cats.sort();
+    }, [inventoryData]);
 
     // Filter
     const filteredData = useMemo(() => {
-        let result = [...inventoryData];
+        let data = [...inventoryData];
 
-        // search on real API fields
+        // search
         if (debounceSearch) {
             const s = debounceSearch.toLowerCase();
-            result = result.filter(item =>
-                item?.name?.toLowerCase().includes(s) ||
-                item?.sku?.toLowerCase().includes(s) ||
-                item?.unit_type?.toLowerCase().includes(s)
+            data = data.filter(item =>
+                item.name.toLowerCase().includes(s) ||
+                item.sku.toLowerCase().includes(s) ||
+                item.barcode.includes(s) ||
+                item.category.toLowerCase().includes(s) ||
+                item.brand.toLowerCase().includes(s)
             );
         }
 
         // status filter
         if (statusFilter !== 'all') {
-            result = result.filter(item => getStockStatus(item) === statusFilter);
+            data = data.filter(item => getStockStatus(item) === statusFilter);
         }
 
-        return result;
-    }, [inventoryData, debounceSearch, statusFilter]);
+        // category filter
+        if (categoryFilter !== 'all') {
+            data = data.filter(item => item.category === categoryFilter);
+        }
+
+        // product type filter
+        if (productTypeFilter !== 'all') {
+            data = data.filter(item => item.product_type === productTypeFilter);
+        }
+
+        return data;
+    }, [inventoryData, debounceSearch, statusFilter, categoryFilter, productTypeFilter]);
 
     const stats = useMemo(() => computeStats(inventoryData), [inventoryData]);
     const isEmpty = filteredData.length < 1;
 
     function handleViewBatches(product) {
-        console.log(product)
         setSelectedProduct(product);
         setIsShow(true);
     }
 
     return (
         <>
+            {/* Header */}
+            <ComponentHeader
+                headerLink={headerLink}
+                searchPlaceholder="Search by product, SKU, barcode, category..."
+                setDebounceSearch={setDebounceSearch}
+                addButton={false}
+                addButton2={true}
+                btn2Title="Bulk Creation"
+                btn2OnClick={() => setIsBulkShow(true)}
+            />
+
             {/* ─── Dashboard KPI Cards ──────────────────────────────────────── */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mt-5">
                 <StatCard
@@ -219,18 +220,6 @@ const FGstock = () => {
                     <span className="font-semibold">Filters:</span>
                 </div>
 
-                {/* Search */}
-                <div className="relative">
-                    <FiSearch size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                        type="text"
-                        className="form-input form-input-sm text-xs pl-7 rounded-full border-gray-200 bg-white min-w-[200px]"
-                        placeholder="Search by name or SKU..."
-                        value={debounceSearch}
-                        onChange={e => { setDebounceSearch(e.target.value); setCurrentPage(1); }}
-                    />
-                </div>
-
                 {/* Status Filter */}
                 <div className="relative">
                     <select
@@ -243,6 +232,31 @@ const FGstock = () => {
                         <option value="low_stock">Low Stock</option>
                         <option value="critical">Critical</option>
                         <option value="out_of_stock">Out of Stock</option>
+                    </select>
+                </div>
+
+                {/* Category Filter */}
+                <div className="relative">
+                    <select
+                        className="form-select form-select-sm text-xs pr-8 rounded-full border-gray-200 bg-white min-w-[160px]"
+                        value={categoryFilter}
+                        onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
+                    >
+                        <option value="all">All Categories</option>
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                </div>
+
+                {/* Status Filter */}
+                <div className="relative">
+                    <select
+                        className="form-select form-select-sm text-xs pr-8 rounded-full border-gray-200 bg-white min-w-[140px]"
+                        value={productTypeFilter}
+                        onChange={(e) => { setProductTypeFilter(e.target.value); setCurrentPage(1); }}
+                    >
+                        <option value="all">All Product Type</option>
+                        <option value="raw">Raw</option>
+                        <option value="finished">Finished</option>
                     </select>
                 </div>
 
@@ -276,7 +290,7 @@ const FGstock = () => {
                 </div>
 
                 <TableBody
-                    columns={FG_INVENTORY_COLUMN}
+                    columns={INVENTORY_COLUMN}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     limit={limit}
@@ -295,13 +309,13 @@ const FGstock = () => {
                             return (
                                 <TableRow
                                     key={item.id}
-                                    columns={FG_INVENTORY_COLUMN}
+                                    columns={INVENTORY_COLUMN}
                                     className={
                                         isOut
-                                            ? 'bg-danger/[0.03] hover:!bg-danger/[0.07]'
+                                            ? "bg-danger/[0.03] hover:!bg-danger/[0.07]"
                                             : isLow
-                                                ? 'bg-warning/[0.03] hover:!bg-warning/[0.07]'
-                                                : ''
+                                                ? "bg-warning/[0.03] hover:!bg-warning/[0.07]"
+                                                : ""
                                     }
                                     row={{
                                         product: (
@@ -310,41 +324,51 @@ const FGstock = () => {
                                                     <HiOutlineCube size={18} />
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-semibold text-sm text-gray-800 truncate max-w-[180px]">{item?.name}</p>
-                                                    <p className="text-[11px] text-gray-400 font-mono">{item?.unit_type ?? '—'}</p>
+                                                    <p className="font-semibold text-sm text-gray-800 truncate max-w-[180px]">{item.name}</p>
+                                                    <p className="text-[16px] text-gray-400 font-mono">{item.barcode}</p>
                                                 </div>
                                             </div>
                                         ),
                                         sku: (
-                                            <span className="font-mono text-xs bg-gray-50 px-2 py-1 rounded text-gray-600">{item?.sku}</span>
+                                            <span className="font-mono text-xs bg-gray-50 px-2 py-1 rounded text-gray-600 whitespace-nowrap">{item.sku}</span>
                                         ),
                                         category: (
-                                            <span className="text-xs bg-primary/5 text-primary font-semibold px-2 py-1 rounded-full capitalize">
-                                                {item?.product_type ?? '—'}
+                                            <span className="text-xs bg-primary/5 text-primary font-semibold px-2 py-1 rounded-full whitespace-nowrap">{item.category}</span>
+                                        ),
+                                        subCategory: (
+                                            <span className="text-xs bg-secondary/5 text-secondary font-semibold px-2 py-1 rounded-full whitespace-nowrap">{item.subCategory}</span>
+                                        ),
+                                        product_type: (
+                                            <span className="text-xs bg-gray-100 text-gray-600 font-semibold px-2 py-1 rounded-full capitalize">
+                                                {item.product_type}
                                             </span>
+                                        ),
+                                        location: (
+                                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                                                <MdOutlineWarehouse size={14} className="text-gray-400 shrink-0" />
+                                                <span className="truncate max-w-[120px]">{item.location}</span>
+                                            </div>
                                         ),
                                         totalQty: (
                                             <span className={`font-bold text-sm ${isOut ? 'text-danger' : isLow ? 'text-warning' : 'text-gray-700'}`}>
-                                                {formatQty(item?.totalQty)}
+                                                {formatQty(item.totalQty)}
                                             </span>
                                         ),
                                         availableQty: (
-                                            <span className="text-sm font-semibold text-success">{formatQty(item?.availableQty)}</span>
+                                            <span className="text-sm font-semibold text-success">{formatQty(item.availableQty)}</span>
                                         ),
                                         reservedQty: (
-                                            <span className="text-sm text-secondary font-medium">{formatQty(item?.reservedQty)}</span>
+                                            <span className="text-sm text-secondary font-medium">{formatQty(item.reservedQty)}</span>
                                         ),
                                         reorderLevel: (
-                                            <span className="text-xs text-gray-500">{formatQty(item?.reorder_level)}</span>
+                                            <span className="text-xs text-gray-500">{formatQty(item.reorderLevel)}</span>
                                         ),
                                         stockStatus: getStatusBadge(status),
-                                        mrp: (
-                                            <span className="text-sm font-medium text-gray-600 text-nowrap">
-                                                {formatPriceRange(item?.mrp, item?.mrp)}
-                                            </span>
+                                        unitPrice: (
+                                            <span className="text-sm font-medium text-gray-600">{currencyFormatter(item.unitPrice)}</span>
                                         ),
                                         stockValue: (
-                                            <span className="text-sm font-bold text-gray-800">{currencyFormatter(item?.stockValue)}</span>
+                                            <span className="text-sm font-bold text-gray-800">{currencyFormatter(item.totalQty * item.unitPrice)}</span>
                                         ),
                                         action: (
                                             <Tippy content="View Batches" placement="left">
@@ -367,12 +391,11 @@ const FGstock = () => {
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Batch & Lot Details of RAW Materials"
+                title="Batch & Lot Details"
                 maxWidth="80"
             >
                 {selectedProduct && (
                     <div className="space-y-5">
-
                         {/* Product summary header */}
                         <div className="bg-gradient-to-r from-primary/5 via-primary/[0.02] to-transparent rounded-xl p-5 border border-primary/10">
                             <div className="flex items-start justify-between">
@@ -380,9 +403,9 @@ const FGstock = () => {
                                     <h3 className="text-lg font-bold text-gray-800">{selectedProduct.name}</h3>
                                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                                         <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-xs">{selectedProduct.sku}</span>
-                                        <span>{selectedProduct.unit_type}</span>
+                                        <span>{selectedProduct.brand}</span>
                                         <span>•</span>
-                                        <span className="capitalize">{selectedProduct.product_type}</span>
+                                        <span>{selectedProduct.category}</span>
                                     </div>
                                 </div>
                                 {getStatusBadge(getStockStatus(selectedProduct))}
@@ -391,22 +414,22 @@ const FGstock = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
                                 <MiniStat label="Total Qty" value={formatQty(selectedProduct.totalQty)} />
                                 <MiniStat label="Available" value={formatQty(selectedProduct.availableQty)} color="text-success" />
-                                {/* <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" /> */}
-                                <MiniStat label="Stock Value" value={currencyFormatter(selectedProduct.stockValue)} color="text-primary" />
+                                <MiniStat label="Reserved" value={formatQty(selectedProduct.reservedQty)} color="text-secondary" />
+                                <MiniStat label="Stock Value" value={currencyFormatter(selectedProduct.totalQty * selectedProduct.unitPrice)} color="text-primary" />
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 pt-3 border-t border-gray-100">
                                 <div className="text-xs text-gray-400">
-                                    Reorder Level: <span className="text-gray-600 font-semibold">{formatQty(selectedProduct.reorder_level)}</span>
+                                    Reorder Level: <span className="text-gray-600 font-semibold">{formatQty(selectedProduct.reorderLevel)}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Unit Type: <span className="text-gray-600 font-semibold">{selectedProduct.unit_type ?? '—'}</span>
+                                    Location: <span className="text-gray-600 font-semibold">{selectedProduct.location}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Total Batches: <span className="text-gray-600 font-semibold">{selectedProduct.batches?.length ?? 0}</span>
+                                    Last Inward: <span className="text-gray-600 font-semibold">{formatDate(selectedProduct.lastInwardDate)}</span>
                                 </div>
                                 <div className="text-xs text-gray-400">
-                                    Unit MRP: <span className="text-gray-600 font-semibold">{currencyFormatter(selectedProduct.mrp)}</span>
+                                    Last Outward: <span className="text-gray-600 font-semibold">{formatDate(selectedProduct.lastOutwardDate)}</span>
                                 </div>
                             </div>
                         </div>
@@ -424,42 +447,37 @@ const FGstock = () => {
                             </div>
 
                             <TableBody
-                                columns={RM_INVENTORY_BATCH_COLUMN}
+                                columns={INVENTORY_BATCH_COLUMN}
                                 showPagination={false}
-                                isEmpty={!selectedProduct?.batches?.length}
+                                isEmpty={!selectedProduct.batches?.length}
                                 isLoading={false}
                             >
-                                {selectedProduct?.batches?.map((batch) => {
-                                    const days = getDaysToExpiry(batch?.expiry_date);
+                                {selectedProduct.batches?.map((batch, idx) => {
+                                    const days = getDaysToExpiry(batch.expiryDate);
                                     return (
                                         <TableRow
-                                            key={batch.id}
-                                            columns={RM_INVENTORY_BATCH_COLUMN}
+                                            key={batch.batchNo}
+                                            columns={INVENTORY_BATCH_COLUMN}
                                             className={
                                                 days !== null && days <= 0
-                                                    ? 'bg-danger/[0.04]'
+                                                    ? "bg-danger/[0.04]"
                                                     : days !== null && days <= 90
-                                                        ? 'bg-warning/[0.04]'
-                                                        : ''
+                                                        ? "bg-warning/[0.04]"
+                                                        : ""
                                             }
                                             row={{
                                                 batchNo: (
-                                                    <span className="font-mono text-xs font-semibold text-gray-700">{batch.batch_no}</span>
+                                                    <span className="font-mono text-xs font-semibold text-gray-700">{batch.batchNo}</span>
                                                 ),
                                                 qty: (
-                                                    <span className="font-bold text-sm">
-                                                        {formatQty(parseFloat(batch.available_qty ?? 0) + parseFloat(batch.reserved_qty ?? 0))}
-                                                    </span>
-                                                ),
-                                                unitPrice: (
-                                                    <span className="text-sm font-medium text-gray-600">{currencyFormatter(parseFloat(batch.unit_price ?? 0))}</span>
+                                                    <span className="font-bold text-sm">{formatQty(batch.qty)}</span>
                                                 ),
                                                 mfgDate: (
-                                                    <span className="text-xs text-gray-500">{formatDate(batch.mfg_date)}</span>
+                                                    <span className="text-xs text-gray-500">{formatDate(batch.mfgDate)}</span>
                                                 ),
                                                 expiryDate: (
                                                     <span className={`text-xs font-semibold ${days !== null && days <= 90 ? 'text-danger' : 'text-gray-600'}`}>
-                                                        {formatDate(batch.expiry_date)}
+                                                        {formatDate(batch.expiryDate)}
                                                     </span>
                                                 ),
                                                 daysToExpiry: days !== null
@@ -470,12 +488,15 @@ const FGstock = () => {
                                                     )
                                                     : <span className="text-xs text-gray-400">—</span>,
                                                 grnRef: (
-                                                    <span className="font-mono text-xs text-primary">
-                                                        {batch.reference_type?.toUpperCase() ?? '—'}
-                                                        {batch.reference_id ? ` #${batch.reference_id}` : ''}
-                                                    </span>
+                                                    <span className="font-mono text-xs text-primary hover:underline cursor-pointer">{batch.grnRef}</span>
                                                 ),
-                                                batchStatus: getBatchStatus(batch.expiry_date),
+                                                storageLocation: (
+                                                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                                                        <MdOutlineWarehouse size={13} className="text-gray-400" />
+                                                        {batch.storageLocation}
+                                                    </div>
+                                                ),
+                                                batchStatus: getBatchStatus(batch.expiryDate),
                                             }}
                                         />
                                     );
@@ -486,13 +507,14 @@ const FGstock = () => {
                 )}
             </AddModal>
 
+
             {/* ─── Bulk creation modal ──────────────────────────────────────── */}
             <AddModal
                 isShow={isBulkShow}
                 setIsShow={setIsBulkShow}
                 title="Bulk Creation"
                 maxWidth='60'
-                placement='start'
+                placement='start'  // top | start | center | end
             >
                 <BulkCreationModal
                     onCancel={() => setIsBulkShow(false)}
@@ -502,12 +524,12 @@ const FGstock = () => {
     );
 };
 
-export default FGstock;
+export default AdminInventory;
 
 
 // ─── Sub-components ─────────────────────────────────────────────────────────────
 
-function MiniStat({ label, value, color = 'text-gray-800' }) {
+function MiniStat({ label, value, color = "text-gray-800" }) {
     return (
         <div>
             <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">{label}</p>

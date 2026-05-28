@@ -23,6 +23,7 @@ import { utcToLocal } from '../../utils/UTCtoLocal';
 import { Helmet } from 'react-helmet-async';
 import { useSelector } from 'react-redux';
 import { REQUISITION_COLUMN_MANUFACTURING, REQUISITION_COLUMN_NON_MANUFACTURING } from './helper';
+import { TbArrowBarDown, TbArrowBarUp } from 'react-icons/tb';
 
 const HEADER_LINKS = [
     { title: "requisition" },
@@ -179,10 +180,13 @@ const Requisition = () => {
                                 // for manufacturinf
                                 name: item?.items?.[0]?.product?.name,  // restrict to one item in RFQ
                                 quotationReceived: item?.receiveQuotationCount,
-                                limitType: <p
-                                    className='uppercase whitespace-nowrap'
-                                >
+                                price: currencyFormatter(item?.items?.[0]?.price_limit),
+                                limitType: <p className='flex items-center uppercase whitespace-nowrap'>
                                     {item?.price_limit_type?.split("_")?.join(" ") ?? "—"}
+                                    <span className='ml-2'>
+                                        {item?.price_limit_type === "lower_limit" && <TbArrowBarUp size={18} />}
+                                        {item?.price_limit_type === "upper_limit" && <TbArrowBarDown size={18} />}
+                                    </span>
                                 </p>,
 
                                 // for non manufacturing

@@ -195,14 +195,14 @@ const ExpenseForm = ({ setIsShow, editId = null }) => {
                                 required={true}
                             />
                         </div>
-                    </div>
+                    {/* </div> */}
 
                     {/* Remarks */}
-                    <div className="grid grid-cols-1 gap-4">
+                    {/* <div className="grid grid-cols-1 gap-4"> */}
                         <TextArea
                             label="Remarks"
                             placeholder="Enter remarks (optional)"
-                            rows={3}
+                            rows={1}
                             {...register("remarks")}
                         />
                     </div>

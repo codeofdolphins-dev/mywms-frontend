@@ -123,7 +123,7 @@ const AddProduct = () => {
                 const fd = RHFToFormData(data);
                 const res = await createData({
                     // path: isRaw ? "/product/create-raw" : "/product/create-finish",
-                    path: "/product/create-finish",
+                    path: "/product/create",
                     formData: fd
                 });
                 if (res.success) successAlert(res.message);
@@ -542,7 +542,7 @@ const AddProduct = () => {
                                     Cancel
                                 </button>
 
-                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} >
+                                <Button variant="filled" color="indigo" size="md" radius="md" type="submit"  >
                                     {id ? "Update Product" : "Add Product"}
                                 </Button>
                             </div>

@@ -287,6 +287,8 @@ export const INVENTORY_COLUMN = [
     { key: "product", label: "Product" },
     { key: "sku", label: "SKU" },
     { key: "category", label: "Category" },
+    { key: "subCategory", label: "Sub Category" },
+    { key: "product_type", label: "Type" },
     { key: "location", label: "Location" },
     { key: "totalQty", label: "Total Qty", align: "center" },
     { key: "availableQty", label: "Available", align: "center" },

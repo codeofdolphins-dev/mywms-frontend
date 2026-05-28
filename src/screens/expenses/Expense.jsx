@@ -150,7 +150,7 @@ const Expense = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title={editId ? "Edit Expense" : "Add New Expense"}
-                maxWidth='55'
+                maxWidth='50'
             >
                 <ExpenseForm
                     setIsShow={setIsShow}
