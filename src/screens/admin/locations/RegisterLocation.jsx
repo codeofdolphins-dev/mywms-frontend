@@ -99,10 +99,7 @@ const RegisterLocation = () => {
         } catch (error) {
             console.log(error)
         }
-    }
-
-
-    console.log(node);
+    };
 
     return (
         <div>
