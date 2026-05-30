@@ -45,8 +45,6 @@ const Dashboard = () => {
     const isEmpty = rfqList?.data?.length === 0;
 
     useEffect(() => {
-        console.log(search)
-
         if (search && Object.values(search).some(val => val && String(val).trim() !== "")) {
             setStatus("all");
             setPriority("all");
