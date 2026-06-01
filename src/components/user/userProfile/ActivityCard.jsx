@@ -3,6 +3,7 @@ import Button from '../../inputs/Button'
 
 const ActivityCard = ({
     cardTitle = "Details",
+    hideButton = false,
     buttonTitle = "Details",
     btnOnClick = () => { },
     children
@@ -11,13 +12,14 @@ const ActivityCard = ({
         < div className="panel" >
             <div className="flex items-center justify-between mb-5">
                 <h5 className="font-semibold text-lg dark:text-white-light">{cardTitle}</h5>
-                <Button
+                {!hideButton && <Button
                     className={"btn btn-info"}
                     icon={true}
                     onClick={btnOnClick}
                 >
                     {buttonTitle}
                 </Button>
+                }
             </div>
             <div className="">
                 <div className="h-96 flex-1 overflow-y-auto p-4 space-y-2">

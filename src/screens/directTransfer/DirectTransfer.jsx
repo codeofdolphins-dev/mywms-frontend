@@ -59,8 +59,9 @@ const DirectTransfer = () => {
   /** production status color */
   const statusColor = (status) => {
     switch (status) {
-      case "pending": return "bg-info";
+      case "send": return "bg-info";
       case "accepted": return "bg-success";
+      case "return": return "bg-danger";
       default: return "bg-danger";
     }
   }

@@ -258,8 +258,9 @@ const DirectTransferForm = ({ setIsShow, editData }) => {
     /*** data fetching ***/
     // fetch finished product list
     const { data: productData, isLoading: productLoading } = fetchData.TQProductList({ noLimit: true, type: "finished" });
-    // fetch locations
-    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQTenantRegisteredNodeList({ noLimit: true, isAttachCurrentNode: false });
+
+    // fetch allowed locations
+    const { data: allowNode, isLoading: allowNodeLoading } = fetchData.TQDirectTransferContextList()
 
     /*** form setup ***/
     const { register, handleSubmit, control, reset, watch, setValue, formState: { errors },
@@ -296,8 +297,8 @@ const DirectTransferForm = ({ setIsShow, editData }) => {
                         isExisting: true
                     })) || [{ batch_id: '', send_qty: '' }]
                 })) || [
-                    { product_id: '', barcode: "", unit: "", allocations: [{ batch_id: '', send_qty: '' }] }
-                ]
+                        { product_id: '', barcode: "", unit: "", allocations: [{ batch_id: '', send_qty: '' }] }
+                    ]
             });
         } else {
             reset({
@@ -312,7 +313,7 @@ const DirectTransferForm = ({ setIsShow, editData }) => {
     /*** submit ***/
     async function submitForm(data) {
         try {
-            console.log("data", data)
+            // console.log("data", data); return
 
             if (editData) {
                 const res = await updateTransfer({
@@ -345,22 +346,27 @@ const DirectTransferForm = ({ setIsShow, editData }) => {
                         name="target_location_id"
                         control={control}
                         rules={{ required: "Target location is required" }}
-                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                            <RHSelect
+                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                            const customeOptions = allowNode?.data?.map(item => ({
+                                name: `${item?.name}-${item?.location}`,
+                                id: item?.business_node_id
+                            }));
+
+                            return <RHSelect
                                 ref={(el) => ref({ focus: () => el?.focus() })}
                                 value={value}
                                 onChange={onChange}
                                 label="Target Location"
-                                options={registeredNodeList?.data || []}
+                                options={customeOptions || []}
                                 selectKey="name"
                                 error={error?.message}
                                 required={true}
-                                isLoading={registeredNodeListLoading}
+                                isLoading={allowNodeLoading}
                                 placeholder="Select target location..."
                                 isClearable
                                 disabled={!!editData}
                             />
-                        )}
+                        }}
                     />
                 </div>
 

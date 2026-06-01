@@ -67,6 +67,7 @@ const UserProfile = () => {
                     <ActivityCard
                         cardTitle='Assigned Locations'
                         buttonTitle='Assign'
+                        hideButton={true}
                     >
                         {locations?.length > 0 ?
                             <> {

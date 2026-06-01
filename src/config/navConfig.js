@@ -192,7 +192,7 @@ export const NAV_CONFIG = [
 
     // ─── Direct Transfer ───
     {
-        key: "transfer",
+        key: "direct-transfer",
         label: "Direct Transfer",
         icon: FaArrowRightArrowLeft,
         path: "/direct-transfer",

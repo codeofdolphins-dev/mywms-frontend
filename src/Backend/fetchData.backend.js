@@ -443,6 +443,24 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+
+    TQDirectTransferContextList(params, isEnabled = true) {
+        return useQuery({
+            queryKey: ["directTransferContextList", params],
+            queryFn: async () => {
+                try {
+                    const res = await API.get(`/direct-transfer/list/context`, { params });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const fetchData = new FetchData;
