@@ -67,6 +67,8 @@ const OutwardDetails = () => {
                 return "bg-blue-100 text-blue-800";
             case "dispatched":
                 return "bg-green-100 text-green-800";
+            case "return":
+                return "bg-red-100 text-red-800";
             default:
                 return "bg-gray-100 text-gray-800";
         }
@@ -257,14 +259,17 @@ const OutwardDetails = () => {
                     </span>
                 </div>
 
-                <div className="overflow-visible min-h-[300px]">
+                <div className="overflow-x-auto min-h-[300px]">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50/80 text-slate-600 text-sm border-b border-slate-200">
+                            <tr className="bg-slate-50/80 text-slate-600 text-sm border-b border-slate-200 whitespace-nowrap">
                                 <th className="px-6 py-4 font-semibold w-1/5">Barcode</th>
                                 <th className="px-6 py-4 font-semibold w-1/5">Product Name</th>
                                 <th className="px-6 py-4 font-semibold w-1/5">Product SKU</th>
+                                <th className="px-6 py-4 font-semibold w-1/5">HSN</th>
                                 <th className="px-6 py-4 font-semibold w-[12%]">Req. Qty</th>
+                                <th className="px-6 py-4 font-semibold w-[12%]">Dmg. Qty</th>
+                                <th className="px-6 py-4 font-semibold w-[12%]">Stg. Qty</th>
                                 <th className="px-6 py-4 font-semibold">Allocate Batches</th>
                             </tr>
                         </thead>
@@ -285,20 +290,40 @@ const OutwardDetails = () => {
                                 const product = item?.outwardProduct;
 
                                 return (
-                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors whitespace-nowrap">
                                         <td className="px-6 py-2 font-medium text-slate-800">{product?.barcode}</td>
                                         <td className="px-6 py-2">
                                             <div className="font-medium text-slate-700">{product?.name}</div>
                                         </td>
                                         <td className="px-6 py-2 font-medium text-slate-800">{product?.sku}</td>
+                                        <td className="px-6 py-2 font-medium text-slate-800">{product?.hsn_code}</td>
+
+                                        {/* req. qty */}
                                         <td className="px-6 py-2">
                                             <div className="flex flex-col">
                                                 <span className="font-bold text-lg text-slate-800">{item.requested_qty}</span>
                                                 <span className="text-slate-400 text-xs font-semibold uppercase">{product?.unit_type}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-2">
 
+                                        {/* damaged qty */}
+                                        <td className="px-6 py-2">
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-lg text-red-500">{item.total_damage_qty}</span>
+                                                <span className="text-red-500 text-xs font-semibold uppercase">{product?.unit_type}</span>
+                                            </div>
+                                        </td>
+
+                                        {/* shortage qty */}
+                                        <td className="px-6 py-2">
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-lg text-red-500">{item.total_shortage_qty}</span>
+                                                <span className="text-red-500 text-xs font-semibold uppercase">{product?.unit_type}</span>
+                                            </div>
+                                        </td>
+
+                                        {/* allocate batches */}
+                                        <td className="px-6 py-2">
                                             {isPreview ? (
                                                 <AllocatedBatchesCell
                                                     allocatedBatches={allocatedBatches}
@@ -392,8 +417,8 @@ const AllocatedBatchesCell = ({ allocatedBatches = [], requiredQty, unit }) => {
             {allocatedBatches.length === 0 ? (
                 <span className="text-xs text-gray-400 italic">No batches allocated</span>
             ) : (
-                <div className="flex flex-col gap-2">
-                    <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-col gap-2 ">
+                    <div className="flex flex-wrap whitespace-nowrap gap-1.5">
                         {allocatedBatches.map((batch) => (
                             <span
                                 key={batch.id}

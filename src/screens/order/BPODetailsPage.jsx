@@ -23,6 +23,7 @@ import AddModal from '../../components/Add.modal';
 import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import RealseOrderPreview from './ReleaseOrderPreview';
 import { Helmet } from 'react-helmet-async';
+import secureLocalStorage from 'react-secure-storage';
 
 
 const HEADER_LINK = [
@@ -39,6 +40,7 @@ const PRIORITY = [
 
 
 const BPODetailsPage = () => {
+	const tenant = secureLocalStorage.getItem("tenant");
 	const { id } = useParams();
 
 	const [store, setStore] = useState(null);
@@ -50,6 +52,7 @@ const BPODetailsPage = () => {
 
 	const isEmpty = bpoData?.length > 0 ? false : true;
 	const isClosed = bpoData?.status === "closed";
+	const isbuyer = bpoData?.buyer_tenant === tenant;
 
 	const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "rm_store", isAdmin: true }, Boolean(id));
 
@@ -121,6 +124,9 @@ const BPODetailsPage = () => {
 
 	if (bpoListLoading) return <Loader />;
 
+	// console.log(bpoData)
+	// console.log(bpoData?.buyer_tenant, tenant)
+
 	return (
 		<>
 			<Helmet><title>BPO Details | MYWMS</title></Helmet>
@@ -147,7 +153,7 @@ const BPODetailsPage = () => {
 							Download Contract
 						</button>
 
-						{!isClosed &&
+						{isbuyer && !isClosed &&
 							<button
 								type='submit'
 								className="flex items-center gap-2 px-6 py-2 bg-[#0052CC] text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all font-semibold"
@@ -162,7 +168,7 @@ const BPODetailsPage = () => {
 				{/* body section */}
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					{/* Left Column: Contract Info & Item Selection */}
-					<div className={`space-y-6 order-2 lg:order-1 ${isClosed ? "lg:col-span-3" : "lg:col-span-2"} `}>
+					<div className={`space-y-6 order-2 lg:order-1 ${(isClosed || !isbuyer) ? "lg:col-span-3" : "lg:col-span-2"} `}>
 
 						{/* Item List / Selection Table */}
 						<div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -213,7 +219,7 @@ const BPODetailsPage = () => {
 													<td className="px-6 py-6">
 														<input
 															step="any"
-															disabled={isClosed}
+															disabled={isClosed || !isbuyer}
 															{...register(`items.${index}.release_qty`, {
 																min: { value: 0, message: "Minimum is 0" },
 																max: { value: item?.remaining_qty, message: `Maximum is ${item?.remaining_qty}` },
@@ -239,7 +245,7 @@ const BPODetailsPage = () => {
 					</div>
 
 					{/* Right Column: Release Context & Store Selection */}
-					{!isClosed &&
+					{(isbuyer && !isClosed) &&
 						<div className="space-y-6 order-1 lg:order-2">
 							<div className="bg-white px-8 py-4 rounded-2xl shadow-xl border border-gray-100 sticky top-8">
 								<h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">

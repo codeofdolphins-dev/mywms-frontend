@@ -26,7 +26,13 @@ const Outward = () => {
     const [limit, setLimit] = useState(10);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const { data: outwardList, isLoading: outwardListLoading } = fetchData.TQOutwardList();
+    const params = {
+        ...(debounceSearch && { outward_no: debounceSearch }),
+        page: currentPage,
+        limit: limit,
+    }
+
+    const { data: outwardList, isLoading: outwardListLoading } = fetchData.TQOutwardList(params);
 
     const isEmpty = outwardList?.data?.length < 1;
 
@@ -74,6 +80,7 @@ const Outward = () => {
                 headerLink={headerLink}
                 searchPlaceholder='Search by name or description...'
                 setDebounceSearch={setDebounceSearch}
+                addButton={false}
                 btnTitle='Add Outward'
                 btnOnClick={() => navigate('/outward/create')}
             />

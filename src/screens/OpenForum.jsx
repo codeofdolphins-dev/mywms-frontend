@@ -18,6 +18,13 @@ import { utcToLocal } from "../utils/UTCtoLocal";
 import MultiAttributeSearch from "../components/inputs/MultiAttributeSearch";
 import { Helmet } from "react-helmet-async";
 
+
+
+const tabList = [
+    { id: 1, title: "All RFQ List" },
+    { id: 2, title: "Applied List" },
+]
+
 const Dashboard = () => {
     const isLogin = useSelector(state => state.auth.status);
 
@@ -31,6 +38,7 @@ const Dashboard = () => {
     /** pagination states */
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
+    const [activeTab, setActiveTab] = useState(1);
 
     const params = {
         ...(search && Object.fromEntries(
@@ -42,7 +50,14 @@ const Dashboard = () => {
         page: currentPage
     }
     const { data: rfqList, isLoading: rfqListLoading } = fetchData.TQRfqList(params);
+    const { data: appliedRfqList, isLoading: appliedRfqListLoading } = fetchData.TQAppliedRfqList();
+
     const isEmpty = rfqList?.data?.length === 0;
+
+    const filteredList = rfqList?.data?.filter(i => {
+        if (activeTab === 1) return !appliedRfqList?.data?.includes(i.id);
+        if (activeTab === 2) return appliedRfqList?.data?.includes(i.id);
+    });
 
     useEffect(() => {
         if (search && Object.values(search).some(val => val && String(val).trim() !== "")) {
@@ -54,11 +69,11 @@ const Dashboard = () => {
             setPriority("all");
         }
         setCurrentPage(1);
-    }, [search]);
+    }, [search, activeTab]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [status, priority]);
+    }, [status, priority, activeTab]);
 
     // console.log(rfqList?.data)
     // console.log(appliedRfqList?.data);
@@ -86,35 +101,61 @@ const Dashboard = () => {
 
 
             {/* main component */}
-            <div className="w-full overflow-hidden space-y-5 mt-5">
-                <div className="panel overflow-x-auto">
+            <div className="w-full grid grid-cols-5 gap-2 overflow-hidden mt-5">
+
+                {/* <div className="panel col-span-1">
+                    <div>Add</div>
+                </div> */}
+
+                <div className="panel col-span-5">
                     {/*filter */}
-                    <div className="flex items-center justify-end mb-2 gap-4">
-                        {/* status */}
-                        <div className="">
-                            <select
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                                className="border-gray-200 rounded-lg p-1 border text-sm"
-                            >
-                                <option value="all">Status: all</option>
-                                <option value="open">Status: Open</option>
-                                <option value="closed">Status: Closed</option>
-                            </select>
+                    <div className="flex items-center justify-between mb-2 gap-4">
+                        {/* wizards */}
+                        <div className="w-full">
+                            <ul className="flex items-center text-center gap-2">
+                                {tabList?.map(item => (
+                                    <li key={item.id}>
+                                        <div
+                                            className={`
+                                                    ${activeTab === item.id ? '!bg-primary text-white' : ''}
+                                                    block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-44 cursor-pointer
+                                                `}
+                                            onClick={() => setActiveTab(item.id)}
+                                        >
+                                            <p className='mb-1 font-semibold'>{item.title}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
 
-                        {/* priority */}
-                        <div className="">
-                            <select
-                                value={priority}
-                                onChange={(e) => setPriority(e.target.value)}
-                                className="border-gray-200 rounded-lg p-1 border text-sm"
-                            >
-                                <option value="all">Priority: All</option>
-                                <option value="high">Priority: High</option>
-                                <option value="normal">Priority: Normal</option>
-                                <option value="low">Priority: Low</option>
-                            </select>
+                        <div className="w-full flex items-center justify-end gap-3">
+                            {/* status */}
+                            <div>
+                                <select
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                    className="border-gray-200 rounded-lg p-1 border text-sm"
+                                >
+                                    <option value="all">Status: all</option>
+                                    <option value="open">Status: Open</option>
+                                    <option value="closed">Status: Closed</option>
+                                </select>
+                            </div>
+
+                            {/* priority */}
+                            <div className="">
+                                <select
+                                    value={priority}
+                                    onChange={(e) => setPriority(e.target.value)}
+                                    className="border-gray-200 rounded-lg p-1 border text-sm"
+                                >
+                                    <option value="all">Priority: All</option>
+                                    <option value="high">Priority: High</option>
+                                    <option value="normal">Priority: Normal</option>
+                                    <option value="low">Priority: Low</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -124,81 +165,83 @@ const Dashboard = () => {
                             <p className='text-base text-gray-400 font-semibold'>No Records Found</p>
                         </div>
                         : <>
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requisition</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Company</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Location</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Total Amount</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Priority</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Status</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">RFQ. Deadline</th>
-                                        <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Remaining Day(s)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {rfqList?.data?.map((item) =>
-                                        <tr
-                                            key={item.id}
-                                            className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] last:border-0 hover:bg-[#f5f5f5] dark:hover:bg-[#1b2e4b]/40 cursor-pointer transition-colors"
-                                            onClick={() => {
-                                                setIsShow(true);
-                                                setSelectedItem(item);
-                                            }}
-                                        >
-                                            {/* rfq no */}
-                                            <td className="px-3 py-3">
-                                                <p className="font-semibold tracking-wide max-w-[200px]">{item?.title || "Untitled Requisition"}</p>
-                                                <p className="text-xs text-white-dark whitespace-nowrap font-mono mt-0.5"># {item?.rfq_no}</p>
-                                            </td>
-                                            {/* company */}
-                                            <td className="px-3 py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                                                        <FiUser size={12} />
-                                                    </div>
-                                                    <span className="truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
-                                                </div>
-                                            </td>
-                                            {/* location */}
-                                            <td className="px-3 py-3">
-                                                <div className="flex items-center gap-1.5">
-                                                    <FiMapPin size={13} className="text-danger shrink-0" />
-                                                    <span className="text-xs truncate max-w-[130px]">{item?.meta?.nodeDetails?.location || "N/A"}</span>
-                                                </div>
-                                            </td>
-                                            {/* amount */}
-                                            <td className="px-3 py-3 font-semibold whitespace-nowrap">{currencyFormatter(item?.grand_total)}</td>
-                                            {/* priority */}
-                                            <td className="px-3 py-3">
-                                                <span
-                                                    className={`badge rounded-full capitalize text-xs ${item?.priority?.toLowerCase() === "high"
-                                                        ? "badge-outline-danger"
-                                                        : item?.priority?.toLowerCase() === "normal"
-                                                            ? "badge-outline-primary"
-                                                            : "badge-outline-secondary"
-                                                        }`}
-                                                >
-                                                    {item?.priority || "N/A"}
-                                                </span>
-                                            </td>
-                                            {/* status */}
-                                            <td className="px-3 py-3">
-                                                <span
-                                                    className={`badge rounded-full capitalize text-xs ${statusColor(item?.status)}`}
-                                                >
-                                                    {item?.status || "N/A"}
-                                                </span>
-                                            </td>
-                                            {/* deadline */}
-                                            <td className="px-3 py-3 whitespace-nowrap">{utcToLocal(item?.submission_deadline)}</td>
-                                            {/* remaining days */}
-                                            <td className="px-3 py-3 whitespace-nowrap text-center">{remainingDays(item?.submission_deadline)}</td>
+                            <div className=" overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requisition</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Company</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Location</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Total Amount</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Priority</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Status</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">RFQ. Deadline</th>
+                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Remaining Day(s)</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {filteredList?.map((item) =>
+                                            <tr
+                                                key={item.id}
+                                                className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] last:border-0 hover:bg-[#f5f5f5] dark:hover:bg-[#1b2e4b]/40 cursor-pointer transition-colors"
+                                                onClick={() => {
+                                                    setIsShow(true);
+                                                    setSelectedItem(item);
+                                                }}
+                                            >
+                                                {/* rfq no */}
+                                                <td className="px-3 py-3">
+                                                    <p className="font-semibold tracking-wide max-w-[200px]">{item?.title || "Untitled Requisition"}</p>
+                                                    <p className="text-xs text-white-dark whitespace-nowrap font-mono mt-0.5"># {item?.rfq_no}</p>
+                                                </td>
+                                                {/* company */}
+                                                <td className="px-3 py-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                                                            <FiUser size={12} />
+                                                        </div>
+                                                        <span className="truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
+                                                    </div>
+                                                </td>
+                                                {/* location */}
+                                                <td className="px-3 py-3">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <FiMapPin size={13} className="text-danger shrink-0" />
+                                                        <span className="text-xs truncate max-w-[130px]">{item?.meta?.nodeDetails?.location || "N/A"}</span>
+                                                    </div>
+                                                </td>
+                                                {/* amount */}
+                                                <td className="px-3 py-3 font-semibold whitespace-nowrap">{currencyFormatter(item?.grand_total)}</td>
+                                                {/* priority */}
+                                                <td className="px-3 py-3">
+                                                    <span
+                                                        className={`badge rounded-full capitalize text-xs ${item?.priority?.toLowerCase() === "high"
+                                                            ? "badge-outline-danger"
+                                                            : item?.priority?.toLowerCase() === "normal"
+                                                                ? "badge-outline-primary"
+                                                                : "badge-outline-secondary"
+                                                            }`}
+                                                    >
+                                                        {item?.priority || "N/A"}
+                                                    </span>
+                                                </td>
+                                                {/* status */}
+                                                <td className="px-3 py-3">
+                                                    <span
+                                                        className={`badge rounded-full capitalize text-xs ${statusColor(item?.status)}`}
+                                                    >
+                                                        {item?.status || "N/A"}
+                                                    </span>
+                                                </td>
+                                                {/* deadline */}
+                                                <td className="px-3 py-3 whitespace-nowrap">{utcToLocal(item?.submission_deadline)}</td>
+                                                {/* remaining days */}
+                                                <td className="px-3 py-3 whitespace-nowrap text-center">{remainingDays(item?.submission_deadline)}</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                             < BasicPagination
                                 totalPage={rfqList?.totalPage}
                                 currentPage={currentPage}

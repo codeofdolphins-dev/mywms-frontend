@@ -132,7 +132,7 @@ const RMstock = () => {
     const [isShow, setIsShow] = useState(false);
     const [statusFilter, setStatusFilter] = useState('all');
 
-    const { data, isLoading } = inventory.TQInventoryList();
+    const { data, isLoading } = inventory.TQInventoryScopeList();
 
     // Enrich each product by aggregating qty/price from its batches[]
     const inventoryData = useMemo(() => {

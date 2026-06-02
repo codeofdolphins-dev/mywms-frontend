@@ -263,12 +263,12 @@ const Header = () => {
                     </> : <>
                         <div
                             className="sm:flex-1 sm:ml-0 ml-auto flex items-center space-x-1.5 lg:space-x-2"
-                            onClick={() => navigate("/auth/login", { replace: true })}
                         >
                             <div className="sm:mr-auto sm:ml-auto"></div>
                             <button
                                 type="button"
                                 className="btn btn-outline-primary rounded-full p-2 animate-pulse bg-[#fafafa] dark:bg-[#060818] dark:hover:bg-primary"
+                                onClick={() => navigate("/auth/login", { replace: true })}
                             >
                                 Login
                             </button>

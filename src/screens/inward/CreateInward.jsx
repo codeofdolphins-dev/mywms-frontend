@@ -170,7 +170,7 @@ const CreateInward = () => {
                                     <div className="flex items-center gap-2 px-3.5 py-2 bg-blue-50 border-b border-blue-100">
                                         <FcDocument size={20} />
                                         <span className="text-[12px] font-semibold text-blue-600 uppercase tracking-wider">Good Receipt Note (GRN)</span>
-                                        <span className={`badge ${statusColor(inwardData?.data?.status)}`}>{inwardData?.data?.status?.toUpperCase() || "N/A"}</span>
+                                        <span className={`badge ${statusColor(status)}`}>{status?.toUpperCase() || "N/A"}</span>
                                     </div>
                                     <table className="w-full text-[13px] border-collapse">
                                         <tbody>
@@ -416,7 +416,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     label="Batch No:"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.batch_no`)}
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status !== "draft"}
                                                                 />
                                                             </div>
 
@@ -436,7 +436,7 @@ const CreateInward = () => {
                                                                     label="Damage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status !== "draft"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
                                                                         onChange: (e) => {
                                                                             const d_qty = Number(e.target.value) || 0;
@@ -465,7 +465,7 @@ const CreateInward = () => {
                                                                     label="Shortage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status !== "draft"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
                                                                         onChange: (e) => {
                                                                             const s_qty = Number(e.target.value) || 0;
@@ -493,7 +493,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     label="Receive Qty:"
                                                                     placeholder="0"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status !== "draft"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.r_qty`, {
                                                                         min: {
                                                                             value: 0,
@@ -525,7 +525,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     type="date"
                                                                     label="Expiry Date:"
-                                                                    disabled={status === "accepted"}
+                                                                    disabled={status !== "draft"}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.e_date`)}
                                                                 />
                                                             </div>
@@ -550,7 +550,7 @@ const CreateInward = () => {
                         </div>
 
                         {/* button section */}
-                        {status !== "accepted" && (
+                        {status === "draft" && (
                             <div className="flex justify-end">
                                 <Button
                                     type='submit'

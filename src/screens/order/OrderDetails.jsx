@@ -63,7 +63,6 @@ const OrderDetails = () => {
     };
     const { data: poData, isLoading: poLoading } = order.TQPurchaseOrderItemDetails(params, Boolean(isPurchase));
     const { data: soData, isLoading: soLoading } = order.TQSalesOrderItemDetails(params, Boolean(!isPurchase));
-    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, !isPurchase);
 
 
     const data = isPurchase ? poData : soData;
@@ -71,6 +70,9 @@ const OrderDetails = () => {
     const isEmpty = data?.data?.items?.length > 0 ? false : true;
     const isInternal = data?.data?.type === "internal" ? true : false;
     const purchasOrderItems = data?.data?.items ?? [];
+
+
+    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, (!isPurchase && data?.data?.status === "approved"));
 
     const { mutateAsync: pInvoicePdf_download, isPending: pInvoicePdf_pending } = pdf.TQProformaInvoicePDFDownload(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
 

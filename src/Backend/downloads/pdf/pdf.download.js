@@ -20,9 +20,7 @@ class PDF {
                 successAlert("PDF generated successfully");
 
                 if (key.length < 1) return;
-                if (res.success) {
-                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
-                }
+                key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
 
 
                 // Extract filename from header
@@ -65,9 +63,7 @@ class PDF {
                 successAlert("PDF generated successfully");
 
                 if (key.length < 1) return;
-                if (res.success) {
-                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
-                }
+                key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
 
 
                 // Extract filename from header
