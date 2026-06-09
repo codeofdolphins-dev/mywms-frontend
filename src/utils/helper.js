@@ -140,7 +140,7 @@ export const BPO_COLUMN = [
     { key: "id", label: "#", align: "center" },
     { key: "createdAt", label: "Creation Date" },
     { key: "partner", label: "Business Partner" },
-    { key: "name", label: "Item Name" },
+    { key: "name", label: "Item Name", align: "center" },
     { key: "remQty", label: "Remaining Qty.", align: "center" },
     { key: "status", label: "Status" },
     { key: "valid_until", label: "Validity" },

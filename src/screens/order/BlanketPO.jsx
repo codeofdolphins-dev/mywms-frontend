@@ -112,7 +112,7 @@ const BlanketPO = () => {
                                 row={{
                                     slno: idx + 1,
                                     id: (
-                                        <Link to={`/order/bpo/details/${item?.bpo_no}`} className='hover:underline text-primary' >
+                                        <Link to={`/order/bpo/details/${item?.bpo_no}`} className='hover:underline text-primary whitespace-nowrap' >
                                             {item?.bpo_no}
                                         </Link>
                                     ),
@@ -127,7 +127,7 @@ const BlanketPO = () => {
                                             </span>
                                         </>
                                     ),
-                                    valid_until: utcToLocal(item?.valid_until),
+                                    valid_until: <p className='whitespace-nowrap'>{utcToLocal(item?.valid_until)}</p>,
                                     action: (
                                         <div className='flex items-center justify-center space-x-2'>
                                             {/* <CustomeButton

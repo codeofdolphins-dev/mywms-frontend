@@ -135,7 +135,7 @@ const Requisition = () => {
                                         {item?.requisition_no}
                                     </Link>
                                 ),
-                                title: item?.title,
+                                title: <p className='whitespace-nowrap'>{item?.title}</p>,
                                 status: (
                                     <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
                                         {item?.status === "po_created" ? "po. created" : item?.status}

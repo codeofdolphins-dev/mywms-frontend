@@ -75,6 +75,12 @@ const Dashboard = () => {
         setCurrentPage(1);
     }, [status, priority, activeTab]);
 
+    useEffect(() => {
+        if (activeTab === 2 && status !== "all") {
+            setStatus("all");
+        }
+    }, [activeTab]);
+
     // console.log(rfqList?.data)
     // console.log(appliedRfqList?.data);
 
