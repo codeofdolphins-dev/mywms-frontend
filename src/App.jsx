@@ -154,7 +154,7 @@ function App() {
                     <Route path="order" >
                         <Route index element={<OrderBrowse />} />
                         <Route path='bpo' element={<BlanketPO />} />
-                        <Route path='bpo/details/:id' element={<BPODetailsPage />} />
+                        <Route path='bpo/details/:bpo_no' element={<BPODetailsPage />} />
                         <Route path=':id' element={<OrderDetails />} />
                     </Route>
 
