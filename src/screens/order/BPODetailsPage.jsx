@@ -111,7 +111,7 @@ const BPODetailsPage = () => {
 		});
 
 		if (selectedItems.length === 0) {
-			alert("Please enter release qty for at least one item");
+			alert("Please enter release qty");
 			return;
 		}
 
@@ -120,9 +120,9 @@ const BPODetailsPage = () => {
 		data.grand_total = selectedItems.reduce((acc, item) => {
 			return acc + (parseFloat(item.release_qty) * item.unit_price);
 		}, 0);
-		data.target_store_id = data.target_store?.bpo_no;
+		data.target_store_id = data.target_store?.id;
 
-		// console.log("Form Data: ", data);
+		console.log("Form Data: ", data);
 		setFormData(data);
 		setIsPreviewShow(true);
 	};

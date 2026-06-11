@@ -22,7 +22,7 @@ const BulkCreationModal = ({ onCancel }) => {
 
     const [isShow, setIsShow] = useState(false);
 
-    const { mutateAsync: upload, isPending: uploadPending } = masterData.TQCreateMaster();
+    const { mutateAsync: upload, isPending: uploadPending } = masterData.TQCreateMaster(["inventoryFullList"]);
 
     /** validate & set file */
     const handleFile = useCallback((selectedFile) => {
