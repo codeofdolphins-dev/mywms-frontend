@@ -45,7 +45,7 @@ class PDF {
                 errorAlert(error.response.data?.message);
             }
         })
-    }
+    };
 
     TQProformaInvoicePDFDownload(key = []) {
         const QueryClient = useQueryClient()
@@ -89,7 +89,7 @@ class PDF {
                 errorAlert(error.response.data?.message);
             }
         })
-    }
+    };
 
     TQBPOAgreementPDFDownload(key = []) {
         const QueryClient = useQueryClient()
@@ -133,18 +133,16 @@ class PDF {
                 errorAlert(error.response.data?.message);
             }
         })
-    }
+    };
 
     Test() {
         return useMutation({
             mutationFn: async (data) => {
-                const res = await API.post("/download/pdf/bpo-agreement", data);
+                const res = await API.post("/download/pdf/outward-invoice", data);
                 return res.data;
             },
             onSuccess: (data) => {
                 successAlert("Login Successfull");
-                secureLocalStorage.setItem("tenant", data.tenant);
-                secureLocalStorage.setItem("token", data.token)
 
             },
             onError: (error) => {

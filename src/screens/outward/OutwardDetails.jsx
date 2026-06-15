@@ -6,6 +6,7 @@ import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import ComponentHeader from '../../components/ComponentHeader';
 import { Button } from '@mantine/core';
+import { FaFileDownload } from 'react-icons/fa';
 
 
 const OutwardDetails = () => {
@@ -33,6 +34,7 @@ const OutwardDetails = () => {
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
     const isPreview = data?.status === "dispatched";
+    const isExternal = data?.type === "external";
 
     // console.log(data)
     // console.log(isPreview)
@@ -53,9 +55,13 @@ const OutwardDetails = () => {
         };
 
         const res = await update({ path: "/outward/dispatch", formData: payload });
-        if (res?.success) {
-            navigate("/outward");
-        }
+        // if (res?.success) {
+        //     navigate("/outward");
+        // }
+    }
+
+    async function downloadInvoice() {
+        // const res = await pdf.TQOutwardInvoicePDFDownload({ outward_no: out_no });
     }
 
 
@@ -92,7 +98,16 @@ const OutwardDetails = () => {
                     <h1 className="text-2xl font-bold text-slate-800">Outward Details</h1>
                     <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
                 </div>
-                {!isPreview &&
+                {isPreview ?
+                    (isExternal && <Button
+                        className="bg-secondary px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
+                        onClick={downloadInvoice}
+                        loading={updatePending}
+                    >
+                        {!updatePending && <FaFileDownload size={18} className='mr-4' />}
+                        Download Invoice
+                    </Button>)
+                    :
                     <Button
                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
                         onClick={handleConfirmAllocation}
@@ -402,7 +417,7 @@ const OutwardDetails = () => {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 };
 
