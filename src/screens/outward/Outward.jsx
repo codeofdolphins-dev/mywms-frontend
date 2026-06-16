@@ -12,6 +12,9 @@ import fetchData from '../../Backend/fetchData.backend';
 import { currencyFormatter } from '../../utils/currencyFormatter';
 import AddModal from '../../components/Add.modal';
 import { OUTWARD_COLUMN } from './helper';
+import { IoMdDownload } from 'react-icons/io';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
+import { LuLoaderCircle } from 'react-icons/lu';
 
 const headerLink = [
     { title: "outward" },
@@ -25,13 +28,16 @@ const Outward = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [downloadingInvoice, setDownloadingInvoice] = useState(null);
+
+
+    const { mutateAsync, isPending } = pdf.TQOutwardInvoicePDFDownload();
 
     const params = {
         ...(debounceSearch && { outward_no: debounceSearch }),
         page: currentPage,
         limit: limit,
-    }
-
+    };
     const { data: outwardList, isLoading: outwardListLoading } = fetchData.TQOutwardList(params);
 
     const isEmpty = outwardList?.data?.length < 1;
@@ -39,6 +45,11 @@ const Outward = () => {
     function handelShow(items) {
         setSelectedItem(items);
         setIsShow(true);
+    }
+
+    async function handelDownloadInvoice(out_no) {
+        setDownloadingInvoice(out_no);
+        await mutateAsync({ out_no });
     }
 
     /** set status color */
@@ -128,8 +139,21 @@ const Outward = () => {
                                 itemsCount: item?.outwardItemList?.length,
                                 action: (
                                     <div className='flex items-center justify-center space-x-2'>
-                                        <CustomeButton onClick={() => handelShow(item.outwardItemList)} >
+                                        <CustomeButton
+                                            title="Preview"
+                                            onClick={() => handelShow(item.outwardItemList)}
+                                        >
                                             <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                        </CustomeButton>
+                                        <CustomeButton
+                                            title="Download invice"
+                                            onClick={() => handelDownloadInvoice(item.outward_no)}
+                                            disabled={isPending}
+                                        >
+                                            {isPending && downloadingInvoice === item.outward_no
+                                                ? <LuLoaderCircle size={20} className='animate-spin' />
+                                                : <IoMdDownload size={20} className="hover:scale-110 cursor-pointer" />
+                                            }
                                         </CustomeButton>
                                     </div>
                                 )

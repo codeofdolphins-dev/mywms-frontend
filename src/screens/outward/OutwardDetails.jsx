@@ -7,13 +7,21 @@ import masterData from '../../Backend/master.backend';
 import ComponentHeader from '../../components/ComponentHeader';
 import { Button } from '@mantine/core';
 import { FaFileDownload } from 'react-icons/fa';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
+import { LuLoaderCircle } from 'react-icons/lu';
 
+
+const HEAD_LINK = [
+    { title: "outward", link: "/outward" },
+    { title: "details" }
+]
 
 const OutwardDetails = () => {
     const { out_no } = useParams();
     const navigate = useNavigate();
 
     const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["outwardDetails", "outwardList"]);
+    const { mutateAsync, isPending } = pdf.TQOutwardInvoicePDFDownload();
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
@@ -61,7 +69,7 @@ const OutwardDetails = () => {
     }
 
     async function downloadInvoice() {
-        // const res = await pdf.TQOutwardInvoicePDFDownload({ outward_no: out_no });
+        await mutateAsync({ out_no });
     }
 
 
@@ -84,10 +92,7 @@ const OutwardDetails = () => {
     return (
         <div className="bg-slate-50 min-h-screen">
             <ComponentHeader
-                headerLink={[
-                    { title: "outward", link: "/outward" },
-                    { title: "details" }
-                ]}
+                headerLink={HEAD_LINK}
                 showSearch={false}
                 addButton={false}
             />
@@ -102,9 +107,12 @@ const OutwardDetails = () => {
                     (isExternal && <Button
                         className="bg-secondary px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
                         onClick={downloadInvoice}
-                        loading={updatePending}
+                        disabled={isPending}
                     >
-                        {!updatePending && <FaFileDownload size={18} className='mr-4' />}
+                        {isPending ?
+                            <LuLoaderCircle size={20} className='mr-4 animate-spin text-primary' />
+                            : <FaFileDownload size={18} className='mr-4' />
+                        }
                         Download Invoice
                     </Button>)
                     :

@@ -6,7 +6,9 @@ const Button = ({
     onClick,
     className,
     icon = false,
-    children
+    title,
+    children,
+    props
 }, ref) => {
     return (
         <button
@@ -14,6 +16,8 @@ const Button = ({
             type={type}
             className={`${className}`}
             onClick={onClick}
+            title={title}
+            {...props}
         >
             {icon && <FiPlus size={20} className='mr-2' />}
             {children}
