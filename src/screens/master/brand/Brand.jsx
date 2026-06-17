@@ -130,6 +130,7 @@ const Brand = () => {
                                                     labelKey="name.full_name"
                                                 />
                                             ),
+                                            desc: item?.description || "N/A",
                                             is_active: item?.isActive ? "Active" : "Inactive",
                                             action: (
                                                 <div className="flex space-x-3">
@@ -156,7 +157,7 @@ const Brand = () => {
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Add New Brand"
-                maxWidth='55'
+                maxWidth='50'
             >
                 <Form
                     editId={editId}

@@ -17,10 +17,10 @@ import SupplierForm from '../supplier/SupplierForm'
 
 const Form = ({ editId = null, setIsShow = false }) => {
     const navigate = useNavigate()
-    
+
     const [isSupplierPopup, setIsSupplierPopup] = useState(false);
 
-    const { data: supplierData, isLoading: supplierLoading } = fetchData.TQAllSupplierList({ noLimit: true });
+    const { data: supplierData, isLoading: supplierLoading } = fetchData.TQAllSupplierList({ noLimit: true }, false);
 
     const { data: editData, isLoading } = fetchData.TQAllBrandList({ id: editId }, !!editId);
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["brandList"]);
@@ -78,11 +78,12 @@ const Form = ({ editId = null, setIsShow = false }) => {
                     ? <Loader />
                     : <form onSubmit={handleSubmit(submit)} className="space-y-5">
                         {/* 1st row */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1  gap-4">
                             <div>
                                 <Input
                                     label={"Brand Name"}
                                     placeholder={"Enter brand name..."}
+                                    labelPosition="inline"
                                     {...register("name", {
                                         required: "This field is required!!!"
                                     })}
@@ -91,7 +92,31 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                     autoFocus={true}
                                 />
                             </div>
-                            <div className='flex items-center gap-5'>
+                            <div>
+                                <Controller
+                                    name="logo"
+                                    control={control}
+                                    defaultValue={null}
+                                    render={({ field: { onChange } }) => (
+                                        <FileUpload
+                                            label="Product Image"
+                                            labelPosition="inline"
+                                            onChange={onChange}
+                                        />
+                                    )}
+                                />
+                            </div>
+                            <div>
+                                <TextArea
+                                    label="Description"
+                                    labelPosition="inline"
+                                    placeholder="Enter Description"
+                                    className="text-sm"
+                                    rows={1}
+                                    {...register("description")}
+                                />
+                            </div>
+                            {/* <div className='flex items-center gap-5'>
                                 <Controller
                                     name="vendor_id"
                                     control={control}
@@ -121,11 +146,11 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                         />
                                     )}
                                 />
-                            </div>
+                            </div> */}
                         </div>
 
                         {/* 2nd row */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <Input
                                     label={"Website"}
@@ -140,10 +165,10 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                     {...register("origin_country")}
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* 3rd row */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* <div className="grid grid-cols-1">
                             <div>
                                 <TextArea
                                     label="Description"
@@ -166,7 +191,7 @@ const Form = ({ editId = null, setIsShow = false }) => {
                                     )}
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex">
                             <Button variant="filled" color="indigo" size="md" radius="md" type="submit" loading={createPending || updatePending} className='ml-auto'>
