@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 const SampleFileForm = ({ onCancel }) => {
     const navigate = useNavigate();
 
-    const { mutateAsync: downloadSample, isPending: downloadSamplePending } = excel.TQSampleOpeningStockExcelDownload();
+    const { mutateAsync: downloadSample, isPending: downloadSamplePending } = excel.TQOpeningStockSample();
 
 
     const [isHasStore, setIsHasStore] = useState(false);

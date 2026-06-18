@@ -10,7 +10,6 @@ import Tippy from '@tippyjs/react';
 import Input from '@/components/inputs/Input';
 import ButtonBoolean from '@/components/inputs/ButtonBoolean';
 import ItemTable from '@/components/ItemTable';
-import fetchData from '@/Backend/fetchData.backend';
 import masterData from '@/Backend/master.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
 import TableHeader from '@/components/table/TableHeader';
@@ -28,6 +27,7 @@ import { BRAND_COLUMN } from '../../../utils/helper';
 import Form from '../../../components/brand/Form';
 import AddModal from '../../../components/Add.modal';
 import ComponentHeader from '../../../components/ComponentHeader';
+import fetchData from '../../../Backend/fetchData.backend';
 
 
 const headerLink = [
@@ -37,7 +37,7 @@ const headerLink = [
 
 const Brand = () => {
     const imageUrl = import.meta.env.VITE_IMAGE_URL;
-    const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster();
+    const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster(["brandList"]);
 
     const [debounceSearch, setDebounceSearch] = useState('');
     const [isShow, setIsShow] = useState(false);

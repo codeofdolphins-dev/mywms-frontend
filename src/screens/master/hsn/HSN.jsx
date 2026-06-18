@@ -39,7 +39,7 @@ const headerLink = [
 const HSN = () => {
     const navigate = useNavigate();
 
-    const { mutateAsync: deleteData, isLoading } = masterData.TQDeleteMaster();
+    const { mutateAsync: deleteData, isLoading } = masterData.TQDeleteMaster(["hsnList"]);
 
     const [isShow, setIsShow] = useState(false);
     const [debounceSearch, setDebounceSearch] = useState('');

@@ -46,9 +46,7 @@ const ItemTable = ({
                                         <p className='font-bold text-gray-600 whitespace-nowrap'>{col.label}</p>
                                     </th>
                                 )}
-                                {
-                                    (edit || deleteBtn) && <th className="px-3 py-2 font-bold text-gray-600">Action</th>
-                                }
+                                {(edit || deleteBtn) && <th className="px-3 py-2 font-bold text-gray-600">Action</th>}
                             </tr>
                         </thead>
 
@@ -69,8 +67,9 @@ const ItemTable = ({
                                                 return (
                                                     <td key={j}>
                                                         {col.render ? (
-                                                            col.render(value, row)
-
+                                                            <div className="whitespace-nowrap">
+                                                                {col.render(value, row)}
+                                                            </div>
                                                         ) : col.type === "image" ? (
                                                             <ImageComponent
                                                                 src={value}
@@ -84,7 +83,7 @@ const ItemTable = ({
                                                                     interactive
                                                                     placement="right"
                                                                     content={
-                                                                        <div className="max-w-xs p-3">
+                                                                        <div className="max-w-xs p-3 whitespace-nowrap">
                                                                             {renderTwoLevelArray(value, col.arrayRender)}
                                                                         </div>
                                                                     }

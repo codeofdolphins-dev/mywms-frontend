@@ -88,7 +88,6 @@ const confirmation = async (msg = "You won't be able to revert this!") => {
 
 const inputAlert = async (title = "Enter details", placeholder = "Type here...") => {
     return await MySwal.fire({
-        // const { value: enteredData } = await MySwal.fire({
         title: title,
         input: "text",
         inputPlaceholder: placeholder,
@@ -97,8 +96,43 @@ const inputAlert = async (title = "Enter details", placeholder = "Type here...")
         cancelButtonColor: "#d33",
         confirmButtonText: "Submit"
     });
+};
 
-    // return enteredData || null;
+/* inputOptions can be an object or Promise */
+// const inputOptions = new Promise((resolve) => {
+//     setTimeout(() => {
+//         resolve({
+//             "#ff0000": "Red",
+//             "#00ff00": "Green",
+//             "#0000ff": "Blue"
+//         });
+//     }, 1000);
+// });
+// const { value: color } = await Swal.fire({
+//     title: "Select color",
+//     input: "radio",
+//     inputOptions,
+//     inputValidator: (value) => {
+//         if (!value) return "You need to choose something!";
+//     }
+// });
+// if (color) Swal.fire({ html: `You selected: ${color}` });
+
+const option = {
+    "1": "One",
+    "2": "Two",
+    "3": "Three"
+};
+
+const radioAlert = async (title = "Select color", options = option) => {
+    return await Swal.fire({
+        title,
+        input: "radio",
+        inputOptions: options,
+        inputValidator: (value) => {
+            if (!value) return "You need to choose something!";
+        }
+    });
 }
 
-export { successAlert, errorAlert, confirmation, warningAlert, inputAlert, errorToastAlert };
+export { successAlert, errorAlert, confirmation, warningAlert, inputAlert, errorToastAlert, radioAlert };

@@ -9,7 +9,6 @@ import IconCaretDown from '@/components/Icon/IconCaretDown';
 import Tippy from '@tippyjs/react';
 import Input from '@/components/inputs/Input';
 import { FiPlus } from 'react-icons/fi';
-import fetchData from '@/Backend/fetchData.backend';
 import { confirmation, successAlert } from '@/utils/alerts';
 import masterData from '@/Backend/master.backend';
 import ItemTable from '../../../components/ItemTable';
@@ -17,6 +16,8 @@ import ComponentHeader from '../../../components/ComponentHeader';
 import AddModal from '../../../components/Add.modal';
 import RawForm from '../../../components/product/Raw.Form';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
+import BulkUploadModal from '../../../components/product/BulkUploadModal';
+import fetchData from '../../../Backend/fetchData.backend';
 
 const colName_raw = [
     // { key: "id", label: "#" },
@@ -138,12 +139,11 @@ const Product = () => {
                 setDebounceSearch={setDebounceSearch}
                 className={"mb-5 justify-between"}
 
-                addButton={true}
                 btnTitle='Add'
                 btnOnClick={() => navigate("add-product")}
 
-                addButton2={false}
-                btn2Title='Raw'
+                addButton2={true}
+                btn2Title='Bulk Upload'
                 btn2OnClick={() => setIsShow(true)}
             />
 
@@ -189,7 +189,7 @@ const Product = () => {
                 isLoading={isLoading}
             />
 
-            <AddModal
+            {/* <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
                 title="Add Raw Product"
@@ -197,6 +197,17 @@ const Product = () => {
                 <RawForm
                     setIsShow={setIsShow}
                     editRawProduct={editRawProduct}
+                />
+            </AddModal> */}
+
+            <AddModal
+                isShow={isShow}
+                setIsShow={setIsShow}
+                title="Bulk Upload"
+                maxWidth='50'
+            >
+                <BulkUploadModal
+                    onCancel={() => setIsShow(false)}
                 />
             </AddModal>
 
