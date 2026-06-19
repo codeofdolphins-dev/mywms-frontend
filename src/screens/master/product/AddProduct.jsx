@@ -556,6 +556,7 @@ const AddProduct = () => {
                 isShow={showBrand}
                 setIsShow={setShowBrand}
                 title="Add New Brand"
+                maxWidth={'50'}
             >
                 <BrandForm setIsShow={setShowBrand} />
             </AddModal>

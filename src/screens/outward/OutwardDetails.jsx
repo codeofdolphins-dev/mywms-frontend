@@ -5,13 +5,23 @@ import Select from 'react-select';
 import fetchData from '../../Backend/fetchData.backend';
 import masterData from '../../Backend/master.backend';
 import ComponentHeader from '../../components/ComponentHeader';
+import { Button } from '@mantine/core';
+import { FaFileDownload } from 'react-icons/fa';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
+import { LuLoaderCircle } from 'react-icons/lu';
 
+
+const HEAD_LINK = [
+    { title: "outward", link: "/outward" },
+    { title: "details" }
+]
 
 const OutwardDetails = () => {
     const { out_no } = useParams();
     const navigate = useNavigate();
 
     const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["outwardDetails", "outwardList"]);
+    const { mutateAsync, isPending } = pdf.TQOutwardInvoicePDFDownload();
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
@@ -32,6 +42,7 @@ const OutwardDetails = () => {
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
     const isPreview = data?.status === "dispatched";
+    const isExternal = data?.type === "external";
 
     // console.log(data)
     // console.log(isPreview)
@@ -52,9 +63,13 @@ const OutwardDetails = () => {
         };
 
         const res = await update({ path: "/outward/dispatch", formData: payload });
-        if (res?.success) {
-            navigate("/outward");
-        }
+        // if (res?.success) {
+        //     navigate("/outward");
+        // }
+    }
+
+    async function downloadInvoice() {
+        await mutateAsync({ out_no });
     }
 
 
@@ -77,10 +92,7 @@ const OutwardDetails = () => {
     return (
         <div className="bg-slate-50 min-h-screen">
             <ComponentHeader
-                headerLink={[
-                    { title: "outward", link: "/outward" },
-                    { title: "details" }
-                ]}
+                headerLink={HEAD_LINK}
                 showSearch={false}
                 addButton={false}
             />
@@ -91,14 +103,27 @@ const OutwardDetails = () => {
                     <h1 className="text-2xl font-bold text-slate-800">Outward Details</h1>
                     <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
                 </div>
-                {!isPreview &&
-                    <button
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
-                        onClick={handleConfirmAllocation}
+                {isPreview ?
+                    (isExternal && <Button
+                        className="bg-secondary px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
+                        onClick={downloadInvoice}
+                        disabled={isPending}
                     >
-                        <FiCheckCircle size={18} />
+                        {isPending ?
+                            <LuLoaderCircle size={20} className='mr-4 animate-spin text-primary' />
+                            : <FaFileDownload size={18} className='mr-4' />
+                        }
+                        Download Invoice
+                    </Button>)
+                    :
+                    <Button
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
+                        onClick={handleConfirmAllocation}
+                        loading={updatePending}
+                    >
+                        {!updatePending && <FiCheckCircle size={18} className='mr-4' />}
                         Confirm Dispatch
-                    </button>
+                    </Button>
                 }
             </div>
 
@@ -400,7 +425,7 @@ const OutwardDetails = () => {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 };
 

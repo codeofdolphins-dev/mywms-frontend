@@ -12,9 +12,8 @@ class MasterData {
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if (key.length < 1) return;
                 if (res.success) {
-                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                    if (key.length >= 1) key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
                 }
             },
             onError: (error) => {
@@ -32,9 +31,8 @@ class MasterData {
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if (key.length < 1) return;
                 if (res.success) {
-                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                    if (key.length >= 1) key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
                 }
             },
             onError: (error) => {
@@ -52,9 +50,8 @@ class MasterData {
             },
             onSuccess: (res) => {
                 successAlert(res.message);
-                if (key.length < 1) return;
                 if (res.success) {
-                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                    if (key.length >= 1) key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
                 }
             },
             onError: (error) => {

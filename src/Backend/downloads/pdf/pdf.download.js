@@ -19,8 +19,9 @@ class PDF {
             onSuccess: (res) => {
                 successAlert("PDF generated successfully");
 
-                if (key.length < 1) return;
-                key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                if (key.length >= 1) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                }
 
 
                 // Extract filename from header
@@ -44,7 +45,7 @@ class PDF {
                 errorAlert(error.response.data?.message);
             }
         })
-    }
+    };
 
     TQProformaInvoicePDFDownload(key = []) {
         const QueryClient = useQueryClient()
@@ -62,8 +63,9 @@ class PDF {
             onSuccess: (res) => {
                 successAlert("PDF generated successfully");
 
-                if (key.length < 1) return;
-                key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                if (key.length >= 1) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                }
 
 
                 // Extract filename from header
@@ -87,7 +89,114 @@ class PDF {
                 errorAlert(error.response.data?.message);
             }
         })
-    }
+    };
+
+    TQBPOAgreementPDFDownload(key = []) {
+        const QueryClient = useQueryClient()
+        return useMutation({
+            mutationFn: async (params) => {
+                const res = await API.post(
+                    "/download/pdf/bpo-agreement",
+                    params,
+                    {
+                        responseType: "blob",
+                    }
+                );
+                return res
+            },
+            onSuccess: (res) => {
+                successAlert("PDF generated successfully");
+
+                if (key.length >= 1) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                }
+
+
+                // Extract filename from header
+                const disposition = res.headers["content-disposition"];
+                const filename = disposition?.split("filename=")[1]?.replace(/"/g, "") || "requisition.pdf";
+
+                // Create downloadable file
+                const blob = new Blob([res.data], { type: "application/pdf" });
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            onError: (error) => {
+                errorAlert(error.response.data?.message);
+            }
+        })
+    };
+    
+    TQOutwardInvoicePDFDownload(key = []) {
+        const QueryClient = useQueryClient()
+        return useMutation({
+            mutationFn: async (params) => {
+                const res = await API.post(
+                    "/download/pdf/outward-invoice",
+                    params,
+                    {
+                        responseType: "blob",
+                    }
+                );
+                return res
+            },
+            onSuccess: (res) => {
+                successAlert("PDF generated successfully");
+
+                if (key.length >= 1) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                }
+
+
+                // Extract filename from header
+                const disposition = res.headers["content-disposition"];
+                const filename = disposition?.split("filename=")[1]?.replace(/"/g, "") || "requisition.pdf";
+
+                // Create downloadable file
+                const blob = new Blob([res.data], { type: "application/pdf" });
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            onError: (error) => {
+                errorAlert(error.response.data?.message);
+            }
+        })
+    };
+
+
+
+    Test() {
+        return useMutation({
+            mutationFn: async (data) => {
+                const res = await API.post("/download/pdf/outward-invoice", data);
+                return res.data;
+            },
+            onSuccess: (data) => {
+                successAlert("Login Successfull");
+
+            },
+            onError: (error) => {
+                console.log(error.response.data);
+                errorAlert(error.response.data?.message || "something Wrong!!!");
+            },
+        });
+    };
 }
 
 const pdf = new PDF();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BasicPagination from '../../components/BasicPagination';
 import ComponentHeader from '../../components/ComponentHeader';
 import bpo from '../../Backend/bpo.fetch';
@@ -13,6 +13,7 @@ import TableRow from '../../components/table/TableRow';
 import secureLocalStorage from 'react-secure-storage';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import { Helmet } from 'react-helmet-async';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
 
 
 
@@ -27,6 +28,9 @@ const BlanketPO = () => {
     const [status, setStatus] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
+    const [downloadBpoNo, setDownloadBpoNo] = useState(null);
+
+    const { mutateAsync, isPending, isSuccess } = pdf.TQBPOAgreementPDFDownload();
 
     const params = {
         ...(search && { search: search }),
@@ -39,12 +43,14 @@ const BlanketPO = () => {
 
     // console.log(bpoList)
 
+    useEffect(() => {
+        if (isSuccess) setDownloadBpoNo(null);
+    }, [isSuccess]);
 
-    async function handelDownload(params) { alert("Working!!!") };
-    function handelShow(items) { };
-    async function handleDelete(id) { };
-
-
+    async function handelDownload(bpo_no) {
+        setDownloadBpoNo(bpo_no);
+        await mutateAsync({ bpoNo: bpo_no });
+    };
 
 
     /** set status color */
@@ -140,8 +146,8 @@ const BlanketPO = () => {
                                                 <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                             </CustomeButton> */}
 
-                                            <CustomeButton onClick={() => handelDownload(item?.requisition_no)} >
-                                                {false && (downloadReqNo === item?.requisition_no)
+                                            <CustomeButton onClick={() => handelDownload(item?.bpo_no)} >
+                                                {isPending && (downloadBpoNo === item?.bpo_no)
                                                     ?
                                                     <span class="animate-spin border-[3px] border-black border-l-transparent rounded-full w-4 h-4 inline-block align-middle" />
                                                     :

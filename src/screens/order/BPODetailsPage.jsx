@@ -24,6 +24,8 @@ import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import RealseOrderPreview from './ReleaseOrderPreview';
 import { Helmet } from 'react-helmet-async';
 import secureLocalStorage from 'react-secure-storage';
+import pdf from '../../Backend/downloads/pdf/pdf.download';
+import { FaSpinner } from 'react-icons/fa6';
 
 
 const HEADER_LINK = [
@@ -41,20 +43,24 @@ const PRIORITY = [
 
 const BPODetailsPage = () => {
 	const tenant = secureLocalStorage.getItem("tenant");
-	const { id } = useParams();
+	const { bpo_no = "" } = useParams();
+	const isIdValid = bpo_no.length > 0;
 
 	const [store, setStore] = useState(null);
 	const [isPreviewShow, setIsPreviewShow] = useState(false);
 	const [formData, setFormData] = useState(null);
 
-	const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem(id, Boolean(id));
+
+	const { mutateAsync, isPending } = pdf.TQBPOAgreementPDFDownload();
+
+	const { data: bpoList, isLoading: bpoListLoading } = bpo.TQBlanketOrderItem(bpo_no, isIdValid);
 	const bpoData = bpoList?.data;
 
 	const isEmpty = bpoData?.length > 0 ? false : true;
 	const isClosed = bpoData?.status === "closed";
 	const isbuyer = bpoData?.buyer_tenant === tenant;
 
-	const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "rm_store", isAdmin: true }, Boolean(id));
+	const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "rm_store", isAdmin: true }, isIdValid);
 
 	const { handleSubmit, reset, register, formState: { errors }, setValue, control, watch } = useForm({
 		defaultValues: {
@@ -105,7 +111,7 @@ const BPODetailsPage = () => {
 		});
 
 		if (selectedItems.length === 0) {
-			alert("Please enter release qty for at least one item");
+			alert("Please enter release qty");
 			return;
 		}
 
@@ -116,9 +122,13 @@ const BPODetailsPage = () => {
 		}, 0);
 		data.target_store_id = data.target_store?.id;
 
-		// console.log("Form Data: ", data);
+		console.log("Form Data: ", data);
 		setFormData(data);
 		setIsPreviewShow(true);
+	};
+
+	async function handelDownload() {
+		await mutateAsync({ bpoNo: bpo_no });
 	}
 
 
@@ -146,11 +156,12 @@ const BPODetailsPage = () => {
 					<div className="flex gap-3">
 						<button
 							type='button'
+							disabled={isPending}
 							className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all font-medium"
-							onClick={() => alert("working!!!")}
+							onClick={handelDownload}
 						>
-							<FaFileDownload className="text-gray-400" size={25} />
-							Download Contract
+							{isPending ? <FaSpinner className="animate-spin text-gray-400" size={25} /> : <FaFileDownload className="text-gray-400" size={25} />}
+							{isPending ? "Downloading..." : "Download Contract"}
 						</button>
 
 						{isbuyer && !isClosed &&

@@ -163,7 +163,8 @@ export const BRAND_COLUMN = [
     { key: "logo", label: "Logo", width: "80px" },
     { key: "name", label: "Brand Name" },
     { key: "slug", label: "Slug" },
-    { key: "supplier", label: "Supplier" },
+    { key: "desc", label: "Desc" },
+    // { key: "supplier", label: "Supplier" },
     { key: "is_active", label: "Status" },
     { key: "action", label: "Action" }
 ];

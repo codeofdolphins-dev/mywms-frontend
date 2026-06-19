@@ -1,10 +1,11 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { FiDownload, FiFile, FiTrash2, FiInfo, FiUploadCloud, FiLink } from 'react-icons/fi';
 import { BsFiletypeCsv, BsFiletypeXlsx } from 'react-icons/bs';
-import AddModal from '../Add.modal';
-import SampleFileForm from './SampleFile.form';
 import masterData from '../../Backend/master.backend';
-import { Button } from '@mantine/core';
+import Button from '../inputs/Button';
+import excel from '../../Backend/downloads/excel/excel.download';
+import { radioAlert } from '../../utils/alerts';
+
 
 const ACCEPTED_TYPES = [
     'text/csv',
@@ -13,16 +14,22 @@ const ACCEPTED_TYPES = [
 ];
 const ACCEPTED_EXTENSIONS = ['.xlsx', '.xls'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const PRODUCT_TYPE = {
+    "finished": "FINISHED",
+    "raw": "RAW"
+};
 
-const BulkCreationModal = ({ onCancel }) => {
+
+const BulkUploadModal = ({ onCancel }) => {
     const fileInputRef = useRef(null);
     const [file, setFile] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
     const [error, setError] = useState('');
 
-    const [isShow, setIsShow] = useState(false);
 
-    const { mutateAsync: upload, isPending: uploadPending } = masterData.TQCreateMaster(["inventoryFullList"]);
+    const { mutateAsync, isPending } = excel.TQProductUploadSample();
+    const { mutateAsync: upload, isPending: uploadPending } = masterData.TQCreateMaster(["productList"]);
+
 
     /** validate & set file */
     const handleFile = useCallback((selectedFile) => {
@@ -44,6 +51,7 @@ const BulkCreationModal = ({ onCancel }) => {
         setFile(selectedFile);
     }, []);
 
+
     /** drag events */
     const handleDragOver = (e) => { e.preventDefault(); setIsDragOver(true); };
     const handleDragLeave = (e) => { e.preventDefault(); setIsDragOver(false); };
@@ -54,8 +62,10 @@ const BulkCreationModal = ({ onCancel }) => {
         if (droppedFile) handleFile(droppedFile);
     };
 
+
     /** browse click */
     const handleBrowse = () => fileInputRef.current?.click();
+
 
     /** file input change */
     const handleInputChange = (e) => {
@@ -64,8 +74,10 @@ const BulkCreationModal = ({ onCancel }) => {
         e.target.value = ''; // reset for re-selection
     };
 
+
     /** remove selected file */
     const removeFile = () => { setFile(null); setError(''); };
+
 
     /** format file size */
     const formatSize = (bytes) => {
@@ -74,6 +86,7 @@ const BulkCreationModal = ({ onCancel }) => {
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     };
 
+
     /** get file icon */
     const getFileIcon = (fileName) => {
         const ext = fileName?.split('.').pop().toLowerCase();
@@ -81,21 +94,35 @@ const BulkCreationModal = ({ onCancel }) => {
         return <BsFiletypeXlsx size={28} className="text-primary" />;
     };
 
+
+    /** get sample file download */
+    function handleSampleFile() {
+        radioAlert("Select Product Type", PRODUCT_TYPE)
+        .then(res => {
+            if (res.isConfirmed) {
+                mutateAsync({ type: res.value });
+            };
+        });
+    }
+
+
+    /** upload file */
     function uploadFile() {
         if (!file) return;
 
         const formData = new FormData();
         formData.append("file", file);
 
-        upload({ path: "/batch/bulk-create", formData }).then(() => onCancel());
+        upload({ path: "/product/bulk-upload", formData }).then(() => onCancel());
     }
+
 
     return (
         <>
             <div className="p-5 pt-4">
                 {/* Subtitle */}
                 <p className="text-sm mb-5">
-                    Upload file to import inventory data for sample file click <span onClick={() => setIsShow(true)} className="text-primary hover:underline cursor-pointer">Here</span>.
+                    Upload file to import product for sample file click <span onClick={handleSampleFile} className="text-primary hover:underline cursor-pointer">Here</span>.
                 </p>
 
                 {/* ─── Drag & Drop Zone ──────────────────────────────── */}
@@ -208,21 +235,8 @@ const BulkCreationModal = ({ onCancel }) => {
                     </div>
                 </div>
             </div>
-
-            {/*  */}
-            <AddModal
-                isShow={isShow}
-                setIsShow={setIsShow}
-                title="Download Sample File"
-                maxWidth='50'
-                placement='start'
-            >
-                <SampleFileForm
-                    onCancel={() => { onCancel(); setIsShow(false) }}
-                />
-            </AddModal>
         </>
     );
 };
 
-export default BulkCreationModal;
+export default BulkUploadModal;
