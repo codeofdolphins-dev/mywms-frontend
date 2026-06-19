@@ -181,17 +181,15 @@ const Requisition = () => {
                                 name: item?.items?.[0]?.product?.name,  // restrict to one item in RFQ
                                 quotationReceived: item?.receiveQuotationCount,
                                 price: currencyFormatter(item?.items?.[0]?.price_limit),
-                                limitType: <p className='flex items-center uppercase whitespace-nowrap'>
+                                limitType: <p className={`flex items-center uppercase whitespace-nowrap`}>
                                     {item?.price_limit_type?.split("_")?.join(" ") ?? "—"}
-                                    <span className='ml-2'>
+                                    <span className={`ml-2 ${item?.price_limit_type === "lower_limit" ? "text-success" : item?.price_limit_type === "upper_limit" ? "text-danger" : ""}`}>
                                         {item?.price_limit_type === "lower_limit" && <TbArrowBarUp size={18} />}
                                         {item?.price_limit_type === "upper_limit" && <TbArrowBarDown size={18} />}
                                     </span>
                                 </p>,
-
                                 // for non manufacturing
-                                items: item?.items?.length,
-
+                                items: item?.items?.length
                             }}
                         />
                     })}

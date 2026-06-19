@@ -23,7 +23,7 @@ const colName_raw = [
     { key: "barcode", label: "Barcode" },
     { key: "photo", label: "Logo", type: "image" },
     { key: "name", label: "Name" },
-    { key: "sku", label: "code / SKU" },
+    { key: "sku", label: "Code / SKU" },
     { key: "measure", label: "Measure" },
     { key: "unit_type", label: "Unit of Masure" },
     { key: "package_type", label: "Package Type" },
