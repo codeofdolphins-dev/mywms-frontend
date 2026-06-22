@@ -134,7 +134,7 @@ class PDF {
             }
         })
     };
-    
+
     TQOutwardInvoicePDFDownload(key = []) {
         const QueryClient = useQueryClient()
         return useMutation({
@@ -184,7 +184,7 @@ class PDF {
     Test() {
         return useMutation({
             mutationFn: async (data) => {
-                const res = await API.post("/download/pdf/outward-invoice", data);
+                const res = await API.post("/download/pdf/requisition", data);
                 return res.data;
             },
             onSuccess: (data) => {
