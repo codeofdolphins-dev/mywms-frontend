@@ -54,6 +54,7 @@ import FGBrowse from './screens/facilities/fgStore/FGBrowse';
 import DirectTransfer from './screens/directTransfer/DirectTransfer';
 import CostHead from './screens/master/costHead/CostHead';
 import Expense from './screens/expenses/Expense';
+import { StoreRoute, HomeRoute } from './guards/StoreRoute';
 
 
 function App() {
@@ -69,7 +70,8 @@ function App() {
 
                 {/* app */}
                 <Route path="/" element={<AppLayout />}>
-                    <Route index element={<OpenForum />} />
+                    <Route index element={<HomeRoute />} />
+                    {/* <Route index element={<OpenForum />} /> */}
 
                     {/* super admin */}
                     <Route path="super-admin" >
@@ -165,6 +167,7 @@ function App() {
                         <Route path='vendor/category' element={<VendorCategory />} />
 
                         <Route path='store' >
+                            <Route index element={<StoreRoute />} />
                             <Route path='rm' element={<RMBrowse />} />
                             <Route path='rm/:to_no' element={<TransferOrderDispatch />} />
 

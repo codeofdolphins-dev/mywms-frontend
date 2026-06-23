@@ -52,12 +52,12 @@ const Dashboard = () => {
     const { data: rfqList, isLoading: rfqListLoading } = fetchData.TQRfqList(params);
     const { data: appliedRfqList, isLoading: appliedRfqListLoading } = fetchData.TQAppliedRfqList();
 
-    const isEmpty = rfqList?.data?.length === 0;
-
     const filteredList = rfqList?.data?.filter(i => {
         if (activeTab === 1) return !appliedRfqList?.data?.includes(i.id);
         if (activeTab === 2) return appliedRfqList?.data?.includes(i.id);
     });
+
+    const isEmpty = filteredList?.length === 0;
 
     useEffect(() => {
         if (search && Object.values(search).some(val => val && String(val).trim() !== "")) {

@@ -145,16 +145,18 @@ const Outward = () => {
                                         >
                                             <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                         </CustomeButton>
-                                        <CustomeButton
-                                            title="Download invice"
-                                            onClick={() => handelDownloadInvoice(item.outward_no)}
-                                            disabled={isPending}
-                                        >
-                                            {isPending && downloadingInvoice === item.outward_no
-                                                ? <LuLoaderCircle size={20} className='animate-spin' />
-                                                : <IoMdDownload size={20} className="hover:scale-110 cursor-pointer" />
-                                            }
-                                        </CustomeButton>
+                                        {item?.status === "dispatched" &&
+                                            <CustomeButton
+                                                title="Download invice"
+                                                onClick={() => handelDownloadInvoice(item.outward_no)}
+                                                disabled={isPending}
+                                            >
+                                                {isPending && downloadingInvoice === item.outward_no
+                                                    ? <LuLoaderCircle size={20} className='animate-spin' />
+                                                    : <IoMdDownload size={20} className="hover:scale-110 cursor-pointer" />
+                                                }
+                                            </CustomeButton>
+                                        }
                                     </div>
                                 )
                             }}

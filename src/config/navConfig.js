@@ -15,7 +15,7 @@ export const NAV_CONFIG = [
         label: "Open Forum",
         icon: HiUserGroup,
         path: "/",
-        // allowedRoles: ["system", "owner", "company"],
+        allowedRoles: ["system", "owner", "company", "purchase", "sales"],
     },
 
     // ─── Master ───
@@ -115,7 +115,7 @@ export const NAV_CONFIG = [
         label: "Production",
         icon: BiSolidFactory,
         basePath: "/production",
-        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "store_wip", "store_fg"],
+        allowedRoles: ["system", "store_rm", "store_wip", "store_fg", "company"],
         // children: [
         //     {
         //         label: "Facilities / Stores",
@@ -136,7 +136,7 @@ export const NAV_CONFIG = [
         label: "Requisition",
         icon: FaClipboardList,
         basePath: "/requisition",
-        allowedRoles: ["system", "owner", "company", "admin", "purchase", "warehouse", "partner"],
+        allowedRoles: ["system", "purchase", "warehouse", "partner", "company"],
         children: [
             { label: "All List", path: "/requisition" },
             { label: "Create", path: "/requisition/create" },
@@ -151,7 +151,7 @@ export const NAV_CONFIG = [
         label: "Quotation",
         icon: FaQuoteLeft,
         basePath: "/quotation",
-        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales"],
+        allowedRoles: ["system", "purchase", "sales", "company"],
         children: [
             { label: "All List", path: "/quotation" },
             { label: "Receive Quotation", path: "/quotation/received-quotation" },
@@ -164,7 +164,7 @@ export const NAV_CONFIG = [
         label: "Orders",
         icon: MdOutlineReceiptLong,
         basePath: "/order",
-        allowedRoles: ["system", "owner", "company", "admin", "purchase", "sales", "warehouse", 'partner'],
+        allowedRoles: ["system", "purchase", "sales", "warehouse", 'partner', "company"],
         children: [
             { label: "List", path: "/order" },
             { label: "Blanket PO", path: "/order/bpo" },
@@ -178,7 +178,7 @@ export const NAV_CONFIG = [
         label: "Inward",
         icon: BsBoxArrowInDown,
         path: "/inward",
-        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "warehouse", "partner"],
+        allowedRoles: ["system", "store_rm", "warehouse", "partner", "company"],
     },
 
     // ─── Outward ───
@@ -187,7 +187,7 @@ export const NAV_CONFIG = [
         label: "Outward",
         icon: BsBoxArrowUp,
         path: "/outward",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg", "warehouse", "partner"],
+        allowedRoles: ["system", "store_fg", "warehouse", "partner", "company"],
     },
 
     // ─── Direct Transfer ───
@@ -196,13 +196,13 @@ export const NAV_CONFIG = [
         label: "Direct Transfer",
         icon: FaArrowRightArrowLeft,
         path: "/direct-transfer",
-        allowedRoles: ["system", "owner", "company", "admin", "store_fg"],
+        allowedRoles: ["system", "store_fg", "company"],
     },
     {
         key: "expense",
         label: "Expenses",
         icon: HiOutlineDocumentCurrencyRupee,
         path: "/expense",
-        allowedRoles: ["system", "owner", "company", "admin", "store_rm", "store_wip", "store_fg", "warehouse", "partner"],
+        allowedRoles: ["system", "store_rm", "store_wip", "store_fg", "warehouse", "partner", "company"],
     },
 ];
