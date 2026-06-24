@@ -2,7 +2,7 @@ import { HiDatabase, HiUserGroup } from "react-icons/hi";
 import { RiAdminFill } from "react-icons/ri";
 import { MdAdminPanelSettings, MdOutlineReceiptLong } from "react-icons/md";
 import { FaClipboardList } from "react-icons/fa";
-import { FaArrowRightArrowLeft, FaQuoteLeft } from "react-icons/fa6";
+import { FaArrowRightArrowLeft, FaHandshake, FaQuoteLeft } from "react-icons/fa6";
 import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
 import { BiSolidFactory, BiSolidStore } from "react-icons/bi";
 import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
@@ -107,6 +107,13 @@ export const NAV_CONFIG = [
             { key: "role", label: "Role", path: "/access/role" },
             { key: "permission", label: "Permission", path: "/access/permission" },
         ],
+    },
+    {
+        key: "connection",
+        label: "Connection",
+        icon: FaHandshake,
+        path: "/connection",
+        allowedRoles: ["system", "owner", "company", "admin"],
     },
 
     // ─── Production ───

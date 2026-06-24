@@ -162,7 +162,8 @@ const ReceiveQuotation = () => {
             <div className="panel space-y-4">
                 {
                     rfqQuotationData?.data?.map((item, idx) => {
-                        // console.log(item)
+                        // console.log(item.current_revision_no);
+
                         return (
                             <div
                                 className="border border-[#d3d3d3] rounded"
@@ -258,7 +259,7 @@ const ReceiveQuotation = () => {
                                                                             Lock & Confirm
                                                                         </button>
                                                                     </li>
-                                                                    {item?.current_revision_no <= 3 && <>
+                                                                    {item?.current_revision_no < 3 && <>
                                                                         <li>
                                                                             <button
                                                                                 type="button"

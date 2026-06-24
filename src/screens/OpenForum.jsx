@@ -242,7 +242,7 @@ const Dashboard = () => {
                                                 {/* deadline */}
                                                 <td className="px-3 py-3 whitespace-nowrap">{utcToLocal(item?.submission_deadline)}</td>
                                                 {/* remaining days */}
-                                                <td className="px-3 py-3 whitespace-nowrap text-left">{remainingDays(item?.submission_deadline)}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap text-center">{remainingDays(item?.submission_deadline)}</td>
                                             </tr>
                                         )}
                                     </tbody>
