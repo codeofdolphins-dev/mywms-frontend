@@ -55,6 +55,7 @@ import DirectTransfer from './screens/directTransfer/DirectTransfer';
 import CostHead from './screens/master/costHead/CostHead';
 import Expense from './screens/expenses/Expense';
 import { StoreRoute, HomeRoute } from './guards/StoreRoute';
+import Connection from './screens/connectionScreen/Connection';
 
 
 function App() {
@@ -203,6 +204,11 @@ function App() {
                     <Route path="direct-transfer" >
                         <Route index element={<DirectTransfer />} />
                         {/* <Route path=':out_no' element={<OutwardDetails />} /> */}
+                    </Route>
+
+                    {/* connection */}
+                    <Route path="connection" >
+                        <Route index element={<Connection />} />
                     </Route>
 
                     {/* expense */}

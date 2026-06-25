@@ -217,14 +217,16 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                         </div>
                     )}
                     {details.status == 'open' && (isLogin && buyerTenant !== details?.buyer_tenant) && (
-                        <button
-                            type="button"
-                            onClick={previewCumSubmit}
-                            className={`btn ${isSubmited ? 'btn-success' : 'btn-primary'} btn-sm`}
-                            disabled={isSubmited}
-                        >
-                            {isSubmited ? "Submited" : "Preview"}
-                        </button>
+                        details?.isConnected
+                            ? <button
+                                type="button"
+                                onClick={previewCumSubmit}
+                                className={`btn ${isSubmited ? 'btn-success' : 'btn-primary'} btn-sm`}
+                                disabled={isSubmited}
+                            >
+                                {isSubmited ? "Submited" : "Preview"}
+                            </button>
+                            : <span className="badge bg-danger py-1.5">You are not connected</span>
                     )}
                 </div>
             </div>

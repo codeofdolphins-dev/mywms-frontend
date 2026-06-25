@@ -461,6 +461,24 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+
+    TQConnectionList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["connectionList", params],
+            queryFn: async () => {
+                try {
+                    const res = await API.get("/connection/list", { params });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const fetchData = new FetchData;

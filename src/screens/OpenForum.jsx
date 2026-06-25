@@ -19,6 +19,7 @@ import MultiAttributeSearch from "../components/inputs/MultiAttributeSearch";
 import { Helmet } from "react-helmet-async";
 import ConnectRoleModal from "../components/ConnectRoleModal";
 import masterData from "../Backend/master.backend";
+import secureLocalStorage from "react-secure-storage";
 
 
 
@@ -41,6 +42,7 @@ const tableHeader = [
 
 const Dashboard = () => {
     const isLogin = useSelector(state => state.auth.status);
+    const buyerTenant = secureLocalStorage.getItem("tenant");
 
     const { mutateAsync, isPending } = masterData.TQCreateMaster(["rfqList"]);
 
@@ -265,17 +267,25 @@ const Dashboard = () => {
                                                 <td className="px-3 py-3 whitespace-nowrap text-center">{remainingDays(item?.submission_deadline)}</td>
 
                                                 {/* connection */}
-                                                <td>
-                                                    <button
-                                                        className="btn btn-outline-primary"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setSelectedConnectItem(item);
-                                                            setConnectModalShow(true);
-                                                        }}
-                                                    >
-                                                        Connect
-                                                    </button>
+                                                <td className="whitespace-nowrap">
+                                                    {buyerTenant == item?.buyer_tenant
+                                                        ? <> Creator </>
+                                                        : item?.isConnected
+                                                            ? <span className="text-sky-400">Connected</span>
+                                                            : item?.connection_status === "pending"
+                                                                ? <>Pending...</>
+                                                                :
+                                                                <button
+                                                                    className="btn btn-outline-primary"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setSelectedConnectItem(item);
+                                                                        setConnectModalShow(true);
+                                                                    }}
+                                                                >
+                                                                    Connect
+                                                                </button>
+                                                    }
                                                 </td>
                                             </tr>
                                         )}
@@ -311,20 +321,29 @@ const Dashboard = () => {
                 setIsShow={setConnectModalShow}
                 rfqItem={selectedConnectItem}
                 onConfirm={async (role, item) => {
-                    console.log("Connect as:", role, "for RFQ:", item);
                     // TODO: call your API here
 
                     if (role === "supplier") {
                         const payload = {
                             buyer_tenant: item?.buyer_tenant,
                             connection_type: role,
-                        }
+                        };
 
                         const res = await mutateAsync({ path: "/connection/supplier", formData: payload });
                         console.log("Supplier Connected:", res);
                     };
 
-                    if (role == "trader") { };
+                    if (role == "trader") {
+                        console.log("Connect as:", role, "for RFQ:", item);
+                        const payload = {
+                            buyer_tenant: item?.buyer_tenant,
+                            connection_type: role,
+                        };
+
+                        const res = await mutateAsync({ path: "/connection/trader", formData: payload });
+                        // setStatus(all);
+                        console.log(res);
+                    };
                 }}
             />
         </div>
