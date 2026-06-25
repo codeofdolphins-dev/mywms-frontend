@@ -25,9 +25,6 @@ const RFQPreview = ({
 
     const [allowEdit, setAllowEdit] = useState(false);
 
-    console.log(details)
-
-
     const { handleSubmit, register, setValue, reset, control, watch, formState: { errors } } = useForm({
         defaultValues: {
             grandTotal: currencyFormatter(details?.grand_total) ?? "",

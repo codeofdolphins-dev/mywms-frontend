@@ -17,19 +17,37 @@ import { remainingDays } from "../utils/remainingDays";
 import { utcToLocal } from "../utils/UTCtoLocal";
 import MultiAttributeSearch from "../components/inputs/MultiAttributeSearch";
 import { Helmet } from "react-helmet-async";
+import ConnectRoleModal from "../components/ConnectRoleModal";
+import masterData from "../Backend/master.backend";
 
 
 
 const tabList = [
     { id: 1, title: "All RFQ List" },
     { id: 2, title: "Applied List" },
-]
+];
+
+const tableHeader = [
+    { key: "requisition", label: "Requisition" },
+    { key: "company", label: "Company" },
+    { key: "location", label: "Location" },
+    { key: "totalAmount", label: "Total Amount" },
+    { key: "priority", label: "Priority" },
+    { key: "status", label: "Status" },
+    { key: "rfqDeadline", label: "RFQ. Deadline" },
+    { key: "remainingDays", label: "Remaining Day(s)" },
+    { key: "connection", label: "Connection" },
+];
 
 const Dashboard = () => {
     const isLogin = useSelector(state => state.auth.status);
 
+    const { mutateAsync, isPending } = masterData.TQCreateMaster(["rfqList"]);
+
     const [isShow, setIsShow] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [connectModalShow, setConnectModalShow] = useState(false);
+    const [selectedConnectItem, setSelectedConnectItem] = useState(null);
     const [status, setStatus] = useState("open");
     const [priority, setPriority] = useState("all");
 
@@ -105,7 +123,6 @@ const Dashboard = () => {
                 setSearchObject={setSearch}
             />
 
-
             {/* main component */}
             <div className="w-full grid grid-cols-5 gap-2 overflow-hidden mt-5">
 
@@ -175,14 +192,9 @@ const Dashboard = () => {
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] bg-[#f5f5f5] dark:bg-[#1b2e4b]/40">
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Requisition</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Company</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Location</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Total Amount</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Priority</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Status</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">RFQ. Deadline</th>
-                                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">Remaining Day(s)</th>
+                                            {tableHeader.map(item =>
+                                                <th key={item.key} className="px-3 py-2.5 text-left text-xs font-semibold text-white-dark uppercase tracking-wide">{item.label}</th>
+                                            )};
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -190,7 +202,8 @@ const Dashboard = () => {
                                             <tr
                                                 key={item.id}
                                                 className="border-b border-[#e0e6ed] dark:border-[#1b2e4b] last:border-0 hover:bg-[#f5f5f5] dark:hover:bg-[#1b2e4b]/40 cursor-pointer transition-colors"
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     setIsShow(true);
                                                     setSelectedItem(item);
                                                 }}
@@ -200,6 +213,7 @@ const Dashboard = () => {
                                                     <p className="font-semibold tracking-wide max-w-[200px]">{item?.title || "Untitled Requisition"}</p>
                                                     <p className="text-xs text-white-dark whitespace-nowrap font-mono mt-0.5"># {item?.rfq_no}</p>
                                                 </td>
+
                                                 {/* company */}
                                                 <td className="px-3 py-3">
                                                     <div className="flex items-center gap-2">
@@ -209,6 +223,7 @@ const Dashboard = () => {
                                                         <span className="truncate max-w-[120px]">{item?.meta?.name || "Unknown"}</span>
                                                     </div>
                                                 </td>
+
                                                 {/* location */}
                                                 <td className="px-3 py-3">
                                                     <div className="flex items-center gap-1.5">
@@ -216,8 +231,10 @@ const Dashboard = () => {
                                                         <span className="text-xs truncate max-w-[130px]">{item?.meta?.nodeDetails?.location || "N/A"}</span>
                                                     </div>
                                                 </td>
+
                                                 {/* amount */}
                                                 <td className="px-3 py-3 font-semibold whitespace-nowrap">{currencyFormatter(item?.grand_total)}</td>
+
                                                 {/* priority */}
                                                 <td className="px-3 py-3">
                                                     <span
@@ -231,6 +248,7 @@ const Dashboard = () => {
                                                         {item?.priority || "N/A"}
                                                     </span>
                                                 </td>
+
                                                 {/* status */}
                                                 <td className="px-3 py-3">
                                                     <span
@@ -239,10 +257,26 @@ const Dashboard = () => {
                                                         {item?.status || "N/A"}
                                                     </span>
                                                 </td>
+
                                                 {/* deadline */}
                                                 <td className="px-3 py-3 whitespace-nowrap">{utcToLocal(item?.submission_deadline)}</td>
+
                                                 {/* remaining days */}
                                                 <td className="px-3 py-3 whitespace-nowrap text-center">{remainingDays(item?.submission_deadline)}</td>
+
+                                                {/* connection */}
+                                                <td>
+                                                    <button
+                                                        className="btn btn-outline-primary"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedConnectItem(item);
+                                                            setConnectModalShow(true);
+                                                        }}
+                                                    >
+                                                        Connect
+                                                    </button>
+                                                </td>
                                             </tr>
                                         )}
                                     </tbody>
@@ -271,8 +305,32 @@ const Dashboard = () => {
                     setIsRequisitionCardShow={setIsShow}
                 />
             </AddModal>
+
+            <ConnectRoleModal
+                isShow={connectModalShow}
+                setIsShow={setConnectModalShow}
+                rfqItem={selectedConnectItem}
+                onConfirm={async (role, item) => {
+                    console.log("Connect as:", role, "for RFQ:", item);
+                    // TODO: call your API here
+
+                    if (role === "supplier") {
+                        const payload = {
+                            buyer_tenant: item?.buyer_tenant,
+                            connection_type: role,
+                        }
+
+                        const res = await mutateAsync({ path: "/connection/supplier", formData: payload });
+                        console.log("Supplier Connected:", res);
+                    };
+
+                    if (role == "trader") { };
+                }}
+            />
         </div>
     );
 };
 
 export default Dashboard;
+
+
