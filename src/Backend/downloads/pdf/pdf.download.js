@@ -179,12 +179,56 @@ class PDF {
         })
     };
 
+    TQExternalQuotationPDFDownload(key = []) {
+        const QueryClient = useQueryClient()
+        return useMutation({
+            mutationFn: async (reqNo) => {
+                const res = await API.post(
+                    `/download/pdf/quotation/${reqNo}`,
+                    {},
+                    {
+                        responseType: "blob",
+                    }
+                );
+                return res;
+            },
+            onSuccess: (res) => {
+                successAlert("PDF generated successfully");
+
+                if (key.length >= 1) {
+                    key.forEach((k) => QueryClient.invalidateQueries({ queryKey: Array.isArray(k) ? k : [k] }));
+                }
+
+                // Extract filename from header
+                const disposition = res.headers["content-disposition"];
+                const filename = disposition?.split("filename=")[1]?.replace(/"/g, "") || "quotation.pdf";
+
+                // Create downloadable file
+                const blob = new Blob([res.data], { type: "application/pdf" });
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            onError: (error) => {
+                console.log(error);
+                errorAlert("Failed to download PDF");
+            }
+        });
+    };
+
 
 
     Test() {
         return useMutation({
-            mutationFn: async (data) => {
-                const res = await API.post("/download/pdf/requisition", data);
+            mutationFn: async (params) => {
+                const res = await API.post("/download/pdf/bpo-agreement", params);
                 return res.data;
             },
             onSuccess: (data) => {

@@ -20,6 +20,9 @@ import AddModal from '../../components/Add.modal'
 import BlanketPOPreview from '../../components/blanketPO/BlanketPO.preview'
 import { inputAlert } from '../../utils/alerts'
 import { Helmet } from 'react-helmet-async'
+import { MdDownload } from 'react-icons/md'
+import pdf from '../../Backend/downloads/pdf/pdf.download'
+import { LuLoaderCircle } from 'react-icons/lu'
 
 
 const headerLink = [
@@ -43,6 +46,9 @@ const ReceiveQuotation = () => {
     /**************** APT mutation *******************/
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["receiveQuotationList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["receiveQuotationList"]);
+
+    /** for download quotation pdf */
+    const { mutateAsync: download, isPending } = pdf.TQExternalQuotationPDFDownload();
 
 
     /**************** pagination and search utilities *******************/
@@ -107,8 +113,6 @@ const ReceiveQuotation = () => {
         }
     }
 
-
-
     async function approveQ(data) {
         setPreviewData(data);
         setIsShowPreviewsShow(true);
@@ -148,6 +152,10 @@ const ReceiveQuotation = () => {
         setRevNo(revNo);
     }
 
+    function downloadQuotation(reqNo) {
+        download(reqNo)
+    }
+
     return (
         <div>
             <Helmet><title>Receive Quotation | MYWMS</title></Helmet>
@@ -160,179 +168,196 @@ const ReceiveQuotation = () => {
             />
 
             <div className="panel space-y-4">
-                {
-                    rfqQuotationData?.data?.map((item, idx) => {
-                        // console.log(item.current_revision_no);
+                {rfqQuotationData?.data?.map((item, idx) => {
+                    // console.log(item.current_revision_no);
 
-                        return (
+                    return (
+                        <div
+                            className="border border-[#d3d3d3] rounded"
+                            key={idx}
+                        >
+                            {/* supplier listing */}
                             <div
-                                className="border border-[#d3d3d3] rounded"
-                                key={idx}
+                                className={`flex items-center justify-between 'cursor-pointer`}
+                                onClick={() => togglePara(item)}
                             >
-                                {/* supplier listing */}
-                                <div
-                                    className={`flex items-center justify-between 'cursor-pointer`}
-                                    onClick={() => togglePara(item)}
-                                >
-                                    <table>
-                                        <thead>
-                                            <tr
-                                                className={`py-1 w-full flex items-center justify-between cursor-pointer ${active === `${item.id}` ? '!text-primary' : ''
-                                                    }`}
-                                            >
-                                                {/* 1️⃣ Name */}
-                                                <th className="min-w-[15%] w-full text-start">
-                                                    {/* {item?.nodeDetails?.name} */}
-                                                    {item?.vendorTenant?.tenantDetails?.companyName}
-                                                </th>
+                                <table>
+                                    <thead>
+                                        <tr
+                                            className={`py-1 w-full flex items-center justify-between cursor-pointer ${active === `${item.id}` ? '!text-primary' : ''
+                                                }`}
+                                        >
+                                            {/* 1️⃣ Name */}
+                                            <th className="min-w-[15%] w-full text-start">
+                                                {/* {item?.nodeDetails?.name} */}
+                                                {item?.vendorTenant?.tenantDetails?.companyName}
+                                            </th>
 
-                                                {/* 2️⃣ Location */}
-                                                {/* <th className="w-[10%] text-start break-words !px-0">
+                                            {/* 2️⃣ Location */}
+                                            {/* <th className="w-[10%] text-start break-words !px-0">
                                                     {item?.nodeDetails?.location}
                                                 </th> */}
 
-                                                {/* 3️⃣ Status */}
-                                                <th className="min-w-[10%] w-full !px-0 truncate">
-                                                    <div>
-                                                        <span className={`badge ${statusColor(item?.activeRevision?.status)}`}>{item?.activeRevision?.status === "sent" ? "QUOTED" : item?.activeRevision?.status?.toUpperCase()}</span>
-                                                    </div>
-                                                </th>
+                                            {/* 3️⃣ Status */}
+                                            <th className="min-w-[10%] w-full !px-0 truncate">
+                                                <div>
+                                                    <span className={`badge ${statusColor(item?.activeRevision?.status)}`}>{item?.activeRevision?.status === "sent" ? "QUOTED" : item?.activeRevision?.status?.toUpperCase()}</span>
+                                                </div>
+                                            </th>
 
-                                                {/* 2️⃣ Revision */}
-                                                <th className="min-w-[15%] w-full text-start break-words !px-0 flex items-center">
-                                                    <label htmlFor="" className='mb-0'>Revision:</label>
-                                                    <select
-                                                        className="bg-white border rounded-md px-1 py-1 cursor-pointer ml-1"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        value={
-                                                            item?.vendor_tenant === vendor
-                                                                ? revNo
-                                                                : item?.current_revision_no
-                                                        }
-                                                        onChange={(e) =>
-                                                            changeRevision(item?.vendor_tenant, Number(e.target.value))
-                                                        }
-                                                    >
-                                                        {[...Array(item?.current_revision_no).keys()].map((idx) => (
-                                                            <option key={idx} value={idx + 1}>
-                                                                {idx + 1}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </th>
-
-                                                {/* 4️⃣ Amounts */}
-                                                <th className="min-w-[30%] w-full text-start break-words text-sm !px-0 !pl-1">
-                                                    {currencyFormatter(item?.requisition?.grand_total)}{" || "}
-                                                    {currencyFormatter(item?.activeRevision?.grand_total) ?? "XXXXX"}
-                                                </th>
-
-                                                {/* 5️⃣ PO No */}
-                                                <th className="min-w-[10%] text-start break-words !px-0">
-                                                    <Link
-                                                        to={`/purchase-order/${item?.quotation?.purchaseOrder_no}`}
-                                                        className="hover:underline text-primary"
-                                                    >
-                                                        {item?.quotation?.purchaseOrder_no}
-                                                    </Link>
-                                                </th>
-
-                                                {/* 6️⃣ Actions */}
-                                                <th className="w-[5%] flex justify-center !px-0 mr-2">
-                                                    {item?.status === null &&
-                                                        <div
-                                                            className="dropdown"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <Dropdown
-                                                                placement="bottom-end"
-                                                                btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
-                                                                button={<IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />}
-                                                            >
-                                                                <ul className="!min-w-[180px]">
-                                                                    <li>
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => approveQ(item)}
-                                                                            className="text-left hover:!bg-green-100 hover:!text-green-500"
-                                                                        >
-                                                                            Lock & Confirm
-                                                                        </button>
-                                                                    </li>
-                                                                    {item?.current_revision_no < 3 && <>
-                                                                        <li>
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => negotiate(item?.id)}
-                                                                            >
-                                                                                Negotiate
-                                                                            </button>
-                                                                        </li>
-                                                                    </>}
-                                                                    <li>
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => rejectQ(item?.quotation?.id)}
-                                                                            className="hover:!bg-red-100 hover:!text-red-500"
-                                                                        >
-                                                                            Reject
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </Dropdown>
-                                                        </div>
+                                            {/* 2️⃣ Revision */}
+                                            <th className="min-w-[15%] w-full text-start break-words !px-0 flex items-center">
+                                                <label htmlFor="" className='mb-0'>Revision:</label>
+                                                <select
+                                                    className="bg-white border rounded-md px-1 py-1 cursor-pointer ml-1"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    value={
+                                                        item?.vendor_tenant === vendor
+                                                            ? revNo
+                                                            : item?.current_revision_no
                                                     }
+                                                    onChange={(e) =>
+                                                        changeRevision(item?.vendor_tenant, Number(e.target.value))
+                                                    }
+                                                >
+                                                    {[...Array(item?.current_revision_no).keys()].map((idx) => (
+                                                        <option key={idx} value={idx + 1}>
+                                                            {idx + 1}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </th>
 
-                                                    {/* </th> */}
-                                                    {/* 7️⃣ Expand icon */}
-                                                    {/* <th className="w-[5%] flex justify-center"> */}
-                                                    <div className={`${active === `${item.id}` ? 'rotate-180' : ''}`}>
-                                                        <IconCaretDown className='w-6 h-6' />
+                                            {/* 4️⃣ Amounts */}
+                                            <th className="min-w-[30%] w-full text-start break-words text-sm !px-0 !pl-1">
+                                                {currencyFormatter(item?.requisition?.grand_total)}{" || "}
+                                                {currencyFormatter(item?.activeRevision?.grand_total) ?? "XXXXX"}
+                                            </th>
+
+                                            {/* 5️⃣ PO No */}
+                                            <th className="min-w-[10%] text-start break-words !px-0">
+                                                <Link
+                                                    to={`/purchase-order/${item?.quotation?.purchaseOrder_no}`}
+                                                    className="hover:underline text-primary"
+                                                >
+                                                    {item?.quotation?.purchaseOrder_no}
+                                                </Link>
+                                            </th>
+
+                                            {/* 5️⃣ download */}
+                                            <th className="min-w-[10%] text-start break-words !px-0">
+                                                <div
+                                                    className="hover:scale-105"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        downloadQuotation(item?.requisition?.pr_reference_code)
+                                                    }}
+                                                >
+                                                    {
+                                                        isPending ? (
+                                                            <LuLoaderCircle size={22} className='animate-spin' />
+                                                        ) : (
+                                                            <MdDownload size={22} />
+                                                        )
+                                                    }
+                                                </div>
+                                            </th>
+
+                                            {/* 6️⃣ Actions */}
+                                            <th className="w-[5%] flex justify-center !px-0 mr-2">
+                                                {item?.status === null &&
+                                                    <div
+                                                        className="dropdown"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <Dropdown
+                                                            placement="bottom-end"
+                                                            btnClassName="btn p-0 rounded-none border-0 shadow-none dropdown-toggle text-black hover:text-primary"
+                                                            button={<IconHorizontalDots className="w-6 h-6 rotate-90 opacity-70" />}
+                                                        >
+                                                            <ul className="!min-w-[180px]">
+                                                                <li>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => approveQ(item)}
+                                                                        className="text-left hover:!bg-green-100 hover:!text-green-500"
+                                                                    >
+                                                                        Lock & Confirm
+                                                                    </button>
+                                                                </li>
+                                                                {item?.current_revision_no < 3 && <>
+                                                                    <li>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => negotiate(item?.id)}
+                                                                        >
+                                                                            Negotiate
+                                                                        </button>
+                                                                    </li>
+                                                                </>}
+                                                                <li>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => rejectQ(item?.quotation?.id)}
+                                                                        className="hover:!bg-red-100 hover:!text-red-500"
+                                                                    >
+                                                                        Reject
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </Dropdown>
                                                     </div>
-                                                </th>
-                                            </tr>
-                                        </thead>
+                                                }
 
-                                    </table>
-                                </div>
+                                                {/* </th> */}
+                                                {/* 7️⃣ Expand icon */}
+                                                {/* <th className="w-[5%] flex justify-center"> */}
+                                                <div className={`${active === `${item.id}` ? 'rotate-180' : ''}`}>
+                                                    <IconCaretDown className='w-6 h-6' />
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
 
-                                {/* table view */}
-                                <AnimateHeight duration={300} height={active === `${item.id}` ? 'auto' : 0}>
-                                    <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
-                                        <TableBody
-                                            isEmpty={false}
-                                            columns={QUOTATION_RECEIVE_RAW_COLUMN}
-                                            currentPage={currentPage}
-                                            setCurrentPage={setCurrentPage}
-                                            limit={limit}
-                                            setLimit={setLimit}
-                                            totalPage={item?.pagination?.totalPages}
-                                        >
-                                            {item?.quotationItems?.map((product, j) => {
-                                                // console.log(product);
-                                                const line_total = Number(product?.qty) * Number(product?.offer_price)
-                                                return (
-                                                    <TableRow
-                                                        key={j}
-                                                        columns={QUOTATION_RECEIVE_RAW_COLUMN}
-                                                        row={{
-                                                            name: product?.sourceRfqItem?.product_name,
-                                                            uom: product?.sourceRfqItem?.uom,
-                                                            qty: product?.qty,
-                                                            priceLimit: currencyFormatter(product?.sourceRfqItem?.price_limit),
-                                                            offerPrice: currencyFormatter(product?.offer_price),
-                                                            total: currencyFormatter(line_total),
-                                                        }}
-                                                    />
-                                                )
-                                            })}
-                                        </TableBody>
-                                    </div>
-                                </AnimateHeight>
+                                </table>
                             </div>
-                        )
-                    })
-                }
+
+                            {/* table view */}
+                            <AnimateHeight duration={300} height={active === `${item.id}` ? 'auto' : 0}>
+                                <div className="space-y-2 p-4 text-white-dark text-[13px] border-t border-[#d3d3d3]">
+                                    <TableBody
+                                        isEmpty={false}
+                                        columns={QUOTATION_RECEIVE_RAW_COLUMN}
+                                        currentPage={currentPage}
+                                        setCurrentPage={setCurrentPage}
+                                        limit={limit}
+                                        setLimit={setLimit}
+                                        totalPage={item?.pagination?.totalPages}
+                                    >
+                                        {item?.quotationItems?.map((product, j) => {
+                                            // console.log(product);
+                                            const line_total = Number(product?.qty) * Number(product?.offer_price)
+                                            return (
+                                                <TableRow
+                                                    key={j}
+                                                    columns={QUOTATION_RECEIVE_RAW_COLUMN}
+                                                    row={{
+                                                        name: product?.sourceRfqItem?.product_name,
+                                                        uom: product?.sourceRfqItem?.uom,
+                                                        qty: product?.qty,
+                                                        priceLimit: currencyFormatter(product?.sourceRfqItem?.price_limit),
+                                                        offerPrice: currencyFormatter(product?.offer_price),
+                                                        total: currencyFormatter(line_total),
+                                                    }}
+                                                />
+                                            )
+                                        })}
+                                    </TableBody>
+                                </div>
+                            </AnimateHeight>
+                        </div>
+                    )
+                })}
             </div >
 
             <AddModal
