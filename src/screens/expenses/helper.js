@@ -7,5 +7,6 @@ export const EXPENSE_COLUMN = [
     { key: "amount", label: "Amount" },
     { key: "remarks", label: "Remarks" },
     { key: "creator", label: "Creator" },
+    { key: "doc", label: "Document" },
     { key: "action", label: "Action" }
 ];

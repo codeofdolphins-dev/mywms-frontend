@@ -1,5 +1,5 @@
 import React from 'react'
-import { IMAGE_URL, SAMPLE_IMAGE1, SAMPLE_IMAGE2, SAMPLE_IMAGE3 } from '../utils/helper'
+import { ASSETS_URL, SAMPLE_IMAGE1, SAMPLE_IMAGE2, SAMPLE_IMAGE3 } from '../utils/helper'
 
 const ImageComponent = ({
     src,
@@ -12,7 +12,7 @@ const ImageComponent = ({
                 className={`rounded-full overflow-hidden object-cover object-top ${className}`}
                 src={
                     (src != null && src != undefined)
-                        ? `${IMAGE_URL}/${src}`
+                        ? `${ASSETS_URL}/${src}`
                         : dummyImage === 1
                             ? SAMPLE_IMAGE1
                             : dummyImage === 2

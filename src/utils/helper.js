@@ -1,4 +1,4 @@
-export const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+export const ASSETS_URL = import.meta.env.VITE_ASSETS;
 export const SAMPLE_IMAGE1 = "/assets/images/user-profile.jpeg";
 export const SAMPLE_IMAGE2 = "/assets/images/profile-34.jpeg";
 export const SAMPLE_IMAGE3 = "/assets/images/product-camera.jpg";

@@ -15,6 +15,9 @@ import ExpenseForm from '../../components/expense/ExpenseForm';
 import { currencyFormatter } from '../../utils/currencyFormatter';
 import { utcToLocal } from '../../utils/UTCtoLocal';
 import BasicFilterSelect from '../../components/inputs/BasicFilterSelect';
+import { Link } from 'react-router-dom';
+import { FaRegFileLines } from 'react-icons/fa6';
+import { ASSETS_URL } from '../../utils/helper';
 
 
 const HEADER_LINK = [
@@ -125,6 +128,18 @@ const Expense = () => {
                                             amount: currencyFormatter(item?.amount),
                                             remarks: item?.remarks || "—",
                                             creator: item?.costCreator?.name?.full_name?.toUpperCase() || "—",
+                                            doc: (
+                                                <div
+                                                    className='flex justify-center items-center'
+                                                >
+                                                    <Link
+                                                        to={`${ASSETS_URL}/${item.doc_url}`}
+                                                        target='_blank'
+                                                    >
+                                                        <FaRegFileLines size={18} className="text-success hover:scale-110 cursor-pointer" />
+                                                    </Link>
+                                                </div>
+                                            ),
                                             action: (
                                                 <div className="flex space-x-3">
                                                     <CustomeButton onClick={() => handleEdit(item.id)}>

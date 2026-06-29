@@ -36,7 +36,6 @@ const headerLink = [
 ]
 
 const Brand = () => {
-    const imageUrl = import.meta.env.VITE_IMAGE_URL;
     const { mutateAsync: deleteData, isLoading: deleteLoading } = masterData.TQDeleteMaster(["brandList"]);
 
     const [debounceSearch, setDebounceSearch] = useState('');

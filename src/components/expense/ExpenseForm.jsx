@@ -8,6 +8,8 @@ import FullScreenLoader from '../loader/FullScreenLoader';
 import RHRadioGroup from '../inputs/RHF/RHRadioGroup';
 import RHSelect from '../inputs/RHF/Select.RHF';
 import TextArea from '../inputs/TextArea';
+import FileUpload from '../inputs/File';
+import { RHFToFormData } from '../../utils/RHFtoFD';
 
 const ExpenseForm = ({ setIsShow, editId = null }) => {
 
@@ -24,7 +26,8 @@ const ExpenseForm = ({ setIsShow, editId = null }) => {
             type: "monthly",
             amount: "",
             cost_date: new Date().toISOString().split('T')[0],
-            remarks: ""
+            remarks: "",
+            doc: null
         }
     });
 
@@ -50,21 +53,24 @@ const ExpenseForm = ({ setIsShow, editId = null }) => {
     const submit = async (data) => {
         try {
             const formData = {
+                ...(editId && { id: editId }),
                 costHead_id: Number(data.costHead_id),
                 costSubHead_id: data.costSubHead_id ? Number(data.costSubHead_id) : null,
                 type: data.type,
                 amount: String(data.amount),
                 cost_date: data.cost_date || new Date().toISOString().split('T')[0],
-                remarks: data.remarks || ""
+                remarks: data.remarks || "",
+                doc: data.doc,
             };
 
+            const fData = RHFToFormData(formData);
+
             if (editId) {
-                formData.id = editId;
-                await updateData({ path: "/cost-center/update", formData });
+                await updateData({ path: "/cost-center/update", formData: fData });
                 reset();
                 setIsShow(false);
             } else {
-                await createData({ path: "/cost-center/create", formData });
+                await createData({ path: "/cost-center/create", formData: fData });
                 reset();
                 setIsShow(false);
             }
@@ -195,10 +201,26 @@ const ExpenseForm = ({ setIsShow, editId = null }) => {
                                 required={true}
                             />
                         </div>
-                    {/* </div> */}
+                        {/* </div> */}
 
-                    {/* Remarks */}
-                    {/* <div className="grid grid-cols-1 gap-4"> */}
+                        <div >
+                            <Controller
+                                name="doc"
+                                control={control}
+                                defaultValue={null}
+                                render={({ field: { onChange } }) => (
+                                    <FileUpload
+                                        label="Supporting Document"
+                                        helperText="Max 5MB"
+                                        onChange={onChange}
+                                        accept="application/pdf"
+                                    />
+                                )}
+                            />
+                        </div>
+
+                        {/* Remarks */}
+                        {/* <div className="grid grid-cols-1 gap-4"> */}
                         <TextArea
                             label="Remarks"
                             placeholder="Enter remarks (optional)"

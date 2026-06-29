@@ -25,7 +25,6 @@ const ItemTable = ({
     isLoading = true,
     isEmpty = false
 }) => {
-    const imageUrl = import.meta.env.VITE_IMAGE_URL;
     const getValue = (obj, path) => path?.split('.')?.reduce((acc, key) => acc?.[key], obj);
     return (
         <div className="panel">

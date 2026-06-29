@@ -2,6 +2,7 @@ import React, { useState, useRef, useId } from "react";
 
 function FileUpload({
 	label = "Product Image",
+	accept = "image/jpeg,image/png",
 	labelPosition = "",
 	helperText = "Accepted formats: JPG, PNG (Max 5MB)",
 	onChange,
@@ -46,7 +47,7 @@ function FileUpload({
 						id={_id}
 						ref={inputRef}
 						type="file"
-						accept="image/jpeg,image/png"
+						accept={accept}
 						className="hidden"
 						onChange={handleFileChange}
 						{...rest}
