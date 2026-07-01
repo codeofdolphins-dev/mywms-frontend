@@ -15,6 +15,8 @@ import masterData from "../../Backend/master.backend";
 import { utcToLocal } from "../../utils/UTCtoLocal";
 import TableBody from "../../components/table/TableBody";
 import TableRow from "../../components/table/TableRow";
+import SummaryCard from "./components/Summary.card";
+import { CONNECTION_COLUMN } from "./helper";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -162,77 +164,16 @@ const Connection = () => {
             formData: { connection_type: newType },
         });
     };
-
     const getName = (conn, side) =>
         conn?.[side]?.tenantDetails?.companyName
         ?? conn?.[side]?.name
         ?? conn?.[`${side}_tenant`]
         ?? "Unknown";
-
     const getEmail = (conn, side) =>
         conn?.[side]?.tenantDetails?.email
         ?? conn?.[side]?.name
         ?? conn?.[`${side}_tenant`]
         ?? "Unknown";
-
-    // ── build columns with render fns (needs myTenant + handleUpdate in scope)
-    const columns = [
-        {
-            key: "partner",
-            label: "Partner",
-            render: (conn) => {
-                const iAmBuyer = conn.buyer_tenant === myTenant;
-                const partnerName = iAmBuyer ? getName(conn, "vendor") : getName(conn, "buyer");
-                const partnerId = iAmBuyer ? getEmail(conn, "vendor") : getEmail(conn, "buyer");
-                return (
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
-                            <FiUser size={13} />
-                        </div>
-                        <div>
-                            <p className="font-semibold truncate max-w-[150px]">{partnerName}</p>
-                            <p className="text-xs text-gray-400 font-mono truncate max-w-[150px]">{partnerId}</p>
-                        </div>
-                    </div>
-                );
-            }
-        },
-        {
-            key: "role",
-            label: "My Role",
-            render: (conn) => <RoleChip isBuyer={conn.buyer_tenant === myTenant} />
-        },
-        {
-            key: "connection_type",
-            label: "Connection Type",
-            render: (conn) => <TypeBadge type={conn.connection_type} />
-        },
-        {
-            key: "connection_status",
-            label: "Status",
-            render: (conn) => <StatusBadge active={conn.connection_status} />
-        },
-        {
-            key: "createdAt",
-            label: "Connection Date",
-            render: (conn) => <span className="text-xs text-gray-500 whitespace-nowrap">{utcToLocal(conn.createdAt)}</span>
-        },
-        {
-            key: "actions",
-            label: "Assign Role",
-            render: (conn) => {
-                if (conn.connection_status) return "-";
-                return (
-                    <RoleAssignDropdown
-                        connection={conn}
-                        myTenant={myTenant}
-                        onUpdate={handleUpdate}
-                        isUpdating={isUpdating}
-                    />
-                )
-            }
-        },
-    ];
 
     return (
         <div>
@@ -284,22 +225,7 @@ const Connection = () => {
                         textColor: "text-amber-600",
                         icon: <FiUser size={18} />,
                     },
-                ].map((card) => (
-                    <div
-                        key={card.label}
-                        className={`panel bg-gradient-to-br ${card.color} border-0 flex items-center gap-4 py-4`}
-                    >
-                        <div className={`w-10 h-10 rounded-xl bg-white/70 flex items-center justify-center ${card.textColor} shadow-sm`}>
-                            {card.icon}
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-gray-800 leading-none">{card.value}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                                {card.label} Connection{card.value !== 1 ? "s" : ""}
-                            </p>
-                        </div>
-                    </div>
-                ))}
+                ].map((card) => <SummaryCard key={card.label} card={card} />)}
             </div>
 
             {/* ── Main table panel ── */}
@@ -327,7 +253,7 @@ const Connection = () => {
 
                 {/* table */}
                 <TableBody
-                    columns={columns}
+                    columns={CONNECTION_COLUMN}
                     isLoading={isLoading}
                     isEmpty={isEmpty}
                     totalPage={connectionData?.pagination?.totalPages}
@@ -336,22 +262,43 @@ const Connection = () => {
                     limit={limit}
                     setLimit={setLimit}
                 >
-                    {list.map((conn) => (
-                        <TableRow
+                    {list.map((conn) => {
+                        const iAmBuyer = conn.buyer_tenant === myTenant;
+                        const partnerName = iAmBuyer ? getName(conn, "vendor") : getName(conn, "buyer");
+                        const partnerId = iAmBuyer ? getEmail(conn, "vendor") : getEmail(conn, "buyer");
+
+                        return <TableRow
                             key={conn.id}
-                            columns={columns}
+                            columns={CONNECTION_COLUMN}
                             row={{
-                                ...conn,
-                                // Pre-render custom cells via render fn
-                                partner: columns[0].render(conn),
-                                role: columns[1].render(conn),
-                                connection_type: columns[2].render(conn),
-                                connection_status: columns[3].render(conn),
-                                createdAt: columns[4].render(conn),
-                                actions: columns[5].render(conn),
+                                partner: (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                                            <FiUser size={13} />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold truncate max-w-[150px]">{partnerName}</p>
+                                            <p className="text-xs text-gray-400 font-mono truncate max-w-[150px]">{partnerId}</p>
+                                        </div>
+                                    </div>
+                                ),
+                                role: <RoleChip isBuyer={conn.buyer_tenant === myTenant} />,
+                                connection_type: <TypeBadge type={conn.connection_type} />,
+                                connection_status: <StatusBadge active={conn.connection_status} />,
+                                createdAt: <span className="text-xs text-gray-500 whitespace-nowrap">{utcToLocal(conn.createdAt)}</span>,
+                                actions: (
+                                    conn.connection_status ? "-" : (
+                                        <RoleAssignDropdown
+                                            connection={conn}
+                                            myTenant={myTenant}
+                                            onUpdate={handleUpdate}
+                                            isUpdating={isUpdating}
+                                        />
+                                    )
+                                )
                             }}
                         />
-                    ))}
+                    })}
                 </TableBody>
             </div>
         </div>
