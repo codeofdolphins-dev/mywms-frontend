@@ -17,6 +17,10 @@ import TableBody from "../../components/table/TableBody";
 import TableRow from "../../components/table/TableRow";
 import SummaryCard from "./components/Summary.card";
 import { CONNECTION_COLUMN } from "./helper";
+import ProductList from "./components/ProductList";
+import AddModal from "../../components/Add.modal";
+import { BiImport } from "react-icons/bi";
+import Loader from "../../components/loader/Loader";
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -78,8 +82,8 @@ const RoleChip = ({ isBuyer }) =>
 const RoleAssignDropdown = ({ connection, myTenant, onUpdate, isUpdating }) => {
     const [selected, setSelected] = useState("");
 
-    const iAmBuyer = connection.buyer_tenant === myTenant;
-    const iAmVendor = connection.vendor_tenant === myTenant;
+    const iAmBuyer = connection.parent_tenant === myTenant;
+    const iAmVendor = connection.child_tenant === myTenant;
     const isPending = connection.connection_type === "pending";
 
     // Buyer can always assign / re-assign role
@@ -137,13 +141,17 @@ const Connection = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
 
+    const [selectTenant, setSelectTenant] = useState(null);
+
     const params = {
         connection_type: filterType,
         page: currentPage,
         limit,
     };
-
     const { data: connectionData, isLoading, isFetching, refetch } = fetchData.TQConnectionList(params);
+
+    /** tenant product list */
+    const { data: tenantProductData, isLoading: tenantProductDataLoading } = fetchData.TQTenantProductList({ tenant: selectTenant }, Boolean(selectTenant));
 
     // Separate no-filter call for the summary cards only
     const { data: allData } = fetchData.TQConnectionList();
@@ -174,6 +182,9 @@ const Connection = () => {
         ?? conn?.[side]?.name
         ?? conn?.[`${side}_tenant`]
         ?? "Unknown";
+
+
+    if (tenantProductDataLoading) return <Loader />;
 
     return (
         <div>
@@ -263,9 +274,9 @@ const Connection = () => {
                     setLimit={setLimit}
                 >
                     {list.map((conn) => {
-                        const iAmBuyer = conn.buyer_tenant === myTenant;
-                        const partnerName = iAmBuyer ? getName(conn, "vendor") : getName(conn, "buyer");
-                        const partnerId = iAmBuyer ? getEmail(conn, "vendor") : getEmail(conn, "buyer");
+                        const iAmParent = conn.parent_tenant === myTenant;
+                        const partnerName = iAmParent ? getName(conn, "child") : getName(conn, "parent");
+                        const partnerId = iAmParent ? getEmail(conn, "child") : getEmail(conn, "parent");
 
                         return <TableRow
                             key={conn.id}
@@ -282,11 +293,16 @@ const Connection = () => {
                                         </div>
                                     </div>
                                 ),
-                                role: <RoleChip isBuyer={conn.buyer_tenant === myTenant} />,
+                                role: (<RoleChip
+                                    isBuyer={
+                                        (conn.parent_tenant === myTenant && conn.connection_type === "supplier") ||
+                                        (conn.parent_tenant !== myTenant && conn.connection_type !== "supplier")
+                                    }
+                                />),
                                 connection_type: <TypeBadge type={conn.connection_type} />,
                                 connection_status: <StatusBadge active={conn.connection_status} />,
                                 createdAt: <span className="text-xs text-gray-500 whitespace-nowrap">{utcToLocal(conn.createdAt)}</span>,
-                                actions: (
+                                assignRole: (
                                     conn.connection_status ? "-" : (
                                         <RoleAssignDropdown
                                             connection={conn}
@@ -295,12 +311,37 @@ const Connection = () => {
                                             isUpdating={isUpdating}
                                         />
                                     )
+                                ),
+                                action: (
+                                    <div className="flex items-center justify-center">
+                                        {(conn.connection_type !== "supplier" && conn.parent_tenant !== myTenant) ?
+                                            <BiImport
+                                                size={20}
+                                                onClick={() => setSelectTenant(conn.parent_tenant)}
+                                                className="cursor-pointer"
+                                                title="Import Products"
+                                            />
+                                            : "no action required"
+                                        }
+                                    </div>
                                 )
                             }}
                         />
                     })}
                 </TableBody>
             </div>
+
+            <AddModal
+                isShow={Boolean(selectTenant)}
+                setIsShow={setSelectTenant}
+                noEffect={true}
+            >
+                <ProductList
+                    onClose={() => setSelectTenant(null)}
+                    products={tenantProductData?.data}
+                />
+            </AddModal>
+
         </div>
     );
 };

@@ -152,6 +152,27 @@ class FetchData {
         });
     };
 
+    TQTenantProductList(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["tenantProductList", params],
+            queryFn: async () => {
+                try {
+                    const res = await API.get("/product/tenant-list", {
+                        params
+                    });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled
+        });
+    };
+
+
     TQPermissionList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["permissionList", params],

@@ -4,5 +4,6 @@ export const CONNECTION_COLUMN = [
     { key: "connection_type", label: "Connection Type", },
     { key: "connection_status", label: "Status", },
     { key: "createdAt", label: "Connection Date", },
-    { key: "actions", label: "Assign Role", }
+    { key: "assignRole", label: "Assign Role", },
+    { key: "action", label: "Action", align: "center" }
 ];
