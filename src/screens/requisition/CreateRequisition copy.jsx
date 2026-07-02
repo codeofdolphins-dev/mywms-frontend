@@ -35,33 +35,14 @@ const PRIORITY = [
     { label: "High", value: "high" },
 ]
 
-const TYPE = [
-    { label: "Open Forum", value: "openForum" },
-    { label: "Trading", value: "trading" }
-]
-
 const CreateRequisition = () => {
     const navigate = useNavigate()
     const user = useSelector(state => state.auth.userData);
 
-    /**************** react form hook *******************/
-    const { handleSubmit, control, register, formState: { errors }, setValue, reset, watch } = useForm({
-        defaultValues: {
-            supplier_node: "",
-            title: "",
-            required_by_date: "",
-            priority: "",
-            requisition_category_id: ""
-        }
-    });
-
-    const type = watch("type");
 
     /**************** global variable *******************/
     const locationName = user?.activeNode?.nodeDetails?.name;
-    const isManufacture = (user?.activeNode?.NodeUser?.department !== null) && (type === "openForum") ? true : false;
-    // const isManufacture = true;
-    // const isManufacture = false;
+    const isManufacture = user?.activeNode?.NodeUser?.department !== null ? true : false;
 
 
     /**************** APT mutation *******************/
@@ -70,14 +51,24 @@ const CreateRequisition = () => {
 
     /**************** data fetching GET *******************/
     const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList(!isManufacture);
-    const { data: vendorList, isLoading: vendorListLoading } = fetchData.TQVendorList(type === "trading");
     const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList(isManufacture);
 
 
-
+    /**************** react form hook *******************/
+    const { handleSubmit, control, register, formState: { errors }, setValue, reset } = useForm({
+        defaultValues: {
+            supplier_node: "",
+            title: "",
+            required_by_date: "",
+            priority: "",
+            requisition_category_id: ""
+        }
+    });
     if (!isManufacture) setValue("buyer", locationName);
 
+
     const [isShow, setIsShow] = useState(false);
+    // const [isEmpty, setIsEmpty] = useState(true);
     const [isReqForm, setIsReqForm] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
 
@@ -150,7 +141,7 @@ const CreateRequisition = () => {
                     title='Add Item'
                     className={`w-8 h-8 rounded-full bg-primary flex justify-center items-center ${isManufacture && selectedItems?.length >= 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     onClick={() => setIsShow(true)}
-                    disabled={!Boolean(type) || isManufacture && selectedItems?.length >= 1}
+                    disabled={isManufacture && selectedItems?.length >= 1}
                 >
                     <FiPlus size={22} color='white' />
                 </button>
@@ -165,29 +156,6 @@ const CreateRequisition = () => {
                         <div className="panel">
 
                             <div className="grid grid-cols-1 gap-5">
-                                <div className="">
-                                    <Controller
-                                        name="type"
-                                        control={control}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <SearchableSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={onChange}
-                                                isSearchable={false}
-
-                                                label="Requisition Type"
-                                                labelPosition={"inline"}
-                                                options={TYPE}
-                                            />
-                                        )}
-                                    />
-                                </div>
-
                                 {/* buyer */}
                                 {!isManufacture &&
                                     <div>
@@ -236,11 +204,10 @@ const CreateRequisition = () => {
                                                 required: "This field is required!!!"
                                             }}
                                             render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
-                                                // const supplierOptions = allownodeList?.data?.map(node => ({
-                                                //     id: node?.id,
-                                                //     name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
-                                                // }));
-                                                const supplierOptions = vendorList?.data;
+                                                const supplierOptions = allownodeList?.data?.map(node => ({
+                                                    id: node?.id,
+                                                    name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
+                                                }));
 
                                                 return <RHSelect
                                                     ref={(el) => {
@@ -258,7 +225,6 @@ const CreateRequisition = () => {
                                                     required={true}
                                                     // isMulti={true}
                                                     isClearable={true}
-                                                    disabled={!Boolean(type)}
                                                 />
                                             }}
                                         />
@@ -277,7 +243,6 @@ const CreateRequisition = () => {
                                         })}
                                         error={errors.title?.message}
                                         required={true}
-                                        disabled={!Boolean(type)}
                                     />
                                 </div>
 
@@ -288,7 +253,6 @@ const CreateRequisition = () => {
                                         label={isManufacture ? "Deadline" : "Required Date"}
                                         labelPosition="inline"
                                         {...register("required_by_date")}
-                                        disabled={!Boolean(type)}
                                     />
                                 </div>
 
@@ -311,7 +275,6 @@ const CreateRequisition = () => {
                                                 label="Priority"
                                                 labelPosition={"inline"}
                                                 options={PRIORITY}
-                                                disabled={!Boolean(type)}
                                             />
                                         )}
                                     />
@@ -349,7 +312,6 @@ const CreateRequisition = () => {
                                                         { label: "Upper Limit", value: "upper_limit", title: "High amount is not allowed" },
                                                         { label: "Lower Limit", value: "lower_limit", title: "Low amount is not allowed" },
                                                     ]}
-                                                    disabled={!Boolean(type)}
                                                 // error={error?.message}
                                                 // required={true}
                                                 />
@@ -366,24 +328,15 @@ const CreateRequisition = () => {
                                             label="Note"
                                             labelPosition="inline"
                                             {...register("notes")}
-                                            disabled={!Boolean(type)}
                                         />
                                     </div>
                                 )}
                             </div>
 
-                            <div className="mt-10 flex items-center gap-3 justify-end">
-                                <Button
-                                    type="reset"
-                                    className="btn btn-secondary"
-                                    onClick={() => reset()}
-                                // disabled={isEmpty}
-                                >
-                                    Reset
-                                </Button>
+                            <div className="mt-10">
                                 <Button
                                     type="submit"
-                                    className="btn btn-primary"
+                                    className="btn btn-primary ml-auto"
                                 // disabled={isEmpty}
                                 >
                                     Submit

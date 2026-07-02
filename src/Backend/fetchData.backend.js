@@ -273,6 +273,24 @@ class FetchData {
         });
     };
 
+    TQVendorList(isEnabled = true) {
+        return useQuery({
+            queryKey: ["vendorList"],
+            queryFn: async () => {
+                try {
+                    const res = await API.get("/vendor/list");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
+
     TQRequisitionList(params = {}, isEnabled = true) {
         return useQuery({
             queryKey: ["requisitionList", params],
