@@ -39,7 +39,7 @@ const ALL_TYPES = [
 
 // Types that can be assigned as a role (excludes meta-options)
 const ROLE_TYPES = ALL_TYPES.filter(t =>
-    !["all", "pending"].includes(t.value)
+    !["all", "pending", "supplier"].includes(t.value)
 );
 
 // columns are built dynamically inside the component (need access to callbacks)
@@ -151,7 +151,7 @@ const Connection = () => {
     const { data: connectionData, isLoading, isFetching, refetch } = fetchData.TQConnectionList(params);
 
     /** tenant product list */
-    const { data: tenantProductData, isLoading: tenantProductDataLoading } = fetchData.TQTenantProductList({ tenant: selectTenant }, Boolean(selectTenant));
+    const { data: tenantProductData, isLoading: tenantProductDataLoading } = fetchData.TQTenantProductList({ tenant: selectTenant?.parent_tenant }, Boolean(selectTenant?.parent_tenant));
 
     // Separate no-filter call for the summary cards only
     const { data: allData } = fetchData.TQConnectionList();
@@ -169,7 +169,10 @@ const Connection = () => {
     const handleUpdate = async (conn, newType) => {
         await updateMutate({
             path: `/connection/${conn.id}/type`,
-            formData: { connection_type: newType },
+            formData: {
+                connection_type: newType,
+                child_tenant: conn.child_tenant
+            },
         });
     };
     const getName = (conn, side) =>
@@ -303,21 +306,21 @@ const Connection = () => {
                                 connection_status: <StatusBadge active={conn.connection_status} />,
                                 createdAt: <span className="text-xs text-gray-500 whitespace-nowrap">{utcToLocal(conn.createdAt)}</span>,
                                 assignRole: (
-                                    conn.connection_status ? "-" : (
-                                        <RoleAssignDropdown
-                                            connection={conn}
-                                            myTenant={myTenant}
-                                            onUpdate={handleUpdate}
-                                            isUpdating={isUpdating}
-                                        />
-                                    )
+                                    // conn.connection_status ? "-" : (
+                                    <RoleAssignDropdown
+                                        connection={conn}
+                                        myTenant={myTenant}
+                                        onUpdate={handleUpdate}
+                                        isUpdating={isUpdating}
+                                    />
+                                    // )
                                 ),
                                 action: (
                                     <div className="flex items-center justify-center">
                                         {(conn.connection_type !== "supplier" && conn.parent_tenant !== myTenant) ?
                                             <BiImport
                                                 size={20}
-                                                onClick={() => setSelectTenant(conn.parent_tenant)}
+                                                onClick={() => setSelectTenant(conn)}
                                                 className="cursor-pointer"
                                                 title="Import Products"
                                             />
@@ -339,6 +342,7 @@ const Connection = () => {
                 <ProductList
                     onClose={() => setSelectTenant(null)}
                     products={tenantProductData?.data}
+                    data={selectTenant}
                 />
             </AddModal>
 

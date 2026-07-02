@@ -3,6 +3,7 @@ import { FiSearch, FiBox, FiCheck } from "react-icons/fi";
 import IconX from "../../../components/Icon/IconX";
 import { IoInformationCircleOutline } from "react-icons/io5";
 import masterData from "../../../Backend/master.backend";
+import { ImSpinner8 } from "react-icons/im";
 
 const DUMMY_PRODUCTS = [
     {
@@ -60,6 +61,7 @@ const DUMMY_PRODUCTS = [
 const ProductList = ({
     products,
     onClose,
+    data,
     title = "Select Products to Import",
     subtitle = "Choose from the products below to import into your system."
 }) => {
@@ -122,7 +124,9 @@ const ProductList = ({
         const selectedProducts = actualProducts.filter(p => selectedIds.has(p.id));
 
         const formData = {
+            connectionId: data.id,
             products: selectedProducts,
+            parent: data.parent
         }
 
         const res = await mutateAsync({ path: "/product/import", formData });
@@ -290,7 +294,10 @@ const ProductList = ({
                         : "bg-gray-100 text-gray-400 cursor-not-allowed"
                         }`}
                 >
-                    <FiCheck size={16} />
+                    {isPending
+                        ? <ImSpinner8 className="animate-spin" size={18} />
+                        : <FiCheck size={16} />
+                    }
                     Import {selectedIds.size > 0 ? `(${selectedIds.size})` : ""} Products
                 </button>
             </div>
