@@ -30,7 +30,7 @@ const UnitTypeForm = ({ setIsShow, editId = null }) => {
         if (!editData) return;
         const data = editData.data?.[0];
         reset({
-            name: data?.unit,
+            name: data?.name,
             isActive: data?.isActive
         });
     }, [editId, reset, editData]);

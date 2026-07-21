@@ -27,6 +27,7 @@ import requisition from '../../Backend/requisition.backend';
 import TextArea from '../../components/inputs/TextArea';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
 import { Helmet } from 'react-helmet-async';
+import business from '../../Backend/business.fetch';
 
 
 const PRIORITY = [
@@ -35,13 +36,19 @@ const PRIORITY = [
     { label: "High", value: "high" },
 ]
 
+const REQ_TYPE = [
+    { label: "Trading Requisition", value: "trade" },
+    { label: "Open Forum Requisition", value: "openForum" },
+    // { label: "High", value: "high" },
+]
+
 const CreateRequisition = () => {
     const navigate = useNavigate()
     const user = useSelector(state => state.auth.userData);
 
 
     /**************** global variable *******************/
-    const locationName = user?.activeNode?.nodeDetails?.name;
+    // const locationName = user?.activeNode?.nodeDetails?.name;
     const isManufacture = user?.activeNode?.NodeUser?.department !== null ? true : false;
 
 
@@ -50,12 +57,15 @@ const CreateRequisition = () => {
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["requisitionList"]);
 
     /**************** data fetching GET *******************/
-    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList(!isManufacture);
-    const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList(isManufacture);
+    const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList(false);
+    // const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList(isManufacture);
+
+    const { data: locationData, isLoading: locationIsLoading } = business.TQTenantRegisteredNodeList();
+    const { data: supplierData, isLoading: supplierIsLoading } = vendor.TQVendorList();
 
 
     /**************** react form hook *******************/
-    const { handleSubmit, control, register, formState: { errors }, setValue, reset } = useForm({
+    const { handleSubmit, control, register, formState: { errors }, setValue, reset, watch } = useForm({
         defaultValues: {
             supplier_node: "",
             title: "",
@@ -64,7 +74,7 @@ const CreateRequisition = () => {
             requisition_category_id: ""
         }
     });
-    if (!isManufacture) setValue("buyer", locationName);
+    // if (!isManufacture) setValue("buyer", locationName);
 
 
     const [isShow, setIsShow] = useState(false);
@@ -118,12 +128,16 @@ const CreateRequisition = () => {
 
     function handleDelete(id) {
         setSelectedItems(prev => prev.filter(item => item.id !== id));
-    };
+    }
+
+    const req_type = watch("req_type");
+    const isTrader = req_type === "trade"
 
 
     return (
         <div>
             <Helmet><title>Create Requisition | MYWMS</title></Helmet>
+
             {/* breadcrumb */}
             <div className="flex items-center gap-5 ">
                 <ul className=" flex space-x-2 ">
@@ -155,111 +169,13 @@ const CreateRequisition = () => {
                         {/* left side */}
                         <div className="panel">
 
+                            {/* input fields */}
                             <div className="grid grid-cols-1 gap-5">
-                                {/* buyer */}
-                                {!isManufacture &&
-                                    <div>
-                                        <Input
-                                            label="Buyer (Current Location)"
-                                            labelPosition="inline"
-                                            {...register("buyer")}
-                                            required={true}
-                                            disabled={true}
-                                        />
-                                    </div>
-                                }
 
-                                {/* conditional rendering supplier or vendor */}
-                                {isManufacture ? (
-                                    // vendor
-                                    <>
-                                        {/* <div>
-                                            <Controller
-                                                name="requisition_category_id"
-                                                control={control}
-                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                    <RHSelect
-                                                        value={value}
-                                                        onChange={onChange}
-
-                                                        label="Requisition Category"
-                                                        labelPosition='inline'
-                                                        options={requisitionCatList?.data}
-
-                                                        addButton={true}
-                                                        buttonTitle='Req Category'
-                                                        buttonOnClick={() => setIsReqForm(true)}
-                                                    />
-                                                )}
-                                            />
-                                        </div> */}
-                                    </>
-                                ) : (
-                                    // supplier
-                                    <div>
-                                        <Controller
-                                            name="supplier_node"
-                                            control={control}
-                                            rules={{
-                                                required: "This field is required!!!"
-                                            }}
-                                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
-                                                const supplierOptions = allownodeList?.data?.map(node => ({
-                                                    id: node?.id,
-                                                    name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
-                                                }));
-
-                                                return <RHSelect
-                                                    ref={(el) => {
-                                                        ref({
-                                                            focus: () => el?.focus(),
-                                                        });
-                                                    }}
-                                                    value={value}
-                                                    onChange={onChange}
-
-                                                    label="Supplier"
-                                                    labelPosition='inline'
-                                                    options={supplierOptions}
-                                                    error={error?.message}
-                                                    required={true}
-                                                    // isMulti={true}
-                                                    isClearable={true}
-                                                />
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
-
-                                {/* title */}
-                                <div>
-                                    <Input
-                                        label="Title"
-                                        labelPosition="inline"
-                                        placeholder="Enter title"
-                                        {...register("title", {
-                                            required: "Title Required"
-                                        })}
-                                        error={errors.title?.message}
-                                        required={true}
-                                    />
-                                </div>
-
-                                {/* required date */}
-                                <div>
-                                    <Input
-                                        type="date"
-                                        label={isManufacture ? "Deadline" : "Required Date"}
-                                        labelPosition="inline"
-                                        {...register("required_by_date")}
-                                    />
-                                </div>
-
-                                {/* priority */}
+                                {/* req type */}
                                 <div className="">
                                     <Controller
-                                        name="priority"
+                                        name="req_type"
                                         control={control}
                                         render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
                                             <SearchableSelect
@@ -271,34 +187,123 @@ const CreateRequisition = () => {
                                                 value={value}
                                                 onChange={onChange}
                                                 isSearchable={false}
+                                                isClearable={true}
 
-                                                label="Priority"
+                                                label="Requisition Type"
                                                 labelPosition={"inline"}
-                                                options={PRIORITY}
+                                                options={REQ_TYPE}
                                             />
                                         )}
                                     />
                                 </div>
 
-                                {isManufacture && <>
-                                    {/* total */}
-                                    <div className="">
+                                {req_type && <>
+
+                                    {/* buyer */}
+                                    {isTrader &&
+                                        <div>
+                                            <Controller
+                                                name="buyer_node"
+                                                control={control}
+                                                rules={{
+                                                    required: "This field is required!!!"
+                                                }}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                                                    const buyyerOptions = locationData?.data?.map(node => ({
+                                                        id: node?.business_node_id,
+                                                        name: `${node?.name} - ${node?.location}`
+                                                    }));
+
+                                                    return <RHSelect
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
+
+                                                        label="Buyer"
+                                                        labelPosition='inline'
+                                                        options={buyyerOptions}
+                                                        error={error?.message}
+                                                        required={true}
+                                                        // isMulti={true}
+                                                        isClearable={true}
+                                                    />
+                                                }}
+                                            />
+                                        </div>
+                                    }
+
+                                    {/* supplier */}
+                                    {isTrader &&
+                                        <div>
+                                            <Controller
+                                                name="supplier_node"
+                                                control={control}
+                                                rules={{
+                                                    required: "This field is required!!!"
+                                                }}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                                                    const supplierOptions = allownodeList?.data?.map(node => ({
+                                                        id: node?.id,
+                                                        name: `${node?.nodeDetails?.name ?? node?.name} - ${node?.nodeDetails?.location ?? node?.location}`
+                                                    }));
+
+                                                    return <RHSelect
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
+
+                                                        label="Supplier"
+                                                        labelPosition='inline'
+                                                        options={supplierOptions}
+                                                        error={error?.message}
+                                                        required={true}
+                                                        // isMulti={true}
+                                                        isClearable={true}
+                                                    />
+                                                }}
+                                            />
+                                        </div>
+                                    }
+
+                                    {/* title */}
+                                    <div>
                                         <Input
-                                            label="Total"
+                                            label="Title"
                                             labelPosition="inline"
-                                            disabled={true}
-                                            {...register("total")}
+                                            placeholder="Enter title"
+                                            {...register("title", {
+                                                required: "Title Required"
+                                            })}
+                                            error={errors.title?.message}
+                                            required={true}
                                         />
                                     </div>
 
-                                    {/* price limit */}
+                                    {/* required date / deadline */}
+                                    <div>
+                                        <Input
+                                            type="date"
+                                            label={isTrader ? "Required Date" : "Deadline"}
+                                            labelPosition="inline"
+                                            {...register("required_by_date")}
+                                        />
+                                    </div>
+
+                                    {/* priority */}
                                     <div className="">
                                         <Controller
-                                            name="limit_type"
+                                            name="priority"
                                             control={control}
-                                            // rules={{ required: "Price Limit is required!!!" }}
                                             render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                                <RHRadioGroup
+                                                <SearchableSelect
                                                     ref={(el) => {
                                                         ref({
                                                             focus: () => el?.focus(),
@@ -306,23 +311,59 @@ const CreateRequisition = () => {
                                                     }}
                                                     value={value}
                                                     onChange={onChange}
-                                                    label="Price Limit"
-                                                    labelPosition="inline"
-                                                    options={[
-                                                        { label: "Upper Limit", value: "upper_limit", title: "High amount is not allowed" },
-                                                        { label: "Lower Limit", value: "lower_limit", title: "Low amount is not allowed" },
-                                                    ]}
-                                                // error={error?.message}
-                                                // required={true}
+                                                    isSearchable={false}
+
+                                                    label="Priority"
+                                                    labelPosition={"inline"}
+                                                    options={PRIORITY}
                                                 />
                                             )}
                                         />
                                     </div>
-                                </>
-                                }
 
-                                {/* note */}
-                                {isManufacture && (
+                                    {/* price limit - hidden for trader */}
+                                    {!isTrader && (
+                                        <div className="">
+                                            <Controller
+                                                name="limit_type"
+                                                control={control}
+                                                // rules={{ required: "Price Limit is required!!!" }}
+                                                render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                    <RHRadioGroup
+                                                        ref={(el) => {
+                                                            ref({
+                                                                focus: () => el?.focus(),
+                                                            });
+                                                        }}
+                                                        value={value}
+                                                        onChange={onChange}
+                                                        label="Price Limit"
+                                                        labelPosition="inline"
+                                                        options={[
+                                                            { label: "Upper Limit", value: "upper_limit", title: "High amount is not allowed" },
+                                                            { label: "Lower Limit", value: "lower_limit", title: "Low amount is not allowed" },
+                                                        ]}
+                                                    // error={error?.message}
+                                                    // required={true}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* total - hidden for trader */}
+                                    {!isTrader && (
+                                        <div className="">
+                                            <Input
+                                                label="Total"
+                                                labelPosition="inline"
+                                                disabled={true}
+                                                {...register("total")}
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* note */}
                                     <div className="">
                                         <TextArea
                                             label="Note"
@@ -330,13 +371,22 @@ const CreateRequisition = () => {
                                             {...register("notes")}
                                         />
                                     </div>
-                                )}
+                                </>}
+
                             </div>
 
-                            <div className="mt-10">
+                            {/* button  group*/}
+                            <div className="mt-10 flex items-center justify-end gap-5">
+                                <Button
+                                    type="reset"
+                                    className="btn-secondary"
+                                    onClick={() => reset()}
+                                >
+                                    Reset
+                                </Button>
                                 <Button
                                     type="submit"
-                                    className="btn btn-primary ml-auto"
+                                    className="btn btn-primary"
                                 // disabled={isEmpty}
                                 >
                                     Submit
@@ -458,3 +508,28 @@ const CreateRequisition = () => {
 }
 
 export default CreateRequisition;
+
+
+// requisition category - hidden for trader
+// !isTrader && (
+//     <div>
+//         <Controller
+//             name="requisition_category_id"
+//             control={control}
+//             render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+//                 <RHSelect
+//                     value={value}
+//                     onChange={onChange}
+
+//                     label="Requisition Category"
+//                     labelPosition='inline'
+//                     options={requisitionCatList?.data}
+
+//                     addButton={true}
+//                     buttonTitle='Req Category'
+//                     buttonOnClick={() => setIsReqForm(true)}
+//                 />
+//             )}
+//         />
+//     </div>
+// )

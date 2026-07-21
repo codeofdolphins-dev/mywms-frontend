@@ -24,7 +24,7 @@ export const NAV_CONFIG = [
         label: "Master",
         icon: HiDatabase,
         path: "/master",
-        allowedRoles: ["system", "owner", "company", "admin"],
+        allowedRoles: ["system", "company", "admin"],
         children: [
             { key: "category", label: "Category", path: "/master/categories" },
             { key: "brand", label: "Brand", path: "/master/brands" },
@@ -45,7 +45,7 @@ export const NAV_CONFIG = [
         label: "Inventory",
         icon: BiSolidStore,
         path: "/inventory",
-        allowedRoles: ["system", "owner", "company", "admin", "warehouse", "partner"],
+        allowedRoles: ["system", "company", "admin", "warehouse", "partner"],
     },
 
     // ─── Super Admin ───
