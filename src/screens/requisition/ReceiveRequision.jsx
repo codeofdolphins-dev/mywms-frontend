@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
@@ -17,13 +17,20 @@ import { LuBookmarkPlus } from 'react-icons/lu';
 import Button from '../../components/inputs/Button';
 import RHSelect from "../../components/inputs/RHF/Select.RHF"
 import { Helmet } from 'react-helmet-async';
-import { REQUISITION_RECEIVE_COLUMN } from './helper';
+import { REQUISITION_RECEIVE_COLUMN, TRADING_RECEIVE_COLUMN } from './helper';
 import { FaBolt } from 'react-icons/fa6';
+import requisition from '../../Backend/requisition.backend';
+import RequisitionDetails from '../../components/requisition/RequisitionDetails';
 
 
 const headerLink = [
     { title: "requisition", link: "/requisition" },
     { title: "received-requisition" },
+];
+
+const tabList = [
+    { id: 1, title: "Received Requisition" },
+    { id: 2, title: "Trading REQ." },
 ];
 
 const ReceiveRequision = () => {
@@ -37,6 +44,12 @@ const ReceiveRequision = () => {
     const isManufacture = userData?.activeNode?.NodeUser?.department !== null ? true : false;
 
 
+    /**************** tab state *******************/
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabValue = searchParams.get('tab');
+    const [activeTab, setActiveTab] = useState(tabValue ? Number(tabValue) : 1);
+
+
     /**************** pagination state *******************/
     const [debounceSearch, setDebounceSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -45,22 +58,43 @@ const ReceiveRequision = () => {
 
     /**************** details state *******************/
     const [details, setDetails] = useState(null);
+    const [tradingItems, setTradingItems] = useState([]);
 
 
     /**************** modal state *******************/
     const [isShowDetails, setIsShowDetails] = useState(false);
     const [isShow, setIsShow] = useState(false);
+    const [isTradingItems, setIsTradingItems] = useState(false);
+
+
+    /** sync the active tab from the url search params */
+    useEffect(() => {
+        if (tabValue && Number(tabValue) !== activeTab) {
+            setActiveTab(Number(tabValue));
+        }
+    }, [tabValue]);
+
+    /** update the tab to url search params when active tab is changed */
+    useEffect(() => {
+        setSearchParams(prev => {
+            prev.set('tab', activeTab);
+            return prev;
+        });
+        setCurrentPage(1);
+    }, [activeTab, setSearchParams]);
 
 
     /**************** APT mutation *******************/
     const { mutateAsync: create, isPending: createPending } = masterData.TQCreateMaster(["receiveRequisitionList"]);
 
 
-    /**************** data fetching GET *******************/
-    const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList();
+    /**************** data fetching GET (only the active tab's list is fetched) *******************/
+    const { data: receiveRequisitionList, isLoading: receiveRequisitionListLoading } = fetchData.TQReceiveRequisitionList(activeTab === 1);
+    const { data: tradingReceiveList, isLoading: tradingReceiveListLoading } = requisition.TQTradingReceiveRequisitionList({}, activeTab === 2);
     const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, isManufacture);
 
     const isEmpty = receiveRequisitionList?.data?.length === 0;
+    const tradingIsEmpty = tradingReceiveList?.data?.length === 0;
 
     const fgStore = watch("fg_store");
 
@@ -147,8 +181,28 @@ const ReceiveRequision = () => {
                 addButton={false}
             />
 
-            {/* table view */}
-            <div className="panel mt-5 z-0 min-h-64 relative">
+            {/* wizards / tabs */}
+            <div className="w-full mt-5">
+                <ul className="flex items-center text-center gap-2">
+                    {tabList.map((item) => (
+                        <li key={item.id}>
+                            <div
+                                className={`
+                                    ${activeTab === item.id ? '!bg-primary text-white' : ''}
+                                    block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-44 cursor-pointer
+                                `}
+                                onClick={() => setActiveTab(item.id)}
+                            >
+                                <p className='mb-1 font-semibold'>{item.title}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* ── Tab 1: Received Requisition ── */}
+            {activeTab === 1 && (
+            <div className="panel z-0 min-h-64 relative">
                 <TableBody
                     columns={REQUISITION_RECEIVE_COLUMN}
                     currentPage={currentPage}
@@ -248,8 +302,74 @@ const ReceiveRequision = () => {
                     ))}
                 </TableBody>
             </div>
+            )}
 
-
+            {/* ── Tab 2: Trading Received Requisition ── */}
+            {activeTab === 2 && (
+                <div className="panel z-0 min-h-64 relative">
+                    <TableBody
+                        columns={TRADING_RECEIVE_COLUMN}
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        totalPage={tradingReceiveList?.pagination?.totalPages}
+                        isEmpty={tradingIsEmpty}
+                        isLoading={tradingReceiveListLoading}
+                    >
+                        {tradingReceiveList?.data?.map((item) => (
+                            <TableRow
+                                key={item.id}
+                                columns={TRADING_RECEIVE_COLUMN}
+                                row={{
+                                    id: (
+                                        <Link
+                                            to={`/requisition/trading/${item.id}`}
+                                            className='whitespace-nowrap text-blue-600 hover:underline'
+                                        >
+                                            {item?.requisition_no}
+                                        </Link>
+                                    ),
+                                    title: item?.title,
+                                    sender: item?.icReqConnection?.buyer_tenant,
+                                    connectionType: (
+                                        <span className="badge badge-outline-primary uppercase rounded-full">
+                                            {item?.icReqConnection?.connection_type}
+                                        </span>
+                                    ),
+                                    priority: (
+                                        <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
+                                            {item?.priority}
+                                        </span>
+                                    ),
+                                    status: (
+                                        <span className={`badge uppercase rounded-full whitespace-nowrap ${statusColor(item?.status)}`}>
+                                            {item?.status?.split("_").join(" ")}
+                                        </span>
+                                    ),
+                                    itemsCount: item?.intercompanyItems?.length,
+                                    deadline: <p className='whitespace-nowrap'>{utcToLocal(item?.required_by_date)}</p>,
+                                    notes: item?.notes,
+                                    action: (
+                                        <div className='flex items-center justify-center gap-2'>
+                                            <Tippy content="Preview">
+                                                <button
+                                                    onClick={() => {
+                                                        setTradingItems(item?.intercompanyItems);
+                                                        setIsTradingItems(true);
+                                                    }}
+                                                >
+                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                                </button>
+                                            </Tippy>
+                                        </div>
+                                    ),
+                                }}
+                            />
+                        ))}
+                    </TableBody>
+                </div>
+            )}
 
             {/* Item Details */}
             <AddModal
@@ -474,6 +594,21 @@ const ReceiveRequision = () => {
                         </Button>
                     </div>
                 </div>
+            </AddModal>
+
+
+
+            {/* Trading Requisition Items Preview */}
+            <AddModal
+                isShow={isTradingItems}
+                setIsShow={setIsTradingItems}
+                title={"Preview Requisition Items"}
+                maxWidth='50'
+            >
+                <RequisitionDetails
+                    setIsShow={setIsTradingItems}
+                    selectedItems={tradingItems}
+                />
             </AddModal>
         </div >
     )

@@ -348,7 +348,7 @@ const Dashboard = () => {
           if (role == "trader") {
             console.log("Connect as:", role, "for RFQ:", item);
             const payload = {
-              parent_tenant: item?.buyer_tenant,
+              vendor_tenant: item?.buyer_tenant,
               connection_type: role,
             };
 

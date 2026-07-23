@@ -12,8 +12,8 @@ export const useNavAccess = () => {
 
             const hasRoleAccess = item.allowedRoles && item.allowedRoles.some(role => roles.includes(role));
 
-            const hasPermissionAccess = item.key === "open-forum" ? true : permissions.includes(item.key);
-            // const hasPermissionAccess = permissions.includes(item.key);
+            // const hasPermissionAccess = item.key === "open-forum" ? true : permissions.includes(item.key);
+            const hasPermissionAccess = permissions.includes(item.key);
 
             /** If either condition is true, the user has access to this item */
             let isAuthorized = hasRoleAccess || hasPermissionAccess;

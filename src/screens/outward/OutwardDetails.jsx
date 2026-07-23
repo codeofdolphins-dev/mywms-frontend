@@ -22,6 +22,7 @@ const OutwardDetails = () => {
 
     const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["outwardDetails", "outwardList"]);
     const { mutateAsync, isPending } = pdf.TQOutwardInvoicePDFDownload();
+    const { mutateAsync: tradingInvoiceDownload, isPending: tradingInvoicePending } = pdf.TQTradingInvoicePDFDownload();
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
@@ -43,6 +44,7 @@ const OutwardDetails = () => {
 
     const isPreview = data?.status === "dispatched";
     const isExternal = data?.type === "external";
+    const isTrading = Boolean(data?.meta?.trading);
 
     // console.log(data)
     // console.log(isPreview)
@@ -69,6 +71,11 @@ const OutwardDetails = () => {
     }
 
     async function downloadInvoice() {
+        /** trading outward — invoice generated from the trading requisition no */
+        if (isTrading) {
+            await tradingInvoiceDownload({ requisition_no: data?.pr_no });
+            return;
+        }
         await mutateAsync({ out_no });
     }
 
@@ -104,12 +111,12 @@ const OutwardDetails = () => {
                     <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
                 </div>
                 {isPreview ?
-                    (isExternal && <Button
+                    ((isExternal || isTrading) && <Button
                         className="bg-secondary px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
                         onClick={downloadInvoice}
-                        disabled={isPending}
+                        disabled={isPending || tradingInvoicePending}
                     >
-                        {isPending ?
+                        {(isPending || tradingInvoicePending) ?
                             <LuLoaderCircle size={20} className='mr-4 animate-spin text-primary' />
                             : <FaFileDownload size={18} className='mr-4' />
                         }

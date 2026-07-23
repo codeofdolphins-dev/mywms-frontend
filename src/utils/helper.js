@@ -33,7 +33,7 @@ export const REQUISITION_CREATE_COLUMN_ACTION = [
     { key: "subCategory", label: "Sub Category" },
     { key: "packSize", label: "Pack Size" },
     { key: "reqQty", label: "Req Qty." },
-    { key: "priceLimit", label: "Price Limit" },
+    // { key: "priceLimit", label: "Price Limit" },
     { key: "action", label: "Action", align: "center" }
 ];
 

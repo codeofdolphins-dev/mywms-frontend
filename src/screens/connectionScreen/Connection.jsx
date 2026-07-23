@@ -76,19 +76,19 @@ const RoleChip = ({ isBuyer }) =>
         </span>;
 
 // ─── Role-assign dropdown ─────────────────────────────────────────────────────
-// Shows for the BUYER side on any connection so they can assign/change role.
-// Shows for the VENDOR side only on PENDING connections (to accept).
+// Only the VENDOR side can assign / reassign a role.
+// Supplier-type connections are locked — no one can change them.
 
 const RoleAssignDropdown = ({ connection, myTenant, onUpdate, isUpdating }) => {
     const [selected, setSelected] = useState("");
 
-    const iAmBuyer = connection.parent_tenant === myTenant;
-    const iAmVendor = connection.child_tenant === myTenant;
+    const iAmVendor = connection.vendor_tenant === myTenant;
     const isPending = connection.connection_type === "pending";
+    const isSupplier = connection.connection_type === "supplier";
 
-    // Buyer can always assign / re-assign role
-    // Vendor can only accept a pending request
-    const canAssign = iAmBuyer || (iAmVendor && isPending);
+    // Only the vendor can assign / reassign a role.
+    // Supplier-type connections are locked and cannot be changed by anyone.
+    const canAssign = iAmVendor && !isSupplier;
     if (!canAssign) return <span className="text-gray-300 text-xs">—</span>;
 
     const placeholder = isPending ? "Accept as…" : "Change role…";
@@ -151,7 +151,7 @@ const Connection = () => {
     const { data: connectionData, isLoading, isFetching, refetch } = fetchData.TQConnectionList(params);
 
     /** tenant product list */
-    const { data: tenantProductData, isLoading: tenantProductDataLoading } = fetchData.TQTenantProductList({ tenant: selectTenant?.parent_tenant }, Boolean(selectTenant?.parent_tenant));
+    const { data: tenantProductData, isLoading: tenantProductDataLoading } = fetchData.TQTenantProductList({ tenant: selectTenant?.vendor_tenant }, Boolean(selectTenant?.vendor_tenant));
 
     // Separate no-filter call for the summary cards only
     const { data: allData } = fetchData.TQConnectionList();
@@ -171,7 +171,7 @@ const Connection = () => {
             path: `/connection/${conn.id}/type`,
             formData: {
                 connection_type: newType,
-                child_tenant: conn.child_tenant
+                buyer_tenant: conn.buyer_tenant
             },
         });
     };
@@ -277,9 +277,9 @@ const Connection = () => {
                     setLimit={setLimit}
                 >
                     {list.map((conn) => {
-                        const iAmParent = conn.parent_tenant === myTenant;
-                        const partnerName = iAmParent ? getName(conn, "child") : getName(conn, "parent");
-                        const partnerId = iAmParent ? getEmail(conn, "child") : getEmail(conn, "parent");
+                        const iAmVendor = conn.vendor_tenant === myTenant;
+                        const partnerName = iAmVendor ? getName(conn, "buyer") : getName(conn, "vendor");
+                        const partnerId = iAmVendor ? getName(conn, "buyer") : getName(conn, "vendor");
 
                         return <TableRow
                             key={conn.id}
@@ -298,33 +298,37 @@ const Connection = () => {
                                 ),
                                 role: (<RoleChip
                                     isBuyer={
-                                        (conn.parent_tenant === myTenant && conn.connection_type === "supplier") ||
-                                        (conn.parent_tenant !== myTenant && conn.connection_type !== "supplier")
+                                        (conn.buyer_tenant === myTenant && conn.connection_type === "supplier") ||
+                                        (conn.vendor_tenant !== myTenant && conn.connection_type !== "supplier")
                                     }
                                 />),
                                 connection_type: <TypeBadge type={conn.connection_type} />,
                                 connection_status: <StatusBadge active={conn.connection_status} />,
                                 createdAt: <span className="text-xs text-gray-500 whitespace-nowrap">{utcToLocal(conn.createdAt)}</span>,
                                 assignRole: (
-                                    // conn.connection_status ? "-" : (
-                                    <RoleAssignDropdown
-                                        connection={conn}
-                                        myTenant={myTenant}
-                                        onUpdate={handleUpdate}
-                                        isUpdating={isUpdating}
-                                    />
-                                    // )
+                                    conn.connection_type === "supplier" ? "-" : (
+                                        <RoleAssignDropdown
+                                            connection={conn}
+                                            myTenant={myTenant}
+                                            onUpdate={handleUpdate}
+                                            isUpdating={isUpdating}
+                                        />
+                                    )
                                 ),
                                 action: (
                                     <div className="flex items-center justify-center">
-                                        {(conn.connection_type !== "supplier" && conn.parent_tenant !== myTenant) ?
-                                            <BiImport
-                                                size={20}
-                                                onClick={() => setSelectTenant(conn)}
-                                                className="cursor-pointer"
-                                                title="Import Products"
-                                            />
-                                            : "no action required"
+                                        {conn.connection_type === "supplier"
+                                            ? "no action required"
+                                            : iAmVendor
+                                                ? "no action required"
+                                                : !conn.connection_status
+                                                    ? "pending..."
+                                                    : <BiImport
+                                                        size={20}
+                                                        onClick={() => setSelectTenant(conn)}
+                                                        className="cursor-pointer"
+                                                        title="Import Products"
+                                                    />
                                         }
                                     </div>
                                 )
