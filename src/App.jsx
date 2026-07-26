@@ -57,6 +57,7 @@ import CostHead from './screens/master/costHead/CostHead';
 import Expense from './screens/expenses/Expense';
 import { StoreRoute, HomeRoute } from './guards/StoreRoute';
 import Connection from './screens/connectionScreen/Connection';
+import BrowseCompanies from './screens/connectionScreen/BrowseCompanies';
 
 
 function App() {
@@ -211,6 +212,7 @@ function App() {
                     {/* connection */}
                     <Route path="connection" >
                         <Route index element={<Connection />} />
+                        <Route path="browse" element={<BrowseCompanies />} />
                     </Route>
 
                     {/* expense */}

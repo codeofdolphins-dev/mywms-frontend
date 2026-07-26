@@ -112,8 +112,12 @@ export const NAV_CONFIG = [
         key: "connection",
         label: "Connection",
         icon: FaHandshake,
-        path: "/connection",
+        basePath: "/connection",
         allowedRoles: ["system", "owner", "company", "admin"],
+        children: [
+            { key: "my-connections", label: "My Connections", path: "/connection" },
+            { key: "browse-companies", label: "Browse Companies", path: "/connection/browse" },
+        ],
     },
 
     // ─── Production ───
