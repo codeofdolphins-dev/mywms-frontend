@@ -144,9 +144,9 @@ const Dashboard = () => {
                   <li key={item.id}>
                     <div
                       className={`
-                                                    ${activeTab === item.id ? '!bg-primary text-white' : ''}
-                                                    block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-44 cursor-pointer
-                                                `}
+                                ${activeTab === item.id ? '!bg-primary text-white' : ''}
+                                block rounded-t-full bg-[#f3f2ee] px-2 py-1 w-44 cursor-pointer
+                            `}
                       onClick={() => setActiveTab(item.id)}
                     >
                       <p className='mb-1 font-semibold'>{item.title}</p>
@@ -272,11 +272,14 @@ const Dashboard = () => {
                         <td className="whitespace-nowrap">
                           {isLogin ?
                             buyerTenant == item?.buyer_tenant
-                              ? <> Creator </>
-                              : item?.isConnected
-                                ? <span className="text-sky-400">Connected</span>
-                                : item?.connection_status === "pending"
-                                  ? <>Pending...</>
+                              ? <span className="badge badge-outline-primary rounded-full text-xs">Creator</span>
+                              : item?.connection_status === "pending"
+                                ? <span className="badge badge-outline-secondary rounded-full text-xs">Pending...</span>
+                                : item?.connection_status
+                                  /* a connection exists — supplier can quote, any other type cannot */
+                                  ? <span className={`badge rounded-full capitalize text-xs ${item?.isConnected ? "badge-outline-success" : "badge-outline-warning"}`}>
+                                    {item?.connection_status}
+                                  </span>
                                   :
                                   <button
                                     className="btn btn-outline-primary"
@@ -332,9 +335,8 @@ const Dashboard = () => {
         isShow={connectModalShow}
         setIsShow={setConnectModalShow}
         rfqItem={selectedConnectItem}
+        allowedRoles={["supplier", "trader"]}
         onConfirm={async (role, item) => {
-          // TODO: call your API here
-
           if (role === "supplier") {
             const payload = {
               parent_tenant: item?.buyer_tenant,

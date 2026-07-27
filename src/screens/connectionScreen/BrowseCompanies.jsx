@@ -266,6 +266,7 @@ const BrowseCompanies = () => {
                     meta: { name: selectedCompany?.companyName },
                     buyer_tenant: selectedCompany?.tenant,
                 }}
+                allowedRoles={["trader"]}
                 onConfirm={handleConfirm}
             />
         </div>

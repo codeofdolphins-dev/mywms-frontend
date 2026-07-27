@@ -13,6 +13,7 @@ import { MdOutlineAttachMoney } from 'react-icons/md';
 import secureLocalStorage from 'react-secure-storage';
 import { useSelector } from 'react-redux';
 import fetchData from '../../Backend/fetchData.backend';
+import { packSize } from '../../utils/packSize';
 
 const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
     const isLogin = useSelector(state => state.auth.status);
@@ -175,11 +176,32 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                                     key={item.id || index}
                                     className="group flex flex-col sm:flex-row sm:items-center justify-between bg-white dark:bg-[#1b2e4b] border border-[#e0e6ed] dark:border-[#191e3a] rounded-xl p-3 shadow-sm hover:border-primary transition-all duration-200"
                                 >
-                                    <div className="flex items-center gap-3 mb-2 sm:mb-0">
+                                    <div className="flex items-start gap-3 mb-2 sm:mb-0 min-w-0">
                                         <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
                                             {index + 1}
                                         </div>
-                                        <span className="font-semibold text-sm">{item.product_name}</span>
+                                        <div className="min-w-0">
+                                            <span className="font-semibold text-sm block">{item.product_name}</span>
+
+                                            {/* product identifiers */}
+                                            <div className="flex items-center gap-x-2 gap-y-1 flex-wrap mt-1 text-[11px] text-white-dark">
+                                                {item?.details?.sku && (
+                                                    <span className="font-mono break-all">{item?.details?.sku}</span>
+                                                )}
+                                                {item?.details?.barcode && (
+                                                    <>
+                                                        <span className="w-1 h-1 rounded-full bg-white-dark/40 shrink-0" />
+                                                        <span className="font-mono break-all">{item?.details?.barcode}</span>
+                                                    </>
+                                                )}
+                                                {packSize(item?.details) && (
+                                                    <>
+                                                        <span className="w-1 h-1 rounded-full bg-white-dark/40 shrink-0" />
+                                                        <span className="capitalize whitespace-nowrap">{packSize(item?.details)}</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pl-11 sm:pl-0">
                                         <div className="bg-dark/5 dark:bg-dark/20 px-3 py-1.5 rounded-lg text-sm">
@@ -226,7 +248,11 @@ const RequisitionCard = ({ details = null, setIsRequisitionCardShow }) => {
                             >
                                 {isSubmited ? "Submited" : "Preview"}
                             </button>
-                            : <span className="badge bg-danger py-1.5">You are not connected</span>
+                            : <span className="badge bg-secondary py-1.5">
+                                {details?.connection_status && details?.connection_status !== "pending"
+                                    ? <span className="capitalize">You are already connected as {details?.connection_status}</span>
+                                    : "You are not connected"}
+                            </span>
                     )}
                 </div>
             </div>

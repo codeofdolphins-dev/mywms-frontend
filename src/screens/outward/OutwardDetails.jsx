@@ -372,7 +372,13 @@ const OutwardDetails = () => {
                                                         placeholder="Select from available batches..."
                                                         onChange={(val) => handleBatchChange(val, item.vendor_product_id)}
                                                         value={selectedBatches[item.vendor_product_id] || []}
+                                                        menuPortalTarget={document.body}
+                                                        menuPosition="fixed"
                                                         styles={{
+                                                            menuPortal: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                zIndex: 9999
+                                                            }),
                                                             control: (baseStyles, state) => ({
                                                                 ...baseStyles,
                                                                 borderColor: state.isFocused ? '#6366f1' : '#e2e8f0',
@@ -397,7 +403,8 @@ const OutwardDetails = () => {
                                                                 backgroundColor: state.isSelected ? '#indigo-500' : state.isFocused ? '#e0e7ff' : 'white',
                                                                 color: state.isSelected ? 'white' : '#1e293b',
                                                                 padding: '10px 14px',
-                                                                cursor: 'pointer'
+                                                                cursor: 'pointer',
+                                                                fontSize: "13px"
                                                             }),
                                                             multiValue: (baseStyles) => ({
                                                                 ...baseStyles,

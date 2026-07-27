@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@mantine/core';
-import { FiHash, FiFileText, FiCalendar, FiClock, FiMapPin, FiPackage } from 'react-icons/fi';
+import { FiHash, FiFileText, FiCalendar, FiClock, FiMapPin, FiPackage, FiGitBranch } from 'react-icons/fi';
 import { HiOutlineBuildingOffice2 } from 'react-icons/hi2';
 import { TbTruckDelivery } from 'react-icons/tb';
 import ComponentHeader from '../../components/ComponentHeader';
@@ -12,9 +12,9 @@ import TableRow from '../../components/table/TableRow';
 import Loader from '../../components/loader/Loader';
 import AddModal from '../../components/Add.modal';
 import RHSelect from '../../components/inputs/RHF/Select.RHF';
-import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import requisition from '../../Backend/requisition.backend';
 import masterData from '../../Backend/master.backend';
+import business from '../../Backend/business.fetch';
 import fetchData from '../../Backend/fetchData.backend';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
 import { utcToLocal } from '../../utils/UTCtoLocal';
@@ -42,6 +42,16 @@ function statusColor(status) {
     }
 }
 
+/** flatten a JSONB address into a single line */
+function formatAddress(address) {
+    return [
+        address?.address,
+        address?.district?.name || address?.district,
+        address?.state?.name || address?.state,
+        address?.pincode,
+    ].filter(Boolean).join(", ");
+}
+
 /** single labelled row inside a party card */
 const InfoRow = ({ label, value }) => (
     <div className="flex items-start justify-between gap-3 text-sm">
@@ -51,14 +61,10 @@ const InfoRow = ({ label, value }) => (
 );
 
 /** buyer / vendor detail card */
-const PartyCard = ({ title, Icon, accent, details, tenant, connectionType, isYou }) => {
-    const address = details?.address;
-    const fullAddress = [
-        address?.address,
-        address?.district?.name || address?.district,
-        address?.state?.name || address?.state,
-        address?.pincode,
-    ].filter(Boolean).join(", ");
+const PartyCard = ({ title, Icon, accent, details, tenant, email, connectionType, isYou, node, nodeLabel }) => {
+    const fullAddress = formatAddress(details?.address);
+    const nodeAddress = formatAddress(node?.nodeDetails?.address);
+    const store = node?.store;
 
     return (
         <div className="bg-white dark:bg-[#1b2e4b] rounded-2xl shadow-sm border border-[#e0e6ed] dark:border-[#191e3a] overflow-hidden">
@@ -79,7 +85,7 @@ const PartyCard = ({ title, Icon, accent, details, tenant, connectionType, isYou
             {/* card body */}
             <div className="p-5 space-y-2.5">
                 {connectionType && <InfoRow label="Connection" value={<span className="capitalize">{connectionType}</span>} />}
-                <InfoRow label="Tenant" value={tenant} />
+                <InfoRow label="Email" value={email} />
                 <InfoRow label="GST No." value={details?.gst_no} />
                 <InfoRow label="License No." value={details?.license_no} />
                 <InfoRow
@@ -91,6 +97,43 @@ const PartyCard = ({ title, Icon, accent, details, tenant, connectionType, isYou
                     )}
                 />
                 <InfoRow label="Address" value={fullAddress} />
+
+                {/* acting node — buyer: who raised it | vendor: assigned node (only after assignment) */}
+                {node && (
+                    <div className="pt-3 mt-3 border-t border-dashed border-[#e0e6ed] dark:border-[#191e3a] space-y-2.5">
+                        <p className="text-[11px] uppercase tracking-widest font-bold text-white-dark flex items-center gap-1.5">
+                            <FiGitBranch size={12} /> {nodeLabel}
+                        </p>
+                        <InfoRow label="Node" value={node?.nodeDetails?.name || node?.name} />
+                        {node?.nodeDetails?.gst_no && <InfoRow label="GST No." value={node?.nodeDetails?.gst_no} />}
+                        <InfoRow
+                            label="Location"
+                            value={node?.nodeDetails?.location && (
+                                <span className="inline-flex items-center gap-1">
+                                    <FiMapPin size={13} className="text-danger" /> {node?.nodeDetails?.location}
+                                </span>
+                            )}
+                        />
+                        {nodeAddress && <InfoRow label="Address" value={nodeAddress} />}
+
+                        {/* store attached to the assigned node (when assigned to a store) */}
+                        {store && (
+                            <InfoRow
+                                label="Store"
+                                value={
+                                    <span className="inline-flex items-center gap-1.5 flex-wrap justify-end">
+                                        {store?.name}
+                                        {store?.store_type && (
+                                            <span className="badge badge-outline-primary rounded-full text-[10px] uppercase">
+                                                {store?.store_type?.split("_").join(" ")}
+                                            </span>
+                                        )}
+                                    </span>
+                                }
+                            />
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -100,10 +143,10 @@ const TradingRequisitionDetails = () => {
     const { id = "" } = useParams();
 
     const [isShow, setIsShow] = useState(false);
-    const [store, setStore] = useState(null);
 
-    const { control, watch } = useForm();
-    const fgStore = watch("fg_store");
+    const { control, watch, setValue } = useForm();
+    const selectedLocation = watch("location");
+    const selectedStore = watch("store");
 
     const { data, isLoading } = requisition.TQTradingRequisitionDetails(id, Boolean(id));
     const details = data?.data;
@@ -115,17 +158,33 @@ const TradingRequisitionDetails = () => {
     const canDownloadInvoice = ["dispatched", "closed"].includes(details?.status);
     const { mutateAsync: invoiceDownload, isPending: invoicePending } = pdf.TQTradingInvoicePDFDownload();
 
-    const { data: storeList } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, canAssign);
+    /** fetch all registered locations */
+    const { data: locationList } = business.TQTenantRegisteredNodeList({ noLimit: true, isAttachCurrentNode: false }, canAssign);
+
+    /** fetch stores for selected location (enabled only when a location is selected) */
+    const locationNodeId = selectedLocation?.businessNode?.id || selectedLocation?.business_node_id;
+    const { data: storeList } = fetchData.TQStoreList(
+        { location_id: locationNodeId, isAdmin: true },
+        Boolean(locationNodeId)
+    );
+    const stores = storeList?.data ?? [];
+    const hasStores = stores.length > 0;
+
     const { mutateAsync: createData, isPending: assignPending } = masterData.TQCreateMaster(["tradingRequisitionDetails", "tradingRequisitionList", "tradingReceiveRequisitionList", "outwardList"]);
 
-    /** assign requisition to FG store — creates a pending outward on this store */
-    async function assignFgStore() {
+    /** assign requisition to location/store — creates a pending outward */
+    async function assignLocation() {
+        const formData = { id: details?.id };
+
+        if (selectedStore) {
+            formData.store_id = selectedStore?.id;
+        } else {
+            formData.location_id = locationNodeId;
+        }
+
         const res = await createData({
-            path: "/requisition/trading/assign-fg",
-            formData: {
-                id: details?.id,
-                store_id: fgStore?.id
-            }
+            path: "/requisition/trading/assign-location",
+            formData
         });
         if (res?.success) setIsShow(false);
     }
@@ -181,9 +240,13 @@ const TradingRequisitionDetails = () => {
                         {canAssign &&
                             <Button
                                 className="btn !btn-primary rounded-full py-1 px-1"
-                                onClick={() => setIsShow(true)}
+                                onClick={() => {
+                                    setValue("location", null);
+                                    setValue("store", null);
+                                    setIsShow(true);
+                                }}
                             >
-                                <span className='text-xs'>Assign to FG Store</span>
+                                <span className='text-xs'>Assign Location</span>
                             </Button>
                         }
 
@@ -216,8 +279,11 @@ const TradingRequisitionDetails = () => {
                     accent="bg-primary/10"
                     details={details?.buyerDetails}
                     tenant={connection?.buyer_tenant}
+                    email={connection?.buyer?.tenantDetails?.email}
                     connectionType={connection?.connection_type}
                     isYou={details?.side === "buyer"}
+                    node={details?.side === "buyer" ? details?.buyerNode : null}
+                    nodeLabel="Requesting Node"
                 />
                 <PartyCard
                     title="Vendor"
@@ -225,8 +291,11 @@ const TradingRequisitionDetails = () => {
                     accent="bg-secondary/10"
                     details={details?.vendorDetails}
                     tenant={connection?.vendor_tenant}
+                    email={connection?.vendor?.tenantDetails?.email}
                     connectionType={connection?.connection_type}
                     isYou={details?.side === "vendor"}
+                    node={details?.side === "vendor" ? details?.vendorNode : null}
+                    nodeLabel="Assigned Node"
                 />
             </div>
 
@@ -266,22 +335,47 @@ const TradingRequisitionDetails = () => {
                 </div>
             </div>
 
-            {/* Assign FG Store */}
+            {/* Assign Location */}
             <AddModal
                 isShow={isShow}
                 setIsShow={setIsShow}
-                title="Assign FG Store"
+                title="Assign Location"
                 maxWidth='50'
             >
-                <div className="panel">
-                    <div>
-                        {/* fg_store */}
+                <div className="panel space-y-4">
+                    {/* Step 1: Select Location */}
+                    <Controller
+                        name="location"
+                        control={control}
+                        rules={{
+                            required: "This field is required!!!"
+                        }}
+                        render={({ field: { ref, value, onChange } }) => (
+                            <RHSelect
+                                ref={(el) => {
+                                    ref({
+                                        focus: () => el?.focus(),
+                                    });
+                                }}
+                                value={value}
+                                onChange={(val) => {
+                                    onChange(val);
+                                    setValue("store", null);
+                                }}
+
+                                label="Select Location"
+                                options={locationList?.data ?? []}
+                                required={true}
+                                objectReturn={true}
+                            />
+                        )}
+                    />
+
+                    {/* Step 2: Select Store (only if location has stores) */}
+                    {selectedLocation && hasStores && (
                         <Controller
-                            name="fg_store"
+                            name="store"
                             control={control}
-                            rules={{
-                                required: "This field is required!!!"
-                            }}
                             render={({ field: { ref, value, onChange } }) => (
                                 <RHSelect
                                     ref={(el) => {
@@ -292,18 +386,13 @@ const TradingRequisitionDetails = () => {
                                     value={value}
                                     onChange={onChange}
 
-                                    label="Select FG Store"
-                                    options={storeList?.data}
-                                    required={true}
+                                    label="Select Store"
+                                    options={stores}
                                     objectReturn={true}
-
-                                    addButton={true}
-                                    buttonTitle="Add FG Store"
-                                    buttonOnClick={() => setStore("FIN")}
                                 />
                             )}
                         />
-                    </div>
+                    )}
 
                     <div className="flex items-center justify-end gap-2 mt-10">
                         <Button
@@ -315,27 +404,13 @@ const TradingRequisitionDetails = () => {
                         <Button
                             className="btn !btn-primary rounded-full"
                             loading={assignPending}
-                            disabled={!fgStore}
-                            onClick={assignFgStore}
+                            disabled={!selectedLocation}
+                            onClick={assignLocation}
                         >
                             <span>Assign</span>
                         </Button>
                     </div>
                 </div>
-            </AddModal>
-
-            {/* Add New FG Store */}
-            <AddModal
-                isShow={Boolean(store)}
-                setIsShow={setStore}
-                title={"Add New FG Store"}
-                maxWidth='75'
-            >
-                <CreateStoreForm
-                    selectedStore={store}
-                    setSelectedStore={setStore}
-                    isTypeDisabled={true}
-                />
             </AddModal>
         </div>
     );

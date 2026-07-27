@@ -4,7 +4,11 @@ import { MdOutlineStorefront } from "react-icons/md";
 import { TbTruckDelivery } from "react-icons/tb";
 import { IoClose } from "react-icons/io5";
 
-const ConnectRoleModal = ({ isShow, setIsShow, rfqItem, onConfirm }) => {
+/**
+ * allowedRoles — which connection roles this screen permits.
+ * Roles outside the list still render (so the user sees the full choice) but are disabled.
+ */
+const ConnectRoleModal = ({ isShow, setIsShow, rfqItem, onConfirm, allowedRoles = ["trader", "supplier"] }) => {
     const [selectedRole, setSelectedRole] = useState(null);
     const [hoveredRole, setHoveredRole] = useState(null);
 
@@ -43,7 +47,7 @@ const ConnectRoleModal = ({ isShow, setIsShow, rfqItem, onConfirm }) => {
     };
 
     const handleConfirm = () => {
-        if (!selectedRole) return;
+        if (!selectedRole || !allowedRoles.includes(selectedRole)) return;
         onConfirm?.(selectedRole, rfqItem);
         handleClose();
     };
@@ -113,19 +117,23 @@ const ConnectRoleModal = ({ isShow, setIsShow, rfqItem, onConfirm }) => {
                             {/* ── Role Cards ── */}
                             <div className="px-6 py-5 flex flex-col gap-3">
                                 {roles.map((role) => {
-                                    const isSelected = selectedRole === role.id;
+                                    const isAllowed = allowedRoles.includes(role.id);
+                                    const isSelected = isAllowed && selectedRole === role.id;
                                     const isHovered = hoveredRole === role.id;
                                     return (
                                         <button
                                             key={role.id}
-                                            onClick={() => setSelectedRole(role.id)}
+                                            disabled={!isAllowed}
+                                            onClick={() => isAllowed && setSelectedRole(role.id)}
                                             onMouseEnter={() => setHoveredRole(role.id)}
                                             onMouseLeave={() => setHoveredRole(null)}
                                             className={`
                                                 w-full text-left rounded-xl border-2 p-4 transition-all duration-200 outline-none
-                                                ${isSelected
-                                                    ? `${role.activeBorder} ${role.softBg} shadow-md ring-2 ${role.ringColor}`
-                                                    : `border-gray-200 hover:${role.border} hover:${role.softBg} bg-white`
+                                                ${!isAllowed
+                                                    ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                                                    : isSelected
+                                                        ? `${role.activeBorder} ${role.softBg} shadow-md ring-2 ${role.ringColor}`
+                                                        : `border-gray-200 hover:${role.border} hover:${role.softBg} bg-white`
                                                 }
                                             `}
                                             style={{
@@ -137,27 +145,29 @@ const ConnectRoleModal = ({ isShow, setIsShow, rfqItem, onConfirm }) => {
                                                 <div className={`
                                                     w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200
                                                     bg-gradient-to-br ${role.gradient}
-                                                    ${isSelected ? 'shadow-lg scale-110' : 'opacity-80'}
+                                                    ${!isAllowed ? 'grayscale opacity-50' : isSelected ? 'shadow-lg scale-110' : 'opacity-80'}
                                                 `}>
                                                     <role.Icon size={22} className="text-white" />
                                                 </div>
 
                                                 {/* Text */}
                                                 <div className="flex-1 min-w-0">
-                                                    <p className={`font-semibold text-sm ${isSelected ? role.textAccent : 'text-gray-800'}`}>
+                                                    <p className={`font-semibold text-sm ${!isAllowed ? 'text-gray-400' : isSelected ? role.textAccent : 'text-gray-800'}`}>
                                                         {role.label}
                                                     </p>
                                                     <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
-                                                        {role.subtitle}
+                                                        {isAllowed ? role.subtitle : "Not available from this page"}
                                                     </p>
                                                 </div>
 
                                                 {/* Selection indicator */}
                                                 <div className={`
                                                     w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all duration-200
-                                                    ${isSelected
-                                                        ? `bg-gradient-to-br ${role.gradient} border-transparent`
-                                                        : 'border-gray-300 bg-white'
+                                                    ${!isAllowed
+                                                        ? 'border-gray-200 bg-gray-100'
+                                                        : isSelected
+                                                            ? `bg-gradient-to-br ${role.gradient} border-transparent`
+                                                            : 'border-gray-300 bg-white'
                                                     }
                                                 `}>
                                                     {isSelected && (

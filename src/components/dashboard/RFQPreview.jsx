@@ -10,7 +10,43 @@ import CustomeButton from "../inputs/Button"
 import { FiFileText, FiPackage, FiCheckCircle, FiEdit3 } from 'react-icons/fi';
 import fetchData from '../../Backend/fetchData.backend';
 import RHSelect from '../../components/inputs/RHF/Select.RHF';
+import { packSize } from '../../utils/packSize';
 
+
+/** product names repeat across sizes — show what actually tells them apart */
+function productOptionLabel(product, { context }) {
+    const meta = [packSize(product), product?.sku, product?.barcode].filter(Boolean);
+
+    /** the closed control is narrow — keep the selected value to one line */
+    if (context === "value") {
+        return (
+            <span className="truncate">
+                {product?.name}
+                {packSize(product) && <span className="text-gray-400 ml-1.5 capitalize">{packSize(product)}</span>}
+            </span>
+        );
+    }
+
+    return (
+        <div className="min-w-0">
+            <span className="block font-medium truncate">{product?.name}</span>
+            {meta.length > 0 && (
+                <span className="block text-[10px] text-gray-400 truncate capitalize">{meta.join(" · ")}</span>
+            )}
+        </div>
+    );
+}
+
+/** search the identifiers too, not just the (repeating) name */
+function productOptionFilter(option, input) {
+    if (!input?.trim()) return true;
+    const product = option?.data;
+    return [product?.name, product?.sku, product?.barcode, packSize(product)]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(input.trim().toLowerCase());
+}
 
 const RFQPreview = ({
     details,
@@ -256,6 +292,31 @@ const RFQPreview = ({
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <span className="font-semibold text-gray-800 text-sm block mb-1 truncate">{field?.product_name}</span>
+
+                                                        {/* product identifiers */}
+                                                        {(() => {
+                                                            const meta = details?.items?.[idx]?.details
+                                                                ?? details?.quotationRevision?.revisionItems?.[idx]?.sourceRfqItem?.details;
+                                                            if (!meta) return null;
+                                                            return (
+                                                                <div className="flex items-center gap-x-2 gap-y-1 flex-wrap mb-1 text-[10px] text-gray-400">
+                                                                    {meta?.sku && <span className="font-mono break-all">{meta?.sku}</span>}
+                                                                    {meta?.barcode && (
+                                                                        <>
+                                                                            <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
+                                                                            <span className="font-mono break-all">{meta?.barcode}</span>
+                                                                        </>
+                                                                    )}
+                                                                    {packSize(meta) && (
+                                                                        <>
+                                                                            <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
+                                                                            <span className="capitalize whitespace-nowrap">{packSize(meta)}</span>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })()}
+
                                                         <div className="flex items-center gap-3 text-xs flex-wrap">
                                                             <div className="flex items-center text-gray-600">
                                                                 <span className="text-gray-400 mr-1 font-medium uppercase tracking-wider text-[10px]">Qty:</span>
@@ -305,6 +366,8 @@ const RFQPreview = ({
                                                                             options={productList?.data?.filter(product => {
                                                                                 return !items?.some((item, i) => i !== idx && item?.supplier_product_id === product.id);
                                                                             })}
+                                                                            formatOptionLabel={productOptionLabel}
+                                                                            filterOption={productOptionFilter}
                                                                             error={errors?.items?.[idx]?.supplier_product_id?.message || error?.message}
                                                                             required={true}
                                                                             isClearable={true}
