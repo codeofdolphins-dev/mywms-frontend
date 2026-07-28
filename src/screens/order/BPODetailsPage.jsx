@@ -26,6 +26,7 @@ import { Helmet } from 'react-helmet-async';
 import secureLocalStorage from 'react-secure-storage';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
 import { FaSpinner } from 'react-icons/fa6';
+import { errorAlert, errorToastAlert } from '../../utils/alerts';
 
 
 const HEADER_LINK = [
@@ -58,7 +59,7 @@ const BPODetailsPage = () => {
 
 	const isEmpty = bpoData?.length > 0 ? false : true;
 	const isClosed = bpoData?.status === "closed";
-	const isbuyer = bpoData?.buyer_tenant === tenant;
+	const isbuyer = bpoData?.connection?.buyer_tenant === tenant;
 
 	const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "rm_store", isAdmin: true }, isIdValid);
 
@@ -83,8 +84,8 @@ const BPODetailsPage = () => {
 			const initialItems = bpoData.blanketOrderItems.map(item => ({
 				bpo_item_id: item.id, // reference to original ID
 
-				buyer_product_id: item.buyer_product_id,
-				vendor_product_id: item.vendor_product_id,
+				// each side's local product id is resolved server side from the
+				// product mapping — only bpo_item_id needs to be sent back
 
 				product: item.product,
 				unit_price: item.unit_price,
@@ -104,6 +105,8 @@ const BPODetailsPage = () => {
 
 
 	async function submitData(data) {
+		// console.log("bpoList", bpoList); return
+
 		// Filter: only items where release_qty is filled (> 0)
 		const selectedItems = data.items.filter(item => {
 			const qty = parseFloat(item.release_qty);
@@ -111,10 +114,11 @@ const BPODetailsPage = () => {
 		});
 
 		if (selectedItems.length === 0) {
-			alert("Please enter release qty");
+			errorToastAlert("Please enter release qty", 2500);
 			return;
 		}
 
+		data.connection_id = bpoList?.data?.connection_id;
 		data.items = selectedItems;
 		data.bpo_no = bpoData?.bpo_no;
 		data.grand_total = selectedItems.reduce((acc, item) => {
@@ -122,7 +126,6 @@ const BPODetailsPage = () => {
 		}, 0);
 		data.target_store_id = data.target_store?.id;
 
-		console.log("Form Data: ", data);
 		setFormData(data);
 		setIsPreviewShow(true);
 	};
@@ -135,7 +138,7 @@ const BPODetailsPage = () => {
 	if (bpoListLoading) return <Loader />;
 
 	// console.log(bpoData)
-	// console.log(bpoData?.buyer_tenant, tenant)
+	// console.log(bpoData?.connection?.buyer_tenant, tenant)
 
 	return (
 		<>

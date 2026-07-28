@@ -13,15 +13,14 @@ const BlanketPOPreview = ({ data, setIsShowPreviewsShow }) => {
 
         try {
             // format data
+            // both parties and each side's product id come from the product mapping,
+            // which the server resolves from product_map_id / the quotation revision
             const formData = {
                 rfq_id: data.rfq_id,
                 pr_reference_code: data.requisition.pr_reference_code,
                 rfq_quotation_revision_id: data.activeRevision.id,
-                buyer_tenant: data.requisition.buyer_tenant,
-                vendor_tenant: data.vendor_tenant,
                 valid_until: data.valid_till,
                 items: data.quotationItems.map(item => ({
-                    buyer_product_id: item.sourceRfqItem.product_id,
                     total_contracted_qty: item.qty,
                     unit_price: item.offer_price,
                     product_map_id: item.product_map_id,

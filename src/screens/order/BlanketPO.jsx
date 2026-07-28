@@ -107,7 +107,7 @@ const BlanketPO = () => {
                 >
                     {
                         bpoList?.data?.map((item, idx) => {
-                            const isBuyer = item?.buyer_tenant === TENANT ? true : false;
+                            const isBuyer = item?.connection?.buyer_tenant === TENANT ? true : false;
                             const product = {
                                 name: isBuyer ? item?.blanketOrderItems?.[0]?.buyer_product?.name : item?.blanketOrderItems?.[0]?.vendor_product?.name,
                                 remQty: item?.blanketOrderItems?.[0]?.remain_contracted_qty
@@ -124,7 +124,7 @@ const BlanketPO = () => {
                                         </Link>
                                     ),
                                     createdAt: utcToLocal(item?.createdAt),
-                                    partner: isBuyer ? item?.vendor?.tenantDetails?.companyName : item?.buyer?.tenantDetails?.companyName,
+                                    partner: isBuyer ? item?.connection?.vendor?.tenantDetails?.companyName : item?.connection?.buyer?.tenantDetails?.companyName,
                                     name: product?.name,
                                     remQty: product?.remQty,
                                     status: (

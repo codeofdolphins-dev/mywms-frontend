@@ -691,3 +691,9 @@ pre.hljs {
 .swal2-popup.swal2-toast .swal2-icon {
     transform: scale(0.85);
 }
+
+/* Overrides .swal2-popup .swal2-title (and its .dark variant) in assets/css/sweetalert.css */
+.swal2-popup.swal2-toast.error-toast .swal2-title,
+.dark .swal2-popup.swal2-toast.error-toast .swal2-title {
+    color: #fff;
+}
