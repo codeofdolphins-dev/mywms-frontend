@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../inputs/RHF/Select.RHF";
 import { debounce } from 'lodash';
 import fetchData from '../../../Backend/fetchData.backend';
+import { productOptionLabel, productOptionFilter } from '../../../utils/productOption';
 
 const RequisitionItemFormRaw = ({
     setIsShow,
@@ -112,6 +113,8 @@ const RequisitionItemFormRaw = ({
 
                                         label="Product Name"
                                         options={data?.data}
+                                        formatOptionLabel={productOptionLabel}
+                                        filterOption={productOptionFilter}
                                         error={error?.message}
                                         // required={true}
                                         isLoading={isLoading}

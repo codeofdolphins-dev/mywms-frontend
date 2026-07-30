@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import RHSelect from "../../../components/inputs/RHF/Select.RHF";
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import RegisterWarehouseNode from '../../../components/admin/register/RegisterWarehouseNode';
 import RegisterPartnerNode from '../../../components/admin/register/RegisterPartnerNode';
 import masterData from '../../../Backend/master.backend';
 import { RHFToFormData } from '../../../utils/RHFtoFD';
-import path from 'path';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import business from '../../../Backend/business.fetch';
 import ComponentHeader from '../../../components/ComponentHeader';
-import { headLink_register_location } from './helper';
 
 
 
@@ -17,38 +14,34 @@ const RegisterLocation = () => {
     const navigate = useNavigate();
 
     const location = useLocation();
-    const mfg = location?.state;
-
     const { id } = useParams();
 
-    const [editData, setEditData] = useState(null);
+    // node type passed by the Location page card's "+" button (or the Store form shortcut)
+    const stateNode = (location?.state && typeof location.state === "object") ? location.state : null;
 
 
-    const { mutateAsync: registerWarehouse, isPending: isPendingWarehouse } = masterData.TQCreateMaster(["tenantRegisteredNodeList"]);
-    const { mutateAsync: updateLocation, isPending: locationIsPending } = masterData.TQUpdateMaster(["tenantRegisteredNodeList"]);
+    const { mutateAsync: registerWarehouse, isPending: isPendingWarehouse } = masterData.TQCreateMaster(["tenantRegisteredNodeList", "registeredNodeCount"]);
+    const { mutateAsync: updateLocation, isPending: locationIsPending } = masterData.TQUpdateMaster(["tenantRegisteredNodeList", "registeredNodeCount"]);
 
-
-    const { data: businessNodes, isLoading: businessNodeLoading } = business.TQTenantBusinessNodeList();
     const { data: locationData, isLoading: locationIsLoading } = business.TQTenantRegisteredNodeList({ id }, Boolean(id));
 
 
     const { register, control, handleSubmit, formState: { errors }, watch, reset, setValue } = useForm({
         defaultValues: {
-            node: null
+            node: stateNode
         }
     });
 
     const node = watch("node");
 
 
-    /** setup prefill fields */
+    /** register mode needs a node type from the Location page cards */
     useEffect(() => {
-        if (!mfg) return;
-
-        if (typeof mfg === "object") setValue("node", mfg);
-    }, [businessNodeLoading, mfg]);
+        if (!id && !stateNode) navigate("/admin/location", { replace: true });
+    }, []);
 
 
+    /** prefill fields on update */
     useEffect(() => {
         if (!id) return;
         const data = locationData?.data
@@ -67,7 +60,6 @@ const RegisterLocation = () => {
 
         setValue("state", data?.address?.state);
         setValue("district", data?.address?.district);
-        setEditData(data);
 
     }, [id, locationData, locationIsLoading]);
 
@@ -77,68 +69,34 @@ const RegisterLocation = () => {
         const formData = RHFToFormData(data);
 
         try {
-            if (id) {
-                const res = await updateLocation({ path: `/admin/update-node/${id}`, formData });
+            const res = id
+                ? await updateLocation({ path: `/admin/update-node/${id}`, formData })
+                : await registerWarehouse({ path: "/admin/register-node", formData });
 
-                if (res.success) {
-                    if (mfg) navigate(-1);
+            if (res.success) {
+                reset({ node: null });
 
-                    reset({ node: null });
-                    navigate("/admin/location");
-                }
-            } else {
-                const res = await registerWarehouse({ path: "/admin/register-node", formData });
-
-                if (res.success) {
-                    if (mfg) navigate(-1);
-
-                    reset({ node: null });
-                    navigate("/admin/location")
-                }
+                if (stateNode) navigate(-1);
+                else navigate("/admin/location");
             }
         } catch (error) {
             console.log(error)
         }
     };
 
+    const headerLink = [
+        { title: "location", link: "/admin/location" },
+        { title: id ? "update" : "register" },
+    ];
+
     return (
         <div>
             <ComponentHeader
                 showSearch={false}
-                headerLink={headLink_register_location}
+                headerLink={headerLink}
             />
 
             <form onSubmit={handleSubmit(submitForm)} className='mt-3 space-y-3'>
-                <div className="panel">
-                    <Controller
-                        name="node"
-                        control={control}
-                        isClearable={false}
-                        rules={{
-                            required: "This field is required!!!"
-                        }}
-                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                            <RHSelect
-                                ref={(el) => {
-                                    ref({
-                                        focus: () => el?.focus(),
-                                    });
-                                }}
-                                value={value}
-                                onChange={(val) =>
-                                    reset({ node: val })
-                                }
-
-                                label="Select Model Type"
-                                options={businessNodes?.data}
-                                error={error?.message}
-                                required={true}
-                                objectReturn={true}
-                            />
-                        )}
-                    />
-                </div>
-
                 {node
                     ? ["manufacturing", "warehouse"].includes(node?.category)
                         ?
@@ -158,7 +116,9 @@ const RegisterLocation = () => {
                             errors={errors}
                             header={node}
                         />
-                    : null
+                    : (id && locationIsLoading)
+                        ? <div className="panel min-h-64 animate-pulse" />
+                        : null
                 }
 
             </form>

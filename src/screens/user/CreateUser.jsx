@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link, useAsyncError, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import RHSelect from "@/components/inputs/RHF/Select.RHF";
 import Input from '@/components/inputs/Input';
-import TextArea from '@/components/inputs/TextArea';
 import fetchData from '@/Backend/fetchData.backend';
-import { useSelector } from 'react-redux';
 import masterData from '@/Backend/master.backend';
 import { RHFToFormData } from '@/utils/RHFtoFD';
 import { Button } from '@mantine/core';
 import FileUpload from '../../components/inputs/File';
-import business from '../../Backend/business.fetch';
 import ProfileCard from '../../components/user/userProfile/ProfileCard';
 import SearchableSelect from '../../components/inputs/SearchableSelect';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
@@ -22,32 +19,35 @@ import { deptType_createUser } from './helper';
 const CreateUser = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["allUserList"]);
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["allUserList"]);
+    // place passed by the User page card's "+" button
+    const stateNode = (location?.state && typeof location.state === "object") ? location.state : null;
+
+    const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["allUserList", "userCountByNode"]);
+    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["allUserList", "userCountByNode"]);
 
 
     const [preview, setPreview] = useState(null);
     const [oldPreview, setOldPreview] = useState(null);
     const [fileKey, setFileKey] = useState(0);
-    const [nodeOptions, setNodeOptions] = useState([]);
 
 
-    const { handleSubmit, register, control, setValue, reset, watch, formState: { errors } } = useForm({
+    const { handleSubmit, register, control, reset, watch, formState: { errors } } = useForm({
         shouldUnregister: true,
         defaultValues: {
             full_name: "",
             phone_no: "",
             email: "",
             password: "",
-            node: null,
             image: null,
             store_id: null,
         }
     });
 
 
-    const node = watch("node") || null;
+    /** on register the place comes from the User page cards, on update it is not editable */
+    const node = id ? null : stateNode;
     const password = watch("password");
     const isNodeAdmin = watch("isNodeAdmin") || null;
     const storeType = watch("storeType") || null;
@@ -68,8 +68,13 @@ const CreateUser = () => {
 
 
 
-    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQTenantRegisteredNodeList({ isAllowOwner: true, noLimit: true });
     const { data: editUserDetails, isLoading: editUserDetailsLoading } = fetchData.TQAllUserList({ id }, !!id);
+
+
+    /** register mode needs a place from the User page cards */
+    useEffect(() => {
+        if (!id && !stateNode) navigate("/admin/user", { replace: true });
+    }, []);
 
 
     /** generate object url for image preview */
@@ -97,39 +102,16 @@ const CreateUser = () => {
         setOldPreview(data?.profile_image);
     }, [editUserDetailsLoading]);
 
-    useEffect(() => {
-        const options = registeredNodeList?.data?.map(item => ({
-            ...item,
-            name: item?.businessNode?.node_type_code === null ? item?.name : `${item?.name} - ${item?.businessNode?.name}`,
-        }))
-        setNodeOptions(options)
-    }, [registeredNodeList]);
-
-    /** hard reset all fields except node when node value changes */
-    const currentNodeRef = React.useRef(null);
-    useEffect(() => {
-        if (!node) return;
-        if (currentNodeRef.current === node?.id) return; // skip if same node
-        currentNodeRef.current = node?.id;
-
-        // setValue("isNodeAdmin", false);
-        // setValue("storeType", null);
-        // setValue("dept", null);
-        setValue("store_id", null);
-    }, [node?.id]);
-
-
     async function submitForm(data) {
         data.node_id = node?.businessNode?.id;
+        data.node = node;
         if (id) data.id = id;
-
+        
         const filteredData = Object.fromEntries(
             Object.entries(data).filter(([_, value]) => value !== null)
-        )
-
+        );
+        
         const formData = RHFToFormData(filteredData);
-
-        // console.log(filteredData); return
 
         try {
             if (id) {
@@ -161,73 +143,31 @@ const CreateUser = () => {
         <div>
 
             {/* breadcrumb */}
-            <ul className="flex space-x-2">
-                <li>
-                    <Link to="/admin/user" className="text-primary hover:underline">
-                        user
-                    </Link>
-                </li>
-                <li className="before:content-['/'] before:mr-2">
-                    <span> {id ? "update user" : "register & assign user"}</span>
-                </li>
-            </ul>
+            <ComponentHeader
+                showSearch={false}
+                headerLink={[
+                    { title: "user", link: "/admin/user" },
+                    { title: id ? "update user" : "register & assign user" },
+                ]}
+            />
 
             <form onSubmit={handleSubmit(submitForm)} className='mt-5'>
                 <div className="grid grid-cols-1 min-[820px]:grid-cols-2 gap-8">
                     <div className="panel space-y-6">
 
-                        {/* select location node */}
+                        {/* assigned place (chosen from the User page cards) */}
                         {id
                             ?
                             <></>
                             :
                             <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
-                                {/* assign location */}
-                                <div className="">
-                                    <Controller
-                                        name="node"
-                                        control={control}
-                                        render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                            <RHSelect
-                                                ref={(el) => {
-                                                    ref({
-                                                        focus: () => el?.focus(),
-                                                    });
-                                                }}
-                                                value={value}
-                                                onChange={(e) => {
-                                                    if (e === null) {
-                                                        setValue("isNodeAdmin", null);
-                                                        setValue("dept", null);
-                                                    }
-                                                    reset({
-                                                        full_name: "",
-                                                        phone_no: "",
-                                                        email: "",
-                                                        password: "",
-                                                        isNodeAdmin: "false",
-                                                        image: null,
-                                                        store_id: null,
-                                                        storeType: null,
-                                                        dept: null,
-                                                        node: e
-                                                    });
-                                                    setPreview(null);
-
-                                                    // Keep ONLY its own value
-                                                    return onChange(e);
-                                                }}
-
-                                                label="Assign Place"
-                                                labelPosition={"inline"}
-                                                // options={registeredNodeList?.data}
-                                                options={nodeOptions}
-                                                error={error?.message}
-                                                objectReturn={true}
-                                                isClearable={true}
-                                            />
-                                        )}
-                                    />
+                                <div className="flex justify-between items-center">
+                                    <h1 className="text-xl font-bold my-3">
+                                        Assign to: {node?.name}
+                                    </h1>
+                                    <span className='badge bg-info uppercase'>
+                                        {node?.businessNode?.type?.name || "Company"}
+                                    </span>
                                 </div>
 
                                 {node !== null && (
