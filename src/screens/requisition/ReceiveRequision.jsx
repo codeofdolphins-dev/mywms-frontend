@@ -33,6 +33,9 @@ const tabList = [
     { id: 2, title: "Trading REQ." },
 ];
 
+/** requisition is already routed onward — no assign / outward action left */
+const ASSIGNED_STATUS = ["assign", "assign_fg"];
+
 const ReceiveRequision = () => {
     const userData = useSelector(state => state?.auth?.userData);
     const nodeId = userData?.userBusinessNode?.id;
@@ -98,7 +101,7 @@ const ReceiveRequision = () => {
 
     const fgStore = watch("fg_store");
 
-    /** assign to FG store */
+    /** assign to FG store for department */
     async function assignFgStore() {
         const item = details?.items?.map((item) => {
             return {
@@ -128,6 +131,7 @@ const ReceiveRequision = () => {
         }
     }
 
+    /** create outward for non-mfg nodes */
     async function createOutward(item) {
         // console.log("item", item)
 
@@ -202,106 +206,107 @@ const ReceiveRequision = () => {
 
             {/* ── Tab 1: Received Requisition ── */}
             {activeTab === 1 && (
-            <div className="panel z-0 min-h-64 relative">
-                <TableBody
-                    columns={REQUISITION_RECEIVE_COLUMN}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    limit={limit}
-                    setLimit={setLimit}
-                    totalPage={receiveRequisitionList?.pagination?.totalPages}
-                    isEmpty={isEmpty}
-                >
-                    {receiveRequisitionList?.data?.map((item, idx) => (
-                        <TableRow
-                            key={idx}
-                            columns={REQUISITION_RECEIVE_COLUMN}
-                            row={{
-                                id: item?.requisition_no,
-                                title: item?.title,
-                                sender: item?.buyer?.nodeDetails?.name,
-                                location: item?.buyer?.nodeDetails?.location,
-                                priority: (
-                                    <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
-                                        {item?.priority}
-                                    </span>
-                                ),
-                                status: (
-                                    <span className={`badge uppercase rounded-full whitespace-nowrap ${statusColor(item?.status)}`}>
-                                        {/* {item?.status === "sent" ? "Received" : item?.status} */}
-                                        {item?.status?.split("_").join(" ")}
-                                    </span>
-                                ),
-                                itemsCount: item?.items?.length,
-                                notes: item?.notes,
-                                action: isManufacture
-                                    ? <div className='flex items-center justify-center gap-2'>
-                                        {item?.status !== "assign_fg" &&
+                <div className="panel z-0 min-h-64 relative">
+                    <TableBody
+                        columns={REQUISITION_RECEIVE_COLUMN}
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        totalPage={receiveRequisitionList?.pagination?.totalPages}
+                        isEmpty={isEmpty}
+                    >
+                        {receiveRequisitionList?.data?.map((item, idx) => (
+                            <TableRow
+                                key={idx}
+                                columns={REQUISITION_RECEIVE_COLUMN}
+                                row={{
+                                    id: item?.requisition_no,
+                                    title: item?.title,
+                                    sender: item?.buyer?.nodeDetails?.name,
+                                    location: item?.buyer?.nodeDetails?.location,
+                                    priority: (
+                                        <span className={`badge uppercase rounded-full ${item?.priority === "high" ? "badge-outline-danger" : item?.priority === "normal" ? "badge-outline-primary" : "badge-outline-secondary"}`}>
+                                            {item?.priority}
+                                        </span>
+                                    ),
+                                    status: (
+                                        <span className={`badge uppercase rounded-full whitespace-nowrap ${statusColor(item?.status)}`}>
+                                            {/* {item?.status === "sent" ? "Received" : item?.status} */}
+                                            {item?.status?.split("_").join(" ")}
+                                        </span>
+                                    ),
+                                    itemsCount: item?.items?.length,
+                                    notes: item?.notes,
+                                    action: isManufacture ?
+                                        <div className='flex items-center justify-center gap-2'>
+                                            {item?.status !== "assign" &&
+                                                <Tippy
+                                                    content="Assign FG Store"
+                                                >
+                                                    <button
+                                                        onClick={() => {
+                                                            setDetails(item);
+                                                            setIsShow(true);
+                                                        }}
+                                                    >
+                                                        <FaBolt
+                                                            className="hover:scale-110 cursor-pointer"
+                                                            strokeWidth={1.5}
+                                                            size={20}
+                                                        />
+                                                    </button>
+                                                </Tippy>
+                                            }
+
                                             <Tippy
-                                                content="Assign FG Store"
+                                                content="Preview"
                                             >
                                                 <button
                                                     onClick={() => {
                                                         setDetails(item);
-                                                        setIsShow(true);
+                                                        setIsShowDetails(true);
                                                     }}
                                                 >
-                                                    <FaBolt
-                                                        className="hover:scale-110 cursor-pointer"
-                                                        strokeWidth={1.5}
-                                                        size={20}
-                                                    />
+                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
                                                 </button>
                                             </Tippy>
-                                        }
+                                        </div>
+                                        : <div className="flex items-center gap-2">
+                                            <Tippy
+                                                content="Preview"
+                                            >
+                                                <button
+                                                    onClick={() => {
+                                                        setDetails(item);
+                                                        setIsShowDetails(true);
+                                                    }}
+                                                >
+                                                    <IconMenuNotes className="hover:scale-110 cursor-pointer" />
+                                                </button>
+                                            </Tippy>
 
-                                        <Tippy
-                                            content="Preview"
-                                        >
-                                            <button
-                                                onClick={() => {
-                                                    setDetails(item);
-                                                    setIsShowDetails(true);
-                                                }}
-                                            >
-                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                            </button>
-                                        </Tippy>
-                                    </div>
-                                    : <div className="flex items-center gap-2">
-                                        <Tippy
-                                            content="Preview"
-                                        >
-                                            <button
-                                                onClick={() => {
-                                                    setDetails(item);
-                                                    setIsShowDetails(true);
-                                                }}
-                                            >
-                                                <IconMenuNotes className="hover:scale-110 cursor-pointer" />
-                                            </button>
-                                        </Tippy>
-                                        <Tippy
-                                            content="Create Outward"
-                                        >
-                                            <button
-                                                onClick={() => {
-                                                    createOutward(item)
-                                                }}
-                                            >
-                                                <FaBolt
-                                                    className="hover:scale-110 cursor-pointer"
-                                                    strokeWidth={1.5}
-                                                    size={20}
-                                                />
-                                            </button>
-                                        </Tippy>
-                                    </div>
-                            }}
-                        />
-                    ))}
-                </TableBody>
-            </div>
+                                            {item?.status !== "assign" &&
+                                                <Tippy
+                                                    content="Create Outward"
+                                                >
+                                                    <button
+                                                        onClick={() => createOutward(item)}
+                                                    >
+                                                        <FaBolt
+                                                            className="hover:scale-110 cursor-pointer"
+                                                            strokeWidth={1.5}
+                                                            size={20}
+                                                        />
+                                                    </button>
+                                                </Tippy>
+                                            }
+                                        </div>
+                                }}
+                            />
+                        ))}
+                    </TableBody>
+                </div>
             )}
 
             {/* ── Tab 2: Trading Received Requisition ── */}
@@ -520,23 +525,27 @@ const ReceiveRequision = () => {
                             </div>
 
                             {/* buttton */}
-
-                            {isManufacture ?
-                                details?.status !== "assign_fg" &&
-                                <div className="flex items-center mt-1">
-                                    <button
-                                        type='button'
-                                        className='btn btn-secondary mx-auto'
-                                        onClick={() => setIsShow(true)}
-                                    >
-                                        Assign to FG Store
-                                    </button>
-                                </div>
-                                : <div className="flex items-center justify-center mt-5">
-                                    <button type="submit" className="btn btn-primary">
-                                        Create Outward
-                                    </button>
-                                </div>
+                            {
+                                /* already assigned — nothing left to do from the preview */
+                                !ASSIGNED_STATUS.includes(details?.status) &&
+                                (isManufacture ?
+                                    <div className="flex items-center mt-1">
+                                        <button
+                                            type='button'
+                                            className='btn btn-secondary mx-auto'
+                                            onClick={() => setIsShow(true)}
+                                        >
+                                            Assign to FG Store
+                                        </button>
+                                    </div>
+                                    : <div className="flex items-center justify-center mt-5">
+                                        <button
+                                            className="btn btn-primary"
+                                            onClick={() => createOutward(item)}
+                                        >
+                                            Create Outward
+                                        </button>
+                                    </div>)
                             }
                         </form>
                     </div>

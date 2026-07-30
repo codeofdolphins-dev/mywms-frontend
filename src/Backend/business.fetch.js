@@ -24,6 +24,16 @@ class Business {
         });
     };
 
+    TQRegisteredNodeCount() {
+        return useQuery({
+            queryKey: ["registeredNodeCount"],
+            queryFn: async () => {
+                const res = await API.get("/business/registered-node-count");
+                return res.data;
+            },
+        });
+    };
+
     TQManufacturingNodeList() {
         return useQuery({
             queryKey: ["tenantManufacturingNodeList"],
