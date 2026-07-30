@@ -286,7 +286,7 @@ const BPODetailsPage = () => {
 													onChange={onChange}
 													isSearchable={false}
 
-													label="Target Store (Buyer Side)"
+													label="Target RM Store (Buyer Side)"
 													options={storeList?.data}
 
 													required={true}
