@@ -70,29 +70,18 @@ export const NAV_CONFIG = [
         allowedRoles: ["system", "owner", "company", "admin"],
         children: [
             {
-                label: "Location (Main WH)",
-                basePath: "/admin/location",
-                children: [
-                    { label: "Browse Locations", path: "/admin/location" },
-                    { label: "Register Location", path: "/admin/location/register" },
-                ],
+                label: "All Locations",
+                path: "/admin/location",
             },
             {
                 label: "Internal Stores & Units",
                 path: "/admin/store",
+                requiredNodeCategory: "manufacturing",
             },
             {
                 label: "User Management",
-                basePath: "/admin/user",
-                children: [
-                    { label: "Browse Users", path: "/admin/user" },
-                    { label: "Register User", path: "/admin/user/register" },
-                ],
+                path: "/admin/user",
             },
-            // {
-            //     label: "Inventory",
-            //     path: "/inventory",
-            // },
         ],
     },
 
@@ -127,6 +116,7 @@ export const NAV_CONFIG = [
         icon: BiSolidFactory,
         basePath: "/production",
         allowedRoles: ["system", "store_rm", "store_wip", "store_fg", "company"],
+        requiredNodeCategory: "manufacturing",
         // children: [
         //     {
         //         label: "Facilities / Stores",

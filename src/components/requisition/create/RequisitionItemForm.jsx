@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import fetchData from '../../../Backend/fetchData.backend';
 import { Button } from '@mantine/core';
 import RHSelect from '../../inputs/RHF/Select.RHF';
+import { productOptionLabel, productOptionFilter } from '../../../utils/productOption';
 
 const RequisitionItemForm = ({
     setIsShow,
@@ -161,6 +162,8 @@ const RequisitionItemForm = ({
                                         }}
                                         label="Product Name"
                                         options={finishedProducts?.data}
+                                        formatOptionLabel={productOptionLabel}
+                                        filterOption={productOptionFilter}
                                         error={error?.message}
                                         required={true}
                                         isLoading={productsLoading}

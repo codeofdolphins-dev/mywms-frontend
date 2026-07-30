@@ -31,9 +31,9 @@ import business from '../../Backend/business.fetch';
 
 
 const PRIORITY = [
-    { label: "Low", value: "low" },
-    { label: "Normal", value: "normal" },
     { label: "High", value: "high" },
+    { label: "Normal", value: "normal" },
+    { label: "Low", value: "low" },
 ]
 
 const REQ_TYPE = [
@@ -419,7 +419,6 @@ const CreateRequisition = () => {
                                             label="Note"
                                             labelPosition="inline"
                                             {...register("notes")}
-                                            disabled={!Boolean(type)}
                                         />
                                     </div>
                                 </>}

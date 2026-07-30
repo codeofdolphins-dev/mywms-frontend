@@ -1,0 +1,18 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "development",
+    "experimentalAI",
+    "main"
+  ],
+  "parent": {
+    "development": "main",
+    "experimentalAI": "main",
+    "main": null
+  },
+  "order": [
+    "main",
+    "development",
+    "experimentalAI"
+  ]
+}

@@ -1,14 +1,37 @@
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import { checkAccess } from "../utils/roles";
+import business from "../Backend/business.fetch";
 
 export const useNavAccess = () => {
     const { roles, permissions } = useSelector(state => state.auth);
+
+    /** node categories this tenant actually has registered (manufacturing, warehouse, partner...) */
+    const { data: nodeCount, isError: nodeCountFailed } = business.TQRegisteredNodeCount();
+
+    const availableCategories = useMemo(() => new Set(
+        (nodeCount?.data || [])
+            .filter(item => Number(item.count) > 0)
+            .map(item => item.category)
+    ), [nodeCount]);
+
+    /** a route is useless without the node it operates on.
+     *  if the lookup itself failed, keep it rather than breaking navigation */
+    const isNodeGated = (item) =>
+        !nodeCountFailed && item.requiredNodeCategory && !availableCategories.has(item.requiredNodeCategory);
+
+    /** drop node-gated entries at any depth, leaving every other access rule untouched */
+    const stripNodeGated = (items = []) =>
+        items
+            .filter(item => !isNodeGated(item))
+            .map(item => item.children ? { ...item, children: stripNodeGated(item.children) } : item);
 
     const filterNav = (navConfig) => {
         const allowedNavItems = [];
 
         for (const item of navConfig) {
+
+            if (isNodeGated(item)) continue;
 
             const hasRoleAccess = item.allowedRoles && item.allowedRoles.some(role => roles.includes(role));
 
@@ -30,6 +53,12 @@ export const useNavAccess = () => {
                 if (children.length > 0) {
                     isAuthorized = true;
                 }
+
+                /** children render unfiltered by design (see NAVIGATION.md), only node-gated ones are removed */
+                clonedItem.children = stripNodeGated(clonedItem.children);
+
+                /** a dropdown whose entries are all node-gated has nothing left to show */
+                if (clonedItem.children.length === 0) continue;
             }
 
             /** If authorized, add it to our final navigation list */
