@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlus, FaWarehouse, FaIndustry, FaBox } from 'react-icons/fa';
+import { FaPlus, FaWarehouse, FaIndustry, FaBox, FaLayerGroup } from 'react-icons/fa';
 import { IoMdMore } from 'react-icons/io';
 import { LiaSpinnerSolid } from "react-icons/lia";
 import Breadcrumb from '../../../components/Breadcrumb';
@@ -19,6 +19,13 @@ import { confirmation } from '../../../utils/alerts';
 import ComponentHeader from '../../../components/ComponentHeader';
 import IconPencil from '../../../components/Icon/IconPencil';
 
+// card code -> store_type expected by the API
+const STORE_TYPE_BY_CODE = {
+    RAW: "rm_store",
+    MFG: "production",
+    FIN: "fg_store",
+};
+
 const Store = () => {
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["storeCount", "storeList"]);
 
@@ -29,6 +36,9 @@ const Store = () => {
         const item = countData.find(d => d.store_type === type);
         return item ? parseInt(item.count) : 0;
     };
+
+    // total across every store type, shown on the "All Stores" card
+    const totalCount = countData.reduce((sum, d) => sum + (parseInt(d.count) || 0), 0);
 
     // Top category cards
     const storeCategories = [
@@ -69,7 +79,7 @@ const Store = () => {
     const [selectedStore, setSelectedStore] = useState(null);
 
     /**************** pagination variables *******************/
-    const [activeStore, setActiveStore] = useState("RAW");
+    const [activeStore, setActiveStore] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState(null);
@@ -86,7 +96,8 @@ const Store = () => {
             limit,
         }),
         isAdmin: true,
-        store_type: activeStore === "RAW" ? "rm_store" : activeStore === "FIN" ? "fg_store" : "production",
+        // omitted when the "All Stores" card is active so every type comes back
+        ...(activeStore && { store_type: STORE_TYPE_BY_CODE[activeStore] }),
     };
 
     useEffect(() => {
@@ -133,11 +144,37 @@ const Store = () => {
             />
 
             {/* 1. Top Category Cards with Add Icon */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+                {/* default card — clears the store type filter and lists every store */}
+                <div
+                    onClick={() => setActiveStore(null)}
+                    className={`group rounded-2xl border-2 p-4 hover:shadow-md transition-all relative flex gap-5 items-center cursor-pointer bg-slate-50 ${!activeStore ? "border-slate-700 shadow-md" : "border-gray-200 shadow-sm"}
+                    `}
+                >
+                    <div className="p-4 rounded-xl bg-white text-slate-700 text-2xl">
+                        <FaLayerGroup />
+                    </div>
+
+                    <div className="w-full min-w-0">
+                        <h3 className="text-xl font-bold text-gray-800 truncate">All Stores</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">ALL</span>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                            {
+                                storeCountLoading ? (
+                                    <LiaSpinnerSolid size={15} className='animate-spin text-blue-400' />
+                                ) : (
+                                    <span className="text-sm text-blue-600 whitespace-nowrap">{totalCount} Store(s)</span>
+                                )
+                            }
+                        </div>
+                    </div>
+                </div>
+
                 {storeCategories.map((cat, index) => (
                     <div
                         key={index}
-                        onClick={() => setActiveStore(cat.code)}
+                        onClick={() => setActiveStore(prev => prev === cat.code ? null : cat.code)}
                         className={`group rounded-2xl border-2 p-4 hover:shadow-md transition-all relative flex gap-5 items-center cursor-pointer ${cat.bgColor} ${activeStore === cat.code ? `${cat.activeBorder} shadow-md` : "border-gray-200 shadow-sm"}
                         `}
                     >
@@ -156,7 +193,7 @@ const Store = () => {
                                         storeCountLoading ? (
                                             <LiaSpinnerSolid size={15} className='animate-spin text-blue-400' />
                                         ) : (
-                                            <span className="text-sm text-blue-600">{cat.count} Location(s)</span>
+                                            <span className="text-sm text-blue-600">{cat.count} Store(s)</span>
                                         )
                                     }
                                 </div>

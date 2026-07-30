@@ -255,6 +255,24 @@ class FetchData {
         });
     };
 
+    TQUserCountByNode(isEnabled = true) {
+        return useQuery({
+            queryKey: ["userCountByNode"],
+            queryFn: async () => {
+                try {
+                    const res = await API.get("/user/count-by-node");
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
+
     TQAllowNodeList(isEnabled = true) {
         return useQuery({
             queryKey: ["AllowNodeList"],
