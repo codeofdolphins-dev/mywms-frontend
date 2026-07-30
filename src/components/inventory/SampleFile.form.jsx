@@ -22,7 +22,7 @@ const SampleFileForm = ({ onCancel }) => {
     const [store, setStore] = useState(false);
     
 
-    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQManufacturingNodeList();
+    const { data: registeredNodeList, isLoading: registeredNodeListLoading } = business.TQTenantRegisteredNodeList({ noLimit: true });
 
     const { control, formState: { errors }, watch, handleSubmit, resetField } = useForm();
 
@@ -30,11 +30,15 @@ const SampleFileForm = ({ onCancel }) => {
     const storeType = watch("storeType");
     const storeId = watch("storeId");
 
+    /** manufacturing nodes require selecting a store; other node categories download the sample directly */
+    const getNodeCategory = (node) => node?.businessNode?.type?.category ?? node?.category ?? null;
+    const isManufacturing = getNodeCategory(locationId) === "manufacturing";
+
     const params = {
         location_id: locationId?.id,
         noLimit: true
     };
-    const { data: storeData, isLoading: storeLoading } = fetchData.TQStoreList(params, Boolean(locationId?.id));
+    const { data: storeData, isLoading: storeLoading } = fetchData.TQStoreList(params, Boolean(locationId?.id) && isManufacturing);
 
 
     /** check is the location has any store */
@@ -70,11 +74,20 @@ const SampleFileForm = ({ onCancel }) => {
 
 
     function onSubmit(data) {
-        const formData = {
-            locationId: data.locationId?.id,
-            storeId: data.storeId,
-            type: data.storeType === "fg_store" ? "finished" : "raw"
-        };
+        const isMfg = getNodeCategory(data.locationId) === "manufacturing";
+
+        const formData = isMfg
+            ? {
+                locationId: data.locationId?.id,
+                storeId: data.storeId,
+                type: data.storeType === "fg_store" ? "finished" : "raw"
+            }
+            : {
+                // non-manufacturing nodes have no store — download all finished products at the location
+                locationId: data.locationId?.id,
+                type: "finished"
+            };
+
         downloadSample(formData).then(() => onCancel());
     }
 
@@ -120,69 +133,74 @@ const SampleFileForm = ({ onCancel }) => {
                         />
                     </div>
 
-                    {/* store type */}
-                    <div className="">
-                        <Controller
-                            name="storeType"
-                            control={control}
-                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                <SearchableSelect
-                                    ref={(el) => {
-                                        ref({
-                                            focus: () => el?.focus(),
-                                        });
-                                    }}
-                                    value={value}
-                                    onChange={onChange}
-                                    isSearchable={false}
+                    {/* store type & store — only required for manufacturing nodes */}
+                    {isManufacturing && (
+                        <>
+                            {/* store type */}
+                            <div className="">
+                                <Controller
+                                    name="storeType"
+                                    control={control}
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                        <SearchableSelect
+                                            ref={(el) => {
+                                                ref({
+                                                    focus: () => el?.focus(),
+                                                });
+                                            }}
+                                            value={value}
+                                            onChange={onChange}
+                                            isSearchable={false}
 
-                                    disabled={!Boolean(locationId) || !isHasStore}
+                                            disabled={!Boolean(locationId) || !isHasStore}
 
-                                    label="Store Type"
-                                    labelPosition='inline'
-                                    options={[
-                                        { label: "FG Store", value: "fg_store" },
-                                        { label: "RM Store", value: "rm_store" },
-                                    ]}
+                                            label="Store Type"
+                                            labelPosition='inline'
+                                            options={[
+                                                { label: "FG Store", value: "fg_store" },
+                                                { label: "RM Store", value: "rm_store" },
+                                            ]}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                    </div>
+                            </div>
 
-                    {/* store */}
-                    <div className="">
-                        <Controller
-                            name="storeId"
-                            control={control}
-                            render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
-                                <RHSelect
-                                    ref={(el) => {
-                                        ref({
-                                            focus: () => el?.focus(),
-                                        });
-                                    }}
-                                    value={value}
-                                    onChange={onChange}
+                            {/* store */}
+                            <div className="">
+                                <Controller
+                                    name="storeId"
+                                    control={control}
+                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                        <RHSelect
+                                            ref={(el) => {
+                                                ref({
+                                                    focus: () => el?.focus(),
+                                                });
+                                            }}
+                                            value={value}
+                                            onChange={onChange}
 
-                                    disabled={
-                                        !Boolean(locationId) ||
-                                        !isHasStore ||
-                                        !Boolean(storeType) ||
-                                        storeList.length === 0
-                                    }
+                                            disabled={
+                                                !Boolean(locationId) ||
+                                                !isHasStore ||
+                                                !Boolean(storeType) ||
+                                                storeList.length === 0
+                                            }
 
-                                    label="Select Store"
-                                    labelPosition="inline"
-                                    options={storeList}
-                                    error={error?.message}
+                                            label="Select Store"
+                                            labelPosition="inline"
+                                            options={storeList}
+                                            error={error?.message}
 
-                                    addButton={true}
-                                    buttonTitle="Store"
-                                    buttonOnClick={() => setStore(true)}
+                                            addButton={true}
+                                            buttonTitle="Store"
+                                            buttonOnClick={() => setStore(true)}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                    </div>
+                            </div>
+                        </>
+                    )}
 
                     {/* buttons */}
                     <div className="mt-10 flex justify-end items-center">
@@ -190,7 +208,7 @@ const SampleFileForm = ({ onCancel }) => {
                             type="submit"
                             variant="primary"
                             loading={downloadSamplePending}
-                            disabled={!Boolean(storeId)}
+                            disabled={isManufacturing ? !Boolean(storeId) : !Boolean(locationId)}
                         >
                             Download Sample File
                         </Button>

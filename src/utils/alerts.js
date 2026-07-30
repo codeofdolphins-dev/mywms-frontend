@@ -47,12 +47,12 @@ const errorAlert = (message = "something wrong!") => {
     });
 }
 
-const errorToastAlert = (message = "something wrong!") => {
+const errorToastAlert = (message = "something wrong!", timer = 1500) => {
     const Toast = MySwal.mixin({
         toast: true,
         position: "top-end",
         showConfirmButton: false,
-        timer: 1500,
+        timer: timer,
         timerProgressBar: true,
         didOpen: (toast) => {
             toast.onmouseenter = Swal.stopTimer;
@@ -62,11 +62,10 @@ const errorToastAlert = (message = "something wrong!") => {
     Toast.fire({
         icon: "error",
         title: message,
-        color: "white",
         iconColor: "white",
         background: "#FF6467",
         customClass: {
-            title: "white"
+            popup: "error-toast"
         }
     });
 }

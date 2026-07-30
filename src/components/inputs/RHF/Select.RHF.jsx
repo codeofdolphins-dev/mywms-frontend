@@ -25,6 +25,10 @@ function RHSelect({
     autoFocus = false,
     hiddenIds = null,
 
+    /** optional react-select passthroughs — richer option rows and matching search */
+    formatOptionLabel = undefined,
+    filterOption = undefined,
+
     addButton = false,
     buttonTitle = "Add",
     buttonDisabled = false,
@@ -105,6 +109,8 @@ function RHSelect({
                             return typeof option[selectKey] === "object" ? option[selectKey]?.[selectSubKey] : option[selectKey]
                         }}
                         getOptionValue={option => option.id}
+                        formatOptionLabel={formatOptionLabel}
+                        filterOption={filterOption}
                         isOptionDisabled={
                             hiddenIds?.length
                                 ? (option) => hiddenIds?.includes(option.id)

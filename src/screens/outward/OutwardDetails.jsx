@@ -22,6 +22,7 @@ const OutwardDetails = () => {
 
     const { mutateAsync: update, isPending: updatePending } = masterData.TQUpdateMaster(["outwardDetails", "outwardList"]);
     const { mutateAsync, isPending } = pdf.TQOutwardInvoicePDFDownload();
+    const { mutateAsync: tradingInvoiceDownload, isPending: tradingInvoicePending } = pdf.TQTradingInvoicePDFDownload();
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
@@ -43,6 +44,7 @@ const OutwardDetails = () => {
 
     const isPreview = data?.status === "dispatched";
     const isExternal = data?.type === "external";
+    const isTrading = Boolean(data?.meta?.trading);
 
     // console.log(data)
     // console.log(isPreview)
@@ -69,6 +71,11 @@ const OutwardDetails = () => {
     }
 
     async function downloadInvoice() {
+        /** trading outward — invoice generated from the trading requisition no */
+        if (isTrading) {
+            await tradingInvoiceDownload({ requisition_no: data?.pr_no });
+            return;
+        }
         await mutateAsync({ out_no });
     }
 
@@ -104,12 +111,12 @@ const OutwardDetails = () => {
                     <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
                 </div>
                 {isPreview ?
-                    (isExternal && <Button
+                    ((isExternal || isTrading) && <Button
                         className="bg-secondary px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
                         onClick={downloadInvoice}
-                        disabled={isPending}
+                        disabled={isPending || tradingInvoicePending}
                     >
-                        {isPending ?
+                        {(isPending || tradingInvoicePending) ?
                             <LuLoaderCircle size={20} className='mr-4 animate-spin text-primary' />
                             : <FaFileDownload size={18} className='mr-4' />
                         }
@@ -365,7 +372,13 @@ const OutwardDetails = () => {
                                                         placeholder="Select from available batches..."
                                                         onChange={(val) => handleBatchChange(val, item.vendor_product_id)}
                                                         value={selectedBatches[item.vendor_product_id] || []}
+                                                        menuPortalTarget={document.body}
+                                                        menuPosition="fixed"
                                                         styles={{
+                                                            menuPortal: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                zIndex: 9999
+                                                            }),
                                                             control: (baseStyles, state) => ({
                                                                 ...baseStyles,
                                                                 borderColor: state.isFocused ? '#6366f1' : '#e2e8f0',
@@ -390,7 +403,8 @@ const OutwardDetails = () => {
                                                                 backgroundColor: state.isSelected ? '#indigo-500' : state.isFocused ? '#e0e7ff' : 'white',
                                                                 color: state.isSelected ? 'white' : '#1e293b',
                                                                 padding: '10px 14px',
-                                                                cursor: 'pointer'
+                                                                cursor: 'pointer',
+                                                                fontSize: "13px"
                                                             }),
                                                             multiValue: (baseStyles) => ({
                                                                 ...baseStyles,

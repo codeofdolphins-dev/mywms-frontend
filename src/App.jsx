@@ -17,6 +17,7 @@ import AssignRole from './screens/access/AssignRole';
 import Quotation from './screens/quotation/Quotation';
 import ReceiveQuotation from './screens/quotation/ReceiveQuotation';
 import ReceiveRequision from './screens/requisition/ReceiveRequision';
+import TradingRequisitionDetails from './screens/requisition/TradingRequisitionDetails';
 import CreateUser from './screens/user/CreateUser';
 import UserBrowse from './screens/user/UserBrowse';
 import UserProfile from './screens/user/UserProfile';
@@ -56,6 +57,7 @@ import CostHead from './screens/master/costHead/CostHead';
 import Expense from './screens/expenses/Expense';
 import { StoreRoute, HomeRoute } from './guards/StoreRoute';
 import Connection from './screens/connectionScreen/Connection';
+import BrowseCompanies from './screens/connectionScreen/BrowseCompanies';
 
 
 function App() {
@@ -143,6 +145,7 @@ function App() {
                         <Route index element={<Requisition />} />
                         <Route path="create" element={<CreateRequisition />} />
                         <Route path="received-requisition" element={<ReceiveRequision />} />
+                        <Route path="trading/:id" element={<TradingRequisitionDetails />} />
                     </Route>
 
 
@@ -209,6 +212,7 @@ function App() {
                     {/* connection */}
                     <Route path="connection" >
                         <Route index element={<Connection />} />
+                        <Route path="browse" element={<BrowseCompanies />} />
                     </Route>
 
                     {/* expense */}

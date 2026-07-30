@@ -24,6 +24,7 @@ import { Controller, useForm } from 'react-hook-form';
 import RHSelect from "../../components/inputs/RHF/Select.RHF";
 import CreateStoreForm from '../../components/admin/Store/CreateStoreForm';
 import fetchData from '../../Backend/fetchData.backend';
+import business from '../../Backend/business.fetch';
 
 
 
@@ -46,7 +47,7 @@ const OrderDetails = () => {
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
 
 
-    const { control, watch, formState: { errors } } = useForm();
+    const { control, watch, setValue, formState: { errors } } = useForm();
 
     const { id } = useParams();
 
@@ -72,7 +73,20 @@ const OrderDetails = () => {
     const purchasOrderItems = data?.data?.items ?? [];
 
 
-    const { data: storeList, isLoading: storeListLoading } = fetchData.TQStoreList({ store_type: "fg_store", isAdmin: true }, (!isPurchase && data?.data?.status === "approved"));
+    const selectedLocation = watch("location");
+    const selectedStore = watch("store");
+
+    /** fetch all registered locations (enabled only for sales order with approved status) */
+    const { data: locationList } = business.TQTenantRegisteredNodeList({ noLimit: true, isAttachCurrentNode: false }, (!isPurchase && data?.data?.status === "approved"));
+
+    /** fetch stores for selected location (enabled only when a location is selected) */
+    const locationNodeId = selectedLocation?.businessNode?.id || selectedLocation?.business_node_id;
+    const { data: storeList } = fetchData.TQStoreList(
+        { location_id: locationNodeId, isAdmin: true },
+        Boolean(locationNodeId)
+    );
+    const stores = storeList?.data ?? [];
+    const hasStores = stores.length > 0;
 
     const { mutateAsync: pInvoicePdf_download, isPending: pInvoicePdf_pending } = pdf.TQProformaInvoicePDFDownload(["purchaseOrderItemDetails", "salesOrderItemDetails"]);
 
@@ -139,10 +153,18 @@ const OrderDetails = () => {
         const payload = {
             sales_order_id: data?.data?.id,
             type: "external",
-            store_id: fgStore?.id,
             priority: data?.data?.priority,
             note: data?.data?.note,
             items: item
+        }
+
+        // use store_id if a store is selected, otherwise use location_id
+        if (selectedStore) {
+            payload.store_id = selectedStore?.id;
+        } else if (fgStore) {
+            payload.store_id = fgStore?.id;
+        } else {
+            payload.location_id = locationNodeId;
         }
 
         const res = await createData({ path: "/outward/create", formData: payload });
@@ -257,7 +279,12 @@ const OrderDetails = () => {
                                     {(!isPurchase && data?.data?.status === "approved") &&
                                         <Button
                                             className="btn !btn-primary rounded-full py-1 px-1"
-                                            onClick={() => setIsShow(true)}
+                                            onClick={() => {
+                                                setValue("location", null);
+                                                setValue("store", null);
+                                                setValue("fg_store", null);
+                                                setIsShow(true);
+                                            }}
                                         >
                                             <span className='text-xs'>Assign to FG Store</span>
                                         </Button>
@@ -462,16 +489,41 @@ const OrderDetails = () => {
                 title="Assign FG Store"
                 maxWidth='50'
             >
-                <div className="panel">
-                    <div>
-                        {/* fg_store */}
+                <div className="panel space-y-4">
+                    {/* Step 1: Select Location */}
+                    <Controller
+                        name="location"
+                        control={control}
+                        rules={{
+                            required: "This field is required!!!"
+                        }}
+                        render={({ field: { ref, value, onChange } }) => (
+                            <RHSelect
+                                ref={(el) => {
+                                    ref({
+                                        focus: () => el?.focus(),
+                                    });
+                                }}
+                                value={value}
+                                onChange={(val) => {
+                                    onChange(val);
+                                    setValue("store", null);
+                                }}
+
+                                label="Select Location"
+                                options={locationList?.data ?? []}
+                                required={true}
+                                objectReturn={true}
+                            />
+                        )}
+                    />
+
+                    {/* Step 2: Select Store (only if location has stores) */}
+                    {selectedLocation && hasStores && (
                         <Controller
-                            name="fg_store"
+                            name="store"
                             control={control}
-                            rules={{
-                                required: "This field is required!!!"
-                            }}
-                            render={({ field: { ref, value, onChange }, fieldState: { error } }) => (
+                            render={({ field: { ref, value, onChange } }) => (
                                 <RHSelect
                                     ref={(el) => {
                                         ref({
@@ -481,11 +533,8 @@ const OrderDetails = () => {
                                     value={value}
                                     onChange={onChange}
 
-                                    label="Select FG Store"
-                                    // labelPosition='inline'
-                                    options={storeList?.data}
-                                    required={true}
-                                    // error={error?.message}
+                                    label="Select Store"
+                                    options={stores}
                                     objectReturn={true}
 
                                     addButton={true}
@@ -494,7 +543,7 @@ const OrderDetails = () => {
                                 />
                             )}
                         />
-                    </div>
+                    )}
 
                     <div className="flex items-center justify-end gap-2 mt-10">
                         <Button
@@ -505,6 +554,8 @@ const OrderDetails = () => {
                         </Button>
                         <Button
                             className="btn !btn-primary rounded-full"
+                            loading={createPending}
+                            disabled={!selectedLocation}
                             onClick={assignFgStore}
                         >
                             <span>Assign</span>

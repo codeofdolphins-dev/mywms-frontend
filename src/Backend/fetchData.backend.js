@@ -518,6 +518,24 @@ class FetchData {
             enabled: isEnabled,
         });
     };
+
+    TQBrowseCompanies(params = {}, isEnabled = true) {
+        return useQuery({
+            queryKey: ["browseCompanies", params],
+            queryFn: async () => {
+                try {
+                    const res = await API.get("/connection/browse", { params });
+                    return res.data;
+                } catch (error) {
+                    if (error.response?.data?.code === 403) {
+                        errorToastAlert(error.response?.data?.message)
+                    }
+                    throw error;
+                }
+            },
+            enabled: isEnabled,
+        });
+    };
 }
 
 const fetchData = new FetchData;

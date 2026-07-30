@@ -18,6 +18,7 @@ import RawForm from '../../../components/product/Raw.Form';
 import { currencyFormatter } from '../../../utils/currencyFormatter';
 import BulkUploadModal from '../../../components/product/BulkUploadModal';
 import fetchData from '../../../Backend/fetchData.backend';
+import StatusToggle from '../../../components/StatusToggle';
 
 const colName_raw = [
     // { key: "id", label: "#" },
@@ -34,7 +35,7 @@ const colName_raw = [
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
-    { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} productId={row?.id} /> }
 ];
 const colName_finished = [
     // { key: "id", label: "ID" },
@@ -52,7 +53,7 @@ const colName_finished = [
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
-    { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} productId={row?.id} /> }
 ];
 
 const headerLink = [

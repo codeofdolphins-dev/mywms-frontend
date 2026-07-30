@@ -66,7 +66,7 @@ const ProductList = ({
     subtitle = "Choose from the products below to import into your system."
 }) => {
     const { mutateAsync, isPending } = masterData.TQCreateMaster();
-
+    
 
     // If products is not provided or is empty/null, fall back to dummy list
     const actualProducts = products && products.length > 0 ? products : DUMMY_PRODUCTS;
@@ -126,7 +126,7 @@ const ProductList = ({
         const formData = {
             connectionId: data.id,
             products: selectedProducts,
-            parent: data.parent
+            parent: data.vendor
         }
 
         const res = await mutateAsync({ path: "/product/import", formData });

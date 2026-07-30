@@ -35,7 +35,7 @@ const CreateInward = () => {
     const { grn_no } = useParams();
 
 
-    const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster(["inwardItemDetails"]);
+    const { mutateAsync: createData, isPending: createDataPending } = masterData.TQCreateMaster(["inwardItemDetails", "inwardList", "tradingRequisitionList", "tradingRequisitionDetails"]);
 
 
     /** for accordian */

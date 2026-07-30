@@ -9,6 +9,7 @@ const RequisitionItemForm = ({
     setIsShow,
     selectedItems,
     setSelectedItems = () => { },
+    vendorId
 }) => {
     const hiddenIds = selectedItems?.map(i => i.id) ?? [];
 
@@ -27,7 +28,11 @@ const RequisitionItemForm = ({
         }
     });
 
-    const { data: finishedProducts, isLoading: productsLoading } = fetchData.TQProductList({ type: "finished", noLimit: true });
+    const { data: finishedProducts, isLoading: productsLoading } = fetchData.TQProductList({
+        type: "finished",
+        noLimit: true,
+        ...(vendorId && { vendorId })
+    });
 
     function submitForm(data) {
         setSelectedItems(prev => [
