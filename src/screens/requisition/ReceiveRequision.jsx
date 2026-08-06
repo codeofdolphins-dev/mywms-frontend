@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { REQUISITION_CREATE_COLUMN } from '../../utils/helper';
 import TableRow from '../../components/table/TableRow';
 import IconMenuNotes from '../../components/Icon/Menu/IconMenuNotes';
@@ -24,7 +24,7 @@ import RequisitionDetails from '../../components/requisition/RequisitionDetails'
 
 
 const headerLink = [
-    { title: "requisition", link: "/requisition" },
+    // { title: "requisition", link: "/requisition" },
     { title: "received-requisition" },
 ];
 
@@ -39,7 +39,6 @@ const ASSIGNED_STATUS = ["assign", "assign_fg"];
 const ReceiveRequision = () => {
     const userData = useSelector(state => state?.auth?.userData);
     const nodeId = userData?.userBusinessNode?.id;
-    const navigate = useNavigate();
     const { handleSubmit, register, watch, formState: { errors }, reset, setValue, control } = useForm();
 
 
@@ -149,7 +148,6 @@ const ReceiveRequision = () => {
             type: item.type,
             items
         };
-        console.log("payload", payload);
 
         const res = await create({ path: "/outward/create", formData: payload });
         if (res?.success) { }
@@ -329,7 +327,7 @@ const ReceiveRequision = () => {
                                 row={{
                                     id: (
                                         <Link
-                                            to={`/requisition/trading/${item.id}`}
+                                            to={`/requisition/received-requisition/${item.id}`}
                                             className='whitespace-nowrap text-blue-600 hover:underline'
                                         >
                                             {item?.requisition_no}

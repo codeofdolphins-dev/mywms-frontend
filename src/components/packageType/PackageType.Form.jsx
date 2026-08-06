@@ -10,7 +10,7 @@ import BooleanSwitch from '../inputs/BooleanSwitch';
 
 const PackageTypeForm = ({ setIsShow, editId = null }) => {
 
-    const { data: editData, isLoading } = fetchData.TQUnitTypeList({ id: Number(editId) }, !!editId);
+    const { data: editData, isLoading } = fetchData.TQPackageTypeList({ id: Number(editId) }, !!editId);
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["packageTypeList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["packageTypeList"]);
 
@@ -30,7 +30,7 @@ const PackageTypeForm = ({ setIsShow, editId = null }) => {
         if (!editData) return;
         const data = editData.data?.[0];
         reset({
-            name: data?.unit,
+            name: data?.name,
             isActive: data?.isActive
         });
     }, [editId, reset, editData]);

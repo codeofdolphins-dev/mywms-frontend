@@ -35,7 +35,7 @@ const colName_raw = [
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
-    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} productId={row?.id} /> }
+    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/product/update" queryKey="productList" fieldName="is_active" asFormData={true} /> }
 ];
 const colName_finished = [
     // { key: "id", label: "ID" },
@@ -53,7 +53,7 @@ const colName_finished = [
     { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
-    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} productId={row?.id} /> }
+    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/product/update" queryKey="productList" fieldName="is_active" asFormData={true} /> }
 ];
 
 const headerLink = [

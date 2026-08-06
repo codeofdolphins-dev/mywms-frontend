@@ -12,12 +12,13 @@ import ButtonBoolean from '@/components/inputs/ButtonBoolean';
 import UnitTypeForm from '@/components/unit/UnitType.Form';
 import PackageTypeForm from '@/components/packageType/PackageType.Form';
 import ComponentHeader from '@/components/ComponentHeader';
+import StatusToggle from '@/components/StatusToggle';
 
 
 const colName = [
     { key: "id", label: "#" },
     { key: "name", label: "Package Type", },
-    { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "isActive", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/package-type/update" queryKey="packageTypeList" fieldName="isActive" /> }
 ];
 
 const headerLink = [

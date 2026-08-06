@@ -18,6 +18,7 @@ import { confirmation } from '@/utils/alerts';
 import ComponentHeader from '@/components/ComponentHeader';
 import CostHeadForm from '../../../components/costHead/CostHeadForm';
 import costFetch from '../../../Backend/cost.fetch';
+import StatusToggle from '@/components/StatusToggle';
 
 
 const headerLink = [
@@ -108,7 +109,15 @@ const CostHead = () => {
                                             >
                                                 <div className="whitespace-nowrap text-left">{item.name}</div>
                                                 <div className="text-left">{item.description}</div>
-                                                <div className="text-left">{String(item.status)}</div>
+                                                <div className="text-left">
+                                                    <StatusToggle
+                                                        isActive={item.status}
+                                                        id={item.id}
+                                                        path="/cost-head/update"
+                                                        queryKey="costHeadList"
+                                                        fieldName="status"
+                                                    />
+                                                </div>
                                                 <div className="text-left">{utcToLocal(item.createdAt)}</div>
                                                 <div className="text-center">
                                                     <ul className="flex items-center justify-center gap-2">
@@ -163,7 +172,15 @@ const CostHead = () => {
                                                                     >
                                                                         <div className="whitespace-nowrap">{data.name}</div>
                                                                         <div>{data.description}</div>
-                                                                        <div>{String(data.status)}</div>
+                                                                        <div>
+                                                                            <StatusToggle
+                                                                                isActive={data.status}
+                                                                                id={data.id}
+                                                                                path="/cost-head/update"
+                                                                                queryKey="costHeadList"
+                                                                                fieldName="status"
+                                                                            />
+                                                                        </div>
                                                                         <div>{utcToLocal(data.createdAt)}</div>
                                                                         <div className="text-center">
                                                                             <ul className="flex items-center justify-center gap-2">

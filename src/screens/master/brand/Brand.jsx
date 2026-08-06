@@ -28,6 +28,7 @@ import Form from '../../../components/brand/Form';
 import AddModal from '../../../components/Add.modal';
 import ComponentHeader from '../../../components/ComponentHeader';
 import fetchData from '../../../Backend/fetchData.backend';
+import StatusToggle from '../../../components/StatusToggle';
 
 
 const headerLink = [
@@ -130,7 +131,15 @@ const Brand = () => {
                                                 />
                                             ),
                                             desc: item?.description || "N/A",
-                                            is_active: item?.isActive ? "Active" : "Inactive",
+                                            is_active: (
+                                                <StatusToggle
+                                                    isActive={item?.isActive}
+                                                    id={item?.id}
+                                                    path="/brand/update"
+                                                    queryKey="brandList"
+                                                    fieldName="isActive"
+                                                />
+                                            ),
                                             action: (
                                                 <div className="flex space-x-3">
                                                     <CustomeButton onClick={() => handleEdit(item.id)}>

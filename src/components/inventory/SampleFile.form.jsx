@@ -125,9 +125,9 @@ const SampleFileForm = ({ onCancel }) => {
                                     objectReturn={true}
                                     required={true}
 
-                                    addButton={true}
-                                    buttonTitle="Location"
-                                    buttonOnClick={addMfgLocation}
+                                    // addButton={true}
+                                    // buttonTitle="Location"
+                                    // buttonOnClick={addMfgLocation}
                                 />
                             )}
                         />

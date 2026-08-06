@@ -24,6 +24,17 @@ class Business {
         });
     };
 
+    TQLocationsOfTenant(tenant_code, isEnabled = true) {
+        return useQuery({
+            queryKey: ["locationsOfTenant", tenant_code],
+            queryFn: async () => {
+                const res = await API.get(`/business/registered-node-list/${tenant_code}`);
+                return res.data;
+            },
+            enabled: isEnabled
+        });
+    };
+
     TQRegisteredNodeCount() {
         return useQuery({
             queryKey: ["registeredNodeCount"],

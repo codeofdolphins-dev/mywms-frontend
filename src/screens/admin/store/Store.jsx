@@ -284,8 +284,6 @@ const Store = () => {
                     editData={editData}
                 />
             </AddModal>
-
-
         </div>
     );
 };

@@ -17,6 +17,7 @@ import masterData from '@/Backend/master.backend';
 import ComponentHeader from '@/components/ComponentHeader';
 import CreateHSNForm from '../../../components/HSN/HSN.Form';
 import ItemTable from '../../../components/ItemTable';
+import StatusToggle from '../../../components/StatusToggle';
 
 
 const colName = [
@@ -28,7 +29,7 @@ const colName = [
     { key: "effective_from", label: "Effective From" },
     { key: "effective_to", label: "Effective To" },
     { key: "description", label: "description"},
-    { key: "is_active", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/hsn/update" queryKey="hsnList" fieldName="is_active" /> }
 ];
 
 const headerLink = [

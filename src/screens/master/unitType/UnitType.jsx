@@ -11,12 +11,13 @@ import masterData from '@/Backend/master.backend';
 import ButtonBoolean from '@/components/inputs/ButtonBoolean';
 import UnitTypeForm from '@/components/unit/UnitType.Form';
 import ComponentHeader from '@/components/ComponentHeader';
+import StatusToggle from '@/components/StatusToggle';
 
 
 const colName = [
     { key: "id", label: "#" },
     { key: "name", label: "Unit Type", },
-    { key: "isActive", label: "Status", render: v => v ? "Active" : "Inactive" }
+    { key: "isActive", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/unit/update" queryKey="unitTypeList" fieldName="isActive" /> }
 ];
 
 const headerLink = [

@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { errorAlert } from '../utils/alerts';
 import masterData from '../Backend/master.backend';
 import { RHFToFormData } from '../utils/RHFtoFD';
 
-const StatusToggle = ({ isActive, productId }) => {
+const StatusToggle = ({
+    isActive,
+    id,
+    path = "/product/update",
+    queryKey = "productList",
+    fieldName = "is_active",
+    asFormData = false
+}) => {
 
-    const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["productList"])
-
+    const { mutateAsync: updateData } = masterData.TQUpdateMaster([queryKey]);
 
     const [checked, setChecked] = useState(Boolean(isActive));
     const [loading, setLoading] = useState(false);
@@ -17,12 +22,9 @@ const StatusToggle = ({ isActive, productId }) => {
         setChecked(newStatus);
         setLoading(true);
 
-        const formData = RHFToFormData({ is_active: newStatus, id: productId });
+        const payload = { id, [fieldName]: newStatus };
 
-        updateData({ path: `/product/update`, formData })
-            .then(() => {
-
-            })
+        updateData({ path, formData: asFormData ? RHFToFormData(payload) : payload })
             .catch(() => {
                 setChecked(!newStatus);
             })

@@ -146,6 +146,7 @@ function App() {
                         <Route path="create" element={<CreateRequisition />} />
                         <Route path="received-requisition" element={<ReceiveRequision />} />
                         <Route path="trading/:id" element={<TradingRequisitionDetails />} />
+                        <Route path="received-requisition/:id" element={<TradingRequisitionDetails />} />
                     </Route>
 
 

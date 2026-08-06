@@ -38,8 +38,8 @@ const PRIORITY = [
 
 const REQ_TYPE = [
     { label: "Trading Requisition", value: "trade" },
-    { label: "Open Forum Requisition", value: "openForum" },
-    { label: "Internal", value: "internal" },
+    { label: "Open Forum", value: "openForum" },
+    { label: "Internal Stock Transfer", value: "internal" },
 ]
 
 const CreateRequisition = () => {
@@ -58,11 +58,7 @@ const CreateRequisition = () => {
     const { mutateAsync: createData, isPending: createPending } = masterData.TQCreateMaster(["requisitionList"]);
     const { mutateAsync: updateData, isPending: updatePending } = masterData.TQUpdateMaster(["requisitionList"]);
 
-    /**************** data fetching GET *******************/
-    // const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList(isManufacture);
 
-    const { data: locationData, isLoading: locationIsLoading } = business.TQTenantRegisteredNodeList();
-    const { data: supplierData, isLoading: supplierIsLoading } = vendor.TQVendorList();
 
 
     /**************** react form hook *******************/
@@ -71,13 +67,35 @@ const CreateRequisition = () => {
     const req_type = watch("req_type");
     const vendor_id = watch("vendor_id");
 
-
     const isTrader = req_type === "trade";
     const isOpen = req_type === "openForum";
     const isInternal = req_type === "internal";
 
+
+
+
+    /**************** data fetching GET *******************/
+    // const { data: requisitionCatList, isLoading: requisitionCatListLoading } = requisition.TQRequisitionCategoryList(isManufacture);
+    const { data: locationData, isLoading: locationIsLoading } = business.TQTenantRegisteredNodeList({}, isTrader);
+    const { data: supplierData, isLoading: supplierIsLoading } = vendor.TQVendorList({}, isTrader);
+
     /** For internal requisitions the supplier list comes from the allowed-node API */
     const { data: allownodeList, isLoading: allownodeListLoading } = fetchData.TQAllowNodeList(isInternal);
+
+    /** for trading requisition fetch all locations of that vendor */
+    const [tenant_code, setTenant_code] = useState(null);
+    useEffect(() => {
+        if (!isTrader) return;
+
+        setTenant_code(
+            supplierData?.data?.find(sd => sd.id === vendor_id)?.tenant
+        )
+    }, [isTrader, vendor_id, supplierData]);
+
+    console.log("tenant_code", tenant_code);
+
+    const { data: tenantLocationData, isLoading: tenantLocationIsLoading } = business.TQLocationsOfTenant(tenant_code, Boolean(tenant_code));
+
 
     /**
      * Requisition type availability by user type:
@@ -281,9 +299,10 @@ const CreateRequisition = () => {
                                         </div>
                                     }
 
-                                    {/* supplier */}
+                                    {/* supplier & locations */}
                                     {(isTrader || isInternal) &&
-                                        <div>
+                                        <>
+                                            {/* supplier */}
                                             <Controller
                                                 name="vendor_id"
                                                 control={control}
@@ -320,7 +339,43 @@ const CreateRequisition = () => {
                                                     />
                                                 }}
                                             />
-                                        </div>
+
+                                            {/* supplier internal locations */}
+                                            {isTrader &&
+                                                <Controller
+                                                    name="seller_node"
+                                                    control={control}
+                                                    rules={{
+                                                        required: "This field is required!!!"
+                                                    }}
+                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                                                        const locationOption = tenantLocationData?.data?.map(node => ({
+                                                            id: node?.id,
+                                                            name: `${node?.name}`
+                                                        }));
+
+                                                        return <RHSelect
+                                                            ref={(el) => {
+                                                                ref({
+                                                                    focus: () => el?.focus(),
+                                                                });
+                                                            }}
+                                                            value={value}
+                                                            onChange={onChange}
+
+                                                            label="Locations"
+                                                            labelPosition='inline'
+                                                            options={locationOption}
+                                                            error={error?.message}
+                                                            required={true}
+                                                            isClearable={true}
+                                                            isLoading={tenantLocationIsLoading}
+                                                            disabled={!vendor_id}
+                                                        />
+                                                    }}
+                                                />
+                                            }
+                                        </>
                                     }
 
                                     {/* title */}
