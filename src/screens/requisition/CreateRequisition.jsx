@@ -350,8 +350,8 @@ const CreateRequisition = () => {
                                                     }}
                                                     render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
                                                         const locationOption = tenantLocationData?.data?.map(node => ({
-                                                            id: node?.id,
-                                                            name: `${node?.name}`
+                                                            id: node?.business_node_id,
+                                                            name: node?.location ? `${node?.name} - ${node?.location}` : node?.name
                                                         }));
 
                                                         return <RHSelect

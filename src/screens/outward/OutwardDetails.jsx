@@ -42,7 +42,8 @@ const OutwardDetails = () => {
     const destAddess = data?.buyer?.meta?.address || data?.buyer?.nodeDetails?.address;
     const destAddessStr = `${destAddess?.address || "N/A"}, ${destAddess?.district?.name || "N/A"}, ${destAddess?.state?.name || "N/A"}, ${destAddess?.pincode || "N/A"}`
 
-    const isPreview = data?.status === "dispatched";
+    /** once dispatched the screen never goes back to allocation — a return only changes the dmg/stg figures */
+    const isPreview = ["dispatched", "return"].includes(data?.status);
     const isExternal = data?.type === "external";
     const isTrading = Boolean(data?.meta?.trading);
 
@@ -80,17 +81,21 @@ const OutwardDetails = () => {
     }
 
 
-    /** Get status badge */
+    /** Get status badge — same reading as the outward list, in the soft palette this page uses */
     const getStatusBadge = (status) => {
         switch (status) {
             case "pending":
-                return "bg-yellow-100 text-yellow-800";
-            case "allocated":
-                return "bg-blue-100 text-blue-800";
+                return "bg-slate-100 text-slate-700";   // nothing has happened yet
+            case "picking":
+                return "bg-amber-100 text-amber-800";   // being worked on
+            case "picked":
+                return "bg-blue-100 text-blue-800";     // ready to leave
             case "dispatched":
-                return "bg-green-100 text-green-800";
+                return "bg-green-100 text-green-800";   // completed cleanly
             case "return":
-                return "bg-red-100 text-red-800";
+                return "bg-red-100 text-red-800";       // came back short or damaged
+            case "cancelled":
+                return "bg-zinc-800 text-white";        // terminated, not a failure
             default:
                 return "bg-gray-100 text-gray-800";
         }

@@ -334,9 +334,13 @@ const ReceiveRequision = () => {
                                         </Link>
                                     ),
                                     title: item?.title,
-                                    sender: item?.icReqConnection?.buyer_tenant,
+                                    sender: (
+                                        <span className='whitespace-nowrap'>
+                                            {item?.buyerDetails?.name}
+                                        </span>
+                                    ),
                                     connectionType: (
-                                        <span className="badge badge-outline-primary uppercase rounded-full">
+                                        <span className="badge badge-outline-primary uppercase rounded-full whitespace-nowrap">
                                             {item?.icReqConnection?.connection_type}
                                         </span>
                                     ),

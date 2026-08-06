@@ -70,15 +70,26 @@ const CreateInward = () => {
         const items = sourceData.map(item => {
 
             const allocations = item.grnItemBatches?.length > 0
-                ? item.grnItemBatches.map(alloc => ({
-                    grn_item_batch_id: alloc.id,
-                    batch_no: alloc.batch_no || "",
-                    qty: alloc.received_qty,
-                    d_qty: "",
-                    s_qty: "",
-                    r_qty: alloc.received_qty,
-                    e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
-                }))
+                ? item.grnItemBatches.map(alloc => {
+                    const received = Number(alloc.received_qty) || 0;
+                    const damage = Number(alloc.damage_qty) || 0;
+                    const shortage = Number(alloc.shortage_qty) || 0;
+
+                    return {
+                        grn_item_batch_id: alloc.id,
+                        batch_no: alloc.batch_no || "",
+                        /**
+                         * received_qty is overwritten with what was actually taken in, so the qty
+                         * originally sent in this batch is rebuilt from the reported split.
+                         * On a draft both are 0 and this stays received_qty.
+                         */
+                        qty: received + damage + shortage,
+                        d_qty: damage || "",
+                        s_qty: shortage || "",
+                        r_qty: received,
+                        e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
+                    };
+                })
                 : [{
                     batch_no: "",
                     qty: item.ordered_qty,

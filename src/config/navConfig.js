@@ -1,11 +1,30 @@
 import { HiDatabase, HiUserGroup } from "react-icons/hi";
 import { RiAdminFill } from "react-icons/ri";
-import { MdAdminPanelSettings, MdOutlineReceiptLong } from "react-icons/md";
+import {
+    MdAdminPanelSettings,
+    MdOutlineReceiptLong,
+    MdOutlineCategory,
+    MdOutlineInventory2,
+    MdOutlineDescription,
+    MdOutlineAccountBalanceWallet,
+    MdOutlineTravelExplore,
+    MdOutlineLocationOn,
+    MdOutlineWarehouse,
+    MdOutlineBadge,
+    MdOutlineVpnKey,
+    MdOutlineHub,
+    MdPrecisionManufacturing,
+    MdOutlineMoveToInbox,
+    MdOutlineSwapVert,
+    MdOutlineBrandingWatermark,
+} from "react-icons/md";
 import { FaClipboardList } from "react-icons/fa";
 import { FaArrowRightArrowLeft, FaHandshake, FaQuoteLeft } from "react-icons/fa6";
-import { BsBoxArrowInDown, BsBoxArrowUp } from "react-icons/bs";
+import { BsBoxArrowInDown, BsBoxArrowUp, BsBoxSeam } from "react-icons/bs";
 import { BiSolidFactory, BiSolidStore } from "react-icons/bi";
-import { HiOutlineDocumentCurrencyRupee } from "react-icons/hi2";
+import { HiOutlineDocumentCurrencyRupee, HiOutlineBuildingOffice2 } from "react-icons/hi2";
+import { FiList, FiPlusCircle, FiUsers } from "react-icons/fi";
+import { TbNumbers, TbRulerMeasure, TbHierarchy3 } from "react-icons/tb";
 
 
 export const NAV_CONFIG = [
@@ -26,13 +45,13 @@ export const NAV_CONFIG = [
         path: "/master",
         allowedRoles: ["system", "company", "admin"],
         children: [
-            { key: "category", label: "Category", path: "/master/categories" },
-            { key: "brand", label: "Brand", path: "/master/brands" },
-            { key: "product", label: "Product", path: "/master/products" },
-            { key: "hsn", label: "HSN", path: "/master/hsncodes" },
-            { key: "unit", label: "Unit", path: "/master/unit-types" },
-            { key: "package", label: "Package", path: "/master/package-types" },
-            { key: "cost-heads", label: "Cost-heads", path: "/master/cost-heads" },
+            { key: "category", label: "Category", icon: MdOutlineCategory, path: "/master/categories" },
+            { key: "brand", label: "Brand", icon: MdOutlineBrandingWatermark, path: "/master/brands" },
+            { key: "product", label: "Product", icon: MdOutlineInventory2, path: "/master/products" },
+            { key: "hsn", label: "HSN", icon: TbNumbers, path: "/master/hsncodes" },
+            { key: "unit", label: "Unit", icon: TbRulerMeasure, path: "/master/unit-types" },
+            { key: "package", label: "Package", icon: BsBoxSeam, path: "/master/package-types" },
+            { key: "cost-heads", label: "Cost-heads", icon: MdOutlineAccountBalanceWallet, path: "/master/cost-heads" },
             // { key: "bom", label: "BOM", path: "/master/bom" },
             // { key: "supplier", label: "Supplier", path: "/master/suppliers" },
         ],
@@ -56,8 +75,8 @@ export const NAV_CONFIG = [
         basePath: "/super-admin",
         allowedRoles: ["system", "owner"],
         children: [
-            { label: "Browse", path: "/super-admin/browse" },
-            { label: "Business Flow", path: "/super-admin/business-flow" },
+            { label: "Browse", icon: MdOutlineTravelExplore, path: "/super-admin/browse" },
+            { label: "Business Flow", icon: TbHierarchy3, path: "/super-admin/business-flow" },
         ],
     },
 
@@ -71,15 +90,18 @@ export const NAV_CONFIG = [
         children: [
             {
                 label: "All Locations",
+                icon: MdOutlineLocationOn,
                 path: "/admin/location",
             },
             {
                 label: "Internal Stores & Units",
+                icon: MdOutlineWarehouse,
                 path: "/admin/store",
                 requiredNodeCategory: "manufacturing",
             },
             {
                 label: "User Management",
+                icon: FiUsers,
                 path: "/admin/user",
             },
         ],
@@ -93,8 +115,8 @@ export const NAV_CONFIG = [
         basePath: "/access",
         allowedRoles: ["system", "owner", "company", "admin"],
         children: [
-            { key: "role", label: "Role", path: "/access/role" },
-            { key: "permission", label: "Permission", path: "/access/permission" },
+            { key: "role", label: "Role", icon: MdOutlineBadge, path: "/access/role" },
+            { key: "permission", label: "Permission", icon: MdOutlineVpnKey, path: "/access/permission" },
         ],
     },
     {
@@ -104,8 +126,8 @@ export const NAV_CONFIG = [
         basePath: "/connection",
         allowedRoles: ["system", "owner", "company", "admin"],
         children: [
-            { key: "my-connections", label: "My Connections", path: "/connection" },
-            { key: "browse-companies", label: "Browse Companies", path: "/connection/browse" },
+            { key: "my-connections", label: "My Connections", icon: MdOutlineHub, path: "/connection" },
+            { key: "browse-companies", label: "Browse Companies", icon: HiOutlineBuildingOffice2, path: "/connection/browse" },
         ],
     },
 
@@ -122,9 +144,9 @@ export const NAV_CONFIG = [
         //         label: "Facilities / Stores",
         //         basePath: "/production/store",
         children: [
-            { key: "store", label: "RM Store", path: "/production/store/rm" },
-            { key: "store", label: "Production Unit", path: "/production/store/wip" },
-            { key: "store", label: "FG Store", path: "/production/store/fg" },
+            { key: "store", label: "RM Store", icon: MdOutlineWarehouse, path: "/production/store/rm" },
+            { key: "store", label: "Production Unit", icon: MdPrecisionManufacturing, path: "/production/store/wip" },
+            { key: "store", label: "FG Store", icon: BsBoxSeam, path: "/production/store/fg" },
         ],
         //     },
         // ],
@@ -139,9 +161,9 @@ export const NAV_CONFIG = [
         basePath: "/requisition",
         allowedRoles: ["system", "purchase", "warehouse", "partner", "company"],
         children: [
-            { label: "All List", path: "/requisition" },
-            { label: "Create", path: "/requisition/create" },
-            { label: "Receive Requisition", path: "/requisition/received-requisition" },
+            { label: "All List", icon: FiList, path: "/requisition" },
+            { label: "Create", icon: FiPlusCircle, path: "/requisition/create" },
+            { label: "Receive Requisition", icon: MdOutlineMoveToInbox, path: "/requisition/received-requisition" },
         ],
     },
 
@@ -154,8 +176,8 @@ export const NAV_CONFIG = [
         basePath: "/quotation",
         allowedRoles: ["system", "purchase", "sales", "company"],
         children: [
-            { label: "All List", path: "/quotation" },
-            { label: "Receive Quotation", path: "/quotation/received-quotation" },
+            { label: "All List", icon: FiList, path: "/quotation" },
+            { label: "Receive Quotation", icon: MdOutlineMoveToInbox, path: "/quotation/received-quotation" },
         ],
     },
 
@@ -167,29 +189,54 @@ export const NAV_CONFIG = [
         basePath: "/order",
         allowedRoles: ["system", "purchase", "sales", "warehouse", 'partner', "company"],
         children: [
-            { label: "List", path: "/order" },
-            { label: "Blanket PO", path: "/order/bpo" },
+            { label: "List", icon: FiList, path: "/order" },
+            { label: "Blanket PO", icon: MdOutlineDescription, path: "/order/bpo" },
             // { label: "Indent/Release Order", path: "/order/" },
         ],
     },
 
-    // ─── Inward ───
+    // ─── entry ───
     {
-        key: "inward",
-        label: "Inward",
-        icon: BsBoxArrowInDown,
-        path: "/inward",
-        allowedRoles: ["system", "store_rm", "warehouse", "partner", "company"],
+        key: "entry",
+        label: "Entry",
+        icon: MdOutlineSwapVert,        // goods in and out — distinct from Orders' receipt icon
+        basePath: "/entry",
+        // allowedRoles: ["system", "purchase", "sales", "warehouse", 'partner', "company"],
+        children: [
+            {
+                key: "inward",
+                label: "Inward",
+                icon: BsBoxArrowInDown,
+                path: "/inward",
+                allowedRoles: ["system", "store_rm", "warehouse", "partner", "company"],
+            },
+            {
+                key: "outward",
+                label: "Outward",
+                icon: BsBoxArrowUp,
+                path: "/outward",
+                allowedRoles: ["system", "store_fg", "warehouse", "partner", "company"],
+            },
+        ],
     },
 
+    // ─── Inward ───
+    // {
+    //     key: "inward",
+    //     label: "Inward",
+    //     icon: BsBoxArrowInDown,
+    //     path: "/inward",
+    //     allowedRoles: ["system", "store_rm", "warehouse", "partner", "company"],
+    // },
+
     // ─── Outward ───
-    {
-        key: "outward",
-        label: "Outward",
-        icon: BsBoxArrowUp,
-        path: "/outward",
-        allowedRoles: ["system", "store_fg", "warehouse", "partner", "company"],
-    },
+    // {
+    //     key: "outward",
+    //     label: "Outward",
+    //     icon: BsBoxArrowUp,
+    //     path: "/outward",
+    //     allowedRoles: ["system", "store_fg", "warehouse", "partner", "company"],
+    // },
 
     // ─── Direct Transfer ───
     {

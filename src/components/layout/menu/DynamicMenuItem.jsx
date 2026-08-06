@@ -11,6 +11,17 @@ import IconCaretDown from "../../Icon/IconCaretDown";
  *
  * Preserves the exact CSS class structure from the existing menu components.
  */
+/**
+ * Every leaf path under an item.
+ * A group's children do not always sit under its basePath — "Entry" groups /inward and
+ * /outward, which share no prefix — so the active highlight falls back to these.
+ * "/" is skipped: every pathname contains it.
+ */
+const descendantPaths = (node) =>
+    node.children
+        ? node.children.flatMap(descendantPaths)
+        : node.path && node.path !== "/" ? [node.path] : [];
+
 const DynamicMenuItem = ({ item, location }) => {
     const navigate = useNavigate();
     const Icon = item.icon;
@@ -41,9 +52,9 @@ const DynamicMenuItem = ({ item, location }) => {
 
     // ── Dropdown item (has children) ──
     const activePath = item.basePath || item.path;
-    const isParentActive = activePath
-        ? location.pathname.includes(activePath)
-        : false;
+    const isParentActive =
+        (activePath && location.pathname.includes(activePath)) ||
+        descendantPaths(item).some(path => location.pathname.includes(path));
 
     return (
         <li className="menu nav-item relative !ml-0">
@@ -110,6 +121,8 @@ const SubMenuItem = ({ item, location }) => {
     }
 
     // ── Flat sub-menu link ──
+    const Icon = item.icon;
+
     return (
         <li className="relative min-w-[210px]">
             <NavLink
@@ -117,7 +130,13 @@ const SubMenuItem = ({ item, location }) => {
                 end={item.path}
                 className={({ isActive }) => (isActive ? "active" : "")}
             >
-                {item.label}
+                {/* icon-less children keep their original markup untouched */}
+                {Icon ? (
+                    <span className="flex items-center gap-2">
+                        <Icon className="shrink-0" />
+                        {item.label}
+                    </span>
+                ) : item.label}
             </NavLink>
         </li>
     );

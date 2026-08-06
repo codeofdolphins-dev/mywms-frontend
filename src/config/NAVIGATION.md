@@ -40,9 +40,9 @@ enforced by types, so follow the table.
 | --- | --- | --- | --- |
 | `label` | `string` | all | **Required.** The visible text. |
 | `key` | `string` | top level | Unique id. Used as the React list key **and matched against the user's permissions** — see §4. |
-| `icon` | component | top level | React-icons component, e.g. `BiSolidFactory`. Only drawn at the top level. |
+| `icon` | component | top level, sub-menu links | React-icons component, e.g. `BiSolidFactory`. Ignored on grandchildren. |
 | `path` | `string` | leaf items | Route to navigate to. Required for anything without `children`. |
-| `basePath` | `string` | items with `children` | Prefix used to decide the "active" highlight, e.g. `/admin`. |
+| `basePath` | `string` | items with `children` | Prefix used to decide the "active" highlight, e.g. `/admin`. Optional when the children's own paths identify the group — see §6. |
 | `children` | `array` | groups | Sub-items. Presence of this field turns the item into a dropdown. |
 | `allowedRoles` | `string[]` | all | Roles that may see the item (OR). See §4. |
 | `requiredNodeCategory` | `string` | all | Hide unless the tenant has a registered node of this category. See §5. |
@@ -113,15 +113,22 @@ therefore silently change who sees the item.
 key. Owner/company/admin users therefore pass **only** via `allowedRoles`. Practical rule:
 **always set `allowedRoles`**; never rely on permissions alone for admin-facing items.
 
-**(c) Children are rendered unfiltered — by design.** `filterNav` recurses into `children`, but
-only to decide whether to promote the parent ("if you can see any child, you can see the group").
-The filtered result is **not** written back to `clonedItem.children`, so every child of a visible
-group renders regardless of its own `allowedRoles`.
+**(c) Children are rendered unfiltered — unless the whole group opts in.** `filterNav` recurses
+into `children` to decide whether to promote the parent ("if you can see any child, you can see the
+group"). By default the filtered result is **not** written back to `clonedItem.children`, so every
+child of a visible group renders regardless of its own `allowedRoles`.
 
-This is load-bearing, not an oversight to "fix": most children (e.g. under `Master`) declare no
-`allowedRoles`, and because of trap (b) they would all be filtered out for full-access users,
-emptying those menus. If you ever want real per-child filtering, you must first give every child
-proper `allowedRoles` and fix the `"*"` permission check.
+That default is load-bearing, not an oversight to "fix": most children (e.g. under `Master`) declare
+no `allowedRoles`, and because of trap (b) they would all be filtered out for full-access users,
+emptying those menus.
+
+**The opt-in:** when **every** child of a group declares a non-empty `allowedRoles`, the group is
+taken to mean it, and the filtered children are used. This is how `Entry` keeps `Inward` visible to
+`store_rm` while hiding `Outward` from them. The rule is all-or-nothing on purpose — in a group where
+only some children are annotated, the un-annotated ones would fail both checks and silently vanish.
+
+So: annotate **all** children of a group or **none**. A group whose children all filter out is
+dropped entirely, same as a fully node-gated one.
 
 The one exception is `requiredNodeCategory`, which *is* applied to children at any depth via
 `stripNodeGated()` — because a route with no backing node is broken for everyone, regardless of role.
@@ -181,7 +188,11 @@ Read these before blaming the config:
 - **Active highlight is substring-based:** `location.pathname.includes(item.path)`. Sibling routes
   sharing a prefix (`/order` vs `/order/bpo`) will both light up. `/` is special-cased to an exact
   match. If you add a route that is a prefix of another, expect a double highlight.
-- **`icon` only renders at the top level.** Icons on children are ignored.
+- **A group highlights on `basePath` *or* on any descendant path.** Children do not have to live
+  under the parent's prefix — `Entry` has `basePath: "/entry"` (no such route) and groups `/inward`
+  and `/outward`. Without the fallback such a group would never highlight. `/` is excluded from the
+  fallback since every pathname contains it.
+- **`icon` renders at the top level and on flat sub-menu links.** Icons on grandchildren are ignored.
 - **Grandchildren are plain `NavLink`s.** Any `children` on a grandchild is ignored (3-level cap).
 - Sub-menus open on **hover** via CSS (`.sub-menu`), not React state.
 

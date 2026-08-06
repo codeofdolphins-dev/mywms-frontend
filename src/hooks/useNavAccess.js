@@ -54,10 +54,19 @@ export const useNavAccess = () => {
                     isAuthorized = true;
                 }
 
-                /** children render unfiltered by design (see NAVIGATION.md), only node-gated ones are removed */
-                clonedItem.children = stripNodeGated(clonedItem.children);
+                /**
+                 * Children normally render unfiltered by design (see NAVIGATION.md §4c): most
+                 * declare no allowedRoles and would vanish for full-access users, emptying the menu.
+                 * A group whose children EVERY declare their own allowedRoles is opting in to real
+                 * per-child filtering — e.g. "Entry", where Inward and Outward are role specific.
+                 */
+                const childrenSelfGated = clonedItem.children.every(child => child.allowedRoles?.length);
 
-                /** a dropdown whose entries are all node-gated has nothing left to show */
+                clonedItem.children = childrenSelfGated
+                    ? stripNodeGated(children)
+                    : stripNodeGated(clonedItem.children);
+
+                /** a dropdown whose entries are all filtered or node-gated has nothing left to show */
                 if (clonedItem.children.length === 0) continue;
             }
 

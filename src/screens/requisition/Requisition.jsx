@@ -107,7 +107,7 @@ const Requisition = () => {
         }
     };
 
-    /** set status color */
+    /** set status color — shared by both tabs, so it covers the normal and the trading statuses */
     function statusColor(status) {
         // follow jointable status order
         switch (status) {
@@ -118,7 +118,18 @@ const Requisition = () => {
             case "po_created":
                 return "bg-success";
             case "cancelled":
-                return "bg-danger";
+                return "bg-dark";           // terminated, not a failure
+
+            /** trading only */
+            case "assign":
+                return "bg-warning";        // outward raised, being fulfilled
+            case "dispatched":
+                return "bg-info";           // goods sent, awaiting inward
+            case "return":
+                return "bg-danger";         // received short or damaged
+            case "closed":
+                return "bg-success";        // received clean
+
             default:
                 return "bg-secondary";
         }

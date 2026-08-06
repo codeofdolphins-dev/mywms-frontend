@@ -30,13 +30,17 @@ const HEADER_LINK = [
 function statusColor(status) {
     switch (status) {
         case "pending":
-            return "bg-primary";
+            return "bg-primary";        // raised, waiting on the vendor
+        case "assign":
+            return "bg-warning";        // outward raised, being fulfilled
         case "dispatched":
-            return "bg-info";
+            return "bg-info";           // goods sent, awaiting inward
+        case "return":
+            return "bg-danger";         // received short or damaged
         case "closed":
-            return "bg-success";
+            return "bg-success";        // received clean
         case "cancelled":
-            return "bg-danger";
+            return "bg-dark";           // terminated, not a failure
         default:
             return "bg-secondary";
     }
@@ -154,8 +158,8 @@ const TradingRequisitionDetails = () => {
     /** only vendor side can assign, and only while pending */
     const canAssign = details?.side === "vendor" && details?.status === "pending";
 
-    /** invoice available for both sides once dispatched */
-    const canDownloadInvoice = ["dispatched", "closed"].includes(details?.status);
+    /** invoice available for both sides once dispatched — a return does not void it */
+    const canDownloadInvoice = ["dispatched", "return", "closed"].includes(details?.status);
     const { mutateAsync: invoiceDownload, isPending: invoicePending } = pdf.TQTradingInvoicePDFDownload();
 
     /** fetch all registered locations */
