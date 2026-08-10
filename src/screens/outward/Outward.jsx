@@ -215,6 +215,12 @@ const Outward = () => {
                                                     </Link>
                                                 </div>
 
+                                                {/* 2️⃣ transport pass */}
+                                                <div className="w-[13%] text-start whitespace-nowrap">
+                                                    <p className="text-[10px] uppercase tracking-wider text-gray-400 leading-none mb-1">Transport Pass</p>
+                                                    <p className="text-xs font-bold">{outward?.tpass_no}</p>
+                                                </div>
+
                                                 {/* 2️⃣ created date */}
                                                 <div className="w-[13%] text-start whitespace-nowrap">
                                                     <p className="text-[10px] uppercase tracking-wider text-gray-400 leading-none mb-1">Created</p>
@@ -227,15 +233,21 @@ const Outward = () => {
                                                     <p className="text-xs font-medium">{utcToLocal(outward?.required_by)}</p>
                                                 </div>
 
+                                                {/* 3️⃣ vehicle no */}
+                                                <div className="w-[10%] text-start whitespace-nowrap">
+                                                    <p className="text-[10px] uppercase tracking-wider text-gray-400 leading-none mb-1">Vehicle no</p>
+                                                    <p className="text-xs font-bold">{outward?.vehicle_no}</p>
+                                                </div>
+
                                                 {/* 4️⃣ status */}
-                                                <div className="w-[12%] text-center">
+                                                <div className="w-[10%] text-center">
                                                     <span className={`badge uppercase rounded-full ${statusColor(outward?.status)}`}>
                                                         {outward?.status}
                                                     </span>
                                                 </div>
 
                                                 {/* 5️⃣ priority */}
-                                                <div className="w-[10%] text-center">
+                                                <div className="w-[8%] text-center">
                                                     <span className={`badge uppercase rounded-full ${priorityColor(outward?.priority)}`}>
                                                         {outward?.priority}
                                                     </span>
@@ -251,7 +263,13 @@ const Outward = () => {
                                                     Items: <span className="font-bold">{items.length}</span>
                                                 </div>
 
-                                                {/* 8️⃣ action */}
+                                                {/* 8️⃣ total price */}
+                                                <div className="w-[13%] text-start whitespace-nowrap">
+                                                    <p className="text-[10px] uppercase tracking-wider text-gray-400 leading-none mb-1">Total Price</p>
+                                                    <p className="text-xs font-medium">{currencyFormatter(outward?.total_price)}</p>
+                                                </div>
+
+                                                {/* 9️⃣ action */}
                                                 <div
                                                     className="w-[6%] flex items-center justify-end"
                                                     onClick={(e) => e.stopPropagation()}
@@ -269,7 +287,7 @@ const Outward = () => {
                                                     }
                                                 </div>
 
-                                                {/* 9️⃣ Expand icon */}
+                                                {/* 🔟 Expand icon */}
                                                 <div className={`w-[4%] flex justify-end transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600' : 'text-gray-400'}`}>
                                                     <IconCaretDown className='w-6 h-6' />
                                                 </div>
@@ -291,9 +309,11 @@ const Outward = () => {
                                                                     <th className="p-3 font-semibold">SKU</th>
                                                                     <th className="p-3 font-semibold">Pack Size</th>
                                                                     <th className="p-3 font-semibold text-right">Req. Qty</th>
-                                                                    <th className="p-3 font-semibold text-right text-rose-600">Dmg. Qty</th>
-                                                                    <th className="p-3 font-semibold text-right text-amber-600">Stg. Qty</th>
-                                                                    {/* <th className="p-3 font-semibold text-right">Price</th> */}
+                                                                    {activeTab === 2 && <>
+                                                                        <th className="p-3 font-semibold text-right text-rose-600">Dmg. Qty</th>
+                                                                        <th className="p-3 font-semibold text-right text-amber-600">Stg. Qty</th>
+                                                                    </>}
+                                                                    <th className="p-3 font-semibold text-right">Price</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody className="divide-y divide-slate-100">
@@ -311,12 +331,15 @@ const Outward = () => {
                                                                                 {`${product?.measure ?? ""} ${product?.unit_type ?? ""} ${product?.package_type ?? ""}`.trim() || "—"}
                                                                             </td>
                                                                             <td className="p-3 text-right font-bold text-slate-800">{item?.requested_qty}</td>
-                                                                            <td className="p-3 text-right font-medium text-rose-600">
-                                                                                {damage > 0 ? damage.toFixed(2) : "—"}
-                                                                            </td>
-                                                                            <td className="p-3 text-right font-medium text-amber-600">
-                                                                                {shortage > 0 ? shortage.toFixed(2) : "—"}
-                                                                            </td>
+                                                                            {activeTab === 2 && <>
+                                                                                <td className="p-3 text-right font-medium text-rose-600">
+                                                                                    {damage > 0 ? damage.toFixed(2) : "—"}
+                                                                                </td>
+                                                                                <td className="p-3 text-right font-medium text-amber-600">
+                                                                                    {shortage > 0 ? shortage.toFixed(2) : "—"}
+                                                                                </td>
+                                                                            </>}
+                                                                            <td className="p-3 text-right font-bold text-slate-800">{currencyFormatter(item?.line_total_price)}</td>
                                                                             {/* <td className="p-3 text-right">{currencyFormatter(item?.unit_price)}</td> */}
                                                                         </tr>
                                                                     );

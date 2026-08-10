@@ -23,7 +23,7 @@ export const REQUISITION_CREATE_COLUMN = [
     { key: "subCategory", label: "Sub Category" },
     { key: "packSize", label: "Pack Size" },
     { key: "reqQty", label: "Req Qty." },
-    // { key: "priceLimit", label: "Price Limit" },
+    { key: "total", label: "Total" },
 ];
 export const REQUISITION_CREATE_COLUMN_ACTION = [
     { key: "barcode", label: "Barcode" },
@@ -33,7 +33,8 @@ export const REQUISITION_CREATE_COLUMN_ACTION = [
     { key: "subCategory", label: "Sub Category" },
     { key: "packSize", label: "Pack Size" },
     { key: "reqQty", label: "Req Qty." },
-    // { key: "priceLimit", label: "Price Limit" },
+    { key: "mrp", label: "MRP" },
+    { key: "total", label: "Total" },
     { key: "action", label: "Action", align: "center" }
 ];
 

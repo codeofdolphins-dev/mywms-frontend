@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiUser, FiMapPin, FiShoppingBag, FiCheckCircle } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
@@ -9,6 +9,9 @@ import { Button } from '@mantine/core';
 import { FaFileDownload } from 'react-icons/fa';
 import pdf from '../../Backend/downloads/pdf/pdf.download';
 import { LuLoaderCircle } from 'react-icons/lu';
+import AddModal from '../../components/Add.modal';
+import Input from '../../components/inputs/Input';
+import { generateCode } from '../../utils/generateCode';
 
 
 const HEAD_LINK = [
@@ -26,6 +29,10 @@ const OutwardDetails = () => {
 
     // State to hold selected batches per item
     const [selectedBatches, setSelectedBatches] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [transportNo, setTransportNo] = useState('');
+    const [vehicleNo, setVehicleNo] = useState('');
 
     const { data: outwardDetails, isLoading, isError } = fetchData.TQOutwardDetails(out_no, Boolean(out_no));
 
@@ -44,11 +51,17 @@ const OutwardDetails = () => {
 
     /** once dispatched the screen never goes back to allocation — a return only changes the dmg/stg figures */
     const isPreview = ["dispatched", "return"].includes(data?.status);
+    const isReturned = ["return"].includes(data?.status);
     const isExternal = data?.type === "external";
     const isTrading = Boolean(data?.meta?.trading);
 
     // console.log(data)
     // console.log(isPreview)
+
+    // pre fill transport number field
+    useEffect(() => {
+        setTransportNo(generateCode("TPN", data?.id));
+    }, [isModalOpen]);
 
     async function handleConfirmAllocation() {
         const items = [];
@@ -59,16 +72,18 @@ const OutwardDetails = () => {
                 batches: value ? value.map(opt => opt.value) : []
             });
         }
-
         const payload = {
             outward_no: out_no,
+            ...(transportNo && { tpass_no: transportNo }),
+            ...(vehicleNo && { vehicle_no: vehicleNo }),
             items: items
         };
 
         const res = await update({ path: "/outward/dispatch", formData: payload });
-        // if (res?.success) {
-        //     navigate("/outward");
-        // }
+        if (res?.success) {
+            setIsModalOpen(false);
+            // navigate("/outward");
+        }
     }
 
     async function downloadInvoice() {
@@ -114,6 +129,10 @@ const OutwardDetails = () => {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">Outward Details</h1>
                     <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
+                    {isPreview && <>
+                        <p className="text-sm text-slate-500 mt-1">Transport Pass No. <span className="font-semibold text-indigo-600">#{data?.tpass_no}</span></p>
+                        <p className="text-sm text-slate-500 mt-1">Vehicle No. <span className="font-semibold text-indigo-600">#{data?.vehicle_no}</span></p>
+                    </>}
                 </div>
                 {isPreview ?
                     ((isExternal || isTrading) && <Button
@@ -130,8 +149,12 @@ const OutwardDetails = () => {
                     :
                     <Button
                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-2.5 rounded-lg font-medium shadow-sm shadow-indigo-200 transition-all flex items-center gap-2"
-                        onClick={handleConfirmAllocation}
+                        onClick={() => {
+                            if (Object.keys(selectedBatches).length < 1) return;
+                            setIsModalOpen(true)
+                        }}
                         loading={updatePending}
+                        disabled={Object.keys(selectedBatches).length < 1}
                     >
                         {!updatePending && <FiCheckCircle size={18} className='mr-4' />}
                         Confirm Dispatch
@@ -206,77 +229,6 @@ const OutwardDetails = () => {
                         </div>
                     </div>
                 </div>
-
-
-                {/* Buyer Card */}
-                {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4">
-                        <div className="bg-blue-50 p-3 rounded-xl text-blue-600">
-                            <FiUser size={22} className="stroke-[2.5]" />
-                        </div>
-                        <h2 className="text-lg font-semibold text-slate-800">Buyer Information</h2>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Name</span>
-                            <span className="font-semibold text-slate-800 text-right">{data?.buyer?.name}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Email Address</span>
-                            <span className="font-medium text-slate-700 text-right">{data?.buyer?.contact_email}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Phone Number</span>
-                            <span className="font-medium text-slate-700 text-right">{data?.buyer?.contact_phone}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Warehouse</span>
-                            <span className="font-medium text-slate-700 text-right">{data?.buyer?.meta?.parentBusinessNode?.name}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Destination Address</span>
-                            <span className="font-medium text-slate-700 text-right max-w-[200px] leading-snug">{destAddessStr}</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex items-center justify-between">
-                                <span className="text-slate-500 text-sm font-medium">Lat</span>
-                                <span className="font-medium text-slate-700">{destAddess?.lat || "N/A"}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-slate-500 text-sm font-medium">Long</span>
-                                <span className="font-medium text-slate-700">{destAddess?.long || "N/A"}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
-                {/* Location Card */}
-                {/* <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-5 border-b border-slate-100 pb-4">
-                        <div className="bg-emerald-50 p-3 rounded-xl text-emerald-600">
-                            <FiMapPin size={22} className="stroke-[2.5]" />
-                        </div>
-                        <h2 className="text-lg font-semibold text-slate-800">Dispatch Location</h2>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Source Warehouse</span>
-                            <span className="font-semibold text-slate-800 text-right">{mockData.location.warehouse}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Storage Zone</span>
-                            <span className="font-medium text-slate-700 text-right">{mockData.location.zone}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Pick Aisle</span>
-                            <span className="font-medium text-slate-700 text-right">{mockData.location.aisle}</span>
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <span className="text-slate-500 text-sm font-medium">Dispatch Dock</span>
-                            <span className="font-medium text-slate-700 text-right">{mockData.location.dispatchDock}</span>
-                        </div>
-                    </div>
-                </div> */}
             </div>
 
             {/* Outward Items Table */}
@@ -300,14 +252,16 @@ const OutwardDetails = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/80 text-slate-600 text-sm border-b border-slate-200 whitespace-nowrap">
-                                <th className="px-6 py-4 font-semibold w-1/5">Barcode</th>
-                                <th className="px-6 py-4 font-semibold w-1/5">Product Name</th>
-                                <th className="px-6 py-4 font-semibold w-1/5">Product SKU</th>
-                                <th className="px-6 py-4 font-semibold w-1/5">HSN</th>
-                                <th className="px-6 py-4 font-semibold w-[12%]">Req. Qty</th>
-                                <th className="px-6 py-4 font-semibold w-[12%]">Dmg. Qty</th>
-                                <th className="px-6 py-4 font-semibold w-[12%]">Stg. Qty</th>
-                                <th className="px-6 py-4 font-semibold">Allocate Batches</th>
+                                <th className="px-6 py-4 font-semibold min-w-1/5">Barcode</th>
+                                <th className="px-6 py-4 font-semibold min-w-1/5">Product Name</th>
+                                <th className="px-6 py-4 font-semibold min-w-1/5">Product SKU</th>
+                                <th className="px-6 py-4 font-semibold min-w-1/5">HSN</th>
+                                <th className="px-6 py-4 font-semibold min-w-1/5">Req. Qty</th>
+                                {isReturned && <>
+                                    <th className="px-6 py-4 font-semibold">Dmg. Qty</th>
+                                    <th className="px-6 py-4 font-semibold">Stg. Qty</th>
+                                </>}
+                                <th className="px-6 py-4 font-semibold text-center">Allocate Batches</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -343,24 +297,26 @@ const OutwardDetails = () => {
                                             </div>
                                         </td>
 
-                                        {/* damaged qty */}
-                                        <td className="px-6 py-2">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-lg text-red-500">{item.total_damage_qty}</span>
-                                                <span className="text-red-500 text-xs font-semibold uppercase">{product?.unit_type}</span>
-                                            </div>
-                                        </td>
+                                        {isReturned && <>
+                                            {/* damaged qty */}
+                                            <td className="px-6 py-2">
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-lg text-red-500">{item.total_damage_qty}</span>
+                                                    <span className="text-red-500 text-xs font-semibold uppercase">{product?.unit_type}</span>
+                                                </div>
+                                            </td>
 
-                                        {/* shortage qty */}
-                                        <td className="px-6 py-2">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-lg text-red-500">{item.total_shortage_qty}</span>
-                                                <span className="text-red-500 text-xs font-semibold uppercase">{product?.unit_type}</span>
-                                            </div>
-                                        </td>
+                                            {/* shortage qty */}
+                                            <td className="px-6 py-2">
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-lg text-red-500">{item.total_shortage_qty}</span>
+                                                    <span className="text-red-500 text-xs font-semibold uppercase">{product?.unit_type}</span>
+                                                </div>
+                                            </td>
+                                        </>}
 
                                         {/* allocate batches */}
-                                        <td className="px-6 py-2">
+                                        <td className="px-6 py-2 ">
                                             {isPreview ? (
                                                 <AllocatedBatchesCell
                                                     allocatedBatches={allocatedBatches}
@@ -443,6 +399,41 @@ const OutwardDetails = () => {
                     </table>
                 </div>
             </div>
+
+            {/* confirmation & extra field input modal */}
+            <AddModal
+                title="Fill these fields"
+                isShow={isModalOpen}
+                setIsShow={setIsModalOpen}
+            >
+                <div className="panel">
+                    <div className="flex flex-col gap-8">
+                        <div className="grid grid-cols-1 gap-4">
+                            <Input
+                                label="Enter T. Pass No."
+                                labelPosition="inline"
+                                placeholder="Transport pass number"
+                                value={transportNo}
+                                onChange={(e) => setTransportNo(e.target.value)}
+                            />
+                            <Input
+                                label="Enter Vehicle No."
+                                labelPosition="inline"
+                                placeholder="Vehicle number"
+                                value={vehicleNo}
+                                onChange={(e) => setVehicleNo(e.target.value)}
+                            />
+                        </div>
+                        <div className="self-center">
+                            <Button
+                                onClick={handleConfirmAllocation}
+                            >
+                                Submit
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </AddModal>
 
         </div >
     );

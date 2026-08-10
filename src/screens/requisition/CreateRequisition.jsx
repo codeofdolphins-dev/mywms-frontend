@@ -28,6 +28,7 @@ import TextArea from '../../components/inputs/TextArea';
 import RHRadioGroup from '../../components/inputs/RHF/RHRadioGroup';
 import { Helmet } from 'react-helmet-async';
 import business from '../../Backend/business.fetch';
+import { currencyFormatter } from '../../utils/currencyFormatter';
 
 
 const PRIORITY = [
@@ -92,17 +93,9 @@ const CreateRequisition = () => {
         )
     }, [isTrader, vendor_id, supplierData]);
 
-    console.log("tenant_code", tenant_code);
-
     const { data: tenantLocationData, isLoading: tenantLocationIsLoading } = business.TQLocationsOfTenant(tenant_code, Boolean(tenant_code));
 
 
-    /**
-     * Requisition type availability by user type:
-     * - Root user (is_owner) -> can raise ALL types
-     * - Logical user (NodeUser.department has a value) -> cannot raise "internal"
-     * - Inter-location user (NodeUser.department is null) -> can ONLY raise "internal"
-     */
     const reqTypeOptions = REQ_TYPE.map(opt => ({
         ...opt,
         isDisabled: user?.is_owner
@@ -121,7 +114,7 @@ const CreateRequisition = () => {
     useEffect(() => {
         const calculateTotals = (items) => {
             return items?.reduce((total, item) => {
-                const limit = parseFloat(item?.priceLimit) || 0;
+                const limit = parseFloat(item?.priceLimit ?? item?.mrp) || 0;
                 const qty = parseFloat(item?.reqQty) || 0;
                 return total + (limit * qty);
             }, 0);
@@ -252,53 +245,6 @@ const CreateRequisition = () => {
 
                                 {req_type && <>
 
-                                    {/* buyer */}
-                                    {(isTrader || isInternal) &&
-                                        <div>
-                                            {isInternal ? (
-                                                <Input
-                                                    label="Buyer"
-                                                    labelPosition="inline"
-                                                    disabled={true}
-                                                    readOnly
-                                                    value={node?.nodeDetails?.name ?? ""}
-                                                />
-                                            ) : (
-                                                <Controller
-                                                    name="buyer_node"
-                                                    control={control}
-                                                    rules={{
-                                                        required: "This field is required!!!"
-                                                    }}
-                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
-                                                        const buyyerOptions = locationData?.data?.map(node => ({
-                                                            id: node?.business_node_id,
-                                                            name: `${node?.name} - ${node?.location}`
-                                                        }));
-
-                                                        return <RHSelect
-                                                            ref={(el) => {
-                                                                ref({
-                                                                    focus: () => el?.focus(),
-                                                                });
-                                                            }}
-                                                            value={value}
-                                                            onChange={onChange}
-
-                                                            label="Buyer"
-                                                            labelPosition='inline'
-                                                            options={buyyerOptions}
-                                                            error={error?.message}
-                                                            required={true}
-                                                            // isMulti={true}
-                                                            isClearable={true}
-                                                        />
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                    }
-
                                     {/* supplier & locations */}
                                     {(isTrader || isInternal) &&
                                         <>
@@ -378,17 +324,60 @@ const CreateRequisition = () => {
                                         </>
                                     }
 
+                                    {/* buyer */}
+                                    {(isTrader || isInternal) &&
+                                        <div>
+                                            {isInternal ? (
+                                                <Input
+                                                    label="Buyer Location"
+                                                    labelPosition="inline"
+                                                    disabled={true}
+                                                    readOnly
+                                                    value={node?.nodeDetails?.name ?? ""}
+                                                />
+                                            ) : (
+                                                <Controller
+                                                    name="buyer_node"
+                                                    control={control}
+                                                    rules={{
+                                                        required: "This field is required!!!"
+                                                    }}
+                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => {
+                                                        const buyyerOptions = locationData?.data?.map(node => ({
+                                                            id: node?.business_node_id,
+                                                            name: `${node?.name} - ${node?.location}`
+                                                        }));
+
+                                                        return <RHSelect
+                                                            ref={(el) => {
+                                                                ref({
+                                                                    focus: () => el?.focus(),
+                                                                });
+                                                            }}
+                                                            value={value}
+                                                            onChange={onChange}
+
+                                                            label="Buyer Location"
+                                                            labelPosition='inline'
+                                                            options={buyyerOptions}
+                                                            error={error?.message}
+                                                            required={true}
+                                                            // isMulti={true}
+                                                            isClearable={true}
+                                                        />
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
+                                    }
+
                                     {/* title */}
                                     <div>
                                         <Input
                                             label="Title"
                                             labelPosition="inline"
                                             placeholder="Enter title"
-                                            {...register("title", {
-                                                required: "Title Required"
-                                            })}
-                                            error={errors.title?.message}
-                                            required={true}
+                                            {...register("title")}
                                         />
                                     </div>
 
@@ -457,10 +446,10 @@ const CreateRequisition = () => {
                                     )}
 
                                     {/* total */}
-                                    {isOpen && (
+                                    {(isOpen || isTrader) && (
                                         <div className="">
                                             <Input
-                                                label="Total"
+                                                label={`Total ${isTrader && "(MRP)"}`}
                                                 labelPosition="inline"
                                                 disabled={true}
                                                 {...register("total")}
@@ -556,6 +545,8 @@ const CreateRequisition = () => {
                                                     packSize: item?.packSize,
                                                     priceLimit: item?.priceLimit,
                                                     reqQty: item?.reqQty,
+                                                    mrp: currencyFormatter(item?.mrp),
+                                                    total: currencyFormatter(item?.mrp * item?.reqQty),
                                                     action: (
                                                         <div className='flex items-center justify-center'>
                                                             {/* <CustomeButton

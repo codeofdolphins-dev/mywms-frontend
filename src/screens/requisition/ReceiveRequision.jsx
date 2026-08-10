@@ -21,6 +21,7 @@ import { REQUISITION_RECEIVE_COLUMN, TRADING_RECEIVE_COLUMN } from './helper';
 import { FaBolt } from 'react-icons/fa6';
 import requisition from '../../Backend/requisition.backend';
 import RequisitionDetails from '../../components/requisition/RequisitionDetails';
+import { currencyFormatter } from '../../utils/currencyFormatter';
 
 
 const headerLink = [
@@ -333,7 +334,9 @@ const ReceiveRequision = () => {
                                             {item?.requisition_no}
                                         </Link>
                                     ),
-                                    title: item?.title,
+                                    title: (
+                                        <span className='whitespace-nowrap'>{item?.title || "-"}</span>
+                                    ),
                                     sender: (
                                         <span className='whitespace-nowrap'>
                                             {item?.buyerDetails?.name}
@@ -351,12 +354,13 @@ const ReceiveRequision = () => {
                                     ),
                                     status: (
                                         <span className={`badge uppercase rounded-full whitespace-nowrap ${statusColor(item?.status)}`}>
-                                            {item?.status?.split("_").join(" ")}
+                                            {item?.status?.split("_").join(" ") || "-"}
                                         </span>
                                     ),
                                     itemsCount: item?.intercompanyItems?.length,
+                                    total: currencyFormatter(item?.total_price) || "-",
                                     deadline: <p className='whitespace-nowrap'>{utcToLocal(item?.required_by_date)}</p>,
-                                    notes: item?.notes,
+                                    notes: item?.notes || "-",
                                     action: (
                                         <div className='flex items-center justify-center gap-2'>
                                             <Tippy content="Preview">

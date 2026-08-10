@@ -290,6 +290,7 @@ const Requisition = () => {
                                     ),
                                     title: <p className='whitespace-nowrap'>{item?.title}</p>,
                                     items: item?.intercompanyItems?.length,
+                                    total: currencyFormatter(item?.total_price),
                                     status: (
                                         <span className={`badge uppercase rounded-full ${statusColor(item?.status)}`}>
                                             {item?.status === "po_created" ? "po. created" : item?.status}
