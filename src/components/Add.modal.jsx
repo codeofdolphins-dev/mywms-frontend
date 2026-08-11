@@ -15,6 +15,7 @@ const AddModal = ({
 }) => {
     // Map max widths to explicit Tailwind classes since dynamic classes get purged
     const maxWidthClass = {
+        '40': 'xl:max-w-[40%]',
         '50': 'xl:max-w-[50%]',
         '60': 'xl:max-w-[60%]',
         '65': 'xl:max-w-[65%]',

@@ -51,6 +51,9 @@ const CreateInward = () => {
     const vendor = inwardData?.data?.vendor;
     const status = inwardData?.data?.status;
 
+    const isAllowEdit = ["report"].includes(status);
+    
+
 
     const { handleSubmit, register, formState: { errors }, watch, control, reset, getValues, setValue } = useForm({
         defaultValues: { items: [] }
@@ -68,7 +71,6 @@ const CreateInward = () => {
         if (!sourceData?.length) return;
 
         const items = sourceData.map(item => {
-
             const allocations = item.grnItemBatches?.length > 0
                 ? item.grnItemBatches.map(alloc => {
                     const received = Number(alloc.received_qty) || 0;
@@ -88,6 +90,7 @@ const CreateInward = () => {
                         s_qty: shortage || "",
                         r_qty: received,
                         e_date: alloc.expiry_date ? alloc.expiry_date.split('T')[0] : "",
+                        unit_price: alloc.unit_price ?? "",
                     };
                 })
                 : [{
@@ -96,7 +99,8 @@ const CreateInward = () => {
                     d_qty: "",
                     s_qty: "",
                     r_qty: item.ordered_qty,
-                    e_date: ""
+                    e_date: "",
+                    unit_price: ""
                 }];
 
             return {
@@ -144,7 +148,7 @@ const CreateInward = () => {
 
         const res = await createData({ path: "/inward/create", formData: data });
         if (res.success) {
-            navigate("/inward");
+            navigate("/inward?tab=3");
         }
     };
 
@@ -209,15 +213,14 @@ const CreateInward = () => {
                                                 <td className="px-3.5 py-2 text-gray-400">Issue Date</td>
                                                 <td className="px-3.5 py-2 font-medium text-right">{utcToLocal(inwardData?.data?.createdAt)}</td>
                                             </tr>
-                                            {/* <tr className="border-b border-gray-100">
-                                                <td className="px-3.5 py-2 text-gray-400">Grand Total</td>
+                                            <tr className="border-b border-gray-100">
+                                                <td className="px-3.5 py-2 text-gray-400">Total Price</td>
                                                 <td className="px-3.5 py-2 text-right">
                                                     <span className="text-sm font-bold text-green-600 flex items-center justify-end gap-0.5">
-                                                        <MdCurrencyRupee />
-                                                        {inwardData?.data?.grand_total || "0"}
+                                                        {currencyFormatter(Number(inwardData?.data?.total_price) || 0)}
                                                     </span>
                                                 </td>
-                                            </tr> */}
+                                            </tr>
                                             <tr className="border-b border-gray-100">
                                                 <td className="px-3.5 py-2 text-gray-400">Note</td>
                                                 <td className="px-3.5 py-2 text-right italic text-gray-400">
@@ -405,6 +408,11 @@ const CreateInward = () => {
                                                                 Req. Qty: <span className="font-bold">{item.ordered_qty} {product?.unit_type}</span>
                                                             </th>
 
+                                                            {/* 5️⃣.5 line total price */}
+                                                            <th className="w-[15%] text-start truncate !px-0">
+                                                                Price: <span className="font-bold">{currencyFormatter(Number(item?.line_total_price) || 0)}</span>
+                                                            </th>
+
                                                             {/* 6️⃣ Expand icon */}
                                                             <th className="w-[10%] flex justify-end !px-0">
                                                                 <div className={`transition-transform duration-200 ${active === `${item?.id}` ? 'rotate-180 text-blue-600' : 'text-gray-400'}`}>
@@ -421,13 +429,23 @@ const CreateInward = () => {
                                             <AnimateHeight duration={300} height={active === `${item?.id}` ? 'auto' : 0}>
                                                 <div className="space-y-4 p-5 text-gray-700 text-[13px] border-t border-[#d3d3d3] bg-white">
                                                     {field.allocations?.map((alloc, allocIdx) => (
-                                                        <div key={allocIdx} className="grid grid-cols-6 gap-4 items-start border-b border-gray-100 pb-5 mb-2 last:border-0 last:pb-0 last:mb-0">
+                                                        <div key={allocIdx} className="grid grid-cols-7 gap-4 items-start border-b border-gray-100 pb-5 mb-2 last:border-0 last:pb-0 last:mb-0">
                                                             {/* Batch No */}
                                                             <div className="">
                                                                 <Input
                                                                     label="Batch No:"
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.batch_no`)}
-                                                                    disabled={status !== "draft"}
+                                                                    disabled={!isAllowEdit}
+                                                                />
+                                                            </div>
+
+                                                            {/* Unit Price */}
+                                                            <div className="">
+                                                                <Input
+                                                                    label="Unit Price:"
+                                                                    placeholder="0"
+                                                                    {...register(`items.${idx}.allocations.${allocIdx}.unit_price`)}
+                                                                    disabled={true}
                                                                 />
                                                             </div>
 
@@ -447,7 +465,7 @@ const CreateInward = () => {
                                                                     label="Damage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status !== "draft"}
+                                                                    disabled={!isAllowEdit}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.d_qty`, {
                                                                         onChange: (e) => {
                                                                             const d_qty = Number(e.target.value) || 0;
@@ -476,7 +494,7 @@ const CreateInward = () => {
                                                                     label="Shortage Qty:"
                                                                     placeholder="0"
                                                                     className="text-red-500"
-                                                                    disabled={status !== "draft"}
+                                                                    disabled={!isAllowEdit}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.s_qty`, {
                                                                         onChange: (e) => {
                                                                             const s_qty = Number(e.target.value) || 0;
@@ -504,7 +522,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     label="Receive Qty:"
                                                                     placeholder="0"
-                                                                    disabled={status !== "draft"}
+                                                                    disabled={!isAllowEdit}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.r_qty`, {
                                                                         min: {
                                                                             value: 0,
@@ -536,7 +554,7 @@ const CreateInward = () => {
                                                                 <Input
                                                                     type="date"
                                                                     label="Expiry Date:"
-                                                                    disabled={status !== "draft"}
+                                                                    disabled={!isAllowEdit}
                                                                     {...register(`items.${idx}.allocations.${allocIdx}.e_date`)}
                                                                 />
                                                             </div>
@@ -561,7 +579,7 @@ const CreateInward = () => {
                         </div>
 
                         {/* button section */}
-                        {status === "draft" && (
+                        {isAllowEdit && (
                             <div className="flex justify-end">
                                 <Button
                                     type='submit'

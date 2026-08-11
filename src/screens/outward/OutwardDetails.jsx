@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FiUser, FiMapPin, FiShoppingBag, FiCheckCircle } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
@@ -62,6 +62,45 @@ const OutwardDetails = () => {
     useEffect(() => {
         setTransportNo(generateCode("TPN", data?.id));
     }, [isModalOpen]);
+
+    /**
+     * FIFO pre-selection — batches sorted by earliest expiry first (no-expiry last),
+     * picking just enough to cover the requested qty. The dispatch API consumes
+     * batches in payload order, so this ordering is what actually gets drained first.
+     * Runs once per outward so a refetch never overwrites manual changes.
+     */
+    const preSelectedFor = useRef(null);
+    useEffect(() => {
+        if (!items?.length || isPreview || preSelectedFor.current === out_no) return;
+        preSelectedFor.current = out_no;
+
+        const preSelected = {};
+        items.forEach((item) => {
+            const sorted = [...(item?.batch ?? [])]
+                .filter(b => Number(b.available_qty) > 0)
+                .sort((a, b) => {
+                    if (!a.expiry_date && !b.expiry_date) return 0;
+                    if (!a.expiry_date) return 1;
+                    if (!b.expiry_date) return -1;
+                    return new Date(a.expiry_date) - new Date(b.expiry_date);
+                });
+
+            let remaining = Number(item.requested_qty);
+            const picked = [];
+            for (const b of sorted) {
+                if (remaining <= 0) break;
+                picked.push({
+                    value: b.batch_no,
+                    label: `${b.batch_no} | Exp: ${b.expiry_date || 'N/A'} | Available: ${Number(b.available_qty)}`
+                });
+                remaining -= Number(b.available_qty);
+            }
+
+            if (picked.length) preSelected[item.vendor_product_id] = picked;
+        });
+
+        setSelectedBatches(preSelected);
+    }, [outwardDetails, isPreview, out_no]);
 
     async function handleConfirmAllocation() {
         const items = [];
@@ -128,11 +167,27 @@ const OutwardDetails = () => {
             <div className="my-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">Outward Details</h1>
-                    <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for order <span className="font-semibold text-indigo-600">#{out_no}</span></p>
-                    {isPreview && <>
-                        <p className="text-sm text-slate-500 mt-1">Transport Pass No. <span className="font-semibold text-indigo-600">#{data?.tpass_no}</span></p>
-                        <p className="text-sm text-slate-500 mt-1">Vehicle No. <span className="font-semibold text-indigo-600">#{data?.vehicle_no}</span></p>
-                    </>}
+                    <p className="text-sm text-slate-500 mt-1">Manage and allocate stock for this order</p>
+
+                    {/* order / transport identifiers as labeled chips */}
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                        <div className="inline-flex items-center overflow-hidden rounded-lg border border-indigo-200 bg-white text-sm shadow-sm">
+                            <span className="bg-indigo-50 text-indigo-500 px-2.5 py-1.5 font-semibold uppercase tracking-wider text-[10px]">Order</span>
+                            <span className="px-2.5 py-1.5 font-mono font-semibold text-indigo-700">{out_no}</span>
+                        </div>
+
+                        {isPreview && <>
+                            <div className="inline-flex items-center overflow-hidden rounded-lg border border-emerald-200 bg-white text-sm shadow-sm">
+                                <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1.5 font-semibold uppercase tracking-wider text-[10px]">T-Pass</span>
+                                <span className="px-2.5 py-1.5 font-mono font-semibold text-emerald-700">{data?.tpass_no || "—"}</span>
+                            </div>
+
+                            <div className="inline-flex items-center overflow-hidden rounded-lg border border-amber-200 bg-white text-sm shadow-sm">
+                                <span className="bg-amber-50 text-amber-600 px-2.5 py-1.5 font-semibold uppercase tracking-wider text-[10px]">Vehicle</span>
+                                <span className="px-2.5 py-1.5 font-mono font-semibold uppercase text-amber-700">{data?.vehicle_no || "—"}</span>
+                            </div>
+                        </>}
+                    </div>
                 </div>
                 {isPreview ?
                     ((isExternal || isTrading) && <Button
@@ -261,7 +316,7 @@ const OutwardDetails = () => {
                                     <th className="px-6 py-4 font-semibold">Dmg. Qty</th>
                                     <th className="px-6 py-4 font-semibold">Stg. Qty</th>
                                 </>}
-                                <th className="px-6 py-4 font-semibold text-center">Allocate Batches</th>
+                                <th className="px-6 py-4 font-semibold text-center w-[480px]">Allocate Batches</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -269,7 +324,7 @@ const OutwardDetails = () => {
                                 // Formatting batches for react-select dropdown
                                 const batchOptions = item?.batch?.map(b => ({
                                     value: b.batch_no,
-                                    label: `${b.batch_no} | Exp: ${b.expiry_date || 'N/A'} | Available: ${b.available_qty}`
+                                    label: `${b.batch_no} | Exp: ${b.expiry_date || 'N/A'} | Available: ${Number(b.available_qty)}`
                                 }));
 
                                 const allocatedBatches = item?.alloted_batch?.map(b => ({
@@ -324,7 +379,8 @@ const OutwardDetails = () => {
                                                     unit={product?.unit_type}
                                                 />
                                             ) : (
-                                                <div className="w-full max-w-lg">
+                                                // fixed width so adding/removing chips never resizes the table column
+                                                <div className="w-[480px]">
                                                     <Select
                                                         isMulti
                                                         options={batchOptions}
@@ -339,6 +395,12 @@ const OutwardDetails = () => {
                                                             menuPortal: (baseStyles) => ({
                                                                 ...baseStyles,
                                                                 zIndex: 9999
+                                                            }),
+                                                            /** chips scroll after ~3 rows instead of growing the control forever */
+                                                            valueContainer: (baseStyles) => ({
+                                                                ...baseStyles,
+                                                                maxHeight: '110px',
+                                                                overflowY: 'auto',
                                                             }),
                                                             control: (baseStyles, state) => ({
                                                                 ...baseStyles,
@@ -405,6 +467,7 @@ const OutwardDetails = () => {
                 title="Fill these fields"
                 isShow={isModalOpen}
                 setIsShow={setIsModalOpen}
+                maxWidth='40'
             >
                 <div className="panel">
                     <div className="flex flex-col gap-8">

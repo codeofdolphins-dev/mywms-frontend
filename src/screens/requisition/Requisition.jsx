@@ -35,6 +35,17 @@ const tabList = [
     { id: 2, title: "Trading REQ." },
 ];
 
+/** trading statuses grouped per sub-tab — in progress is still moving, completed is settled */
+const TRADING_TAB_STATUS = {
+    1: ["pending", "assign", "dispatched"],
+    2: ["closed", "return", "cancelled"],
+};
+
+const tradingTabList = [
+    { id: 1, title: "In Progress" },
+    { id: 2, title: "Completed" },
+];
+
 const Requisition = () => {
     const navigate = useNavigate();
     const user = useSelector(state => state.auth.userData);
@@ -72,9 +83,22 @@ const Requisition = () => {
     const { mutateAsync: deleteData, isPending: deletePending } = masterData.TQDeleteMaster(["requisitionList"]);
     const { mutateAsync: requisitionPdf_download, isPending: requisitionPdf_pending } = pdf.TQRequisitionPDFDownload();
 
+    /**************** trading sub-tab state *******************/
+    const [tradingTab, setTradingTab] = useState(1);
+    const handleTradingTab = (id) => {
+        setTradingTab(id);
+        setCurrentPage(1);
+    };
+
+    const tradingParams = {
+        page: currentPage,
+        limit,
+        status: (TRADING_TAB_STATUS[tradingTab] ?? []).join(","),
+    };
+
     /** only the active tab's list is fetched */
     const { data: requisitionList, isLoading: requisitionListLoading } = fetchData.TQRequisitionList({}, activeTab === 1);
-    const { data: tradingList, isLoading: tradingListLoading } = requisition.TQTradingRequisitionList({}, activeTab === 2);
+    const { data: tradingList, isLoading: tradingListLoading } = requisition.TQTradingRequisitionList(tradingParams, activeTab === 2);
 
     const isEmpty = requisitionList?.data?.length < 1;
     const tradingIsEmpty = tradingList?.data?.length < 1;
@@ -265,6 +289,25 @@ const Requisition = () => {
             {/* ── Tab 2: Trading Requisition ── */}
             {activeTab === 2 && (
                 <div className="panel z-0 min-h-64">
+                    {/* status sub-tabs */}
+                    <div className="flex items-center gap-2 mb-4">
+                        {tradingTabList.map((item) => (
+                            <button
+                                key={item.id}
+                                type="button"
+                                className={`
+                                    px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors
+                                    ${tradingTab === item.id
+                                        ? 'bg-primary text-white border-primary'
+                                        : 'bg-white text-gray-600 border-gray-300 hover:border-primary hover:text-primary'}
+                                `}
+                                onClick={() => handleTradingTab(item.id)}
+                            >
+                                {item.title}
+                            </button>
+                        ))}
+                    </div>
+
                     <TableBody
                         columns={TRADING_REQUISITION_COLUMN}
                         currentPage={currentPage}
