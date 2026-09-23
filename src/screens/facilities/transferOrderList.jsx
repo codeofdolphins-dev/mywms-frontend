@@ -35,6 +35,8 @@ const getStatusColor = (status) => {
 
 const TransferOrderList = () => {
     const store = useSelector(state => state.auth.userData?.activeNode?.store);
+    const roles = useSelector(state => state.auth.roles);
+    const isRMStore = roles.includes("store_rm");
     const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -61,10 +63,13 @@ const TransferOrderList = () => {
         <div>
 
             <div className="">
-                <div className="flex justify-end items-center mb-4">
-                    {/* <h3 className="text-lg font-semibold text-gray-800">Required Raw Materials</h3> */}
-                    <button className="btn btn-primary" onClick={() => setIsIssueItemShow(true)}><FiPlus size={20} className='mr-2' />Material Issue</button>
-                </div>
+                {/* RM store only receives requests, so it cannot raise a material issue */}
+                {!isRMStore && (
+                    <div className="flex justify-end items-center mb-4">
+                        {/* <h3 className="text-lg font-semibold text-gray-800">Required Raw Materials</h3> */}
+                        <button className="btn btn-primary" onClick={() => setIsIssueItemShow(true)}><FiPlus size={20} className='mr-2' />Material Issue</button>
+                    </div>
+                )}
 
                 {/* Item table */}
                 <div className="panel mt-5 z-0 min-h-64">
