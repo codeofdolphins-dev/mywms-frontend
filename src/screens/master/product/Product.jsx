@@ -32,7 +32,7 @@ const colName_raw = [
     { key: "has_expiry", label: "Has Expiry", render: v => v ? "Yes" : "No" },
     { key: "shelf_life", label: "Shelf Life" },
     { key: "reorder_level", label: "Reorder Level" },
-    { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
+    // { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
     { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/product/update" queryKey="productList" fieldName="is_active" asFormData={true} /> }
@@ -50,7 +50,7 @@ const colName_finished = [
     { key: "shelf_life", label: "Shelf Life" },
     { key: "reorder_level", label: "Reorder Level" },
     { key: "mrp", label: "MRP", render: v => 'Rs. ' + currencyFormatter(Number(v)) },
-    { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
+    // { key: "brand", label: "Brand", type: "nested", nested: (i) => i?.name },
     { key: "productCategories", label: "Categories", type: "array", arrayRender: (item) => item.name },
     { key: "description", label: "Description" },
     { key: "is_active", label: "Status", render: (v, row) => <StatusToggle isActive={v} id={row?.id} path="/product/update" queryKey="productList" fieldName="is_active" asFormData={true} /> }
