@@ -335,7 +335,7 @@ const Dashboard = () => {
         isShow={connectModalShow}
         setIsShow={setConnectModalShow}
         rfqItem={selectedConnectItem}
-        allowedRoles={["supplier", "trader"]}
+        allowedRoles={["supplier"]}
         onConfirm={async (role, item) => {
           if (role === "supplier") {
             const payload = {

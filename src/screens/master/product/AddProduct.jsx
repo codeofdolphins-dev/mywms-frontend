@@ -186,7 +186,7 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                                     {/* product Type */}
                                     <div>
                                         <Controller
@@ -218,7 +218,7 @@ const AddProduct = () => {
                                     </div>
 
                                     {/* brand */}
-                                    <div className="">
+                                    {/* <div className="">
                                         <Controller
                                             name="brand_id"
                                             control={control}
@@ -242,7 +242,7 @@ const AddProduct = () => {
                                                 />
                                             )}
                                         />
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 

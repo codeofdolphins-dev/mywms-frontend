@@ -95,6 +95,17 @@ const CreateRequisition = () => {
 
     const { data: tenantLocationData, isLoading: tenantLocationIsLoading } = business.TQLocationsOfTenant(tenant_code, Boolean(tenant_code));
 
+    /** a manufacturing location sends its outward through an FG store — pick which one */
+    const seller_node = watch("seller_node");
+    const sellerFgStores = tenantLocationData?.data
+        ?.find(node => node?.business_node_id === seller_node)
+        ?.businessNode?.unitLocations ?? [];
+
+    useEffect(() => {
+        setValue("seller_store_id", sellerFgStores.length === 1 ? sellerFgStores[0].id : null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [seller_node, sellerFgStores.length, setValue]);
+
 
     const reqTypeOptions = REQ_TYPE.map(opt => ({
         ...opt,
@@ -319,6 +330,38 @@ const CreateRequisition = () => {
                                                             disabled={!vendor_id}
                                                         />
                                                     }}
+                                                />
+                                            }
+
+                                            {/* supplier FG store — only for manufacturing locations */}
+                                            {isTrader && sellerFgStores.length > 0 &&
+                                                <Controller
+                                                    name="seller_store_id"
+                                                    control={control}
+                                                    rules={{
+                                                        required: "This field is required!!!"
+                                                    }}
+                                                    render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+                                                        <RHSelect
+                                                            ref={(el) => {
+                                                                ref({
+                                                                    focus: () => el?.focus(),
+                                                                });
+                                                            }}
+                                                            value={value}
+                                                            onChange={onChange}
+
+                                                            label="FG Store"
+                                                            labelPosition='inline'
+                                                            options={sellerFgStores.map(store => ({
+                                                                id: store?.id,
+                                                                name: store?.location ? `${store?.name} - ${store?.location}` : store?.name
+                                                            }))}
+                                                            error={error?.message}
+                                                            required={true}
+                                                            isClearable={true}
+                                                        />
+                                                    )}
                                                 />
                                             }
                                         </>
